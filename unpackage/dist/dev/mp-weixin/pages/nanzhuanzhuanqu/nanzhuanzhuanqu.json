@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "男装专区",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "u-loadmore": "/node-modules/uview-ui/components/u-loadmore/u-loadmore",
+    "u-popup": "/node-modules/uview-ui/components/u-popup/u-popup"
+  }
+}

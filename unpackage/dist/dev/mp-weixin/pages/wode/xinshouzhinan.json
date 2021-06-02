@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "新手指南",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "u-parse": "/node-modules/uview-ui/components/u-parse/u-parse"
+  }
+}

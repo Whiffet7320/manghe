@@ -1,0 +1,24 @@
+{
+  "setting": {},
+  "condition": {
+    "plugin": {
+      "list": []
+    },
+    "game": {
+      "list": []
+    },
+    "gamePlugin": {
+      "list": []
+    },
+    "miniprogram": {
+      "list": [
+        {
+          "name": "pages/shangpinxiangqin/shangpinxiangqin",
+          "pathName": "pages/shangpinxiangqin/shangpinxiangqin",
+          "query": "id=19&scene=17_6",
+          "scene": null
+        }
+      ]
+    }
+  }
+}

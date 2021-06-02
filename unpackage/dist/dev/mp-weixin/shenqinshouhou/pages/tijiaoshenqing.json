@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "申请售后",
+  "enablePullDownRefresh": false,
+  "navigationBarBackgroundColor": "#EBBFCC",
+  "navigationBarTextStyle": "white",
+  "usingComponents": {
+    "u-toast": "/node-modules/uview-ui/components/u-toast/u-toast"
+  }
+}
