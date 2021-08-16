@@ -10,6 +10,56 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });exports.createApp = createApp;exports.createComponent = createComponent;exports.createPage = createPage;exports.createPlugin = createPlugin;exports.createSubpackageApp = createSubpackageApp;exports.default = void 0;var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ 2));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function ownKeys(object, enumerableOnly) {var keys = Object.keys(object);if (Object.getOwnPropertySymbols) {var symbols = Object.getOwnPropertySymbols(object);if (enumerableOnly) symbols = symbols.filter(function (sym) {return Object.getOwnPropertyDescriptor(object, sym).enumerable;});keys.push.apply(keys, symbols);}return keys;}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};if (i % 2) {ownKeys(Object(source), true).forEach(function (key) {_defineProperty(target, key, source[key]);});} else if (Object.getOwnPropertyDescriptors) {Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));} else {ownKeys(Object(source)).forEach(function (key) {Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));});}}return target;}function _slicedToArray(arr, i) {return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();}function _nonIterableRest() {throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}function _iterableToArrayLimit(arr, i) {if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;var _arr = [];var _n = true;var _d = false;var _e = undefined;try {for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {_arr.push(_s.value);if (i && _arr.length === i) break;}} catch (err) {_d = true;_e = err;} finally {try {if (!_n && _i["return"] != null) _i["return"]();} finally {if (_d) throw _e;}}return _arr;}function _arrayWithHoles(arr) {if (Array.isArray(arr)) return arr;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}function _toConsumableArray(arr) {return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();}function _nonIterableSpread() {throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}function _unsupportedIterableToArray(o, minLen) {if (!o) return;if (typeof o === "string") return _arrayLikeToArray(o, minLen);var n = Object.prototype.toString.call(o).slice(8, -1);if (n === "Object" && o.constructor) n = o.constructor.name;if (n === "Map" || n === "Set") return Array.from(o);if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);}function _iterableToArray(iter) {if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);}function _arrayWithoutHoles(arr) {if (Array.isArray(arr)) return _arrayLikeToArray(arr);}function _arrayLikeToArray(arr, len) {if (len == null || len > arr.length) len = arr.length;for (var i = 0, arr2 = new Array(len); i < len; i++) {arr2[i] = arr[i];}return arr2;}
 
+function b64DecodeUnicode(str) {
+  return decodeURIComponent(atob(str).split('').map(function (c) {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+}
+
+function getCurrentUserInfo() {
+  var token = wx.getStorageSync('uni_id_token') || '';
+  var tokenArr = token.split('.');
+  if (!token || tokenArr.length !== 3) {
+    return {
+      uid: null,
+      role: [],
+      permission: [],
+      tokenExpired: 0 };
+
+  }
+  var userInfo;
+  try {
+    userInfo = JSON.parse(b64DecodeUnicode(tokenArr[1]));
+  } catch (error) {
+    throw new Error('获取当前用户信息出错，详细错误信息为：' + error.message);
+  }
+  userInfo.tokenExpired = userInfo.exp * 1000;
+  delete userInfo.exp;
+  delete userInfo.iat;
+  return userInfo;
+}
+
+function uniIdMixin(Vue) {
+  Vue.prototype.uniIDHasRole = function (roleId) {var _getCurrentUserInfo =
+
+
+    getCurrentUserInfo(),role = _getCurrentUserInfo.role;
+    return role.indexOf(roleId) > -1;
+  };
+  Vue.prototype.uniIDHasPermission = function (permissionId) {var _getCurrentUserInfo2 =
+
+
+    getCurrentUserInfo(),permission = _getCurrentUserInfo2.permission;
+    return this.uniIDHasRole('admin') || permission.indexOf(permissionId) > -1;
+  };
+  Vue.prototype.uniIDTokenValid = function () {var _getCurrentUserInfo3 =
+
+
+    getCurrentUserInfo(),tokenExpired = _getCurrentUserInfo3.tokenExpired;
+    return tokenExpired > Date.now();
+  };
+}
+
 var _toString = Object.prototype.toString;
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 
@@ -929,6 +979,11 @@ function initProperties(props) {var isBehavior = arguments.length > 1 && argumen
       type: Object,
       value: null };
 
+    // scopedSlotsCompiler auto
+    properties.scopedSlotsCompiler = {
+      type: String,
+      value: '' };
+
     properties.vueSlots = { // 小程序不能直接定义 $slots 的 props，所以通过 vueSlots 转换到 $slots
       type: null,
       value: [],
@@ -1324,11 +1379,14 @@ function initScopedSlotsParams() {
   };
 
   _vue.default.prototype.$setScopedSlotsParams = function (name, value) {
-    var vueId = this.$options.propsData.vueId;
-    var object = center[vueId] = center[vueId] || {};
-    object[name] = value;
-    if (parents[vueId]) {
-      parents[vueId].$forceUpdate();
+    var vueIds = this.$options.propsData.vueId;
+    if (vueIds) {
+      var vueId = vueIds.split(',')[0];
+      var object = center[vueId] = center[vueId] || {};
+      object[name] = value;
+      if (parents[vueId]) {
+        parents[vueId].$forceUpdate();
+      }
     }
   };
 
@@ -1355,6 +1413,7 @@ function parseBaseApp(vm, _ref3)
   if (vm.$options.store) {
     _vue.default.prototype.$store = vm.$options.store;
   }
+  uniIdMixin(_vue.default);
 
   _vue.default.prototype.mpHost = "mp-weixin";
 
@@ -1733,6 +1792,7 @@ function createSubpackageApp(vm) {
   var app = getApp({
     allowDefault: true });
 
+  vm.$scope = app;
   var globalData = app.globalData;
   if (globalData) {
     Object.keys(appOptions.globalData).forEach(function (name) {
@@ -1748,17 +1808,17 @@ function createSubpackageApp(vm) {
   });
   if (isFn(appOptions.onShow) && wx.onAppShow) {
     wx.onAppShow(function () {for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {args[_key5] = arguments[_key5];}
-      appOptions.onShow.apply(app, args);
+      vm.__call_hook('onShow', args);
     });
   }
   if (isFn(appOptions.onHide) && wx.onAppHide) {
     wx.onAppHide(function () {for (var _len6 = arguments.length, args = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {args[_key6] = arguments[_key6];}
-      appOptions.onHide.apply(app, args);
+      vm.__call_hook('onHide', args);
     });
   }
   if (isFn(appOptions.onLaunch)) {
     var args = wx.getLaunchOptionsSync && wx.getLaunchOptionsSync();
-    appOptions.onLaunch.call(app, args);
+    vm.__call_hook('onLaunch', args);
   }
   return vm;
 }
@@ -2000,9 +2060,9 @@ function normalizeComponent (
 /***/ }),
 
 /***/ 11:
-/*!*********************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/index.js ***!
-  \*********************************************************************************************/
+/*!******************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/index.js ***!
+  \******************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2152,9 +2212,9 @@ var install = function install(Vue) {
 /***/ }),
 
 /***/ 12:
-/*!********************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/mixin/mixin.js ***!
-  \********************************************************************************************************/
+/*!*****************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/mixin/mixin.js ***!
+  \*****************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2226,9 +2286,9 @@ var install = function install(Vue) {
 /***/ }),
 
 /***/ 13:
-/*!**********************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/request/index.js ***!
-  \**********************************************************************************************************/
+/*!*******************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/request/index.js ***!
+  \*******************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2407,9 +2467,9 @@ new Request();exports.default = _default;
 /***/ }),
 
 /***/ 14:
-/*!***************************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/function/deepMerge.js ***!
-  \***************************************************************************************************************/
+/*!************************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/function/deepMerge.js ***!
+  \************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2448,9 +2508,9 @@ deepMerge;exports.default = _default;
 /***/ }),
 
 /***/ 15:
-/*!***************************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/function/deepClone.js ***!
-  \***************************************************************************************************************/
+/*!************************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/function/deepClone.js ***!
+  \************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2482,9 +2542,9 @@ deepClone;exports.default = _default;
 /***/ }),
 
 /***/ 16:
-/*!**********************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/function/test.js ***!
-  \**********************************************************************************************************/
+/*!*******************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/function/test.js ***!
+  \*******************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2724,9 +2784,9 @@ function code(value) {var len = arguments.length > 1 && arguments[1] !== undefin
 /***/ }),
 
 /***/ 17:
-/*!*****************************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/function/queryParams.js ***!
-  \*****************************************************************************************************************/
+/*!**************************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/function/queryParams.js ***!
+  \**************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2793,17 +2853,17 @@ queryParams;exports.default = _default;
 /***/ }),
 
 /***/ 18:
-/*!***********************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/function/route.js ***!
-  \***********************************************************************************************************/
+/*!********************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/function/route.js ***!
+  \********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _regenerator = _interopRequireDefault(__webpack_require__(/*! ./node_modules/@babel/runtime/regenerator */ 19));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {try {var info = gen[key](arg);var value = info.value;} catch (error) {reject(error);return;}if (info.done) {resolve(value);} else {Promise.resolve(value).then(_next, _throw);}}function _asyncToGenerator(fn) {return function () {var self = this,args = arguments;return new Promise(function (resolve, reject) {var gen = fn.apply(self, args);function _next(value) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);}function _throw(err) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);}_next(undefined);});};}function _classCallCheck(instance, Constructor) {if (!(instance instanceof Constructor)) {throw new TypeError("Cannot call a class as a function");}}function _defineProperties(target, props) {for (var i = 0; i < props.length; i++) {var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);}}function _createClass(Constructor, protoProps, staticProps) {if (protoProps) _defineProperties(Constructor.prototype, protoProps);if (staticProps) _defineProperties(Constructor, staticProps);return Constructor;} /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   * 路由跳转方法，该方法相对于直接使用uni.xxx的好处是使用更加简单快捷
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   * 并且带有路由拦截功能
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   */var
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            * 路由跳转方法，该方法相对于直接使用uni.xxx的好处是使用更加简单快捷
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            * 并且带有路由拦截功能
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            */var
 
 Router = /*#__PURE__*/function () {
   function Router() {_classCallCheck(this, Router);
@@ -8404,7 +8464,8 @@ function _diff(current, pre, path, result) {
                 var currentType = type(currentValue);
                 var preType = type(preValue);
                 if (currentType != ARRAYTYPE && currentType != OBJECTTYPE) {
-                    if (currentValue != pre[key]) {
+                    // NOTE 此处将 != 修改为 !==。涉及地方太多恐怕测试不到，如果出现数据对比问题，将其修改回来。
+                    if (currentValue !== pre[key]) {
                         setResult(result, (path == '' ? '' : path + ".") + key, currentValue);
                     }
                 } else if (currentType == ARRAYTYPE) {
@@ -9766,9 +9827,9 @@ if (hadRuntime) {
 /***/ }),
 
 /***/ 22:
-/*!****************************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/function/timeFormat.js ***!
-  \****************************************************************************************************************/
+/*!*************************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/function/timeFormat.js ***!
+  \*************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -9828,9 +9889,9 @@ timeFormat;exports.default = _default;
 /***/ }),
 
 /***/ 23:
-/*!**************************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/function/timeFrom.js ***!
-  \**************************************************************************************************************/
+/*!***********************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/function/timeFrom.js ***!
+  \***********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -9886,9 +9947,9 @@ timeFrom;exports.default = _default;
 /***/ }),
 
 /***/ 24:
-/*!*******************************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/function/colorGradient.js ***!
-  \*******************************************************************************************************************/
+/*!****************************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/function/colorGradient.js ***!
+  \****************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10030,9 +10091,9 @@ function colorToRgba(color) {var alpha = arguments.length > 1 && arguments[1] !=
 /***/ }),
 
 /***/ 25:
-/*!**********************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/function/guid.js ***!
-  \**********************************************************************************************************/
+/*!*******************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/function/guid.js ***!
+  \*******************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10082,9 +10143,9 @@ guid;exports.default = _default;
 /***/ }),
 
 /***/ 26:
-/*!***********************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/function/color.js ***!
-  \***********************************************************************************************************/
+/*!********************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/function/color.js ***!
+  \********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10130,9 +10191,9 @@ color;exports.default = _default;
 /***/ }),
 
 /***/ 27:
-/*!***************************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/function/type2icon.js ***!
-  \***************************************************************************************************************/
+/*!************************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/function/type2icon.js ***!
+  \************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10176,9 +10237,9 @@ type2icon;exports.default = _default;
 /***/ }),
 
 /***/ 28:
-/*!*****************************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/function/randomArray.js ***!
-  \*****************************************************************************************************************/
+/*!**************************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/function/randomArray.js ***!
+  \**************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10194,9 +10255,9 @@ randomArray;exports.default = _default;
 /***/ }),
 
 /***/ 29:
-/*!*************************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/function/addUnit.js ***!
-  \*************************************************************************************************************/
+/*!**********************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/function/addUnit.js ***!
+  \**********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10244,9 +10305,9 @@ module.exports = g;
 /***/ }),
 
 /***/ 30:
-/*!************************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/function/random.js ***!
-  \************************************************************************************************************/
+/*!*********************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/function/random.js ***!
+  \*********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10264,10 +10325,151 @@ random;exports.default = _default;
 
 /***/ }),
 
-/***/ 303:
-/*!*********************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/util/emitter.js ***!
-  \*********************************************************************************************************/
+/***/ 31:
+/*!*******************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/function/trim.js ***!
+  \*******************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;function trim(str) {var pos = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'both';
+  if (pos == 'both') {
+    return str.replace(/^\s+|\s+$/g, "");
+  } else if (pos == "left") {
+    return str.replace(/^\s*/, '');
+  } else if (pos == 'right') {
+    return str.replace(/(\s*$)/g, "");
+  } else if (pos == 'all') {
+    return str.replace(/\s+/g, "");
+  } else {
+    return str;
+  }
+}var _default =
+
+trim;exports.default = _default;
+
+/***/ }),
+
+/***/ 32:
+/*!********************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/function/toast.js ***!
+  \********************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;function toast(title) {var duration = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1500;
+  uni.showToast({
+    title: title,
+    icon: 'none',
+    duration: duration });
+
+}var _default =
+
+toast;exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
+
+/***/ }),
+
+/***/ 320:
+/*!*******************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/util/province.js ***!
+  \*******************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var provinceData = [{ "label": "北京市", "value": "11" }, { "label": "天津市", "value": "12" }, { "label": "河北省", "value": "13" }, { "label": "山西省", "value": "14" }, { "label": "内蒙古自治区", "value": "15" }, { "label": "辽宁省", "value": "21" }, { "label": "吉林省", "value": "22" }, { "label": "黑龙江省", "value": "23" }, { "label": "上海市", "value": "31" }, { "label": "江苏省", "value": "32" }, { "label": "浙江省", "value": "33" }, { "label": "安徽省", "value": "34" }, { "label": "福建省", "value": "35" }, { "label": "江西省", "value": "36" }, { "label": "山东省", "value": "37" }, { "label": "河南省", "value": "41" }, { "label": "湖北省", "value": "42" }, { "label": "湖南省", "value": "43" }, { "label": "广东省", "value": "44" }, { "label": "广西壮族自治区", "value": "45" }, { "label": "海南省", "value": "46" }, { "label": "重庆市", "value": "50" }, { "label": "四川省", "value": "51" }, { "label": "贵州省", "value": "52" }, { "label": "云南省", "value": "53" }, { "label": "西藏自治区", "value": "54" }, { "label": "陕西省", "value": "61" }, { "label": "甘肃省", "value": "62" }, { "label": "青海省", "value": "63" }, { "label": "宁夏回族自治区", "value": "64" }, { "label": "新疆维吾尔自治区", "value": "65" }, { "label": "台湾", "value": "66" }, { "label": "香港", "value": "67" }, { "label": "澳门", "value": "68" }];var _default = provinceData;exports.default = _default;
+
+/***/ }),
+
+/***/ 321:
+/*!***************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/util/city.js ***!
+  \***************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var cityData = [[{ "label": "市辖区", "value": "1101" }], [{ "label": "市辖区", "value": "1201" }], [{ "label": "石家庄市", "value": "1301" }, { "label": "唐山市", "value": "1302" }, { "label": "秦皇岛市", "value": "1303" }, { "label": "邯郸市", "value": "1304" }, { "label": "邢台市", "value": "1305" }, { "label": "保定市", "value": "1306" }, { "label": "张家口市", "value": "1307" }, { "label": "承德市", "value": "1308" }, { "label": "沧州市", "value": "1309" }, { "label": "廊坊市", "value": "1310" }, { "label": "衡水市", "value": "1311" }], [{ "label": "太原市", "value": "1401" }, { "label": "大同市", "value": "1402" }, { "label": "阳泉市", "value": "1403" }, { "label": "长治市", "value": "1404" }, { "label": "晋城市", "value": "1405" }, { "label": "朔州市", "value": "1406" }, { "label": "晋中市", "value": "1407" }, { "label": "运城市", "value": "1408" }, { "label": "忻州市", "value": "1409" }, { "label": "临汾市", "value": "1410" }, { "label": "吕梁市", "value": "1411" }], [{ "label": "呼和浩特市", "value": "1501" }, { "label": "包头市", "value": "1502" }, { "label": "乌海市", "value": "1503" }, { "label": "赤峰市", "value": "1504" }, { "label": "通辽市", "value": "1505" }, { "label": "鄂尔多斯市", "value": "1506" }, { "label": "呼伦贝尔市", "value": "1507" }, { "label": "巴彦淖尔市", "value": "1508" }, { "label": "乌兰察布市", "value": "1509" }, { "label": "兴安盟", "value": "1522" }, { "label": "锡林郭勒盟", "value": "1525" }, { "label": "阿拉善盟", "value": "1529" }], [{ "label": "沈阳市", "value": "2101" }, { "label": "大连市", "value": "2102" }, { "label": "鞍山市", "value": "2103" }, { "label": "抚顺市", "value": "2104" }, { "label": "本溪市", "value": "2105" }, { "label": "丹东市", "value": "2106" }, { "label": "锦州市", "value": "2107" }, { "label": "营口市", "value": "2108" }, { "label": "阜新市", "value": "2109" }, { "label": "辽阳市", "value": "2110" }, { "label": "盘锦市", "value": "2111" }, { "label": "铁岭市", "value": "2112" }, { "label": "朝阳市", "value": "2113" }, { "label": "葫芦岛市", "value": "2114" }], [{ "label": "长春市", "value": "2201" }, { "label": "吉林市", "value": "2202" }, { "label": "四平市", "value": "2203" }, { "label": "辽源市", "value": "2204" }, { "label": "通化市", "value": "2205" }, { "label": "白山市", "value": "2206" }, { "label": "松原市", "value": "2207" }, { "label": "白城市", "value": "2208" }, { "label": "延边朝鲜族自治州", "value": "2224" }], [{ "label": "哈尔滨市", "value": "2301" }, { "label": "齐齐哈尔市", "value": "2302" }, { "label": "鸡西市", "value": "2303" }, { "label": "鹤岗市", "value": "2304" }, { "label": "双鸭山市", "value": "2305" }, { "label": "大庆市", "value": "2306" }, { "label": "伊春市", "value": "2307" }, { "label": "佳木斯市", "value": "2308" }, { "label": "七台河市", "value": "2309" }, { "label": "牡丹江市", "value": "2310" }, { "label": "黑河市", "value": "2311" }, { "label": "绥化市", "value": "2312" }, { "label": "大兴安岭地区", "value": "2327" }], [{ "label": "市辖区", "value": "3101" }], [{ "label": "南京市", "value": "3201" }, { "label": "无锡市", "value": "3202" }, { "label": "徐州市", "value": "3203" }, { "label": "常州市", "value": "3204" }, { "label": "苏州市", "value": "3205" }, { "label": "南通市", "value": "3206" }, { "label": "连云港市", "value": "3207" }, { "label": "淮安市", "value": "3208" }, { "label": "盐城市", "value": "3209" }, { "label": "扬州市", "value": "3210" }, { "label": "镇江市", "value": "3211" }, { "label": "泰州市", "value": "3212" }, { "label": "宿迁市", "value": "3213" }], [{ "label": "杭州市", "value": "3301" }, { "label": "宁波市", "value": "3302" }, { "label": "温州市", "value": "3303" }, { "label": "嘉兴市", "value": "3304" }, { "label": "湖州市", "value": "3305" }, { "label": "绍兴市", "value": "3306" }, { "label": "金华市", "value": "3307" }, { "label": "衢州市", "value": "3308" }, { "label": "舟山市", "value": "3309" }, { "label": "台州市", "value": "3310" }, { "label": "丽水市", "value": "3311" }], [{ "label": "合肥市", "value": "3401" }, { "label": "芜湖市", "value": "3402" }, { "label": "蚌埠市", "value": "3403" }, { "label": "淮南市", "value": "3404" }, { "label": "马鞍山市", "value": "3405" }, { "label": "淮北市", "value": "3406" }, { "label": "铜陵市", "value": "3407" }, { "label": "安庆市", "value": "3408" }, { "label": "黄山市", "value": "3410" }, { "label": "滁州市", "value": "3411" }, { "label": "阜阳市", "value": "3412" }, { "label": "宿州市", "value": "3413" }, { "label": "六安市", "value": "3415" }, { "label": "亳州市", "value": "3416" }, { "label": "池州市", "value": "3417" }, { "label": "宣城市", "value": "3418" }], [{ "label": "福州市", "value": "3501" }, { "label": "厦门市", "value": "3502" }, { "label": "莆田市", "value": "3503" }, { "label": "三明市", "value": "3504" }, { "label": "泉州市", "value": "3505" }, { "label": "漳州市", "value": "3506" }, { "label": "南平市", "value": "3507" }, { "label": "龙岩市", "value": "3508" }, { "label": "宁德市", "value": "3509" }], [{ "label": "南昌市", "value": "3601" }, { "label": "景德镇市", "value": "3602" }, { "label": "萍乡市", "value": "3603" }, { "label": "九江市", "value": "3604" }, { "label": "新余市", "value": "3605" }, { "label": "鹰潭市", "value": "3606" }, { "label": "赣州市", "value": "3607" }, { "label": "吉安市", "value": "3608" }, { "label": "宜春市", "value": "3609" }, { "label": "抚州市", "value": "3610" }, { "label": "上饶市", "value": "3611" }], [{ "label": "济南市", "value": "3701" }, { "label": "青岛市", "value": "3702" }, { "label": "淄博市", "value": "3703" }, { "label": "枣庄市", "value": "3704" }, { "label": "东营市", "value": "3705" }, { "label": "烟台市", "value": "3706" }, { "label": "潍坊市", "value": "3707" }, { "label": "济宁市", "value": "3708" }, { "label": "泰安市", "value": "3709" }, { "label": "威海市", "value": "3710" }, { "label": "日照市", "value": "3711" }, { "label": "莱芜市", "value": "3712" }, { "label": "临沂市", "value": "3713" }, { "label": "德州市", "value": "3714" }, { "label": "聊城市", "value": "3715" }, { "label": "滨州市", "value": "3716" }, { "label": "菏泽市", "value": "3717" }], [{ "label": "郑州市", "value": "4101" }, { "label": "开封市", "value": "4102" }, { "label": "洛阳市", "value": "4103" }, { "label": "平顶山市", "value": "4104" }, { "label": "安阳市", "value": "4105" }, { "label": "鹤壁市", "value": "4106" }, { "label": "新乡市", "value": "4107" }, { "label": "焦作市", "value": "4108" }, { "label": "濮阳市", "value": "4109" }, { "label": "许昌市", "value": "4110" }, { "label": "漯河市", "value": "4111" }, { "label": "三门峡市", "value": "4112" }, { "label": "南阳市", "value": "4113" }, { "label": "商丘市", "value": "4114" }, { "label": "信阳市", "value": "4115" }, { "label": "周口市", "value": "4116" }, { "label": "驻马店市", "value": "4117" }, { "label": "省直辖县级行政区划", "value": "4190" }], [{ "label": "武汉市", "value": "4201" }, { "label": "黄石市", "value": "4202" }, { "label": "十堰市", "value": "4203" }, { "label": "宜昌市", "value": "4205" }, { "label": "襄阳市", "value": "4206" }, { "label": "鄂州市", "value": "4207" }, { "label": "荆门市", "value": "4208" }, { "label": "孝感市", "value": "4209" }, { "label": "荆州市", "value": "4210" }, { "label": "黄冈市", "value": "4211" }, { "label": "咸宁市", "value": "4212" }, { "label": "随州市", "value": "4213" }, { "label": "恩施土家族苗族自治州", "value": "4228" }, { "label": "省直辖县级行政区划", "value": "4290" }], [{ "label": "长沙市", "value": "4301" }, { "label": "株洲市", "value": "4302" }, { "label": "湘潭市", "value": "4303" }, { "label": "衡阳市", "value": "4304" }, { "label": "邵阳市", "value": "4305" }, { "label": "岳阳市", "value": "4306" }, { "label": "常德市", "value": "4307" }, { "label": "张家界市", "value": "4308" }, { "label": "益阳市", "value": "4309" }, { "label": "郴州市", "value": "4310" }, { "label": "永州市", "value": "4311" }, { "label": "怀化市", "value": "4312" }, { "label": "娄底市", "value": "4313" }, { "label": "湘西土家族苗族自治州", "value": "4331" }], [{ "label": "广州市", "value": "4401" }, { "label": "韶关市", "value": "4402" }, { "label": "深圳市", "value": "4403" }, { "label": "珠海市", "value": "4404" }, { "label": "汕头市", "value": "4405" }, { "label": "佛山市", "value": "4406" }, { "label": "江门市", "value": "4407" }, { "label": "湛江市", "value": "4408" }, { "label": "茂名市", "value": "4409" }, { "label": "肇庆市", "value": "4412" }, { "label": "惠州市", "value": "4413" }, { "label": "梅州市", "value": "4414" }, { "label": "汕尾市", "value": "4415" }, { "label": "河源市", "value": "4416" }, { "label": "阳江市", "value": "4417" }, { "label": "清远市", "value": "4418" }, { "label": "东莞市", "value": "4419" }, { "label": "中山市", "value": "4420" }, { "label": "潮州市", "value": "4451" }, { "label": "揭阳市", "value": "4452" }, { "label": "云浮市", "value": "4453" }], [{ "label": "南宁市", "value": "4501" }, { "label": "柳州市", "value": "4502" }, { "label": "桂林市", "value": "4503" }, { "label": "梧州市", "value": "4504" }, { "label": "北海市", "value": "4505" }, { "label": "防城港市", "value": "4506" }, { "label": "钦州市", "value": "4507" }, { "label": "贵港市", "value": "4508" }, { "label": "玉林市", "value": "4509" }, { "label": "百色市", "value": "4510" }, { "label": "贺州市", "value": "4511" }, { "label": "河池市", "value": "4512" }, { "label": "来宾市", "value": "4513" }, { "label": "崇左市", "value": "4514" }], [{ "label": "海口市", "value": "4601" }, { "label": "三亚市", "value": "4602" }, { "label": "三沙市", "value": "4603" }, { "label": "儋州市", "value": "4604" }, { "label": "省直辖县级行政区划", "value": "4690" }], [{ "label": "市辖区", "value": "5001" }, { "label": "县", "value": "5002" }], [{ "label": "成都市", "value": "5101" }, { "label": "自贡市", "value": "5103" }, { "label": "攀枝花市", "value": "5104" }, { "label": "泸州市", "value": "5105" }, { "label": "德阳市", "value": "5106" }, { "label": "绵阳市", "value": "5107" }, { "label": "广元市", "value": "5108" }, { "label": "遂宁市", "value": "5109" }, { "label": "内江市", "value": "5110" }, { "label": "乐山市", "value": "5111" }, { "label": "南充市", "value": "5113" }, { "label": "眉山市", "value": "5114" }, { "label": "宜宾市", "value": "5115" }, { "label": "广安市", "value": "5116" }, { "label": "达州市", "value": "5117" }, { "label": "雅安市", "value": "5118" }, { "label": "巴中市", "value": "5119" }, { "label": "资阳市", "value": "5120" }, { "label": "阿坝藏族羌族自治州", "value": "5132" }, { "label": "甘孜藏族自治州", "value": "5133" }, { "label": "凉山彝族自治州", "value": "5134" }], [{ "label": "贵阳市", "value": "5201" }, { "label": "六盘水市", "value": "5202" }, { "label": "遵义市", "value": "5203" }, { "label": "安顺市", "value": "5204" }, { "label": "毕节市", "value": "5205" }, { "label": "铜仁市", "value": "5206" }, { "label": "黔西南布依族苗族自治州", "value": "5223" }, { "label": "黔东南苗族侗族自治州", "value": "5226" }, { "label": "黔南布依族苗族自治州", "value": "5227" }], [{ "label": "昆明市", "value": "5301" }, { "label": "曲靖市", "value": "5303" }, { "label": "玉溪市", "value": "5304" }, { "label": "保山市", "value": "5305" }, { "label": "昭通市", "value": "5306" }, { "label": "丽江市", "value": "5307" }, { "label": "普洱市", "value": "5308" }, { "label": "临沧市", "value": "5309" }, { "label": "楚雄彝族自治州", "value": "5323" }, { "label": "红河哈尼族彝族自治州", "value": "5325" }, { "label": "文山壮族苗族自治州", "value": "5326" }, { "label": "西双版纳傣族自治州", "value": "5328" }, { "label": "大理白族自治州", "value": "5329" }, { "label": "德宏傣族景颇族自治州", "value": "5331" }, { "label": "怒江傈僳族自治州", "value": "5333" }, { "label": "迪庆藏族自治州", "value": "5334" }], [{ "label": "拉萨市", "value": "5401" }, { "label": "日喀则市", "value": "5402" }, { "label": "昌都市", "value": "5403" }, { "label": "林芝市", "value": "5404" }, { "label": "山南市", "value": "5405" }, { "label": "那曲地区", "value": "5424" }, { "label": "阿里地区", "value": "5425" }], [{ "label": "西安市", "value": "6101" }, { "label": "铜川市", "value": "6102" }, { "label": "宝鸡市", "value": "6103" }, { "label": "咸阳市", "value": "6104" }, { "label": "渭南市", "value": "6105" }, { "label": "延安市", "value": "6106" }, { "label": "汉中市", "value": "6107" }, { "label": "榆林市", "value": "6108" }, { "label": "安康市", "value": "6109" }, { "label": "商洛市", "value": "6110" }], [{ "label": "兰州市", "value": "6201" }, { "label": "嘉峪关市", "value": "6202" }, { "label": "金昌市", "value": "6203" }, { "label": "白银市", "value": "6204" }, { "label": "天水市", "value": "6205" }, { "label": "武威市", "value": "6206" }, { "label": "张掖市", "value": "6207" }, { "label": "平凉市", "value": "6208" }, { "label": "酒泉市", "value": "6209" }, { "label": "庆阳市", "value": "6210" }, { "label": "定西市", "value": "6211" }, { "label": "陇南市", "value": "6212" }, { "label": "临夏回族自治州", "value": "6229" }, { "label": "甘南藏族自治州", "value": "6230" }], [{ "label": "西宁市", "value": "6301" }, { "label": "海东市", "value": "6302" }, { "label": "海北藏族自治州", "value": "6322" }, { "label": "黄南藏族自治州", "value": "6323" }, { "label": "海南藏族自治州", "value": "6325" }, { "label": "果洛藏族自治州", "value": "6326" }, { "label": "玉树藏族自治州", "value": "6327" }, { "label": "海西蒙古族藏族自治州", "value": "6328" }], [{ "label": "银川市", "value": "6401" }, { "label": "石嘴山市", "value": "6402" }, { "label": "吴忠市", "value": "6403" }, { "label": "固原市", "value": "6404" }, { "label": "中卫市", "value": "6405" }], [{ "label": "乌鲁木齐市", "value": "6501" }, { "label": "克拉玛依市", "value": "6502" }, { "label": "吐鲁番市", "value": "6504" }, { "label": "哈密市", "value": "6505" }, { "label": "昌吉回族自治州", "value": "6523" }, { "label": "博尔塔拉蒙古自治州", "value": "6527" }, { "label": "巴音郭楞蒙古自治州", "value": "6528" }, { "label": "阿克苏地区", "value": "6529" }, { "label": "克孜勒苏柯尔克孜自治州", "value": "6530" }, { "label": "喀什地区", "value": "6531" }, { "label": "和田地区", "value": "6532" }, { "label": "伊犁哈萨克自治州", "value": "6540" }, { "label": "塔城地区", "value": "6542" }, { "label": "阿勒泰地区", "value": "6543" }, { "label": "自治区直辖县级行政区划", "value": "6590" }], [{ "label": "台北", "value": "6601" }, { "label": "高雄", "value": "6602" }, { "label": "基隆", "value": "6603" }, { "label": "台中", "value": "6604" }, { "label": "台南", "value": "6605" }, { "label": "新竹", "value": "6606" }, { "label": "嘉义", "value": "6607" }, { "label": "宜兰", "value": "6608" }, { "label": "桃园", "value": "6609" }, { "label": "苗栗", "value": "6610" }, { "label": "彰化", "value": "6611" }, { "label": "南投", "value": "6612" }, { "label": "云林", "value": "6613" }, { "label": "屏东", "value": "6614" }, { "label": "台东", "value": "6615" }, { "label": "花莲", "value": "6616" }, { "label": "澎湖", "value": "6617" }], [{ "label": "香港岛", "value": "6701" }, { "label": "九龙", "value": "6702" }, { "label": "新界", "value": "6703" }], [{ "label": "澳门半岛", "value": "6801" }, { "label": "氹仔岛", "value": "6802" }, { "label": "路环岛", "value": "6803" }, { "label": "路氹城", "value": "6804" }]];var _default = cityData;exports.default = _default;
+
+/***/ }),
+
+/***/ 322:
+/*!***************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/util/area.js ***!
+  \***************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var areaData = [[[{ "label": "东城区", "value": "110101" }, { "label": "西城区", "value": "110102" }, { "label": "朝阳区", "value": "110105" }, { "label": "丰台区", "value": "110106" }, { "label": "石景山区", "value": "110107" }, { "label": "海淀区", "value": "110108" }, { "label": "门头沟区", "value": "110109" }, { "label": "房山区", "value": "110111" }, { "label": "通州区", "value": "110112" }, { "label": "顺义区", "value": "110113" }, { "label": "昌平区", "value": "110114" }, { "label": "大兴区", "value": "110115" }, { "label": "怀柔区", "value": "110116" }, { "label": "平谷区", "value": "110117" }, { "label": "密云区", "value": "110118" }, { "label": "延庆区", "value": "110119" }]], [[{ "label": "和平区", "value": "120101" }, { "label": "河东区", "value": "120102" }, { "label": "河西区", "value": "120103" }, { "label": "南开区", "value": "120104" }, { "label": "河北区", "value": "120105" }, { "label": "红桥区", "value": "120106" }, { "label": "东丽区", "value": "120110" }, { "label": "西青区", "value": "120111" }, { "label": "津南区", "value": "120112" }, { "label": "北辰区", "value": "120113" }, { "label": "武清区", "value": "120114" }, { "label": "宝坻区", "value": "120115" }, { "label": "滨海新区", "value": "120116" }, { "label": "宁河区", "value": "120117" }, { "label": "静海区", "value": "120118" }, { "label": "蓟州区", "value": "120119" }]], [[{ "label": "长安区", "value": "130102" }, { "label": "桥西区", "value": "130104" }, { "label": "新华区", "value": "130105" }, { "label": "井陉矿区", "value": "130107" }, { "label": "裕华区", "value": "130108" }, { "label": "藁城区", "value": "130109" }, { "label": "鹿泉区", "value": "130110" }, { "label": "栾城区", "value": "130111" }, { "label": "井陉县", "value": "130121" }, { "label": "正定县", "value": "130123" }, { "label": "行唐县", "value": "130125" }, { "label": "灵寿县", "value": "130126" }, { "label": "高邑县", "value": "130127" }, { "label": "深泽县", "value": "130128" }, { "label": "赞皇县", "value": "130129" }, { "label": "无极县", "value": "130130" }, { "label": "平山县", "value": "130131" }, { "label": "元氏县", "value": "130132" }, { "label": "赵县", "value": "130133" }, { "label": "石家庄高新技术产业开发区", "value": "130171" }, { "label": "石家庄循环化工园区", "value": "130172" }, { "label": "辛集市", "value": "130181" }, { "label": "晋州市", "value": "130183" }, { "label": "新乐市", "value": "130184" }], [{ "label": "路南区", "value": "130202" }, { "label": "路北区", "value": "130203" }, { "label": "古冶区", "value": "130204" }, { "label": "开平区", "value": "130205" }, { "label": "丰南区", "value": "130207" }, { "label": "丰润区", "value": "130208" }, { "label": "曹妃甸区", "value": "130209" }, { "label": "滦县", "value": "130223" }, { "label": "滦南县", "value": "130224" }, { "label": "乐亭县", "value": "130225" }, { "label": "迁西县", "value": "130227" }, { "label": "玉田县", "value": "130229" }, { "label": "唐山市芦台经济技术开发区", "value": "130271" }, { "label": "唐山市汉沽管理区", "value": "130272" }, { "label": "唐山高新技术产业开发区", "value": "130273" }, { "label": "河北唐山海港经济开发区", "value": "130274" }, { "label": "遵化市", "value": "130281" }, { "label": "迁安市", "value": "130283" }], [{ "label": "海港区", "value": "130302" }, { "label": "山海关区", "value": "130303" }, { "label": "北戴河区", "value": "130304" }, { "label": "抚宁区", "value": "130306" }, { "label": "青龙满族自治县", "value": "130321" }, { "label": "昌黎县", "value": "130322" }, { "label": "卢龙县", "value": "130324" }, { "label": "秦皇岛市经济技术开发区", "value": "130371" }, { "label": "北戴河新区", "value": "130372" }], [{ "label": "邯山区", "value": "130402" }, { "label": "丛台区", "value": "130403" }, { "label": "复兴区", "value": "130404" }, { "label": "峰峰矿区", "value": "130406" }, { "label": "肥乡区", "value": "130407" }, { "label": "永年区", "value": "130408" }, { "label": "临漳县", "value": "130423" }, { "label": "成安县", "value": "130424" }, { "label": "大名县", "value": "130425" }, { "label": "涉县", "value": "130426" }, { "label": "磁县", "value": "130427" }, { "label": "邱县", "value": "130430" }, { "label": "鸡泽县", "value": "130431" }, { "label": "广平县", "value": "130432" }, { "label": "馆陶县", "value": "130433" }, { "label": "魏县", "value": "130434" }, { "label": "曲周县", "value": "130435" }, { "label": "邯郸经济技术开发区", "value": "130471" }, { "label": "邯郸冀南新区", "value": "130473" }, { "label": "武安市", "value": "130481" }], [{ "label": "桥东区", "value": "130502" }, { "label": "桥西区", "value": "130503" }, { "label": "邢台县", "value": "130521" }, { "label": "临城县", "value": "130522" }, { "label": "内丘县", "value": "130523" }, { "label": "柏乡县", "value": "130524" }, { "label": "隆尧县", "value": "130525" }, { "label": "任县", "value": "130526" }, { "label": "南和县", "value": "130527" }, { "label": "宁晋县", "value": "130528" }, { "label": "巨鹿县", "value": "130529" }, { "label": "新河县", "value": "130530" }, { "label": "广宗县", "value": "130531" }, { "label": "平乡县", "value": "130532" }, { "label": "威县", "value": "130533" }, { "label": "清河县", "value": "130534" }, { "label": "临西县", "value": "130535" }, { "label": "河北邢台经济开发区", "value": "130571" }, { "label": "南宫市", "value": "130581" }, { "label": "沙河市", "value": "130582" }], [{ "label": "竞秀区", "value": "130602" }, { "label": "莲池区", "value": "130606" }, { "label": "满城区", "value": "130607" }, { "label": "清苑区", "value": "130608" }, { "label": "徐水区", "value": "130609" }, { "label": "涞水县", "value": "130623" }, { "label": "阜平县", "value": "130624" }, { "label": "定兴县", "value": "130626" }, { "label": "唐县", "value": "130627" }, { "label": "高阳县", "value": "130628" }, { "label": "容城县", "value": "130629" }, { "label": "涞源县", "value": "130630" }, { "label": "望都县", "value": "130631" }, { "label": "安新县", "value": "130632" }, { "label": "易县", "value": "130633" }, { "label": "曲阳县", "value": "130634" }, { "label": "蠡县", "value": "130635" }, { "label": "顺平县", "value": "130636" }, { "label": "博野县", "value": "130637" }, { "label": "雄县", "value": "130638" }, { "label": "保定高新技术产业开发区", "value": "130671" }, { "label": "保定白沟新城", "value": "130672" }, { "label": "涿州市", "value": "130681" }, { "label": "定州市", "value": "130682" }, { "label": "安国市", "value": "130683" }, { "label": "高碑店市", "value": "130684" }], [{ "label": "桥东区", "value": "130702" }, { "label": "桥西区", "value": "130703" }, { "label": "宣化区", "value": "130705" }, { "label": "下花园区", "value": "130706" }, { "label": "万全区", "value": "130708" }, { "label": "崇礼区", "value": "130709" }, { "label": "张北县", "value": "130722" }, { "label": "康保县", "value": "130723" }, { "label": "沽源县", "value": "130724" }, { "label": "尚义县", "value": "130725" }, { "label": "蔚县", "value": "130726" }, { "label": "阳原县", "value": "130727" }, { "label": "怀安县", "value": "130728" }, { "label": "怀来县", "value": "130730" }, { "label": "涿鹿县", "value": "130731" }, { "label": "赤城县", "value": "130732" }, { "label": "张家口市高新技术产业开发区", "value": "130771" }, { "label": "张家口市察北管理区", "value": "130772" }, { "label": "张家口市塞北管理区", "value": "130773" }], [{ "label": "双桥区", "value": "130802" }, { "label": "双滦区", "value": "130803" }, { "label": "鹰手营子矿区", "value": "130804" }, { "label": "承德县", "value": "130821" }, { "label": "兴隆县", "value": "130822" }, { "label": "滦平县", "value": "130824" }, { "label": "隆化县", "value": "130825" }, { "label": "丰宁满族自治县", "value": "130826" }, { "label": "宽城满族自治县", "value": "130827" }, { "label": "围场满族蒙古族自治县", "value": "130828" }, { "label": "承德高新技术产业开发区", "value": "130871" }, { "label": "平泉市", "value": "130881" }], [{ "label": "新华区", "value": "130902" }, { "label": "运河区", "value": "130903" }, { "label": "沧县", "value": "130921" }, { "label": "青县", "value": "130922" }, { "label": "东光县", "value": "130923" }, { "label": "海兴县", "value": "130924" }, { "label": "盐山县", "value": "130925" }, { "label": "肃宁县", "value": "130926" }, { "label": "南皮县", "value": "130927" }, { "label": "吴桥县", "value": "130928" }, { "label": "献县", "value": "130929" }, { "label": "孟村回族自治县", "value": "130930" }, { "label": "河北沧州经济开发区", "value": "130971" }, { "label": "沧州高新技术产业开发区", "value": "130972" }, { "label": "沧州渤海新区", "value": "130973" }, { "label": "泊头市", "value": "130981" }, { "label": "任丘市", "value": "130982" }, { "label": "黄骅市", "value": "130983" }, { "label": "河间市", "value": "130984" }], [{ "label": "安次区", "value": "131002" }, { "label": "广阳区", "value": "131003" }, { "label": "固安县", "value": "131022" }, { "label": "永清县", "value": "131023" }, { "label": "香河县", "value": "131024" }, { "label": "大城县", "value": "131025" }, { "label": "文安县", "value": "131026" }, { "label": "大厂回族自治县", "value": "131028" }, { "label": "廊坊经济技术开发区", "value": "131071" }, { "label": "霸州市", "value": "131081" }, { "label": "三河市", "value": "131082" }], [{ "label": "桃城区", "value": "131102" }, { "label": "冀州区", "value": "131103" }, { "label": "枣强县", "value": "131121" }, { "label": "武邑县", "value": "131122" }, { "label": "武强县", "value": "131123" }, { "label": "饶阳县", "value": "131124" }, { "label": "安平县", "value": "131125" }, { "label": "故城县", "value": "131126" }, { "label": "景县", "value": "131127" }, { "label": "阜城县", "value": "131128" }, { "label": "河北衡水经济开发区", "value": "131171" }, { "label": "衡水滨湖新区", "value": "131172" }, { "label": "深州市", "value": "131182" }]], [[{ "label": "小店区", "value": "140105" }, { "label": "迎泽区", "value": "140106" }, { "label": "杏花岭区", "value": "140107" }, { "label": "尖草坪区", "value": "140108" }, { "label": "万柏林区", "value": "140109" }, { "label": "晋源区", "value": "140110" }, { "label": "清徐县", "value": "140121" }, { "label": "阳曲县", "value": "140122" }, { "label": "娄烦县", "value": "140123" }, { "label": "山西转型综合改革示范区", "value": "140171" }, { "label": "古交市", "value": "140181" }], [{ "label": "城区", "value": "140202" }, { "label": "矿区", "value": "140203" }, { "label": "南郊区", "value": "140211" }, { "label": "新荣区", "value": "140212" }, { "label": "阳高县", "value": "140221" }, { "label": "天镇县", "value": "140222" }, { "label": "广灵县", "value": "140223" }, { "label": "灵丘县", "value": "140224" }, { "label": "浑源县", "value": "140225" }, { "label": "左云县", "value": "140226" }, { "label": "大同县", "value": "140227" }, { "label": "山西大同经济开发区", "value": "140271" }], [{ "label": "城区", "value": "140302" }, { "label": "矿区", "value": "140303" }, { "label": "郊区", "value": "140311" }, { "label": "平定县", "value": "140321" }, { "label": "盂县", "value": "140322" }, { "label": "山西阳泉经济开发区", "value": "140371" }], [{ "label": "城区", "value": "140402" }, { "label": "郊区", "value": "140411" }, { "label": "长治县", "value": "140421" }, { "label": "襄垣县", "value": "140423" }, { "label": "屯留县", "value": "140424" }, { "label": "平顺县", "value": "140425" }, { "label": "黎城县", "value": "140426" }, { "label": "壶关县", "value": "140427" }, { "label": "长子县", "value": "140428" }, { "label": "武乡县", "value": "140429" }, { "label": "沁县", "value": "140430" }, { "label": "沁源县", "value": "140431" }, { "label": "山西长治高新技术产业园区", "value": "140471" }, { "label": "潞城市", "value": "140481" }], [{ "label": "城区", "value": "140502" }, { "label": "沁水县", "value": "140521" }, { "label": "阳城县", "value": "140522" }, { "label": "陵川县", "value": "140524" }, { "label": "泽州县", "value": "140525" }, { "label": "高平市", "value": "140581" }], [{ "label": "朔城区", "value": "140602" }, { "label": "平鲁区", "value": "140603" }, { "label": "山阴县", "value": "140621" }, { "label": "应县", "value": "140622" }, { "label": "右玉县", "value": "140623" }, { "label": "怀仁县", "value": "140624" }, { "label": "山西朔州经济开发区", "value": "140671" }], [{ "label": "榆次区", "value": "140702" }, { "label": "榆社县", "value": "140721" }, { "label": "左权县", "value": "140722" }, { "label": "和顺县", "value": "140723" }, { "label": "昔阳县", "value": "140724" }, { "label": "寿阳县", "value": "140725" }, { "label": "太谷县", "value": "140726" }, { "label": "祁县", "value": "140727" }, { "label": "平遥县", "value": "140728" }, { "label": "灵石县", "value": "140729" }, { "label": "介休市", "value": "140781" }], [{ "label": "盐湖区", "value": "140802" }, { "label": "临猗县", "value": "140821" }, { "label": "万荣县", "value": "140822" }, { "label": "闻喜县", "value": "140823" }, { "label": "稷山县", "value": "140824" }, { "label": "新绛县", "value": "140825" }, { "label": "绛县", "value": "140826" }, { "label": "垣曲县", "value": "140827" }, { "label": "夏县", "value": "140828" }, { "label": "平陆县", "value": "140829" }, { "label": "芮城县", "value": "140830" }, { "label": "永济市", "value": "140881" }, { "label": "河津市", "value": "140882" }], [{ "label": "忻府区", "value": "140902" }, { "label": "定襄县", "value": "140921" }, { "label": "五台县", "value": "140922" }, { "label": "代县", "value": "140923" }, { "label": "繁峙县", "value": "140924" }, { "label": "宁武县", "value": "140925" }, { "label": "静乐县", "value": "140926" }, { "label": "神池县", "value": "140927" }, { "label": "五寨县", "value": "140928" }, { "label": "岢岚县", "value": "140929" }, { "label": "河曲县", "value": "140930" }, { "label": "保德县", "value": "140931" }, { "label": "偏关县", "value": "140932" }, { "label": "五台山风景名胜区", "value": "140971" }, { "label": "原平市", "value": "140981" }], [{ "label": "尧都区", "value": "141002" }, { "label": "曲沃县", "value": "141021" }, { "label": "翼城县", "value": "141022" }, { "label": "襄汾县", "value": "141023" }, { "label": "洪洞县", "value": "141024" }, { "label": "古县", "value": "141025" }, { "label": "安泽县", "value": "141026" }, { "label": "浮山县", "value": "141027" }, { "label": "吉县", "value": "141028" }, { "label": "乡宁县", "value": "141029" }, { "label": "大宁县", "value": "141030" }, { "label": "隰县", "value": "141031" }, { "label": "永和县", "value": "141032" }, { "label": "蒲县", "value": "141033" }, { "label": "汾西县", "value": "141034" }, { "label": "侯马市", "value": "141081" }, { "label": "霍州市", "value": "141082" }], [{ "label": "离石区", "value": "141102" }, { "label": "文水县", "value": "141121" }, { "label": "交城县", "value": "141122" }, { "label": "兴县", "value": "141123" }, { "label": "临县", "value": "141124" }, { "label": "柳林县", "value": "141125" }, { "label": "石楼县", "value": "141126" }, { "label": "岚县", "value": "141127" }, { "label": "方山县", "value": "141128" }, { "label": "中阳县", "value": "141129" }, { "label": "交口县", "value": "141130" }, { "label": "孝义市", "value": "141181" }, { "label": "汾阳市", "value": "141182" }]], [[{ "label": "新城区", "value": "150102" }, { "label": "回民区", "value": "150103" }, { "label": "玉泉区", "value": "150104" }, { "label": "赛罕区", "value": "150105" }, { "label": "土默特左旗", "value": "150121" }, { "label": "托克托县", "value": "150122" }, { "label": "和林格尔县", "value": "150123" }, { "label": "清水河县", "value": "150124" }, { "label": "武川县", "value": "150125" }, { "label": "呼和浩特金海工业园区", "value": "150171" }, { "label": "呼和浩特经济技术开发区", "value": "150172" }], [{ "label": "东河区", "value": "150202" }, { "label": "昆都仑区", "value": "150203" }, { "label": "青山区", "value": "150204" }, { "label": "石拐区", "value": "150205" }, { "label": "白云鄂博矿区", "value": "150206" }, { "label": "九原区", "value": "150207" }, { "label": "土默特右旗", "value": "150221" }, { "label": "固阳县", "value": "150222" }, { "label": "达尔罕茂明安联合旗", "value": "150223" }, { "label": "包头稀土高新技术产业开发区", "value": "150271" }], [{ "label": "海勃湾区", "value": "150302" }, { "label": "海南区", "value": "150303" }, { "label": "乌达区", "value": "150304" }], [{ "label": "红山区", "value": "150402" }, { "label": "元宝山区", "value": "150403" }, { "label": "松山区", "value": "150404" }, { "label": "阿鲁科尔沁旗", "value": "150421" }, { "label": "巴林左旗", "value": "150422" }, { "label": "巴林右旗", "value": "150423" }, { "label": "林西县", "value": "150424" }, { "label": "克什克腾旗", "value": "150425" }, { "label": "翁牛特旗", "value": "150426" }, { "label": "喀喇沁旗", "value": "150428" }, { "label": "宁城县", "value": "150429" }, { "label": "敖汉旗", "value": "150430" }], [{ "label": "科尔沁区", "value": "150502" }, { "label": "科尔沁左翼中旗", "value": "150521" }, { "label": "科尔沁左翼后旗", "value": "150522" }, { "label": "开鲁县", "value": "150523" }, { "label": "库伦旗", "value": "150524" }, { "label": "奈曼旗", "value": "150525" }, { "label": "扎鲁特旗", "value": "150526" }, { "label": "通辽经济技术开发区", "value": "150571" }, { "label": "霍林郭勒市", "value": "150581" }], [{ "label": "东胜区", "value": "150602" }, { "label": "康巴什区", "value": "150603" }, { "label": "达拉特旗", "value": "150621" }, { "label": "准格尔旗", "value": "150622" }, { "label": "鄂托克前旗", "value": "150623" }, { "label": "鄂托克旗", "value": "150624" }, { "label": "杭锦旗", "value": "150625" }, { "label": "乌审旗", "value": "150626" }, { "label": "伊金霍洛旗", "value": "150627" }], [{ "label": "海拉尔区", "value": "150702" }, { "label": "扎赉诺尔区", "value": "150703" }, { "label": "阿荣旗", "value": "150721" }, { "label": "莫力达瓦达斡尔族自治旗", "value": "150722" }, { "label": "鄂伦春自治旗", "value": "150723" }, { "label": "鄂温克族自治旗", "value": "150724" }, { "label": "陈巴尔虎旗", "value": "150725" }, { "label": "新巴尔虎左旗", "value": "150726" }, { "label": "新巴尔虎右旗", "value": "150727" }, { "label": "满洲里市", "value": "150781" }, { "label": "牙克石市", "value": "150782" }, { "label": "扎兰屯市", "value": "150783" }, { "label": "额尔古纳市", "value": "150784" }, { "label": "根河市", "value": "150785" }], [{ "label": "临河区", "value": "150802" }, { "label": "五原县", "value": "150821" }, { "label": "磴口县", "value": "150822" }, { "label": "乌拉特前旗", "value": "150823" }, { "label": "乌拉特中旗", "value": "150824" }, { "label": "乌拉特后旗", "value": "150825" }, { "label": "杭锦后旗", "value": "150826" }], [{ "label": "集宁区", "value": "150902" }, { "label": "卓资县", "value": "150921" }, { "label": "化德县", "value": "150922" }, { "label": "商都县", "value": "150923" }, { "label": "兴和县", "value": "150924" }, { "label": "凉城县", "value": "150925" }, { "label": "察哈尔右翼前旗", "value": "150926" }, { "label": "察哈尔右翼中旗", "value": "150927" }, { "label": "察哈尔右翼后旗", "value": "150928" }, { "label": "四子王旗", "value": "150929" }, { "label": "丰镇市", "value": "150981" }], [{ "label": "乌兰浩特市", "value": "152201" }, { "label": "阿尔山市", "value": "152202" }, { "label": "科尔沁右翼前旗", "value": "152221" }, { "label": "科尔沁右翼中旗", "value": "152222" }, { "label": "扎赉特旗", "value": "152223" }, { "label": "突泉县", "value": "152224" }], [{ "label": "二连浩特市", "value": "152501" }, { "label": "锡林浩特市", "value": "152502" }, { "label": "阿巴嘎旗", "value": "152522" }, { "label": "苏尼特左旗", "value": "152523" }, { "label": "苏尼特右旗", "value": "152524" }, { "label": "东乌珠穆沁旗", "value": "152525" }, { "label": "西乌珠穆沁旗", "value": "152526" }, { "label": "太仆寺旗", "value": "152527" }, { "label": "镶黄旗", "value": "152528" }, { "label": "正镶白旗", "value": "152529" }, { "label": "正蓝旗", "value": "152530" }, { "label": "多伦县", "value": "152531" }, { "label": "乌拉盖管委会", "value": "152571" }], [{ "label": "阿拉善左旗", "value": "152921" }, { "label": "阿拉善右旗", "value": "152922" }, { "label": "额济纳旗", "value": "152923" }, { "label": "内蒙古阿拉善经济开发区", "value": "152971" }]], [[{ "label": "和平区", "value": "210102" }, { "label": "沈河区", "value": "210103" }, { "label": "大东区", "value": "210104" }, { "label": "皇姑区", "value": "210105" }, { "label": "铁西区", "value": "210106" }, { "label": "苏家屯区", "value": "210111" }, { "label": "浑南区", "value": "210112" }, { "label": "沈北新区", "value": "210113" }, { "label": "于洪区", "value": "210114" }, { "label": "辽中区", "value": "210115" }, { "label": "康平县", "value": "210123" }, { "label": "法库县", "value": "210124" }, { "label": "新民市", "value": "210181" }], [{ "label": "中山区", "value": "210202" }, { "label": "西岗区", "value": "210203" }, { "label": "沙河口区", "value": "210204" }, { "label": "甘井子区", "value": "210211" }, { "label": "旅顺口区", "value": "210212" }, { "label": "金州区", "value": "210213" }, { "label": "普兰店区", "value": "210214" }, { "label": "长海县", "value": "210224" }, { "label": "瓦房店市", "value": "210281" }, { "label": "庄河市", "value": "210283" }], [{ "label": "铁东区", "value": "210302" }, { "label": "铁西区", "value": "210303" }, { "label": "立山区", "value": "210304" }, { "label": "千山区", "value": "210311" }, { "label": "台安县", "value": "210321" }, { "label": "岫岩满族自治县", "value": "210323" }, { "label": "海城市", "value": "210381" }], [{ "label": "新抚区", "value": "210402" }, { "label": "东洲区", "value": "210403" }, { "label": "望花区", "value": "210404" }, { "label": "顺城区", "value": "210411" }, { "label": "抚顺县", "value": "210421" }, { "label": "新宾满族自治县", "value": "210422" }, { "label": "清原满族自治县", "value": "210423" }], [{ "label": "平山区", "value": "210502" }, { "label": "溪湖区", "value": "210503" }, { "label": "明山区", "value": "210504" }, { "label": "南芬区", "value": "210505" }, { "label": "本溪满族自治县", "value": "210521" }, { "label": "桓仁满族自治县", "value": "210522" }], [{ "label": "元宝区", "value": "210602" }, { "label": "振兴区", "value": "210603" }, { "label": "振安区", "value": "210604" }, { "label": "宽甸满族自治县", "value": "210624" }, { "label": "东港市", "value": "210681" }, { "label": "凤城市", "value": "210682" }], [{ "label": "古塔区", "value": "210702" }, { "label": "凌河区", "value": "210703" }, { "label": "太和区", "value": "210711" }, { "label": "黑山县", "value": "210726" }, { "label": "义县", "value": "210727" }, { "label": "凌海市", "value": "210781" }, { "label": "北镇市", "value": "210782" }], [{ "label": "站前区", "value": "210802" }, { "label": "西市区", "value": "210803" }, { "label": "鲅鱼圈区", "value": "210804" }, { "label": "老边区", "value": "210811" }, { "label": "盖州市", "value": "210881" }, { "label": "大石桥市", "value": "210882" }], [{ "label": "海州区", "value": "210902" }, { "label": "新邱区", "value": "210903" }, { "label": "太平区", "value": "210904" }, { "label": "清河门区", "value": "210905" }, { "label": "细河区", "value": "210911" }, { "label": "阜新蒙古族自治县", "value": "210921" }, { "label": "彰武县", "value": "210922" }], [{ "label": "白塔区", "value": "211002" }, { "label": "文圣区", "value": "211003" }, { "label": "宏伟区", "value": "211004" }, { "label": "弓长岭区", "value": "211005" }, { "label": "太子河区", "value": "211011" }, { "label": "辽阳县", "value": "211021" }, { "label": "灯塔市", "value": "211081" }], [{ "label": "双台子区", "value": "211102" }, { "label": "兴隆台区", "value": "211103" }, { "label": "大洼区", "value": "211104" }, { "label": "盘山县", "value": "211122" }], [{ "label": "银州区", "value": "211202" }, { "label": "清河区", "value": "211204" }, { "label": "铁岭县", "value": "211221" }, { "label": "西丰县", "value": "211223" }, { "label": "昌图县", "value": "211224" }, { "label": "调兵山市", "value": "211281" }, { "label": "开原市", "value": "211282" }], [{ "label": "双塔区", "value": "211302" }, { "label": "龙城区", "value": "211303" }, { "label": "朝阳县", "value": "211321" }, { "label": "建平县", "value": "211322" }, { "label": "喀喇沁左翼蒙古族自治县", "value": "211324" }, { "label": "北票市", "value": "211381" }, { "label": "凌源市", "value": "211382" }], [{ "label": "连山区", "value": "211402" }, { "label": "龙港区", "value": "211403" }, { "label": "南票区", "value": "211404" }, { "label": "绥中县", "value": "211421" }, { "label": "建昌县", "value": "211422" }, { "label": "兴城市", "value": "211481" }]], [[{ "label": "南关区", "value": "220102" }, { "label": "宽城区", "value": "220103" }, { "label": "朝阳区", "value": "220104" }, { "label": "二道区", "value": "220105" }, { "label": "绿园区", "value": "220106" }, { "label": "双阳区", "value": "220112" }, { "label": "九台区", "value": "220113" }, { "label": "农安县", "value": "220122" }, { "label": "长春经济技术开发区", "value": "220171" }, { "label": "长春净月高新技术产业开发区", "value": "220172" }, { "label": "长春高新技术产业开发区", "value": "220173" }, { "label": "长春汽车经济技术开发区", "value": "220174" }, { "label": "榆树市", "value": "220182" }, { "label": "德惠市", "value": "220183" }], [{ "label": "昌邑区", "value": "220202" }, { "label": "龙潭区", "value": "220203" }, { "label": "船营区", "value": "220204" }, { "label": "丰满区", "value": "220211" }, { "label": "永吉县", "value": "220221" }, { "label": "吉林经济开发区", "value": "220271" }, { "label": "吉林高新技术产业开发区", "value": "220272" }, { "label": "吉林中国新加坡食品区", "value": "220273" }, { "label": "蛟河市", "value": "220281" }, { "label": "桦甸市", "value": "220282" }, { "label": "舒兰市", "value": "220283" }, { "label": "磐石市", "value": "220284" }], [{ "label": "铁西区", "value": "220302" }, { "label": "铁东区", "value": "220303" }, { "label": "梨树县", "value": "220322" }, { "label": "伊通满族自治县", "value": "220323" }, { "label": "公主岭市", "value": "220381" }, { "label": "双辽市", "value": "220382" }], [{ "label": "龙山区", "value": "220402" }, { "label": "西安区", "value": "220403" }, { "label": "东丰县", "value": "220421" }, { "label": "东辽县", "value": "220422" }], [{ "label": "东昌区", "value": "220502" }, { "label": "二道江区", "value": "220503" }, { "label": "通化县", "value": "220521" }, { "label": "辉南县", "value": "220523" }, { "label": "柳河县", "value": "220524" }, { "label": "梅河口市", "value": "220581" }, { "label": "集安市", "value": "220582" }], [{ "label": "浑江区", "value": "220602" }, { "label": "江源区", "value": "220605" }, { "label": "抚松县", "value": "220621" }, { "label": "靖宇县", "value": "220622" }, { "label": "长白朝鲜族自治县", "value": "220623" }, { "label": "临江市", "value": "220681" }], [{ "label": "宁江区", "value": "220702" }, { "label": "前郭尔罗斯蒙古族自治县", "value": "220721" }, { "label": "长岭县", "value": "220722" }, { "label": "乾安县", "value": "220723" }, { "label": "吉林松原经济开发区", "value": "220771" }, { "label": "扶余市", "value": "220781" }], [{ "label": "洮北区", "value": "220802" }, { "label": "镇赉县", "value": "220821" }, { "label": "通榆县", "value": "220822" }, { "label": "吉林白城经济开发区", "value": "220871" }, { "label": "洮南市", "value": "220881" }, { "label": "大安市", "value": "220882" }], [{ "label": "延吉市", "value": "222401" }, { "label": "图们市", "value": "222402" }, { "label": "敦化市", "value": "222403" }, { "label": "珲春市", "value": "222404" }, { "label": "龙井市", "value": "222405" }, { "label": "和龙市", "value": "222406" }, { "label": "汪清县", "value": "222424" }, { "label": "安图县", "value": "222426" }]], [[{ "label": "道里区", "value": "230102" }, { "label": "南岗区", "value": "230103" }, { "label": "道外区", "value": "230104" }, { "label": "平房区", "value": "230108" }, { "label": "松北区", "value": "230109" }, { "label": "香坊区", "value": "230110" }, { "label": "呼兰区", "value": "230111" }, { "label": "阿城区", "value": "230112" }, { "label": "双城区", "value": "230113" }, { "label": "依兰县", "value": "230123" }, { "label": "方正县", "value": "230124" }, { "label": "宾县", "value": "230125" }, { "label": "巴彦县", "value": "230126" }, { "label": "木兰县", "value": "230127" }, { "label": "通河县", "value": "230128" }, { "label": "延寿县", "value": "230129" }, { "label": "尚志市", "value": "230183" }, { "label": "五常市", "value": "230184" }], [{ "label": "龙沙区", "value": "230202" }, { "label": "建华区", "value": "230203" }, { "label": "铁锋区", "value": "230204" }, { "label": "昂昂溪区", "value": "230205" }, { "label": "富拉尔基区", "value": "230206" }, { "label": "碾子山区", "value": "230207" }, { "label": "梅里斯达斡尔族区", "value": "230208" }, { "label": "龙江县", "value": "230221" }, { "label": "依安县", "value": "230223" }, { "label": "泰来县", "value": "230224" }, { "label": "甘南县", "value": "230225" }, { "label": "富裕县", "value": "230227" }, { "label": "克山县", "value": "230229" }, { "label": "克东县", "value": "230230" }, { "label": "拜泉县", "value": "230231" }, { "label": "讷河市", "value": "230281" }], [{ "label": "鸡冠区", "value": "230302" }, { "label": "恒山区", "value": "230303" }, { "label": "滴道区", "value": "230304" }, { "label": "梨树区", "value": "230305" }, { "label": "城子河区", "value": "230306" }, { "label": "麻山区", "value": "230307" }, { "label": "鸡东县", "value": "230321" }, { "label": "虎林市", "value": "230381" }, { "label": "密山市", "value": "230382" }], [{ "label": "向阳区", "value": "230402" }, { "label": "工农区", "value": "230403" }, { "label": "南山区", "value": "230404" }, { "label": "兴安区", "value": "230405" }, { "label": "东山区", "value": "230406" }, { "label": "兴山区", "value": "230407" }, { "label": "萝北县", "value": "230421" }, { "label": "绥滨县", "value": "230422" }], [{ "label": "尖山区", "value": "230502" }, { "label": "岭东区", "value": "230503" }, { "label": "四方台区", "value": "230505" }, { "label": "宝山区", "value": "230506" }, { "label": "集贤县", "value": "230521" }, { "label": "友谊县", "value": "230522" }, { "label": "宝清县", "value": "230523" }, { "label": "饶河县", "value": "230524" }], [{ "label": "萨尔图区", "value": "230602" }, { "label": "龙凤区", "value": "230603" }, { "label": "让胡路区", "value": "230604" }, { "label": "红岗区", "value": "230605" }, { "label": "大同区", "value": "230606" }, { "label": "肇州县", "value": "230621" }, { "label": "肇源县", "value": "230622" }, { "label": "林甸县", "value": "230623" }, { "label": "杜尔伯特蒙古族自治县", "value": "230624" }, { "label": "大庆高新技术产业开发区", "value": "230671" }], [{ "label": "伊春区", "value": "230702" }, { "label": "南岔区", "value": "230703" }, { "label": "友好区", "value": "230704" }, { "label": "西林区", "value": "230705" }, { "label": "翠峦区", "value": "230706" }, { "label": "新青区", "value": "230707" }, { "label": "美溪区", "value": "230708" }, { "label": "金山屯区", "value": "230709" }, { "label": "五营区", "value": "230710" }, { "label": "乌马河区", "value": "230711" }, { "label": "汤旺河区", "value": "230712" }, { "label": "带岭区", "value": "230713" }, { "label": "乌伊岭区", "value": "230714" }, { "label": "红星区", "value": "230715" }, { "label": "上甘岭区", "value": "230716" }, { "label": "嘉荫县", "value": "230722" }, { "label": "铁力市", "value": "230781" }], [{ "label": "向阳区", "value": "230803" }, { "label": "前进区", "value": "230804" }, { "label": "东风区", "value": "230805" }, { "label": "郊区", "value": "230811" }, { "label": "桦南县", "value": "230822" }, { "label": "桦川县", "value": "230826" }, { "label": "汤原县", "value": "230828" }, { "label": "同江市", "value": "230881" }, { "label": "富锦市", "value": "230882" }, { "label": "抚远市", "value": "230883" }], [{ "label": "新兴区", "value": "230902" }, { "label": "桃山区", "value": "230903" }, { "label": "茄子河区", "value": "230904" }, { "label": "勃利县", "value": "230921" }], [{ "label": "东安区", "value": "231002" }, { "label": "阳明区", "value": "231003" }, { "label": "爱民区", "value": "231004" }, { "label": "西安区", "value": "231005" }, { "label": "林口县", "value": "231025" }, { "label": "牡丹江经济技术开发区", "value": "231071" }, { "label": "绥芬河市", "value": "231081" }, { "label": "海林市", "value": "231083" }, { "label": "宁安市", "value": "231084" }, { "label": "穆棱市", "value": "231085" }, { "label": "东宁市", "value": "231086" }], [{ "label": "爱辉区", "value": "231102" }, { "label": "嫩江县", "value": "231121" }, { "label": "逊克县", "value": "231123" }, { "label": "孙吴县", "value": "231124" }, { "label": "北安市", "value": "231181" }, { "label": "五大连池市", "value": "231182" }], [{ "label": "北林区", "value": "231202" }, { "label": "望奎县", "value": "231221" }, { "label": "兰西县", "value": "231222" }, { "label": "青冈县", "value": "231223" }, { "label": "庆安县", "value": "231224" }, { "label": "明水县", "value": "231225" }, { "label": "绥棱县", "value": "231226" }, { "label": "安达市", "value": "231281" }, { "label": "肇东市", "value": "231282" }, { "label": "海伦市", "value": "231283" }], [{ "label": "加格达奇区", "value": "232701" }, { "label": "松岭区", "value": "232702" }, { "label": "新林区", "value": "232703" }, { "label": "呼中区", "value": "232704" }, { "label": "呼玛县", "value": "232721" }, { "label": "塔河县", "value": "232722" }, { "label": "漠河县", "value": "232723" }]], [[{ "label": "黄浦区", "value": "310101" }, { "label": "徐汇区", "value": "310104" }, { "label": "长宁区", "value": "310105" }, { "label": "静安区", "value": "310106" }, { "label": "普陀区", "value": "310107" }, { "label": "虹口区", "value": "310109" }, { "label": "杨浦区", "value": "310110" }, { "label": "闵行区", "value": "310112" }, { "label": "宝山区", "value": "310113" }, { "label": "嘉定区", "value": "310114" }, { "label": "浦东新区", "value": "310115" }, { "label": "金山区", "value": "310116" }, { "label": "松江区", "value": "310117" }, { "label": "青浦区", "value": "310118" }, { "label": "奉贤区", "value": "310120" }, { "label": "崇明区", "value": "310151" }]], [[{ "label": "玄武区", "value": "320102" }, { "label": "秦淮区", "value": "320104" }, { "label": "建邺区", "value": "320105" }, { "label": "鼓楼区", "value": "320106" }, { "label": "浦口区", "value": "320111" }, { "label": "栖霞区", "value": "320113" }, { "label": "雨花台区", "value": "320114" }, { "label": "江宁区", "value": "320115" }, { "label": "六合区", "value": "320116" }, { "label": "溧水区", "value": "320117" }, { "label": "高淳区", "value": "320118" }], [{ "label": "锡山区", "value": "320205" }, { "label": "惠山区", "value": "320206" }, { "label": "滨湖区", "value": "320211" }, { "label": "梁溪区", "value": "320213" }, { "label": "新吴区", "value": "320214" }, { "label": "江阴市", "value": "320281" }, { "label": "宜兴市", "value": "320282" }], [{ "label": "鼓楼区", "value": "320302" }, { "label": "云龙区", "value": "320303" }, { "label": "贾汪区", "value": "320305" }, { "label": "泉山区", "value": "320311" }, { "label": "铜山区", "value": "320312" }, { "label": "丰县", "value": "320321" }, { "label": "沛县", "value": "320322" }, { "label": "睢宁县", "value": "320324" }, { "label": "徐州经济技术开发区", "value": "320371" }, { "label": "新沂市", "value": "320381" }, { "label": "邳州市", "value": "320382" }], [{ "label": "天宁区", "value": "320402" }, { "label": "钟楼区", "value": "320404" }, { "label": "新北区", "value": "320411" }, { "label": "武进区", "value": "320412" }, { "label": "金坛区", "value": "320413" }, { "label": "溧阳市", "value": "320481" }], [{ "label": "虎丘区", "value": "320505" }, { "label": "吴中区", "value": "320506" }, { "label": "相城区", "value": "320507" }, { "label": "姑苏区", "value": "320508" }, { "label": "吴江区", "value": "320509" }, { "label": "苏州工业园区", "value": "320571" }, { "label": "常熟市", "value": "320581" }, { "label": "张家港市", "value": "320582" }, { "label": "昆山市", "value": "320583" }, { "label": "太仓市", "value": "320585" }], [{ "label": "崇川区", "value": "320602" }, { "label": "港闸区", "value": "320611" }, { "label": "通州区", "value": "320612" }, { "label": "海安县", "value": "320621" }, { "label": "如东县", "value": "320623" }, { "label": "南通经济技术开发区", "value": "320671" }, { "label": "启东市", "value": "320681" }, { "label": "如皋市", "value": "320682" }, { "label": "海门市", "value": "320684" }], [{ "label": "连云区", "value": "320703" }, { "label": "海州区", "value": "320706" }, { "label": "赣榆区", "value": "320707" }, { "label": "东海县", "value": "320722" }, { "label": "灌云县", "value": "320723" }, { "label": "灌南县", "value": "320724" }, { "label": "连云港经济技术开发区", "value": "320771" }, { "label": "连云港高新技术产业开发区", "value": "320772" }], [{ "label": "淮安区", "value": "320803" }, { "label": "淮阴区", "value": "320804" }, { "label": "清江浦区", "value": "320812" }, { "label": "洪泽区", "value": "320813" }, { "label": "涟水县", "value": "320826" }, { "label": "盱眙县", "value": "320830" }, { "label": "金湖县", "value": "320831" }, { "label": "淮安经济技术开发区", "value": "320871" }], [{ "label": "亭湖区", "value": "320902" }, { "label": "盐都区", "value": "320903" }, { "label": "大丰区", "value": "320904" }, { "label": "响水县", "value": "320921" }, { "label": "滨海县", "value": "320922" }, { "label": "阜宁县", "value": "320923" }, { "label": "射阳县", "value": "320924" }, { "label": "建湖县", "value": "320925" }, { "label": "盐城经济技术开发区", "value": "320971" }, { "label": "东台市", "value": "320981" }], [{ "label": "广陵区", "value": "321002" }, { "label": "邗江区", "value": "321003" }, { "label": "江都区", "value": "321012" }, { "label": "宝应县", "value": "321023" }, { "label": "扬州经济技术开发区", "value": "321071" }, { "label": "仪征市", "value": "321081" }, { "label": "高邮市", "value": "321084" }], [{ "label": "京口区", "value": "321102" }, { "label": "润州区", "value": "321111" }, { "label": "丹徒区", "value": "321112" }, { "label": "镇江新区", "value": "321171" }, { "label": "丹阳市", "value": "321181" }, { "label": "扬中市", "value": "321182" }, { "label": "句容市", "value": "321183" }], [{ "label": "海陵区", "value": "321202" }, { "label": "高港区", "value": "321203" }, { "label": "姜堰区", "value": "321204" }, { "label": "泰州医药高新技术产业开发区", "value": "321271" }, { "label": "兴化市", "value": "321281" }, { "label": "靖江市", "value": "321282" }, { "label": "泰兴市", "value": "321283" }], [{ "label": "宿城区", "value": "321302" }, { "label": "宿豫区", "value": "321311" }, { "label": "沭阳县", "value": "321322" }, { "label": "泗阳县", "value": "321323" }, { "label": "泗洪县", "value": "321324" }, { "label": "宿迁经济技术开发区", "value": "321371" }]], [[{ "label": "上城区", "value": "330102" }, { "label": "下城区", "value": "330103" }, { "label": "江干区", "value": "330104" }, { "label": "拱墅区", "value": "330105" }, { "label": "西湖区", "value": "330106" }, { "label": "滨江区", "value": "330108" }, { "label": "萧山区", "value": "330109" }, { "label": "余杭区", "value": "330110" }, { "label": "富阳区", "value": "330111" }, { "label": "临安区", "value": "330112" }, { "label": "桐庐县", "value": "330122" }, { "label": "淳安县", "value": "330127" }, { "label": "建德市", "value": "330182" }], [{ "label": "海曙区", "value": "330203" }, { "label": "江北区", "value": "330205" }, { "label": "北仑区", "value": "330206" }, { "label": "镇海区", "value": "330211" }, { "label": "鄞州区", "value": "330212" }, { "label": "奉化区", "value": "330213" }, { "label": "象山县", "value": "330225" }, { "label": "宁海县", "value": "330226" }, { "label": "余姚市", "value": "330281" }, { "label": "慈溪市", "value": "330282" }], [{ "label": "鹿城区", "value": "330302" }, { "label": "龙湾区", "value": "330303" }, { "label": "瓯海区", "value": "330304" }, { "label": "洞头区", "value": "330305" }, { "label": "永嘉县", "value": "330324" }, { "label": "平阳县", "value": "330326" }, { "label": "苍南县", "value": "330327" }, { "label": "文成县", "value": "330328" }, { "label": "泰顺县", "value": "330329" }, { "label": "温州经济技术开发区", "value": "330371" }, { "label": "瑞安市", "value": "330381" }, { "label": "乐清市", "value": "330382" }], [{ "label": "南湖区", "value": "330402" }, { "label": "秀洲区", "value": "330411" }, { "label": "嘉善县", "value": "330421" }, { "label": "海盐县", "value": "330424" }, { "label": "海宁市", "value": "330481" }, { "label": "平湖市", "value": "330482" }, { "label": "桐乡市", "value": "330483" }], [{ "label": "吴兴区", "value": "330502" }, { "label": "南浔区", "value": "330503" }, { "label": "德清县", "value": "330521" }, { "label": "长兴县", "value": "330522" }, { "label": "安吉县", "value": "330523" }], [{ "label": "越城区", "value": "330602" }, { "label": "柯桥区", "value": "330603" }, { "label": "上虞区", "value": "330604" }, { "label": "新昌县", "value": "330624" }, { "label": "诸暨市", "value": "330681" }, { "label": "嵊州市", "value": "330683" }], [{ "label": "婺城区", "value": "330702" }, { "label": "金东区", "value": "330703" }, { "label": "武义县", "value": "330723" }, { "label": "浦江县", "value": "330726" }, { "label": "磐安县", "value": "330727" }, { "label": "兰溪市", "value": "330781" }, { "label": "义乌市", "value": "330782" }, { "label": "东阳市", "value": "330783" }, { "label": "永康市", "value": "330784" }], [{ "label": "柯城区", "value": "330802" }, { "label": "衢江区", "value": "330803" }, { "label": "常山县", "value": "330822" }, { "label": "开化县", "value": "330824" }, { "label": "龙游县", "value": "330825" }, { "label": "江山市", "value": "330881" }], [{ "label": "定海区", "value": "330902" }, { "label": "普陀区", "value": "330903" }, { "label": "岱山县", "value": "330921" }, { "label": "嵊泗县", "value": "330922" }], [{ "label": "椒江区", "value": "331002" }, { "label": "黄岩区", "value": "331003" }, { "label": "路桥区", "value": "331004" }, { "label": "三门县", "value": "331022" }, { "label": "天台县", "value": "331023" }, { "label": "仙居县", "value": "331024" }, { "label": "温岭市", "value": "331081" }, { "label": "临海市", "value": "331082" }, { "label": "玉环市", "value": "331083" }], [{ "label": "莲都区", "value": "331102" }, { "label": "青田县", "value": "331121" }, { "label": "缙云县", "value": "331122" }, { "label": "遂昌县", "value": "331123" }, { "label": "松阳县", "value": "331124" }, { "label": "云和县", "value": "331125" }, { "label": "庆元县", "value": "331126" }, { "label": "景宁畲族自治县", "value": "331127" }, { "label": "龙泉市", "value": "331181" }]], [[{ "label": "瑶海区", "value": "340102" }, { "label": "庐阳区", "value": "340103" }, { "label": "蜀山区", "value": "340104" }, { "label": "包河区", "value": "340111" }, { "label": "长丰县", "value": "340121" }, { "label": "肥东县", "value": "340122" }, { "label": "肥西县", "value": "340123" }, { "label": "庐江县", "value": "340124" }, { "label": "合肥高新技术产业开发区", "value": "340171" }, { "label": "合肥经济技术开发区", "value": "340172" }, { "label": "合肥新站高新技术产业开发区", "value": "340173" }, { "label": "巢湖市", "value": "340181" }], [{ "label": "镜湖区", "value": "340202" }, { "label": "弋江区", "value": "340203" }, { "label": "鸠江区", "value": "340207" }, { "label": "三山区", "value": "340208" }, { "label": "芜湖县", "value": "340221" }, { "label": "繁昌县", "value": "340222" }, { "label": "南陵县", "value": "340223" }, { "label": "无为县", "value": "340225" }, { "label": "芜湖经济技术开发区", "value": "340271" }, { "label": "安徽芜湖长江大桥经济开发区", "value": "340272" }], [{ "label": "龙子湖区", "value": "340302" }, { "label": "蚌山区", "value": "340303" }, { "label": "禹会区", "value": "340304" }, { "label": "淮上区", "value": "340311" }, { "label": "怀远县", "value": "340321" }, { "label": "五河县", "value": "340322" }, { "label": "固镇县", "value": "340323" }, { "label": "蚌埠市高新技术开发区", "value": "340371" }, { "label": "蚌埠市经济开发区", "value": "340372" }], [{ "label": "大通区", "value": "340402" }, { "label": "田家庵区", "value": "340403" }, { "label": "谢家集区", "value": "340404" }, { "label": "八公山区", "value": "340405" }, { "label": "潘集区", "value": "340406" }, { "label": "凤台县", "value": "340421" }, { "label": "寿县", "value": "340422" }], [{ "label": "花山区", "value": "340503" }, { "label": "雨山区", "value": "340504" }, { "label": "博望区", "value": "340506" }, { "label": "当涂县", "value": "340521" }, { "label": "含山县", "value": "340522" }, { "label": "和县", "value": "340523" }], [{ "label": "杜集区", "value": "340602" }, { "label": "相山区", "value": "340603" }, { "label": "烈山区", "value": "340604" }, { "label": "濉溪县", "value": "340621" }], [{ "label": "铜官区", "value": "340705" }, { "label": "义安区", "value": "340706" }, { "label": "郊区", "value": "340711" }, { "label": "枞阳县", "value": "340722" }], [{ "label": "迎江区", "value": "340802" }, { "label": "大观区", "value": "340803" }, { "label": "宜秀区", "value": "340811" }, { "label": "怀宁县", "value": "340822" }, { "label": "潜山县", "value": "340824" }, { "label": "太湖县", "value": "340825" }, { "label": "宿松县", "value": "340826" }, { "label": "望江县", "value": "340827" }, { "label": "岳西县", "value": "340828" }, { "label": "安徽安庆经济开发区", "value": "340871" }, { "label": "桐城市", "value": "340881" }], [{ "label": "屯溪区", "value": "341002" }, { "label": "黄山区", "value": "341003" }, { "label": "徽州区", "value": "341004" }, { "label": "歙县", "value": "341021" }, { "label": "休宁县", "value": "341022" }, { "label": "黟县", "value": "341023" }, { "label": "祁门县", "value": "341024" }], [{ "label": "琅琊区", "value": "341102" }, { "label": "南谯区", "value": "341103" }, { "label": "来安县", "value": "341122" }, { "label": "全椒县", "value": "341124" }, { "label": "定远县", "value": "341125" }, { "label": "凤阳县", "value": "341126" }, { "label": "苏滁现代产业园", "value": "341171" }, { "label": "滁州经济技术开发区", "value": "341172" }, { "label": "天长市", "value": "341181" }, { "label": "明光市", "value": "341182" }], [{ "label": "颍州区", "value": "341202" }, { "label": "颍东区", "value": "341203" }, { "label": "颍泉区", "value": "341204" }, { "label": "临泉县", "value": "341221" }, { "label": "太和县", "value": "341222" }, { "label": "阜南县", "value": "341225" }, { "label": "颍上县", "value": "341226" }, { "label": "阜阳合肥现代产业园区", "value": "341271" }, { "label": "阜阳经济技术开发区", "value": "341272" }, { "label": "界首市", "value": "341282" }], [{ "label": "埇桥区", "value": "341302" }, { "label": "砀山县", "value": "341321" }, { "label": "萧县", "value": "341322" }, { "label": "灵璧县", "value": "341323" }, { "label": "泗县", "value": "341324" }, { "label": "宿州马鞍山现代产业园区", "value": "341371" }, { "label": "宿州经济技术开发区", "value": "341372" }], [{ "label": "金安区", "value": "341502" }, { "label": "裕安区", "value": "341503" }, { "label": "叶集区", "value": "341504" }, { "label": "霍邱县", "value": "341522" }, { "label": "舒城县", "value": "341523" }, { "label": "金寨县", "value": "341524" }, { "label": "霍山县", "value": "341525" }], [{ "label": "谯城区", "value": "341602" }, { "label": "涡阳县", "value": "341621" }, { "label": "蒙城县", "value": "341622" }, { "label": "利辛县", "value": "341623" }], [{ "label": "贵池区", "value": "341702" }, { "label": "东至县", "value": "341721" }, { "label": "石台县", "value": "341722" }, { "label": "青阳县", "value": "341723" }], [{ "label": "宣州区", "value": "341802" }, { "label": "郎溪县", "value": "341821" }, { "label": "广德县", "value": "341822" }, { "label": "泾县", "value": "341823" }, { "label": "绩溪县", "value": "341824" }, { "label": "旌德县", "value": "341825" }, { "label": "宣城市经济开发区", "value": "341871" }, { "label": "宁国市", "value": "341881" }]], [[{ "label": "鼓楼区", "value": "350102" }, { "label": "台江区", "value": "350103" }, { "label": "仓山区", "value": "350104" }, { "label": "马尾区", "value": "350105" }, { "label": "晋安区", "value": "350111" }, { "label": "闽侯县", "value": "350121" }, { "label": "连江县", "value": "350122" }, { "label": "罗源县", "value": "350123" }, { "label": "闽清县", "value": "350124" }, { "label": "永泰县", "value": "350125" }, { "label": "平潭县", "value": "350128" }, { "label": "福清市", "value": "350181" }, { "label": "长乐市", "value": "350182" }], [{ "label": "思明区", "value": "350203" }, { "label": "海沧区", "value": "350205" }, { "label": "湖里区", "value": "350206" }, { "label": "集美区", "value": "350211" }, { "label": "同安区", "value": "350212" }, { "label": "翔安区", "value": "350213" }], [{ "label": "城厢区", "value": "350302" }, { "label": "涵江区", "value": "350303" }, { "label": "荔城区", "value": "350304" }, { "label": "秀屿区", "value": "350305" }, { "label": "仙游县", "value": "350322" }], [{ "label": "梅列区", "value": "350402" }, { "label": "三元区", "value": "350403" }, { "label": "明溪县", "value": "350421" }, { "label": "清流县", "value": "350423" }, { "label": "宁化县", "value": "350424" }, { "label": "大田县", "value": "350425" }, { "label": "尤溪县", "value": "350426" }, { "label": "沙县", "value": "350427" }, { "label": "将乐县", "value": "350428" }, { "label": "泰宁县", "value": "350429" }, { "label": "建宁县", "value": "350430" }, { "label": "永安市", "value": "350481" }], [{ "label": "鲤城区", "value": "350502" }, { "label": "丰泽区", "value": "350503" }, { "label": "洛江区", "value": "350504" }, { "label": "泉港区", "value": "350505" }, { "label": "惠安县", "value": "350521" }, { "label": "安溪县", "value": "350524" }, { "label": "永春县", "value": "350525" }, { "label": "德化县", "value": "350526" }, { "label": "金门县", "value": "350527" }, { "label": "石狮市", "value": "350581" }, { "label": "晋江市", "value": "350582" }, { "label": "南安市", "value": "350583" }], [{ "label": "芗城区", "value": "350602" }, { "label": "龙文区", "value": "350603" }, { "label": "云霄县", "value": "350622" }, { "label": "漳浦县", "value": "350623" }, { "label": "诏安县", "value": "350624" }, { "label": "长泰县", "value": "350625" }, { "label": "东山县", "value": "350626" }, { "label": "南靖县", "value": "350627" }, { "label": "平和县", "value": "350628" }, { "label": "华安县", "value": "350629" }, { "label": "龙海市", "value": "350681" }], [{ "label": "延平区", "value": "350702" }, { "label": "建阳区", "value": "350703" }, { "label": "顺昌县", "value": "350721" }, { "label": "浦城县", "value": "350722" }, { "label": "光泽县", "value": "350723" }, { "label": "松溪县", "value": "350724" }, { "label": "政和县", "value": "350725" }, { "label": "邵武市", "value": "350781" }, { "label": "武夷山市", "value": "350782" }, { "label": "建瓯市", "value": "350783" }], [{ "label": "新罗区", "value": "350802" }, { "label": "永定区", "value": "350803" }, { "label": "长汀县", "value": "350821" }, { "label": "上杭县", "value": "350823" }, { "label": "武平县", "value": "350824" }, { "label": "连城县", "value": "350825" }, { "label": "漳平市", "value": "350881" }], [{ "label": "蕉城区", "value": "350902" }, { "label": "霞浦县", "value": "350921" }, { "label": "古田县", "value": "350922" }, { "label": "屏南县", "value": "350923" }, { "label": "寿宁县", "value": "350924" }, { "label": "周宁县", "value": "350925" }, { "label": "柘荣县", "value": "350926" }, { "label": "福安市", "value": "350981" }, { "label": "福鼎市", "value": "350982" }]], [[{ "label": "东湖区", "value": "360102" }, { "label": "西湖区", "value": "360103" }, { "label": "青云谱区", "value": "360104" }, { "label": "湾里区", "value": "360105" }, { "label": "青山湖区", "value": "360111" }, { "label": "新建区", "value": "360112" }, { "label": "南昌县", "value": "360121" }, { "label": "安义县", "value": "360123" }, { "label": "进贤县", "value": "360124" }], [{ "label": "昌江区", "value": "360202" }, { "label": "珠山区", "value": "360203" }, { "label": "浮梁县", "value": "360222" }, { "label": "乐平市", "value": "360281" }], [{ "label": "安源区", "value": "360302" }, { "label": "湘东区", "value": "360313" }, { "label": "莲花县", "value": "360321" }, { "label": "上栗县", "value": "360322" }, { "label": "芦溪县", "value": "360323" }], [{ "label": "濂溪区", "value": "360402" }, { "label": "浔阳区", "value": "360403" }, { "label": "柴桑区", "value": "360404" }, { "label": "武宁县", "value": "360423" }, { "label": "修水县", "value": "360424" }, { "label": "永修县", "value": "360425" }, { "label": "德安县", "value": "360426" }, { "label": "都昌县", "value": "360428" }, { "label": "湖口县", "value": "360429" }, { "label": "彭泽县", "value": "360430" }, { "label": "瑞昌市", "value": "360481" }, { "label": "共青城市", "value": "360482" }, { "label": "庐山市", "value": "360483" }], [{ "label": "渝水区", "value": "360502" }, { "label": "分宜县", "value": "360521" }], [{ "label": "月湖区", "value": "360602" }, { "label": "余江县", "value": "360622" }, { "label": "贵溪市", "value": "360681" }], [{ "label": "章贡区", "value": "360702" }, { "label": "南康区", "value": "360703" }, { "label": "赣县区", "value": "360704" }, { "label": "信丰县", "value": "360722" }, { "label": "大余县", "value": "360723" }, { "label": "上犹县", "value": "360724" }, { "label": "崇义县", "value": "360725" }, { "label": "安远县", "value": "360726" }, { "label": "龙南县", "value": "360727" }, { "label": "定南县", "value": "360728" }, { "label": "全南县", "value": "360729" }, { "label": "宁都县", "value": "360730" }, { "label": "于都县", "value": "360731" }, { "label": "兴国县", "value": "360732" }, { "label": "会昌县", "value": "360733" }, { "label": "寻乌县", "value": "360734" }, { "label": "石城县", "value": "360735" }, { "label": "瑞金市", "value": "360781" }], [{ "label": "吉州区", "value": "360802" }, { "label": "青原区", "value": "360803" }, { "label": "吉安县", "value": "360821" }, { "label": "吉水县", "value": "360822" }, { "label": "峡江县", "value": "360823" }, { "label": "新干县", "value": "360824" }, { "label": "永丰县", "value": "360825" }, { "label": "泰和县", "value": "360826" }, { "label": "遂川县", "value": "360827" }, { "label": "万安县", "value": "360828" }, { "label": "安福县", "value": "360829" }, { "label": "永新县", "value": "360830" }, { "label": "井冈山市", "value": "360881" }], [{ "label": "袁州区", "value": "360902" }, { "label": "奉新县", "value": "360921" }, { "label": "万载县", "value": "360922" }, { "label": "上高县", "value": "360923" }, { "label": "宜丰县", "value": "360924" }, { "label": "靖安县", "value": "360925" }, { "label": "铜鼓县", "value": "360926" }, { "label": "丰城市", "value": "360981" }, { "label": "樟树市", "value": "360982" }, { "label": "高安市", "value": "360983" }], [{ "label": "临川区", "value": "361002" }, { "label": "东乡区", "value": "361003" }, { "label": "南城县", "value": "361021" }, { "label": "黎川县", "value": "361022" }, { "label": "南丰县", "value": "361023" }, { "label": "崇仁县", "value": "361024" }, { "label": "乐安县", "value": "361025" }, { "label": "宜黄县", "value": "361026" }, { "label": "金溪县", "value": "361027" }, { "label": "资溪县", "value": "361028" }, { "label": "广昌县", "value": "361030" }], [{ "label": "信州区", "value": "361102" }, { "label": "广丰区", "value": "361103" }, { "label": "上饶县", "value": "361121" }, { "label": "玉山县", "value": "361123" }, { "label": "铅山县", "value": "361124" }, { "label": "横峰县", "value": "361125" }, { "label": "弋阳县", "value": "361126" }, { "label": "余干县", "value": "361127" }, { "label": "鄱阳县", "value": "361128" }, { "label": "万年县", "value": "361129" }, { "label": "婺源县", "value": "361130" }, { "label": "德兴市", "value": "361181" }]], [[{ "label": "历下区", "value": "370102" }, { "label": "市中区", "value": "370103" }, { "label": "槐荫区", "value": "370104" }, { "label": "天桥区", "value": "370105" }, { "label": "历城区", "value": "370112" }, { "label": "长清区", "value": "370113" }, { "label": "章丘区", "value": "370114" }, { "label": "平阴县", "value": "370124" }, { "label": "济阳县", "value": "370125" }, { "label": "商河县", "value": "370126" }, { "label": "济南高新技术产业开发区", "value": "370171" }], [{ "label": "市南区", "value": "370202" }, { "label": "市北区", "value": "370203" }, { "label": "黄岛区", "value": "370211" }, { "label": "崂山区", "value": "370212" }, { "label": "李沧区", "value": "370213" }, { "label": "城阳区", "value": "370214" }, { "label": "即墨区", "value": "370215" }, { "label": "青岛高新技术产业开发区", "value": "370271" }, { "label": "胶州市", "value": "370281" }, { "label": "平度市", "value": "370283" }, { "label": "莱西市", "value": "370285" }], [{ "label": "淄川区", "value": "370302" }, { "label": "张店区", "value": "370303" }, { "label": "博山区", "value": "370304" }, { "label": "临淄区", "value": "370305" }, { "label": "周村区", "value": "370306" }, { "label": "桓台县", "value": "370321" }, { "label": "高青县", "value": "370322" }, { "label": "沂源县", "value": "370323" }], [{ "label": "市中区", "value": "370402" }, { "label": "薛城区", "value": "370403" }, { "label": "峄城区", "value": "370404" }, { "label": "台儿庄区", "value": "370405" }, { "label": "山亭区", "value": "370406" }, { "label": "滕州市", "value": "370481" }], [{ "label": "东营区", "value": "370502" }, { "label": "河口区", "value": "370503" }, { "label": "垦利区", "value": "370505" }, { "label": "利津县", "value": "370522" }, { "label": "广饶县", "value": "370523" }, { "label": "东营经济技术开发区", "value": "370571" }, { "label": "东营港经济开发区", "value": "370572" }], [{ "label": "芝罘区", "value": "370602" }, { "label": "福山区", "value": "370611" }, { "label": "牟平区", "value": "370612" }, { "label": "莱山区", "value": "370613" }, { "label": "长岛县", "value": "370634" }, { "label": "烟台高新技术产业开发区", "value": "370671" }, { "label": "烟台经济技术开发区", "value": "370672" }, { "label": "龙口市", "value": "370681" }, { "label": "莱阳市", "value": "370682" }, { "label": "莱州市", "value": "370683" }, { "label": "蓬莱市", "value": "370684" }, { "label": "招远市", "value": "370685" }, { "label": "栖霞市", "value": "370686" }, { "label": "海阳市", "value": "370687" }], [{ "label": "潍城区", "value": "370702" }, { "label": "寒亭区", "value": "370703" }, { "label": "坊子区", "value": "370704" }, { "label": "奎文区", "value": "370705" }, { "label": "临朐县", "value": "370724" }, { "label": "昌乐县", "value": "370725" }, { "label": "潍坊滨海经济技术开发区", "value": "370772" }, { "label": "青州市", "value": "370781" }, { "label": "诸城市", "value": "370782" }, { "label": "寿光市", "value": "370783" }, { "label": "安丘市", "value": "370784" }, { "label": "高密市", "value": "370785" }, { "label": "昌邑市", "value": "370786" }], [{ "label": "任城区", "value": "370811" }, { "label": "兖州区", "value": "370812" }, { "label": "微山县", "value": "370826" }, { "label": "鱼台县", "value": "370827" }, { "label": "金乡县", "value": "370828" }, { "label": "嘉祥县", "value": "370829" }, { "label": "汶上县", "value": "370830" }, { "label": "泗水县", "value": "370831" }, { "label": "梁山县", "value": "370832" }, { "label": "济宁高新技术产业开发区", "value": "370871" }, { "label": "曲阜市", "value": "370881" }, { "label": "邹城市", "value": "370883" }], [{ "label": "泰山区", "value": "370902" }, { "label": "岱岳区", "value": "370911" }, { "label": "宁阳县", "value": "370921" }, { "label": "东平县", "value": "370923" }, { "label": "新泰市", "value": "370982" }, { "label": "肥城市", "value": "370983" }], [{ "label": "环翠区", "value": "371002" }, { "label": "文登区", "value": "371003" }, { "label": "威海火炬高技术产业开发区", "value": "371071" }, { "label": "威海经济技术开发区", "value": "371072" }, { "label": "威海临港经济技术开发区", "value": "371073" }, { "label": "荣成市", "value": "371082" }, { "label": "乳山市", "value": "371083" }], [{ "label": "东港区", "value": "371102" }, { "label": "岚山区", "value": "371103" }, { "label": "五莲县", "value": "371121" }, { "label": "莒县", "value": "371122" }, { "label": "日照经济技术开发区", "value": "371171" }, { "label": "日照国际海洋城", "value": "371172" }], [{ "label": "莱城区", "value": "371202" }, { "label": "钢城区", "value": "371203" }], [{ "label": "兰山区", "value": "371302" }, { "label": "罗庄区", "value": "371311" }, { "label": "河东区", "value": "371312" }, { "label": "沂南县", "value": "371321" }, { "label": "郯城县", "value": "371322" }, { "label": "沂水县", "value": "371323" }, { "label": "兰陵县", "value": "371324" }, { "label": "费县", "value": "371325" }, { "label": "平邑县", "value": "371326" }, { "label": "莒南县", "value": "371327" }, { "label": "蒙阴县", "value": "371328" }, { "label": "临沭县", "value": "371329" }, { "label": "临沂高新技术产业开发区", "value": "371371" }, { "label": "临沂经济技术开发区", "value": "371372" }, { "label": "临沂临港经济开发区", "value": "371373" }], [{ "label": "德城区", "value": "371402" }, { "label": "陵城区", "value": "371403" }, { "label": "宁津县", "value": "371422" }, { "label": "庆云县", "value": "371423" }, { "label": "临邑县", "value": "371424" }, { "label": "齐河县", "value": "371425" }, { "label": "平原县", "value": "371426" }, { "label": "夏津县", "value": "371427" }, { "label": "武城县", "value": "371428" }, { "label": "德州经济技术开发区", "value": "371471" }, { "label": "德州运河经济开发区", "value": "371472" }, { "label": "乐陵市", "value": "371481" }, { "label": "禹城市", "value": "371482" }], [{ "label": "东昌府区", "value": "371502" }, { "label": "阳谷县", "value": "371521" }, { "label": "莘县", "value": "371522" }, { "label": "茌平县", "value": "371523" }, { "label": "东阿县", "value": "371524" }, { "label": "冠县", "value": "371525" }, { "label": "高唐县", "value": "371526" }, { "label": "临清市", "value": "371581" }], [{ "label": "滨城区", "value": "371602" }, { "label": "沾化区", "value": "371603" }, { "label": "惠民县", "value": "371621" }, { "label": "阳信县", "value": "371622" }, { "label": "无棣县", "value": "371623" }, { "label": "博兴县", "value": "371625" }, { "label": "邹平县", "value": "371626" }], [{ "label": "牡丹区", "value": "371702" }, { "label": "定陶区", "value": "371703" }, { "label": "曹县", "value": "371721" }, { "label": "单县", "value": "371722" }, { "label": "成武县", "value": "371723" }, { "label": "巨野县", "value": "371724" }, { "label": "郓城县", "value": "371725" }, { "label": "鄄城县", "value": "371726" }, { "label": "东明县", "value": "371728" }, { "label": "菏泽经济技术开发区", "value": "371771" }, { "label": "菏泽高新技术开发区", "value": "371772" }]], [[{ "label": "中原区", "value": "410102" }, { "label": "二七区", "value": "410103" }, { "label": "管城回族区", "value": "410104" }, { "label": "金水区", "value": "410105" }, { "label": "上街区", "value": "410106" }, { "label": "惠济区", "value": "410108" }, { "label": "中牟县", "value": "410122" }, { "label": "郑州经济技术开发区", "value": "410171" }, { "label": "郑州高新技术产业开发区", "value": "410172" }, { "label": "郑州航空港经济综合实验区", "value": "410173" }, { "label": "巩义市", "value": "410181" }, { "label": "荥阳市", "value": "410182" }, { "label": "新密市", "value": "410183" }, { "label": "新郑市", "value": "410184" }, { "label": "登封市", "value": "410185" }], [{ "label": "龙亭区", "value": "410202" }, { "label": "顺河回族区", "value": "410203" }, { "label": "鼓楼区", "value": "410204" }, { "label": "禹王台区", "value": "410205" }, { "label": "祥符区", "value": "410212" }, { "label": "杞县", "value": "410221" }, { "label": "通许县", "value": "410222" }, { "label": "尉氏县", "value": "410223" }, { "label": "兰考县", "value": "410225" }], [{ "label": "老城区", "value": "410302" }, { "label": "西工区", "value": "410303" }, { "label": "瀍河回族区", "value": "410304" }, { "label": "涧西区", "value": "410305" }, { "label": "吉利区", "value": "410306" }, { "label": "洛龙区", "value": "410311" }, { "label": "孟津县", "value": "410322" }, { "label": "新安县", "value": "410323" }, { "label": "栾川县", "value": "410324" }, { "label": "嵩县", "value": "410325" }, { "label": "汝阳县", "value": "410326" }, { "label": "宜阳县", "value": "410327" }, { "label": "洛宁县", "value": "410328" }, { "label": "伊川县", "value": "410329" }, { "label": "洛阳高新技术产业开发区", "value": "410371" }, { "label": "偃师市", "value": "410381" }], [{ "label": "新华区", "value": "410402" }, { "label": "卫东区", "value": "410403" }, { "label": "石龙区", "value": "410404" }, { "label": "湛河区", "value": "410411" }, { "label": "宝丰县", "value": "410421" }, { "label": "叶县", "value": "410422" }, { "label": "鲁山县", "value": "410423" }, { "label": "郏县", "value": "410425" }, { "label": "平顶山高新技术产业开发区", "value": "410471" }, { "label": "平顶山市新城区", "value": "410472" }, { "label": "舞钢市", "value": "410481" }, { "label": "汝州市", "value": "410482" }], [{ "label": "文峰区", "value": "410502" }, { "label": "北关区", "value": "410503" }, { "label": "殷都区", "value": "410505" }, { "label": "龙安区", "value": "410506" }, { "label": "安阳县", "value": "410522" }, { "label": "汤阴县", "value": "410523" }, { "label": "滑县", "value": "410526" }, { "label": "内黄县", "value": "410527" }, { "label": "安阳高新技术产业开发区", "value": "410571" }, { "label": "林州市", "value": "410581" }], [{ "label": "鹤山区", "value": "410602" }, { "label": "山城区", "value": "410603" }, { "label": "淇滨区", "value": "410611" }, { "label": "浚县", "value": "410621" }, { "label": "淇县", "value": "410622" }, { "label": "鹤壁经济技术开发区", "value": "410671" }], [{ "label": "红旗区", "value": "410702" }, { "label": "卫滨区", "value": "410703" }, { "label": "凤泉区", "value": "410704" }, { "label": "牧野区", "value": "410711" }, { "label": "新乡县", "value": "410721" }, { "label": "获嘉县", "value": "410724" }, { "label": "原阳县", "value": "410725" }, { "label": "延津县", "value": "410726" }, { "label": "封丘县", "value": "410727" }, { "label": "长垣县", "value": "410728" }, { "label": "新乡高新技术产业开发区", "value": "410771" }, { "label": "新乡经济技术开发区", "value": "410772" }, { "label": "新乡市平原城乡一体化示范区", "value": "410773" }, { "label": "卫辉市", "value": "410781" }, { "label": "辉县市", "value": "410782" }], [{ "label": "解放区", "value": "410802" }, { "label": "中站区", "value": "410803" }, { "label": "马村区", "value": "410804" }, { "label": "山阳区", "value": "410811" }, { "label": "修武县", "value": "410821" }, { "label": "博爱县", "value": "410822" }, { "label": "武陟县", "value": "410823" }, { "label": "温县", "value": "410825" }, { "label": "焦作城乡一体化示范区", "value": "410871" }, { "label": "沁阳市", "value": "410882" }, { "label": "孟州市", "value": "410883" }], [{ "label": "华龙区", "value": "410902" }, { "label": "清丰县", "value": "410922" }, { "label": "南乐县", "value": "410923" }, { "label": "范县", "value": "410926" }, { "label": "台前县", "value": "410927" }, { "label": "濮阳县", "value": "410928" }, { "label": "河南濮阳工业园区", "value": "410971" }, { "label": "濮阳经济技术开发区", "value": "410972" }], [{ "label": "魏都区", "value": "411002" }, { "label": "建安区", "value": "411003" }, { "label": "鄢陵县", "value": "411024" }, { "label": "襄城县", "value": "411025" }, { "label": "许昌经济技术开发区", "value": "411071" }, { "label": "禹州市", "value": "411081" }, { "label": "长葛市", "value": "411082" }], [{ "label": "源汇区", "value": "411102" }, { "label": "郾城区", "value": "411103" }, { "label": "召陵区", "value": "411104" }, { "label": "舞阳县", "value": "411121" }, { "label": "临颍县", "value": "411122" }, { "label": "漯河经济技术开发区", "value": "411171" }], [{ "label": "湖滨区", "value": "411202" }, { "label": "陕州区", "value": "411203" }, { "label": "渑池县", "value": "411221" }, { "label": "卢氏县", "value": "411224" }, { "label": "河南三门峡经济开发区", "value": "411271" }, { "label": "义马市", "value": "411281" }, { "label": "灵宝市", "value": "411282" }], [{ "label": "宛城区", "value": "411302" }, { "label": "卧龙区", "value": "411303" }, { "label": "南召县", "value": "411321" }, { "label": "方城县", "value": "411322" }, { "label": "西峡县", "value": "411323" }, { "label": "镇平县", "value": "411324" }, { "label": "内乡县", "value": "411325" }, { "label": "淅川县", "value": "411326" }, { "label": "社旗县", "value": "411327" }, { "label": "唐河县", "value": "411328" }, { "label": "新野县", "value": "411329" }, { "label": "桐柏县", "value": "411330" }, { "label": "南阳高新技术产业开发区", "value": "411371" }, { "label": "南阳市城乡一体化示范区", "value": "411372" }, { "label": "邓州市", "value": "411381" }], [{ "label": "梁园区", "value": "411402" }, { "label": "睢阳区", "value": "411403" }, { "label": "民权县", "value": "411421" }, { "label": "睢县", "value": "411422" }, { "label": "宁陵县", "value": "411423" }, { "label": "柘城县", "value": "411424" }, { "label": "虞城县", "value": "411425" }, { "label": "夏邑县", "value": "411426" }, { "label": "豫东综合物流产业聚集区", "value": "411471" }, { "label": "河南商丘经济开发区", "value": "411472" }, { "label": "永城市", "value": "411481" }], [{ "label": "浉河区", "value": "411502" }, { "label": "平桥区", "value": "411503" }, { "label": "罗山县", "value": "411521" }, { "label": "光山县", "value": "411522" }, { "label": "新县", "value": "411523" }, { "label": "商城县", "value": "411524" }, { "label": "固始县", "value": "411525" }, { "label": "潢川县", "value": "411526" }, { "label": "淮滨县", "value": "411527" }, { "label": "息县", "value": "411528" }, { "label": "信阳高新技术产业开发区", "value": "411571" }], [{ "label": "川汇区", "value": "411602" }, { "label": "扶沟县", "value": "411621" }, { "label": "西华县", "value": "411622" }, { "label": "商水县", "value": "411623" }, { "label": "沈丘县", "value": "411624" }, { "label": "郸城县", "value": "411625" }, { "label": "淮阳县", "value": "411626" }, { "label": "太康县", "value": "411627" }, { "label": "鹿邑县", "value": "411628" }, { "label": "河南周口经济开发区", "value": "411671" }, { "label": "项城市", "value": "411681" }], [{ "label": "驿城区", "value": "411702" }, { "label": "西平县", "value": "411721" }, { "label": "上蔡县", "value": "411722" }, { "label": "平舆县", "value": "411723" }, { "label": "正阳县", "value": "411724" }, { "label": "确山县", "value": "411725" }, { "label": "泌阳县", "value": "411726" }, { "label": "汝南县", "value": "411727" }, { "label": "遂平县", "value": "411728" }, { "label": "新蔡县", "value": "411729" }, { "label": "河南驻马店经济开发区", "value": "411771" }], [{ "label": "济源市", "value": "419001" }]], [[{ "label": "江岸区", "value": "420102" }, { "label": "江汉区", "value": "420103" }, { "label": "硚口区", "value": "420104" }, { "label": "汉阳区", "value": "420105" }, { "label": "武昌区", "value": "420106" }, { "label": "青山区", "value": "420107" }, { "label": "洪山区", "value": "420111" }, { "label": "东西湖区", "value": "420112" }, { "label": "汉南区", "value": "420113" }, { "label": "蔡甸区", "value": "420114" }, { "label": "江夏区", "value": "420115" }, { "label": "黄陂区", "value": "420116" }, { "label": "新洲区", "value": "420117" }], [{ "label": "黄石港区", "value": "420202" }, { "label": "西塞山区", "value": "420203" }, { "label": "下陆区", "value": "420204" }, { "label": "铁山区", "value": "420205" }, { "label": "阳新县", "value": "420222" }, { "label": "大冶市", "value": "420281" }], [{ "label": "茅箭区", "value": "420302" }, { "label": "张湾区", "value": "420303" }, { "label": "郧阳区", "value": "420304" }, { "label": "郧西县", "value": "420322" }, { "label": "竹山县", "value": "420323" }, { "label": "竹溪县", "value": "420324" }, { "label": "房县", "value": "420325" }, { "label": "丹江口市", "value": "420381" }], [{ "label": "西陵区", "value": "420502" }, { "label": "伍家岗区", "value": "420503" }, { "label": "点军区", "value": "420504" }, { "label": "猇亭区", "value": "420505" }, { "label": "夷陵区", "value": "420506" }, { "label": "远安县", "value": "420525" }, { "label": "兴山县", "value": "420526" }, { "label": "秭归县", "value": "420527" }, { "label": "长阳土家族自治县", "value": "420528" }, { "label": "五峰土家族自治县", "value": "420529" }, { "label": "宜都市", "value": "420581" }, { "label": "当阳市", "value": "420582" }, { "label": "枝江市", "value": "420583" }], [{ "label": "襄城区", "value": "420602" }, { "label": "樊城区", "value": "420606" }, { "label": "襄州区", "value": "420607" }, { "label": "南漳县", "value": "420624" }, { "label": "谷城县", "value": "420625" }, { "label": "保康县", "value": "420626" }, { "label": "老河口市", "value": "420682" }, { "label": "枣阳市", "value": "420683" }, { "label": "宜城市", "value": "420684" }], [{ "label": "梁子湖区", "value": "420702" }, { "label": "华容区", "value": "420703" }, { "label": "鄂城区", "value": "420704" }], [{ "label": "东宝区", "value": "420802" }, { "label": "掇刀区", "value": "420804" }, { "label": "京山县", "value": "420821" }, { "label": "沙洋县", "value": "420822" }, { "label": "钟祥市", "value": "420881" }], [{ "label": "孝南区", "value": "420902" }, { "label": "孝昌县", "value": "420921" }, { "label": "大悟县", "value": "420922" }, { "label": "云梦县", "value": "420923" }, { "label": "应城市", "value": "420981" }, { "label": "安陆市", "value": "420982" }, { "label": "汉川市", "value": "420984" }], [{ "label": "沙市区", "value": "421002" }, { "label": "荆州区", "value": "421003" }, { "label": "公安县", "value": "421022" }, { "label": "监利县", "value": "421023" }, { "label": "江陵县", "value": "421024" }, { "label": "荆州经济技术开发区", "value": "421071" }, { "label": "石首市", "value": "421081" }, { "label": "洪湖市", "value": "421083" }, { "label": "松滋市", "value": "421087" }], [{ "label": "黄州区", "value": "421102" }, { "label": "团风县", "value": "421121" }, { "label": "红安县", "value": "421122" }, { "label": "罗田县", "value": "421123" }, { "label": "英山县", "value": "421124" }, { "label": "浠水县", "value": "421125" }, { "label": "蕲春县", "value": "421126" }, { "label": "黄梅县", "value": "421127" }, { "label": "龙感湖管理区", "value": "421171" }, { "label": "麻城市", "value": "421181" }, { "label": "武穴市", "value": "421182" }], [{ "label": "咸安区", "value": "421202" }, { "label": "嘉鱼县", "value": "421221" }, { "label": "通城县", "value": "421222" }, { "label": "崇阳县", "value": "421223" }, { "label": "通山县", "value": "421224" }, { "label": "赤壁市", "value": "421281" }], [{ "label": "曾都区", "value": "421303" }, { "label": "随县", "value": "421321" }, { "label": "广水市", "value": "421381" }], [{ "label": "恩施市", "value": "422801" }, { "label": "利川市", "value": "422802" }, { "label": "建始县", "value": "422822" }, { "label": "巴东县", "value": "422823" }, { "label": "宣恩县", "value": "422825" }, { "label": "咸丰县", "value": "422826" }, { "label": "来凤县", "value": "422827" }, { "label": "鹤峰县", "value": "422828" }], [{ "label": "仙桃市", "value": "429004" }, { "label": "潜江市", "value": "429005" }, { "label": "天门市", "value": "429006" }, { "label": "神农架林区", "value": "429021" }]], [[{ "label": "芙蓉区", "value": "430102" }, { "label": "天心区", "value": "430103" }, { "label": "岳麓区", "value": "430104" }, { "label": "开福区", "value": "430105" }, { "label": "雨花区", "value": "430111" }, { "label": "望城区", "value": "430112" }, { "label": "长沙县", "value": "430121" }, { "label": "浏阳市", "value": "430181" }, { "label": "宁乡市", "value": "430182" }], [{ "label": "荷塘区", "value": "430202" }, { "label": "芦淞区", "value": "430203" }, { "label": "石峰区", "value": "430204" }, { "label": "天元区", "value": "430211" }, { "label": "株洲县", "value": "430221" }, { "label": "攸县", "value": "430223" }, { "label": "茶陵县", "value": "430224" }, { "label": "炎陵县", "value": "430225" }, { "label": "云龙示范区", "value": "430271" }, { "label": "醴陵市", "value": "430281" }], [{ "label": "雨湖区", "value": "430302" }, { "label": "岳塘区", "value": "430304" }, { "label": "湘潭县", "value": "430321" }, { "label": "湖南湘潭高新技术产业园区", "value": "430371" }, { "label": "湘潭昭山示范区", "value": "430372" }, { "label": "湘潭九华示范区", "value": "430373" }, { "label": "湘乡市", "value": "430381" }, { "label": "韶山市", "value": "430382" }], [{ "label": "珠晖区", "value": "430405" }, { "label": "雁峰区", "value": "430406" }, { "label": "石鼓区", "value": "430407" }, { "label": "蒸湘区", "value": "430408" }, { "label": "南岳区", "value": "430412" }, { "label": "衡阳县", "value": "430421" }, { "label": "衡南县", "value": "430422" }, { "label": "衡山县", "value": "430423" }, { "label": "衡东县", "value": "430424" }, { "label": "祁东县", "value": "430426" }, { "label": "衡阳综合保税区", "value": "430471" }, { "label": "湖南衡阳高新技术产业园区", "value": "430472" }, { "label": "湖南衡阳松木经济开发区", "value": "430473" }, { "label": "耒阳市", "value": "430481" }, { "label": "常宁市", "value": "430482" }], [{ "label": "双清区", "value": "430502" }, { "label": "大祥区", "value": "430503" }, { "label": "北塔区", "value": "430511" }, { "label": "邵东县", "value": "430521" }, { "label": "新邵县", "value": "430522" }, { "label": "邵阳县", "value": "430523" }, { "label": "隆回县", "value": "430524" }, { "label": "洞口县", "value": "430525" }, { "label": "绥宁县", "value": "430527" }, { "label": "新宁县", "value": "430528" }, { "label": "城步苗族自治县", "value": "430529" }, { "label": "武冈市", "value": "430581" }], [{ "label": "岳阳楼区", "value": "430602" }, { "label": "云溪区", "value": "430603" }, { "label": "君山区", "value": "430611" }, { "label": "岳阳县", "value": "430621" }, { "label": "华容县", "value": "430623" }, { "label": "湘阴县", "value": "430624" }, { "label": "平江县", "value": "430626" }, { "label": "岳阳市屈原管理区", "value": "430671" }, { "label": "汨罗市", "value": "430681" }, { "label": "临湘市", "value": "430682" }], [{ "label": "武陵区", "value": "430702" }, { "label": "鼎城区", "value": "430703" }, { "label": "安乡县", "value": "430721" }, { "label": "汉寿县", "value": "430722" }, { "label": "澧县", "value": "430723" }, { "label": "临澧县", "value": "430724" }, { "label": "桃源县", "value": "430725" }, { "label": "石门县", "value": "430726" }, { "label": "常德市西洞庭管理区", "value": "430771" }, { "label": "津市市", "value": "430781" }], [{ "label": "永定区", "value": "430802" }, { "label": "武陵源区", "value": "430811" }, { "label": "慈利县", "value": "430821" }, { "label": "桑植县", "value": "430822" }], [{ "label": "资阳区", "value": "430902" }, { "label": "赫山区", "value": "430903" }, { "label": "南县", "value": "430921" }, { "label": "桃江县", "value": "430922" }, { "label": "安化县", "value": "430923" }, { "label": "益阳市大通湖管理区", "value": "430971" }, { "label": "湖南益阳高新技术产业园区", "value": "430972" }, { "label": "沅江市", "value": "430981" }], [{ "label": "北湖区", "value": "431002" }, { "label": "苏仙区", "value": "431003" }, { "label": "桂阳县", "value": "431021" }, { "label": "宜章县", "value": "431022" }, { "label": "永兴县", "value": "431023" }, { "label": "嘉禾县", "value": "431024" }, { "label": "临武县", "value": "431025" }, { "label": "汝城县", "value": "431026" }, { "label": "桂东县", "value": "431027" }, { "label": "安仁县", "value": "431028" }, { "label": "资兴市", "value": "431081" }], [{ "label": "零陵区", "value": "431102" }, { "label": "冷水滩区", "value": "431103" }, { "label": "祁阳县", "value": "431121" }, { "label": "东安县", "value": "431122" }, { "label": "双牌县", "value": "431123" }, { "label": "道县", "value": "431124" }, { "label": "江永县", "value": "431125" }, { "label": "宁远县", "value": "431126" }, { "label": "蓝山县", "value": "431127" }, { "label": "新田县", "value": "431128" }, { "label": "江华瑶族自治县", "value": "431129" }, { "label": "永州经济技术开发区", "value": "431171" }, { "label": "永州市金洞管理区", "value": "431172" }, { "label": "永州市回龙圩管理区", "value": "431173" }], [{ "label": "鹤城区", "value": "431202" }, { "label": "中方县", "value": "431221" }, { "label": "沅陵县", "value": "431222" }, { "label": "辰溪县", "value": "431223" }, { "label": "溆浦县", "value": "431224" }, { "label": "会同县", "value": "431225" }, { "label": "麻阳苗族自治县", "value": "431226" }, { "label": "新晃侗族自治县", "value": "431227" }, { "label": "芷江侗族自治县", "value": "431228" }, { "label": "靖州苗族侗族自治县", "value": "431229" }, { "label": "通道侗族自治县", "value": "431230" }, { "label": "怀化市洪江管理区", "value": "431271" }, { "label": "洪江市", "value": "431281" }], [{ "label": "娄星区", "value": "431302" }, { "label": "双峰县", "value": "431321" }, { "label": "新化县", "value": "431322" }, { "label": "冷水江市", "value": "431381" }, { "label": "涟源市", "value": "431382" }], [{ "label": "吉首市", "value": "433101" }, { "label": "泸溪县", "value": "433122" }, { "label": "凤凰县", "value": "433123" }, { "label": "花垣县", "value": "433124" }, { "label": "保靖县", "value": "433125" }, { "label": "古丈县", "value": "433126" }, { "label": "永顺县", "value": "433127" }, { "label": "龙山县", "value": "433130" }, { "label": "湖南吉首经济开发区", "value": "433172" }, { "label": "湖南永顺经济开发区", "value": "433173" }]], [[{ "label": "荔湾区", "value": "440103" }, { "label": "越秀区", "value": "440104" }, { "label": "海珠区", "value": "440105" }, { "label": "天河区", "value": "440106" }, { "label": "白云区", "value": "440111" }, { "label": "黄埔区", "value": "440112" }, { "label": "番禺区", "value": "440113" }, { "label": "花都区", "value": "440114" }, { "label": "南沙区", "value": "440115" }, { "label": "从化区", "value": "440117" }, { "label": "增城区", "value": "440118" }], [{ "label": "武江区", "value": "440203" }, { "label": "浈江区", "value": "440204" }, { "label": "曲江区", "value": "440205" }, { "label": "始兴县", "value": "440222" }, { "label": "仁化县", "value": "440224" }, { "label": "翁源县", "value": "440229" }, { "label": "乳源瑶族自治县", "value": "440232" }, { "label": "新丰县", "value": "440233" }, { "label": "乐昌市", "value": "440281" }, { "label": "南雄市", "value": "440282" }], [{ "label": "罗湖区", "value": "440303" }, { "label": "福田区", "value": "440304" }, { "label": "南山区", "value": "440305" }, { "label": "宝安区", "value": "440306" }, { "label": "龙岗区", "value": "440307" }, { "label": "盐田区", "value": "440308" }, { "label": "龙华区", "value": "440309" }, { "label": "坪山区", "value": "440310" }], [{ "label": "香洲区", "value": "440402" }, { "label": "斗门区", "value": "440403" }, { "label": "金湾区", "value": "440404" }], [{ "label": "龙湖区", "value": "440507" }, { "label": "金平区", "value": "440511" }, { "label": "濠江区", "value": "440512" }, { "label": "潮阳区", "value": "440513" }, { "label": "潮南区", "value": "440514" }, { "label": "澄海区", "value": "440515" }, { "label": "南澳县", "value": "440523" }], [{ "label": "禅城区", "value": "440604" }, { "label": "南海区", "value": "440605" }, { "label": "顺德区", "value": "440606" }, { "label": "三水区", "value": "440607" }, { "label": "高明区", "value": "440608" }], [{ "label": "蓬江区", "value": "440703" }, { "label": "江海区", "value": "440704" }, { "label": "新会区", "value": "440705" }, { "label": "台山市", "value": "440781" }, { "label": "开平市", "value": "440783" }, { "label": "鹤山市", "value": "440784" }, { "label": "恩平市", "value": "440785" }], [{ "label": "赤坎区", "value": "440802" }, { "label": "霞山区", "value": "440803" }, { "label": "坡头区", "value": "440804" }, { "label": "麻章区", "value": "440811" }, { "label": "遂溪县", "value": "440823" }, { "label": "徐闻县", "value": "440825" }, { "label": "廉江市", "value": "440881" }, { "label": "雷州市", "value": "440882" }, { "label": "吴川市", "value": "440883" }], [{ "label": "茂南区", "value": "440902" }, { "label": "电白区", "value": "440904" }, { "label": "高州市", "value": "440981" }, { "label": "化州市", "value": "440982" }, { "label": "信宜市", "value": "440983" }], [{ "label": "端州区", "value": "441202" }, { "label": "鼎湖区", "value": "441203" }, { "label": "高要区", "value": "441204" }, { "label": "广宁县", "value": "441223" }, { "label": "怀集县", "value": "441224" }, { "label": "封开县", "value": "441225" }, { "label": "德庆县", "value": "441226" }, { "label": "四会市", "value": "441284" }], [{ "label": "惠城区", "value": "441302" }, { "label": "惠阳区", "value": "441303" }, { "label": "博罗县", "value": "441322" }, { "label": "惠东县", "value": "441323" }, { "label": "龙门县", "value": "441324" }], [{ "label": "梅江区", "value": "441402" }, { "label": "梅县区", "value": "441403" }, { "label": "大埔县", "value": "441422" }, { "label": "丰顺县", "value": "441423" }, { "label": "五华县", "value": "441424" }, { "label": "平远县", "value": "441426" }, { "label": "蕉岭县", "value": "441427" }, { "label": "兴宁市", "value": "441481" }], [{ "label": "城区", "value": "441502" }, { "label": "海丰县", "value": "441521" }, { "label": "陆河县", "value": "441523" }, { "label": "陆丰市", "value": "441581" }], [{ "label": "源城区", "value": "441602" }, { "label": "紫金县", "value": "441621" }, { "label": "龙川县", "value": "441622" }, { "label": "连平县", "value": "441623" }, { "label": "和平县", "value": "441624" }, { "label": "东源县", "value": "441625" }], [{ "label": "江城区", "value": "441702" }, { "label": "阳东区", "value": "441704" }, { "label": "阳西县", "value": "441721" }, { "label": "阳春市", "value": "441781" }], [{ "label": "清城区", "value": "441802" }, { "label": "清新区", "value": "441803" }, { "label": "佛冈县", "value": "441821" }, { "label": "阳山县", "value": "441823" }, { "label": "连山壮族瑶族自治县", "value": "441825" }, { "label": "连南瑶族自治县", "value": "441826" }, { "label": "英德市", "value": "441881" }, { "label": "连州市", "value": "441882" }], [{ "label": "东莞市", "value": "441900" }], [{ "label": "中山市", "value": "442000" }], [{ "label": "湘桥区", "value": "445102" }, { "label": "潮安区", "value": "445103" }, { "label": "饶平县", "value": "445122" }], [{ "label": "榕城区", "value": "445202" }, { "label": "揭东区", "value": "445203" }, { "label": "揭西县", "value": "445222" }, { "label": "惠来县", "value": "445224" }, { "label": "普宁市", "value": "445281" }], [{ "label": "云城区", "value": "445302" }, { "label": "云安区", "value": "445303" }, { "label": "新兴县", "value": "445321" }, { "label": "郁南县", "value": "445322" }, { "label": "罗定市", "value": "445381" }]], [[{ "label": "兴宁区", "value": "450102" }, { "label": "青秀区", "value": "450103" }, { "label": "江南区", "value": "450105" }, { "label": "西乡塘区", "value": "450107" }, { "label": "良庆区", "value": "450108" }, { "label": "邕宁区", "value": "450109" }, { "label": "武鸣区", "value": "450110" }, { "label": "隆安县", "value": "450123" }, { "label": "马山县", "value": "450124" }, { "label": "上林县", "value": "450125" }, { "label": "宾阳县", "value": "450126" }, { "label": "横县", "value": "450127" }], [{ "label": "城中区", "value": "450202" }, { "label": "鱼峰区", "value": "450203" }, { "label": "柳南区", "value": "450204" }, { "label": "柳北区", "value": "450205" }, { "label": "柳江区", "value": "450206" }, { "label": "柳城县", "value": "450222" }, { "label": "鹿寨县", "value": "450223" }, { "label": "融安县", "value": "450224" }, { "label": "融水苗族自治县", "value": "450225" }, { "label": "三江侗族自治县", "value": "450226" }], [{ "label": "秀峰区", "value": "450302" }, { "label": "叠彩区", "value": "450303" }, { "label": "象山区", "value": "450304" }, { "label": "七星区", "value": "450305" }, { "label": "雁山区", "value": "450311" }, { "label": "临桂区", "value": "450312" }, { "label": "阳朔县", "value": "450321" }, { "label": "灵川县", "value": "450323" }, { "label": "全州县", "value": "450324" }, { "label": "兴安县", "value": "450325" }, { "label": "永福县", "value": "450326" }, { "label": "灌阳县", "value": "450327" }, { "label": "龙胜各族自治县", "value": "450328" }, { "label": "资源县", "value": "450329" }, { "label": "平乐县", "value": "450330" }, { "label": "荔浦县", "value": "450331" }, { "label": "恭城瑶族自治县", "value": "450332" }], [{ "label": "万秀区", "value": "450403" }, { "label": "长洲区", "value": "450405" }, { "label": "龙圩区", "value": "450406" }, { "label": "苍梧县", "value": "450421" }, { "label": "藤县", "value": "450422" }, { "label": "蒙山县", "value": "450423" }, { "label": "岑溪市", "value": "450481" }], [{ "label": "海城区", "value": "450502" }, { "label": "银海区", "value": "450503" }, { "label": "铁山港区", "value": "450512" }, { "label": "合浦县", "value": "450521" }], [{ "label": "港口区", "value": "450602" }, { "label": "防城区", "value": "450603" }, { "label": "上思县", "value": "450621" }, { "label": "东兴市", "value": "450681" }], [{ "label": "钦南区", "value": "450702" }, { "label": "钦北区", "value": "450703" }, { "label": "灵山县", "value": "450721" }, { "label": "浦北县", "value": "450722" }], [{ "label": "港北区", "value": "450802" }, { "label": "港南区", "value": "450803" }, { "label": "覃塘区", "value": "450804" }, { "label": "平南县", "value": "450821" }, { "label": "桂平市", "value": "450881" }], [{ "label": "玉州区", "value": "450902" }, { "label": "福绵区", "value": "450903" }, { "label": "容县", "value": "450921" }, { "label": "陆川县", "value": "450922" }, { "label": "博白县", "value": "450923" }, { "label": "兴业县", "value": "450924" }, { "label": "北流市", "value": "450981" }], [{ "label": "右江区", "value": "451002" }, { "label": "田阳县", "value": "451021" }, { "label": "田东县", "value": "451022" }, { "label": "平果县", "value": "451023" }, { "label": "德保县", "value": "451024" }, { "label": "那坡县", "value": "451026" }, { "label": "凌云县", "value": "451027" }, { "label": "乐业县", "value": "451028" }, { "label": "田林县", "value": "451029" }, { "label": "西林县", "value": "451030" }, { "label": "隆林各族自治县", "value": "451031" }, { "label": "靖西市", "value": "451081" }], [{ "label": "八步区", "value": "451102" }, { "label": "平桂区", "value": "451103" }, { "label": "昭平县", "value": "451121" }, { "label": "钟山县", "value": "451122" }, { "label": "富川瑶族自治县", "value": "451123" }], [{ "label": "金城江区", "value": "451202" }, { "label": "宜州区", "value": "451203" }, { "label": "南丹县", "value": "451221" }, { "label": "天峨县", "value": "451222" }, { "label": "凤山县", "value": "451223" }, { "label": "东兰县", "value": "451224" }, { "label": "罗城仫佬族自治县", "value": "451225" }, { "label": "环江毛南族自治县", "value": "451226" }, { "label": "巴马瑶族自治县", "value": "451227" }, { "label": "都安瑶族自治县", "value": "451228" }, { "label": "大化瑶族自治县", "value": "451229" }], [{ "label": "兴宾区", "value": "451302" }, { "label": "忻城县", "value": "451321" }, { "label": "象州县", "value": "451322" }, { "label": "武宣县", "value": "451323" }, { "label": "金秀瑶族自治县", "value": "451324" }, { "label": "合山市", "value": "451381" }], [{ "label": "江州区", "value": "451402" }, { "label": "扶绥县", "value": "451421" }, { "label": "宁明县", "value": "451422" }, { "label": "龙州县", "value": "451423" }, { "label": "大新县", "value": "451424" }, { "label": "天等县", "value": "451425" }, { "label": "凭祥市", "value": "451481" }]], [[{ "label": "秀英区", "value": "460105" }, { "label": "龙华区", "value": "460106" }, { "label": "琼山区", "value": "460107" }, { "label": "美兰区", "value": "460108" }], [{ "label": "海棠区", "value": "460202" }, { "label": "吉阳区", "value": "460203" }, { "label": "天涯区", "value": "460204" }, { "label": "崖州区", "value": "460205" }], [{ "label": "西沙群岛", "value": "460321" }, { "label": "南沙群岛", "value": "460322" }, { "label": "中沙群岛的岛礁及其海域", "value": "460323" }], [{ "label": "儋州市", "value": "460400" }], [{ "label": "五指山市", "value": "469001" }, { "label": "琼海市", "value": "469002" }, { "label": "文昌市", "value": "469005" }, { "label": "万宁市", "value": "469006" }, { "label": "东方市", "value": "469007" }, { "label": "定安县", "value": "469021" }, { "label": "屯昌县", "value": "469022" }, { "label": "澄迈县", "value": "469023" }, { "label": "临高县", "value": "469024" }, { "label": "白沙黎族自治县", "value": "469025" }, { "label": "昌江黎族自治县", "value": "469026" }, { "label": "乐东黎族自治县", "value": "469027" }, { "label": "陵水黎族自治县", "value": "469028" }, { "label": "保亭黎族苗族自治县", "value": "469029" }, { "label": "琼中黎族苗族自治县", "value": "469030" }]], [[{ "label": "万州区", "value": "500101" }, { "label": "涪陵区", "value": "500102" }, { "label": "渝中区", "value": "500103" }, { "label": "大渡口区", "value": "500104" }, { "label": "江北区", "value": "500105" }, { "label": "沙坪坝区", "value": "500106" }, { "label": "九龙坡区", "value": "500107" }, { "label": "南岸区", "value": "500108" }, { "label": "北碚区", "value": "500109" }, { "label": "綦江区", "value": "500110" }, { "label": "大足区", "value": "500111" }, { "label": "渝北区", "value": "500112" }, { "label": "巴南区", "value": "500113" }, { "label": "黔江区", "value": "500114" }, { "label": "长寿区", "value": "500115" }, { "label": "江津区", "value": "500116" }, { "label": "合川区", "value": "500117" }, { "label": "永川区", "value": "500118" }, { "label": "南川区", "value": "500119" }, { "label": "璧山区", "value": "500120" }, { "label": "铜梁区", "value": "500151" }, { "label": "潼南区", "value": "500152" }, { "label": "荣昌区", "value": "500153" }, { "label": "开州区", "value": "500154" }, { "label": "梁平区", "value": "500155" }, { "label": "武隆区", "value": "500156" }], [{ "label": "城口县", "value": "500229" }, { "label": "丰都县", "value": "500230" }, { "label": "垫江县", "value": "500231" }, { "label": "忠县", "value": "500233" }, { "label": "云阳县", "value": "500235" }, { "label": "奉节县", "value": "500236" }, { "label": "巫山县", "value": "500237" }, { "label": "巫溪县", "value": "500238" }, { "label": "石柱土家族自治县", "value": "500240" }, { "label": "秀山土家族苗族自治县", "value": "500241" }, { "label": "酉阳土家族苗族自治县", "value": "500242" }, { "label": "彭水苗族土家族自治县", "value": "500243" }]], [[{ "label": "锦江区", "value": "510104" }, { "label": "青羊区", "value": "510105" }, { "label": "金牛区", "value": "510106" }, { "label": "武侯区", "value": "510107" }, { "label": "成华区", "value": "510108" }, { "label": "龙泉驿区", "value": "510112" }, { "label": "青白江区", "value": "510113" }, { "label": "新都区", "value": "510114" }, { "label": "温江区", "value": "510115" }, { "label": "双流区", "value": "510116" }, { "label": "郫都区", "value": "510117" }, { "label": "金堂县", "value": "510121" }, { "label": "大邑县", "value": "510129" }, { "label": "蒲江县", "value": "510131" }, { "label": "新津县", "value": "510132" }, { "label": "都江堰市", "value": "510181" }, { "label": "彭州市", "value": "510182" }, { "label": "邛崃市", "value": "510183" }, { "label": "崇州市", "value": "510184" }, { "label": "简阳市", "value": "510185" }], [{ "label": "自流井区", "value": "510302" }, { "label": "贡井区", "value": "510303" }, { "label": "大安区", "value": "510304" }, { "label": "沿滩区", "value": "510311" }, { "label": "荣县", "value": "510321" }, { "label": "富顺县", "value": "510322" }], [{ "label": "东区", "value": "510402" }, { "label": "西区", "value": "510403" }, { "label": "仁和区", "value": "510411" }, { "label": "米易县", "value": "510421" }, { "label": "盐边县", "value": "510422" }], [{ "label": "江阳区", "value": "510502" }, { "label": "纳溪区", "value": "510503" }, { "label": "龙马潭区", "value": "510504" }, { "label": "泸县", "value": "510521" }, { "label": "合江县", "value": "510522" }, { "label": "叙永县", "value": "510524" }, { "label": "古蔺县", "value": "510525" }], [{ "label": "旌阳区", "value": "510603" }, { "label": "罗江区", "value": "510604" }, { "label": "中江县", "value": "510623" }, { "label": "广汉市", "value": "510681" }, { "label": "什邡市", "value": "510682" }, { "label": "绵竹市", "value": "510683" }], [{ "label": "涪城区", "value": "510703" }, { "label": "游仙区", "value": "510704" }, { "label": "安州区", "value": "510705" }, { "label": "三台县", "value": "510722" }, { "label": "盐亭县", "value": "510723" }, { "label": "梓潼县", "value": "510725" }, { "label": "北川羌族自治县", "value": "510726" }, { "label": "平武县", "value": "510727" }, { "label": "江油市", "value": "510781" }], [{ "label": "利州区", "value": "510802" }, { "label": "昭化区", "value": "510811" }, { "label": "朝天区", "value": "510812" }, { "label": "旺苍县", "value": "510821" }, { "label": "青川县", "value": "510822" }, { "label": "剑阁县", "value": "510823" }, { "label": "苍溪县", "value": "510824" }], [{ "label": "船山区", "value": "510903" }, { "label": "安居区", "value": "510904" }, { "label": "蓬溪县", "value": "510921" }, { "label": "射洪县", "value": "510922" }, { "label": "大英县", "value": "510923" }], [{ "label": "市中区", "value": "511002" }, { "label": "东兴区", "value": "511011" }, { "label": "威远县", "value": "511024" }, { "label": "资中县", "value": "511025" }, { "label": "内江经济开发区", "value": "511071" }, { "label": "隆昌市", "value": "511083" }], [{ "label": "市中区", "value": "511102" }, { "label": "沙湾区", "value": "511111" }, { "label": "五通桥区", "value": "511112" }, { "label": "金口河区", "value": "511113" }, { "label": "犍为县", "value": "511123" }, { "label": "井研县", "value": "511124" }, { "label": "夹江县", "value": "511126" }, { "label": "沐川县", "value": "511129" }, { "label": "峨边彝族自治县", "value": "511132" }, { "label": "马边彝族自治县", "value": "511133" }, { "label": "峨眉山市", "value": "511181" }], [{ "label": "顺庆区", "value": "511302" }, { "label": "高坪区", "value": "511303" }, { "label": "嘉陵区", "value": "511304" }, { "label": "南部县", "value": "511321" }, { "label": "营山县", "value": "511322" }, { "label": "蓬安县", "value": "511323" }, { "label": "仪陇县", "value": "511324" }, { "label": "西充县", "value": "511325" }, { "label": "阆中市", "value": "511381" }], [{ "label": "东坡区", "value": "511402" }, { "label": "彭山区", "value": "511403" }, { "label": "仁寿县", "value": "511421" }, { "label": "洪雅县", "value": "511423" }, { "label": "丹棱县", "value": "511424" }, { "label": "青神县", "value": "511425" }], [{ "label": "翠屏区", "value": "511502" }, { "label": "南溪区", "value": "511503" }, { "label": "宜宾县", "value": "511521" }, { "label": "江安县", "value": "511523" }, { "label": "长宁县", "value": "511524" }, { "label": "高县", "value": "511525" }, { "label": "珙县", "value": "511526" }, { "label": "筠连县", "value": "511527" }, { "label": "兴文县", "value": "511528" }, { "label": "屏山县", "value": "511529" }], [{ "label": "广安区", "value": "511602" }, { "label": "前锋区", "value": "511603" }, { "label": "岳池县", "value": "511621" }, { "label": "武胜县", "value": "511622" }, { "label": "邻水县", "value": "511623" }, { "label": "华蓥市", "value": "511681" }], [{ "label": "通川区", "value": "511702" }, { "label": "达川区", "value": "511703" }, { "label": "宣汉县", "value": "511722" }, { "label": "开江县", "value": "511723" }, { "label": "大竹县", "value": "511724" }, { "label": "渠县", "value": "511725" }, { "label": "达州经济开发区", "value": "511771" }, { "label": "万源市", "value": "511781" }], [{ "label": "雨城区", "value": "511802" }, { "label": "名山区", "value": "511803" }, { "label": "荥经县", "value": "511822" }, { "label": "汉源县", "value": "511823" }, { "label": "石棉县", "value": "511824" }, { "label": "天全县", "value": "511825" }, { "label": "芦山县", "value": "511826" }, { "label": "宝兴县", "value": "511827" }], [{ "label": "巴州区", "value": "511902" }, { "label": "恩阳区", "value": "511903" }, { "label": "通江县", "value": "511921" }, { "label": "南江县", "value": "511922" }, { "label": "平昌县", "value": "511923" }, { "label": "巴中经济开发区", "value": "511971" }], [{ "label": "雁江区", "value": "512002" }, { "label": "安岳县", "value": "512021" }, { "label": "乐至县", "value": "512022" }], [{ "label": "马尔康市", "value": "513201" }, { "label": "汶川县", "value": "513221" }, { "label": "理县", "value": "513222" }, { "label": "茂县", "value": "513223" }, { "label": "松潘县", "value": "513224" }, { "label": "九寨沟县", "value": "513225" }, { "label": "金川县", "value": "513226" }, { "label": "小金县", "value": "513227" }, { "label": "黑水县", "value": "513228" }, { "label": "壤塘县", "value": "513230" }, { "label": "阿坝县", "value": "513231" }, { "label": "若尔盖县", "value": "513232" }, { "label": "红原县", "value": "513233" }], [{ "label": "康定市", "value": "513301" }, { "label": "泸定县", "value": "513322" }, { "label": "丹巴县", "value": "513323" }, { "label": "九龙县", "value": "513324" }, { "label": "雅江县", "value": "513325" }, { "label": "道孚县", "value": "513326" }, { "label": "炉霍县", "value": "513327" }, { "label": "甘孜县", "value": "513328" }, { "label": "新龙县", "value": "513329" }, { "label": "德格县", "value": "513330" }, { "label": "白玉县", "value": "513331" }, { "label": "石渠县", "value": "513332" }, { "label": "色达县", "value": "513333" }, { "label": "理塘县", "value": "513334" }, { "label": "巴塘县", "value": "513335" }, { "label": "乡城县", "value": "513336" }, { "label": "稻城县", "value": "513337" }, { "label": "得荣县", "value": "513338" }], [{ "label": "西昌市", "value": "513401" }, { "label": "木里藏族自治县", "value": "513422" }, { "label": "盐源县", "value": "513423" }, { "label": "德昌县", "value": "513424" }, { "label": "会理县", "value": "513425" }, { "label": "会东县", "value": "513426" }, { "label": "宁南县", "value": "513427" }, { "label": "普格县", "value": "513428" }, { "label": "布拖县", "value": "513429" }, { "label": "金阳县", "value": "513430" }, { "label": "昭觉县", "value": "513431" }, { "label": "喜德县", "value": "513432" }, { "label": "冕宁县", "value": "513433" }, { "label": "越西县", "value": "513434" }, { "label": "甘洛县", "value": "513435" }, { "label": "美姑县", "value": "513436" }, { "label": "雷波县", "value": "513437" }]], [[{ "label": "南明区", "value": "520102" }, { "label": "云岩区", "value": "520103" }, { "label": "花溪区", "value": "520111" }, { "label": "乌当区", "value": "520112" }, { "label": "白云区", "value": "520113" }, { "label": "观山湖区", "value": "520115" }, { "label": "开阳县", "value": "520121" }, { "label": "息烽县", "value": "520122" }, { "label": "修文县", "value": "520123" }, { "label": "清镇市", "value": "520181" }], [{ "label": "钟山区", "value": "520201" }, { "label": "六枝特区", "value": "520203" }, { "label": "水城县", "value": "520221" }, { "label": "盘州市", "value": "520281" }], [{ "label": "红花岗区", "value": "520302" }, { "label": "汇川区", "value": "520303" }, { "label": "播州区", "value": "520304" }, { "label": "桐梓县", "value": "520322" }, { "label": "绥阳县", "value": "520323" }, { "label": "正安县", "value": "520324" }, { "label": "道真仡佬族苗族自治县", "value": "520325" }, { "label": "务川仡佬族苗族自治县", "value": "520326" }, { "label": "凤冈县", "value": "520327" }, { "label": "湄潭县", "value": "520328" }, { "label": "余庆县", "value": "520329" }, { "label": "习水县", "value": "520330" }, { "label": "赤水市", "value": "520381" }, { "label": "仁怀市", "value": "520382" }], [{ "label": "西秀区", "value": "520402" }, { "label": "平坝区", "value": "520403" }, { "label": "普定县", "value": "520422" }, { "label": "镇宁布依族苗族自治县", "value": "520423" }, { "label": "关岭布依族苗族自治县", "value": "520424" }, { "label": "紫云苗族布依族自治县", "value": "520425" }], [{ "label": "七星关区", "value": "520502" }, { "label": "大方县", "value": "520521" }, { "label": "黔西县", "value": "520522" }, { "label": "金沙县", "value": "520523" }, { "label": "织金县", "value": "520524" }, { "label": "纳雍县", "value": "520525" }, { "label": "威宁彝族回族苗族自治县", "value": "520526" }, { "label": "赫章县", "value": "520527" }], [{ "label": "碧江区", "value": "520602" }, { "label": "万山区", "value": "520603" }, { "label": "江口县", "value": "520621" }, { "label": "玉屏侗族自治县", "value": "520622" }, { "label": "石阡县", "value": "520623" }, { "label": "思南县", "value": "520624" }, { "label": "印江土家族苗族自治县", "value": "520625" }, { "label": "德江县", "value": "520626" }, { "label": "沿河土家族自治县", "value": "520627" }, { "label": "松桃苗族自治县", "value": "520628" }], [{ "label": "兴义市", "value": "522301" }, { "label": "兴仁县", "value": "522322" }, { "label": "普安县", "value": "522323" }, { "label": "晴隆县", "value": "522324" }, { "label": "贞丰县", "value": "522325" }, { "label": "望谟县", "value": "522326" }, { "label": "册亨县", "value": "522327" }, { "label": "安龙县", "value": "522328" }], [{ "label": "凯里市", "value": "522601" }, { "label": "黄平县", "value": "522622" }, { "label": "施秉县", "value": "522623" }, { "label": "三穗县", "value": "522624" }, { "label": "镇远县", "value": "522625" }, { "label": "岑巩县", "value": "522626" }, { "label": "天柱县", "value": "522627" }, { "label": "锦屏县", "value": "522628" }, { "label": "剑河县", "value": "522629" }, { "label": "台江县", "value": "522630" }, { "label": "黎平县", "value": "522631" }, { "label": "榕江县", "value": "522632" }, { "label": "从江县", "value": "522633" }, { "label": "雷山县", "value": "522634" }, { "label": "麻江县", "value": "522635" }, { "label": "丹寨县", "value": "522636" }], [{ "label": "都匀市", "value": "522701" }, { "label": "福泉市", "value": "522702" }, { "label": "荔波县", "value": "522722" }, { "label": "贵定县", "value": "522723" }, { "label": "瓮安县", "value": "522725" }, { "label": "独山县", "value": "522726" }, { "label": "平塘县", "value": "522727" }, { "label": "罗甸县", "value": "522728" }, { "label": "长顺县", "value": "522729" }, { "label": "龙里县", "value": "522730" }, { "label": "惠水县", "value": "522731" }, { "label": "三都水族自治县", "value": "522732" }]], [[{ "label": "五华区", "value": "530102" }, { "label": "盘龙区", "value": "530103" }, { "label": "官渡区", "value": "530111" }, { "label": "西山区", "value": "530112" }, { "label": "东川区", "value": "530113" }, { "label": "呈贡区", "value": "530114" }, { "label": "晋宁区", "value": "530115" }, { "label": "富民县", "value": "530124" }, { "label": "宜良县", "value": "530125" }, { "label": "石林彝族自治县", "value": "530126" }, { "label": "嵩明县", "value": "530127" }, { "label": "禄劝彝族苗族自治县", "value": "530128" }, { "label": "寻甸回族彝族自治县", "value": "530129" }, { "label": "安宁市", "value": "530181" }], [{ "label": "麒麟区", "value": "530302" }, { "label": "沾益区", "value": "530303" }, { "label": "马龙县", "value": "530321" }, { "label": "陆良县", "value": "530322" }, { "label": "师宗县", "value": "530323" }, { "label": "罗平县", "value": "530324" }, { "label": "富源县", "value": "530325" }, { "label": "会泽县", "value": "530326" }, { "label": "宣威市", "value": "530381" }], [{ "label": "红塔区", "value": "530402" }, { "label": "江川区", "value": "530403" }, { "label": "澄江县", "value": "530422" }, { "label": "通海县", "value": "530423" }, { "label": "华宁县", "value": "530424" }, { "label": "易门县", "value": "530425" }, { "label": "峨山彝族自治县", "value": "530426" }, { "label": "新平彝族傣族自治县", "value": "530427" }, { "label": "元江哈尼族彝族傣族自治县", "value": "530428" }], [{ "label": "隆阳区", "value": "530502" }, { "label": "施甸县", "value": "530521" }, { "label": "龙陵县", "value": "530523" }, { "label": "昌宁县", "value": "530524" }, { "label": "腾冲市", "value": "530581" }], [{ "label": "昭阳区", "value": "530602" }, { "label": "鲁甸县", "value": "530621" }, { "label": "巧家县", "value": "530622" }, { "label": "盐津县", "value": "530623" }, { "label": "大关县", "value": "530624" }, { "label": "永善县", "value": "530625" }, { "label": "绥江县", "value": "530626" }, { "label": "镇雄县", "value": "530627" }, { "label": "彝良县", "value": "530628" }, { "label": "威信县", "value": "530629" }, { "label": "水富县", "value": "530630" }], [{ "label": "古城区", "value": "530702" }, { "label": "玉龙纳西族自治县", "value": "530721" }, { "label": "永胜县", "value": "530722" }, { "label": "华坪县", "value": "530723" }, { "label": "宁蒗彝族自治县", "value": "530724" }], [{ "label": "思茅区", "value": "530802" }, { "label": "宁洱哈尼族彝族自治县", "value": "530821" }, { "label": "墨江哈尼族自治县", "value": "530822" }, { "label": "景东彝族自治县", "value": "530823" }, { "label": "景谷傣族彝族自治县", "value": "530824" }, { "label": "镇沅彝族哈尼族拉祜族自治县", "value": "530825" }, { "label": "江城哈尼族彝族自治县", "value": "530826" }, { "label": "孟连傣族拉祜族佤族自治县", "value": "530827" }, { "label": "澜沧拉祜族自治县", "value": "530828" }, { "label": "西盟佤族自治县", "value": "530829" }], [{ "label": "临翔区", "value": "530902" }, { "label": "凤庆县", "value": "530921" }, { "label": "云县", "value": "530922" }, { "label": "永德县", "value": "530923" }, { "label": "镇康县", "value": "530924" }, { "label": "双江拉祜族佤族布朗族傣族自治县", "value": "530925" }, { "label": "耿马傣族佤族自治县", "value": "530926" }, { "label": "沧源佤族自治县", "value": "530927" }], [{ "label": "楚雄市", "value": "532301" }, { "label": "双柏县", "value": "532322" }, { "label": "牟定县", "value": "532323" }, { "label": "南华县", "value": "532324" }, { "label": "姚安县", "value": "532325" }, { "label": "大姚县", "value": "532326" }, { "label": "永仁县", "value": "532327" }, { "label": "元谋县", "value": "532328" }, { "label": "武定县", "value": "532329" }, { "label": "禄丰县", "value": "532331" }], [{ "label": "个旧市", "value": "532501" }, { "label": "开远市", "value": "532502" }, { "label": "蒙自市", "value": "532503" }, { "label": "弥勒市", "value": "532504" }, { "label": "屏边苗族自治县", "value": "532523" }, { "label": "建水县", "value": "532524" }, { "label": "石屏县", "value": "532525" }, { "label": "泸西县", "value": "532527" }, { "label": "元阳县", "value": "532528" }, { "label": "红河县", "value": "532529" }, { "label": "金平苗族瑶族傣族自治县", "value": "532530" }, { "label": "绿春县", "value": "532531" }, { "label": "河口瑶族自治县", "value": "532532" }], [{ "label": "文山市", "value": "532601" }, { "label": "砚山县", "value": "532622" }, { "label": "西畴县", "value": "532623" }, { "label": "麻栗坡县", "value": "532624" }, { "label": "马关县", "value": "532625" }, { "label": "丘北县", "value": "532626" }, { "label": "广南县", "value": "532627" }, { "label": "富宁县", "value": "532628" }], [{ "label": "景洪市", "value": "532801" }, { "label": "勐海县", "value": "532822" }, { "label": "勐腊县", "value": "532823" }], [{ "label": "大理市", "value": "532901" }, { "label": "漾濞彝族自治县", "value": "532922" }, { "label": "祥云县", "value": "532923" }, { "label": "宾川县", "value": "532924" }, { "label": "弥渡县", "value": "532925" }, { "label": "南涧彝族自治县", "value": "532926" }, { "label": "巍山彝族回族自治县", "value": "532927" }, { "label": "永平县", "value": "532928" }, { "label": "云龙县", "value": "532929" }, { "label": "洱源县", "value": "532930" }, { "label": "剑川县", "value": "532931" }, { "label": "鹤庆县", "value": "532932" }], [{ "label": "瑞丽市", "value": "533102" }, { "label": "芒市", "value": "533103" }, { "label": "梁河县", "value": "533122" }, { "label": "盈江县", "value": "533123" }, { "label": "陇川县", "value": "533124" }], [{ "label": "泸水市", "value": "533301" }, { "label": "福贡县", "value": "533323" }, { "label": "贡山独龙族怒族自治县", "value": "533324" }, { "label": "兰坪白族普米族自治县", "value": "533325" }], [{ "label": "香格里拉市", "value": "533401" }, { "label": "德钦县", "value": "533422" }, { "label": "维西傈僳族自治县", "value": "533423" }]], [[{ "label": "城关区", "value": "540102" }, { "label": "堆龙德庆区", "value": "540103" }, { "label": "林周县", "value": "540121" }, { "label": "当雄县", "value": "540122" }, { "label": "尼木县", "value": "540123" }, { "label": "曲水县", "value": "540124" }, { "label": "达孜县", "value": "540126" }, { "label": "墨竹工卡县", "value": "540127" }, { "label": "格尔木藏青工业园区", "value": "540171" }, { "label": "拉萨经济技术开发区", "value": "540172" }, { "label": "西藏文化旅游创意园区", "value": "540173" }, { "label": "达孜工业园区", "value": "540174" }], [{ "label": "桑珠孜区", "value": "540202" }, { "label": "南木林县", "value": "540221" }, { "label": "江孜县", "value": "540222" }, { "label": "定日县", "value": "540223" }, { "label": "萨迦县", "value": "540224" }, { "label": "拉孜县", "value": "540225" }, { "label": "昂仁县", "value": "540226" }, { "label": "谢通门县", "value": "540227" }, { "label": "白朗县", "value": "540228" }, { "label": "仁布县", "value": "540229" }, { "label": "康马县", "value": "540230" }, { "label": "定结县", "value": "540231" }, { "label": "仲巴县", "value": "540232" }, { "label": "亚东县", "value": "540233" }, { "label": "吉隆县", "value": "540234" }, { "label": "聂拉木县", "value": "540235" }, { "label": "萨嘎县", "value": "540236" }, { "label": "岗巴县", "value": "540237" }], [{ "label": "卡若区", "value": "540302" }, { "label": "江达县", "value": "540321" }, { "label": "贡觉县", "value": "540322" }, { "label": "类乌齐县", "value": "540323" }, { "label": "丁青县", "value": "540324" }, { "label": "察雅县", "value": "540325" }, { "label": "八宿县", "value": "540326" }, { "label": "左贡县", "value": "540327" }, { "label": "芒康县", "value": "540328" }, { "label": "洛隆县", "value": "540329" }, { "label": "边坝县", "value": "540330" }], [{ "label": "巴宜区", "value": "540402" }, { "label": "工布江达县", "value": "540421" }, { "label": "米林县", "value": "540422" }, { "label": "墨脱县", "value": "540423" }, { "label": "波密县", "value": "540424" }, { "label": "察隅县", "value": "540425" }, { "label": "朗县", "value": "540426" }], [{ "label": "乃东区", "value": "540502" }, { "label": "扎囊县", "value": "540521" }, { "label": "贡嘎县", "value": "540522" }, { "label": "桑日县", "value": "540523" }, { "label": "琼结县", "value": "540524" }, { "label": "曲松县", "value": "540525" }, { "label": "措美县", "value": "540526" }, { "label": "洛扎县", "value": "540527" }, { "label": "加查县", "value": "540528" }, { "label": "隆子县", "value": "540529" }, { "label": "错那县", "value": "540530" }, { "label": "浪卡子县", "value": "540531" }], [{ "label": "那曲县", "value": "542421" }, { "label": "嘉黎县", "value": "542422" }, { "label": "比如县", "value": "542423" }, { "label": "聂荣县", "value": "542424" }, { "label": "安多县", "value": "542425" }, { "label": "申扎县", "value": "542426" }, { "label": "索县", "value": "542427" }, { "label": "班戈县", "value": "542428" }, { "label": "巴青县", "value": "542429" }, { "label": "尼玛县", "value": "542430" }, { "label": "双湖县", "value": "542431" }], [{ "label": "普兰县", "value": "542521" }, { "label": "札达县", "value": "542522" }, { "label": "噶尔县", "value": "542523" }, { "label": "日土县", "value": "542524" }, { "label": "革吉县", "value": "542525" }, { "label": "改则县", "value": "542526" }, { "label": "措勤县", "value": "542527" }]], [[{ "label": "新城区", "value": "610102" }, { "label": "碑林区", "value": "610103" }, { "label": "莲湖区", "value": "610104" }, { "label": "灞桥区", "value": "610111" }, { "label": "未央区", "value": "610112" }, { "label": "雁塔区", "value": "610113" }, { "label": "阎良区", "value": "610114" }, { "label": "临潼区", "value": "610115" }, { "label": "长安区", "value": "610116" }, { "label": "高陵区", "value": "610117" }, { "label": "鄠邑区", "value": "610118" }, { "label": "蓝田县", "value": "610122" }, { "label": "周至县", "value": "610124" }], [{ "label": "王益区", "value": "610202" }, { "label": "印台区", "value": "610203" }, { "label": "耀州区", "value": "610204" }, { "label": "宜君县", "value": "610222" }], [{ "label": "渭滨区", "value": "610302" }, { "label": "金台区", "value": "610303" }, { "label": "陈仓区", "value": "610304" }, { "label": "凤翔县", "value": "610322" }, { "label": "岐山县", "value": "610323" }, { "label": "扶风县", "value": "610324" }, { "label": "眉县", "value": "610326" }, { "label": "陇县", "value": "610327" }, { "label": "千阳县", "value": "610328" }, { "label": "麟游县", "value": "610329" }, { "label": "凤县", "value": "610330" }, { "label": "太白县", "value": "610331" }], [{ "label": "秦都区", "value": "610402" }, { "label": "杨陵区", "value": "610403" }, { "label": "渭城区", "value": "610404" }, { "label": "三原县", "value": "610422" }, { "label": "泾阳县", "value": "610423" }, { "label": "乾县", "value": "610424" }, { "label": "礼泉县", "value": "610425" }, { "label": "永寿县", "value": "610426" }, { "label": "彬县", "value": "610427" }, { "label": "长武县", "value": "610428" }, { "label": "旬邑县", "value": "610429" }, { "label": "淳化县", "value": "610430" }, { "label": "武功县", "value": "610431" }, { "label": "兴平市", "value": "610481" }], [{ "label": "临渭区", "value": "610502" }, { "label": "华州区", "value": "610503" }, { "label": "潼关县", "value": "610522" }, { "label": "大荔县", "value": "610523" }, { "label": "合阳县", "value": "610524" }, { "label": "澄城县", "value": "610525" }, { "label": "蒲城县", "value": "610526" }, { "label": "白水县", "value": "610527" }, { "label": "富平县", "value": "610528" }, { "label": "韩城市", "value": "610581" }, { "label": "华阴市", "value": "610582" }], [{ "label": "宝塔区", "value": "610602" }, { "label": "安塞区", "value": "610603" }, { "label": "延长县", "value": "610621" }, { "label": "延川县", "value": "610622" }, { "label": "子长县", "value": "610623" }, { "label": "志丹县", "value": "610625" }, { "label": "吴起县", "value": "610626" }, { "label": "甘泉县", "value": "610627" }, { "label": "富县", "value": "610628" }, { "label": "洛川县", "value": "610629" }, { "label": "宜川县", "value": "610630" }, { "label": "黄龙县", "value": "610631" }, { "label": "黄陵县", "value": "610632" }], [{ "label": "汉台区", "value": "610702" }, { "label": "南郑区", "value": "610703" }, { "label": "城固县", "value": "610722" }, { "label": "洋县", "value": "610723" }, { "label": "西乡县", "value": "610724" }, { "label": "勉县", "value": "610725" }, { "label": "宁强县", "value": "610726" }, { "label": "略阳县", "value": "610727" }, { "label": "镇巴县", "value": "610728" }, { "label": "留坝县", "value": "610729" }, { "label": "佛坪县", "value": "610730" }], [{ "label": "榆阳区", "value": "610802" }, { "label": "横山区", "value": "610803" }, { "label": "府谷县", "value": "610822" }, { "label": "靖边县", "value": "610824" }, { "label": "定边县", "value": "610825" }, { "label": "绥德县", "value": "610826" }, { "label": "米脂县", "value": "610827" }, { "label": "佳县", "value": "610828" }, { "label": "吴堡县", "value": "610829" }, { "label": "清涧县", "value": "610830" }, { "label": "子洲县", "value": "610831" }, { "label": "神木市", "value": "610881" }], [{ "label": "汉滨区", "value": "610902" }, { "label": "汉阴县", "value": "610921" }, { "label": "石泉县", "value": "610922" }, { "label": "宁陕县", "value": "610923" }, { "label": "紫阳县", "value": "610924" }, { "label": "岚皋县", "value": "610925" }, { "label": "平利县", "value": "610926" }, { "label": "镇坪县", "value": "610927" }, { "label": "旬阳县", "value": "610928" }, { "label": "白河县", "value": "610929" }], [{ "label": "商州区", "value": "611002" }, { "label": "洛南县", "value": "611021" }, { "label": "丹凤县", "value": "611022" }, { "label": "商南县", "value": "611023" }, { "label": "山阳县", "value": "611024" }, { "label": "镇安县", "value": "611025" }, { "label": "柞水县", "value": "611026" }]], [[{ "label": "城关区", "value": "620102" }, { "label": "七里河区", "value": "620103" }, { "label": "西固区", "value": "620104" }, { "label": "安宁区", "value": "620105" }, { "label": "红古区", "value": "620111" }, { "label": "永登县", "value": "620121" }, { "label": "皋兰县", "value": "620122" }, { "label": "榆中县", "value": "620123" }, { "label": "兰州新区", "value": "620171" }], [{ "label": "嘉峪关市", "value": "620201" }], [{ "label": "金川区", "value": "620302" }, { "label": "永昌县", "value": "620321" }], [{ "label": "白银区", "value": "620402" }, { "label": "平川区", "value": "620403" }, { "label": "靖远县", "value": "620421" }, { "label": "会宁县", "value": "620422" }, { "label": "景泰县", "value": "620423" }], [{ "label": "秦州区", "value": "620502" }, { "label": "麦积区", "value": "620503" }, { "label": "清水县", "value": "620521" }, { "label": "秦安县", "value": "620522" }, { "label": "甘谷县", "value": "620523" }, { "label": "武山县", "value": "620524" }, { "label": "张家川回族自治县", "value": "620525" }], [{ "label": "凉州区", "value": "620602" }, { "label": "民勤县", "value": "620621" }, { "label": "古浪县", "value": "620622" }, { "label": "天祝藏族自治县", "value": "620623" }], [{ "label": "甘州区", "value": "620702" }, { "label": "肃南裕固族自治县", "value": "620721" }, { "label": "民乐县", "value": "620722" }, { "label": "临泽县", "value": "620723" }, { "label": "高台县", "value": "620724" }, { "label": "山丹县", "value": "620725" }], [{ "label": "崆峒区", "value": "620802" }, { "label": "泾川县", "value": "620821" }, { "label": "灵台县", "value": "620822" }, { "label": "崇信县", "value": "620823" }, { "label": "华亭县", "value": "620824" }, { "label": "庄浪县", "value": "620825" }, { "label": "静宁县", "value": "620826" }, { "label": "平凉工业园区", "value": "620871" }], [{ "label": "肃州区", "value": "620902" }, { "label": "金塔县", "value": "620921" }, { "label": "瓜州县", "value": "620922" }, { "label": "肃北蒙古族自治县", "value": "620923" }, { "label": "阿克塞哈萨克族自治县", "value": "620924" }, { "label": "玉门市", "value": "620981" }, { "label": "敦煌市", "value": "620982" }], [{ "label": "西峰区", "value": "621002" }, { "label": "庆城县", "value": "621021" }, { "label": "环县", "value": "621022" }, { "label": "华池县", "value": "621023" }, { "label": "合水县", "value": "621024" }, { "label": "正宁县", "value": "621025" }, { "label": "宁县", "value": "621026" }, { "label": "镇原县", "value": "621027" }], [{ "label": "安定区", "value": "621102" }, { "label": "通渭县", "value": "621121" }, { "label": "陇西县", "value": "621122" }, { "label": "渭源县", "value": "621123" }, { "label": "临洮县", "value": "621124" }, { "label": "漳县", "value": "621125" }, { "label": "岷县", "value": "621126" }], [{ "label": "武都区", "value": "621202" }, { "label": "成县", "value": "621221" }, { "label": "文县", "value": "621222" }, { "label": "宕昌县", "value": "621223" }, { "label": "康县", "value": "621224" }, { "label": "西和县", "value": "621225" }, { "label": "礼县", "value": "621226" }, { "label": "徽县", "value": "621227" }, { "label": "两当县", "value": "621228" }], [{ "label": "临夏市", "value": "622901" }, { "label": "临夏县", "value": "622921" }, { "label": "康乐县", "value": "622922" }, { "label": "永靖县", "value": "622923" }, { "label": "广河县", "value": "622924" }, { "label": "和政县", "value": "622925" }, { "label": "东乡族自治县", "value": "622926" }, { "label": "积石山保安族东乡族撒拉族自治县", "value": "622927" }], [{ "label": "合作市", "value": "623001" }, { "label": "临潭县", "value": "623021" }, { "label": "卓尼县", "value": "623022" }, { "label": "舟曲县", "value": "623023" }, { "label": "迭部县", "value": "623024" }, { "label": "玛曲县", "value": "623025" }, { "label": "碌曲县", "value": "623026" }, { "label": "夏河县", "value": "623027" }]], [[{ "label": "城东区", "value": "630102" }, { "label": "城中区", "value": "630103" }, { "label": "城西区", "value": "630104" }, { "label": "城北区", "value": "630105" }, { "label": "大通回族土族自治县", "value": "630121" }, { "label": "湟中县", "value": "630122" }, { "label": "湟源县", "value": "630123" }], [{ "label": "乐都区", "value": "630202" }, { "label": "平安区", "value": "630203" }, { "label": "民和回族土族自治县", "value": "630222" }, { "label": "互助土族自治县", "value": "630223" }, { "label": "化隆回族自治县", "value": "630224" }, { "label": "循化撒拉族自治县", "value": "630225" }], [{ "label": "门源回族自治县", "value": "632221" }, { "label": "祁连县", "value": "632222" }, { "label": "海晏县", "value": "632223" }, { "label": "刚察县", "value": "632224" }], [{ "label": "同仁县", "value": "632321" }, { "label": "尖扎县", "value": "632322" }, { "label": "泽库县", "value": "632323" }, { "label": "河南蒙古族自治县", "value": "632324" }], [{ "label": "共和县", "value": "632521" }, { "label": "同德县", "value": "632522" }, { "label": "贵德县", "value": "632523" }, { "label": "兴海县", "value": "632524" }, { "label": "贵南县", "value": "632525" }], [{ "label": "玛沁县", "value": "632621" }, { "label": "班玛县", "value": "632622" }, { "label": "甘德县", "value": "632623" }, { "label": "达日县", "value": "632624" }, { "label": "久治县", "value": "632625" }, { "label": "玛多县", "value": "632626" }], [{ "label": "玉树市", "value": "632701" }, { "label": "杂多县", "value": "632722" }, { "label": "称多县", "value": "632723" }, { "label": "治多县", "value": "632724" }, { "label": "囊谦县", "value": "632725" }, { "label": "曲麻莱县", "value": "632726" }], [{ "label": "格尔木市", "value": "632801" }, { "label": "德令哈市", "value": "632802" }, { "label": "乌兰县", "value": "632821" }, { "label": "都兰县", "value": "632822" }, { "label": "天峻县", "value": "632823" }, { "label": "大柴旦行政委员会", "value": "632857" }, { "label": "冷湖行政委员会", "value": "632858" }, { "label": "茫崖行政委员会", "value": "632859" }]], [[{ "label": "兴庆区", "value": "640104" }, { "label": "西夏区", "value": "640105" }, { "label": "金凤区", "value": "640106" }, { "label": "永宁县", "value": "640121" }, { "label": "贺兰县", "value": "640122" }, { "label": "灵武市", "value": "640181" }], [{ "label": "大武口区", "value": "640202" }, { "label": "惠农区", "value": "640205" }, { "label": "平罗县", "value": "640221" }], [{ "label": "利通区", "value": "640302" }, { "label": "红寺堡区", "value": "640303" }, { "label": "盐池县", "value": "640323" }, { "label": "同心县", "value": "640324" }, { "label": "青铜峡市", "value": "640381" }], [{ "label": "原州区", "value": "640402" }, { "label": "西吉县", "value": "640422" }, { "label": "隆德县", "value": "640423" }, { "label": "泾源县", "value": "640424" }, { "label": "彭阳县", "value": "640425" }], [{ "label": "沙坡头区", "value": "640502" }, { "label": "中宁县", "value": "640521" }, { "label": "海原县", "value": "640522" }]], [[{ "label": "天山区", "value": "650102" }, { "label": "沙依巴克区", "value": "650103" }, { "label": "新市区", "value": "650104" }, { "label": "水磨沟区", "value": "650105" }, { "label": "头屯河区", "value": "650106" }, { "label": "达坂城区", "value": "650107" }, { "label": "米东区", "value": "650109" }, { "label": "乌鲁木齐县", "value": "650121" }, { "label": "乌鲁木齐经济技术开发区", "value": "650171" }, { "label": "乌鲁木齐高新技术产业开发区", "value": "650172" }], [{ "label": "独山子区", "value": "650202" }, { "label": "克拉玛依区", "value": "650203" }, { "label": "白碱滩区", "value": "650204" }, { "label": "乌尔禾区", "value": "650205" }], [{ "label": "高昌区", "value": "650402" }, { "label": "鄯善县", "value": "650421" }, { "label": "托克逊县", "value": "650422" }], [{ "label": "伊州区", "value": "650502" }, { "label": "巴里坤哈萨克自治县", "value": "650521" }, { "label": "伊吾县", "value": "650522" }], [{ "label": "昌吉市", "value": "652301" }, { "label": "阜康市", "value": "652302" }, { "label": "呼图壁县", "value": "652323" }, { "label": "玛纳斯县", "value": "652324" }, { "label": "奇台县", "value": "652325" }, { "label": "吉木萨尔县", "value": "652327" }, { "label": "木垒哈萨克自治县", "value": "652328" }], [{ "label": "博乐市", "value": "652701" }, { "label": "阿拉山口市", "value": "652702" }, { "label": "精河县", "value": "652722" }, { "label": "温泉县", "value": "652723" }], [{ "label": "库尔勒市", "value": "652801" }, { "label": "轮台县", "value": "652822" }, { "label": "尉犁县", "value": "652823" }, { "label": "若羌县", "value": "652824" }, { "label": "且末县", "value": "652825" }, { "label": "焉耆回族自治县", "value": "652826" }, { "label": "和静县", "value": "652827" }, { "label": "和硕县", "value": "652828" }, { "label": "博湖县", "value": "652829" }, { "label": "库尔勒经济技术开发区", "value": "652871" }], [{ "label": "阿克苏市", "value": "652901" }, { "label": "温宿县", "value": "652922" }, { "label": "库车县", "value": "652923" }, { "label": "沙雅县", "value": "652924" }, { "label": "新和县", "value": "652925" }, { "label": "拜城县", "value": "652926" }, { "label": "乌什县", "value": "652927" }, { "label": "阿瓦提县", "value": "652928" }, { "label": "柯坪县", "value": "652929" }], [{ "label": "阿图什市", "value": "653001" }, { "label": "阿克陶县", "value": "653022" }, { "label": "阿合奇县", "value": "653023" }, { "label": "乌恰县", "value": "653024" }], [{ "label": "喀什市", "value": "653101" }, { "label": "疏附县", "value": "653121" }, { "label": "疏勒县", "value": "653122" }, { "label": "英吉沙县", "value": "653123" }, { "label": "泽普县", "value": "653124" }, { "label": "莎车县", "value": "653125" }, { "label": "叶城县", "value": "653126" }, { "label": "麦盖提县", "value": "653127" }, { "label": "岳普湖县", "value": "653128" }, { "label": "伽师县", "value": "653129" }, { "label": "巴楚县", "value": "653130" }, { "label": "塔什库尔干塔吉克自治县", "value": "653131" }], [{ "label": "和田市", "value": "653201" }, { "label": "和田县", "value": "653221" }, { "label": "墨玉县", "value": "653222" }, { "label": "皮山县", "value": "653223" }, { "label": "洛浦县", "value": "653224" }, { "label": "策勒县", "value": "653225" }, { "label": "于田县", "value": "653226" }, { "label": "民丰县", "value": "653227" }], [{ "label": "伊宁市", "value": "654002" }, { "label": "奎屯市", "value": "654003" }, { "label": "霍尔果斯市", "value": "654004" }, { "label": "伊宁县", "value": "654021" }, { "label": "察布查尔锡伯自治县", "value": "654022" }, { "label": "霍城县", "value": "654023" }, { "label": "巩留县", "value": "654024" }, { "label": "新源县", "value": "654025" }, { "label": "昭苏县", "value": "654026" }, { "label": "特克斯县", "value": "654027" }, { "label": "尼勒克县", "value": "654028" }], [{ "label": "塔城市", "value": "654201" }, { "label": "乌苏市", "value": "654202" }, { "label": "额敏县", "value": "654221" }, { "label": "沙湾县", "value": "654223" }, { "label": "托里县", "value": "654224" }, { "label": "裕民县", "value": "654225" }, { "label": "和布克赛尔蒙古自治县", "value": "654226" }], [{ "label": "阿勒泰市", "value": "654301" }, { "label": "布尔津县", "value": "654321" }, { "label": "富蕴县", "value": "654322" }, { "label": "福海县", "value": "654323" }, { "label": "哈巴河县", "value": "654324" }, { "label": "青河县", "value": "654325" }, { "label": "吉木乃县", "value": "654326" }], [{ "label": "石河子市", "value": "659001" }, { "label": "阿拉尔市", "value": "659002" }, { "label": "图木舒克市", "value": "659003" }, { "label": "五家渠市", "value": "659004" }, { "label": "铁门关市", "value": "659006" }]], [[{ "label": "台北", "value": "660101" }], [{ "label": "高雄", "value": "660201" }], [{ "label": "基隆", "value": "660301" }], [{ "label": "台中", "value": "660401" }], [{ "label": "台南", "value": "660501" }], [{ "label": "新竹", "value": "660601" }], [{ "label": "嘉义", "value": "660701" }], [{ "label": "宜兰", "value": "660801" }], [{ "label": "桃园", "value": "660901" }], [{ "label": "苗栗", "value": "661001" }], [{ "label": "彰化", "value": "661101" }], [{ "label": "南投", "value": "661201" }], [{ "label": "云林", "value": "661301" }], [{ "label": "屏东", "value": "661401" }], [{ "label": "台东", "value": "661501" }], [{ "label": "花莲", "value": "661601" }], [{ "label": "澎湖", "value": "661701" }]], [[{ "label": "香港岛", "value": "670101" }], [{ "label": "九龙", "value": "670201" }], [{ "label": "新界", "value": "670301" }]], [[{ "label": "澳门半岛", "value": "680101" }], [{ "label": "氹仔岛", "value": "680201" }], [{ "label": "路环岛", "value": "680301" }], [{ "label": "路氹城", "value": "680401" }]]];var _default = areaData;exports.default = _default;
+
+/***/ }),
+
+/***/ 33:
+/*!************************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/function/getParent.js ***!
+  \************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = getParent; // 获取父组件的参数，因为支付宝小程序不支持provide/inject的写法
+// this.$parent在非H5中，可以准确获取到父组件，但是在H5中，需要多次this.$parent.$parent.xxx
+function getParent(name, keys) {
+  var parent = this.$parent;
+  // 通过while历遍，这里主要是为了H5需要多层解析的问题
+  while (parent) {
+    // 父组件
+    if (parent.$options.name !== name) {
+      // 如果组件的name不相等，继续上一级寻找
+      parent = parent.$parent;
+    } else {var _ret = function () {
+        var data = {};
+        // 判断keys是否数组，如果传过来的是一个数组，那么直接使用数组元素值当做键值去父组件寻找
+        if (Array.isArray(keys)) {
+          keys.map(function (val) {
+            data[val] = parent[val] ? parent[val] : '';
+          });
+        } else {
+          // 历遍传过来的对象参数
+          for (var i in keys) {
+            // 如果子组件有此值则用，无此值则用父组件的值
+            // 判断是否空数组，如果是，则用父组件的值，否则用子组件的值
+            if (Array.isArray(keys[i])) {
+              if (keys[i].length) {
+                data[i] = keys[i];
+              } else {
+                data[i] = parent[i];
+              }
+            } else if (keys[i].constructor === Object) {
+              // 判断是否对象，如果是对象，且有属性，那么使用子组件的值，否则使用父组件的值
+              if (Object.keys(keys[i]).length) {
+                data[i] = keys[i];
+              } else {
+                data[i] = parent[i];
+              }
+            } else {
+              // 只要子组件有传值，即使是false值，也是“传值”了，也需要覆盖父组件的同名参数
+              data[i] = keys[i] || keys[i] === false ? keys[i] : parent[i];
+            }
+          }
+        }
+        return { v: data };}();if (typeof _ret === "object") return _ret.v;
+    }
+  }
+
+  return {};
+}
+
+/***/ }),
+
+/***/ 337:
+/*!******************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/util/emitter.js ***!
+  \******************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10324,115 +10526,10 @@ function _broadcast(componentName, eventName, params) {
 
 /***/ }),
 
-/***/ 31:
-/*!**********************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/function/trim.js ***!
-  \**********************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;function trim(str) {var pos = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'both';
-  if (pos == 'both') {
-    return str.replace(/^\s+|\s+$/g, "");
-  } else if (pos == "left") {
-    return str.replace(/^\s*/, '');
-  } else if (pos == 'right') {
-    return str.replace(/(\s*$)/g, "");
-  } else if (pos == 'all') {
-    return str.replace(/\s+/g, "");
-  } else {
-    return str;
-  }
-}var _default =
-
-trim;exports.default = _default;
-
-/***/ }),
-
-/***/ 32:
-/*!***********************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/function/toast.js ***!
-  \***********************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;function toast(title) {var duration = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1500;
-  uni.showToast({
-    title: title,
-    icon: 'none',
-    duration: duration });
-
-}var _default =
-
-toast;exports.default = _default;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
-
-/***/ }),
-
-/***/ 33:
-/*!***************************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/function/getParent.js ***!
-  \***************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = getParent; // 获取父组件的参数，因为支付宝小程序不支持provide/inject的写法
-// this.$parent在非H5中，可以准确获取到父组件，但是在H5中，需要多次this.$parent.$parent.xxx
-function getParent(name, keys) {
-  var parent = this.$parent;
-  // 通过while历遍，这里主要是为了H5需要多层解析的问题
-  while (parent) {
-    // 父组件
-    if (parent.$options.name !== name) {
-      // 如果组件的name不相等，继续上一级寻找
-      parent = parent.$parent;
-    } else {var _ret = function () {
-        var data = {};
-        // 判断keys是否数组，如果传过来的是一个数组，那么直接使用数组元素值当做键值去父组件寻找
-        if (Array.isArray(keys)) {
-          keys.map(function (val) {
-            data[val] = parent[val] ? parent[val] : '';
-          });
-        } else {
-          // 历遍传过来的对象参数
-          for (var i in keys) {
-            // 如果子组件有此值则用，无此值则用父组件的值
-            // 判断是否空数组，如果是，则用父组件的值，否则用子组件的值
-            if (Array.isArray(keys[i])) {
-              if (keys[i].length) {
-                data[i] = keys[i];
-              } else {
-                data[i] = parent[i];
-              }
-            } else if (keys[i].constructor === Object) {
-              // 判断是否对象，如果是对象，且有属性，那么使用子组件的值，否则使用父组件的值
-              if (Object.keys(keys[i]).length) {
-                data[i] = keys[i];
-              } else {
-                data[i] = parent[i];
-              }
-            } else {
-              // 只要子组件有传值，即使是false值，也是“传值”了，也需要覆盖父组件的同名参数
-              data[i] = keys[i] || keys[i] === false ? keys[i] : parent[i];
-            }
-          }
-        }
-        return { v: data };}();if (typeof _ret === "object") return _ret.v;
-    }
-  }
-
-  return {};
-}
-
-/***/ }),
-
 /***/ 34:
-/*!*************************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/function/$parent.js ***!
-  \*************************************************************************************************************/
+/*!**********************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/function/$parent.js ***!
+  \**********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10458,801 +10555,10 @@ function $parent() {var name = arguments.length > 0 && arguments[0] !== undefine
 
 /***/ }),
 
-/***/ 346:
-/*!****************************************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/components/u-parse/libs/MpHtmlParser.js ***!
-  \****************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(uni) {/**
- * html 解析器
- * @tutorial https://github.com/jin-yufeng/Parser
- * @version 20201029
- * @author JinYufeng
- * @listens MIT
- */
-var cfg = __webpack_require__(/*! ./config.js */ 347),
-blankChar = cfg.blankChar,
-CssHandler = __webpack_require__(/*! ./CssHandler.js */ 348),
-windowWidth = uni.getSystemInfoSync().windowWidth;
-var emoji;
-
-function MpHtmlParser(data) {var _this = this;var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  this.attrs = {};
-  this.CssHandler = new CssHandler(options.tagStyle, windowWidth);
-  this.data = data;
-  this.domain = options.domain;
-  this.DOM = [];
-  this.i = this.start = this.audioNum = this.imgNum = this.videoNum = 0;
-  options.prot = (this.domain || '').includes('://') ? this.domain.split('://')[0] : 'http';
-  this.options = options;
-  this.state = this.Text;
-  this.STACK = [];
-  // 工具函数
-  this.bubble = function () {
-    for (var i = _this.STACK.length, item; item = _this.STACK[--i];) {
-      if (cfg.richOnlyTags[item.name]) return false;
-      item.c = 1;
-    }
-    return true;
-  };
-  this.decode = function (val, amp) {
-    var i = -1,
-    j,en;
-    while (1) {
-      if ((i = val.indexOf('&', i + 1)) == -1) break;
-      if ((j = val.indexOf(';', i + 2)) == -1) break;
-      if (val[i + 1] == '#') {
-        en = parseInt((val[i + 2] == 'x' ? '0' : '') + val.substring(i + 2, j));
-        if (!isNaN(en)) val = val.substr(0, i) + String.fromCharCode(en) + val.substr(j + 1);
-      } else {
-        en = val.substring(i + 1, j);
-        if (cfg.entities[en] || en == amp)
-        val = val.substr(0, i) + (cfg.entities[en] || '&') + val.substr(j + 1);
-      }
-    }
-    return val;
-  };
-  this.getUrl = function (url) {
-    if (url[0] == '/') {
-      if (url[1] == '/') url = _this.options.prot + ':' + url;else
-      if (_this.domain) url = _this.domain + url;
-    } else if (_this.domain && url.indexOf('data:') != 0 && !url.includes('://'))
-    url = _this.domain + '/' + url;
-    return url;
-  };
-  this.isClose = function () {return _this.data[_this.i] == '>' || _this.data[_this.i] == '/' && _this.data[_this.i + 1] == '>';};
-  this.section = function () {return _this.data.substring(_this.start, _this.i);};
-  this.parent = function () {return _this.STACK[_this.STACK.length - 1];};
-  this.siblings = function () {return _this.STACK.length ? _this.parent().children : _this.DOM;};
-}
-MpHtmlParser.prototype.parse = function () {
-  if (emoji) this.data = emoji.parseEmoji(this.data);
-  for (var c; c = this.data[this.i]; this.i++) {
-    this.state(c);}
-  if (this.state == this.Text) this.setText();
-  while (this.STACK.length) {this.popNode(this.STACK.pop());}
-  return this.DOM;
-};
-// 设置属性
-MpHtmlParser.prototype.setAttr = function () {
-  var name = this.attrName.toLowerCase(),
-  val = this.attrVal;
-  if (cfg.boolAttrs[name]) this.attrs[name] = 'T';else
-  if (val) {
-    if (name == 'src' || name == 'data-src' && !this.attrs.src) this.attrs.src = this.getUrl(this.decode(val, 'amp'));else
-    if (name == 'href' || name == 'style') this.attrs[name] = this.decode(val, 'amp');else
-    if (name.substr(0, 5) != 'data-') this.attrs[name] = val;
-  }
-  this.attrVal = '';
-  while (blankChar[this.data[this.i]]) {this.i++;}
-  if (this.isClose()) this.setNode();else
-  {
-    this.start = this.i;
-    this.state = this.AttrName;
-  }
-};
-// 设置文本节点
-MpHtmlParser.prototype.setText = function () {
-  var back,text = this.section();
-  if (!text) return;
-  text = cfg.onText && cfg.onText(text, function () {return back = true;}) || text;
-  if (back) {
-    this.data = this.data.substr(0, this.start) + text + this.data.substr(this.i);
-    var j = this.start + text.length;
-    for (this.i = this.start; this.i < j; this.i++) {this.state(this.data[this.i]);}
-    return;
-  }
-  if (!this.pre) {
-    // 合并空白符
-    var flag,tmp = [];
-    for (var i = text.length, c; c = text[--i];) {
-      if (!blankChar[c]) {
-        tmp.unshift(c);
-        if (!flag) flag = 1;
-      } else {
-        if (tmp[0] != ' ') tmp.unshift(' ');
-        if (c == '\n' && flag == void 0) flag = 0;
-      }}
-    if (flag == 0) return;
-    text = tmp.join('');
-  }
-  this.siblings().push({
-    type: 'text',
-    text: this.decode(text) });
-
-};
-// 设置元素节点
-MpHtmlParser.prototype.setNode = function () {
-  var node = {
-    name: this.tagName.toLowerCase(),
-    attrs: this.attrs },
-
-  close = cfg.selfClosingTags[node.name];
-  if (this.options.nodes.length) node.type = 'node';
-  this.attrs = {};
-  if (!cfg.ignoreTags[node.name]) {
-    // 处理属性
-    var attrs = node.attrs,
-    style = this.CssHandler.match(node.name, attrs, node) + (attrs.style || ''),
-    styleObj = {};
-    if (attrs.id) {
-      if (this.options.compress & 1) attrs.id = void 0;else
-      if (this.options.useAnchor) this.bubble();
-    }
-    if (this.options.compress & 2 && attrs.class) attrs.class = void 0;
-    switch (node.name) {
-      case 'a':
-      case 'ad':
-
-
-        this.bubble();
-        break;
-      case 'font':
-        if (attrs.color) {
-          styleObj['color'] = attrs.color;
-          attrs.color = void 0;
-        }
-        if (attrs.face) {
-          styleObj['font-family'] = attrs.face;
-          attrs.face = void 0;
-        }
-        if (attrs.size) {
-          var size = parseInt(attrs.size);
-          if (size < 1) size = 1;else
-          if (size > 7) size = 7;
-          var map = ['xx-small', 'x-small', 'small', 'medium', 'large', 'x-large', 'xx-large'];
-          styleObj['font-size'] = map[size - 1];
-          attrs.size = void 0;
-        }
-        break;
-      case 'embed':
-
-        var src = node.attrs.src || '',
-        type = node.attrs.type || '';
-        if (type.includes('video') || src.includes('.mp4') || src.includes('.3gp') || src.includes('.m3u8'))
-        node.name = 'video';else
-        if (type.includes('audio') || src.includes('.m4a') || src.includes('.wav') || src.includes('.mp3') || src.includes(
-        '.aac'))
-        node.name = 'audio';else
-        break;
-        if (node.attrs.autostart)
-        node.attrs.autoplay = 'T';
-        node.attrs.controls = 'T';
-
-
-
-
-
-      case 'video':
-      case 'audio':
-        if (!attrs.id) attrs.id = node.name + ++this["".concat(node.name, "Num")];else
-        this["".concat(node.name, "Num")]++;
-        if (node.name == 'video') {
-          if (this.videoNum > 3)
-          node.lazyLoad = 1;
-          if (attrs.width) {
-            styleObj.width = parseFloat(attrs.width) + (attrs.width.includes('%') ? '%' : 'px');
-            attrs.width = void 0;
-          }
-          if (attrs.height) {
-            styleObj.height = parseFloat(attrs.height) + (attrs.height.includes('%') ? '%' : 'px');
-            attrs.height = void 0;
-          }
-        }
-        if (!attrs.controls && !attrs.autoplay) attrs.controls = 'T';
-        attrs.source = [];
-        if (attrs.src) {
-          attrs.source.push(attrs.src);
-          attrs.src = void 0;
-        }
-        this.bubble();
-        break;
-      case 'td':
-      case 'th':
-        if (attrs.colspan || attrs.rowspan)
-        for (var k = this.STACK.length, item; item = this.STACK[--k];) {
-          if (item.name == 'table') {
-            item.flag = 1;
-            break;
-          }}}
-
-    if (attrs.align) {
-      if (node.name == 'table') {
-        if (attrs.align == 'center') styleObj['margin-inline-start'] = styleObj['margin-inline-end'] = 'auto';else
-        styleObj['float'] = attrs.align;
-      } else styleObj['text-align'] = attrs.align;
-      attrs.align = void 0;
-    }
-    // 压缩 style
-    var styles = style.split(';');
-    style = '';
-    for (var i = 0, len = styles.length; i < len; i++) {
-      var info = styles[i].split(':');
-      if (info.length < 2) continue;
-      var _key = info[0].trim().toLowerCase(),
-      _value = info.slice(1).join(':').trim();
-      if (_value[0] == '-' || _value.includes('safe'))
-      style += ";".concat(_key, ":").concat(_value);else
-      if (!styleObj[_key] || _value.includes('import') || !styleObj[_key].includes('import'))
-      styleObj[_key] = _value;
-    }
-    if (node.name == 'img') {
-      if (attrs.src && !attrs.ignore) {
-        if (this.bubble())
-        attrs.i = (this.imgNum++).toString();else
-        attrs.ignore = 'T';
-      }
-      if (attrs.ignore) {
-        style += ';-webkit-touch-callout:none';
-        styleObj['max-width'] = '100%';
-      }
-      var width;
-      if (styleObj.width) width = styleObj.width;else
-      if (attrs.width) width = attrs.width.includes('%') ? attrs.width : parseFloat(attrs.width) + 'px';
-      if (width) {
-        styleObj.width = width;
-        attrs.width = '100%';
-        if (parseInt(width) > windowWidth) {
-          styleObj.height = '';
-          if (attrs.height) attrs.height = void 0;
-        }
-      }
-      if (styleObj.height) {
-        attrs.height = styleObj.height;
-        styleObj.height = '';
-      } else if (attrs.height && !attrs.height.includes('%'))
-      attrs.height = parseFloat(attrs.height) + 'px';
-    }
-    for (var key in styleObj) {
-      var value = styleObj[key];
-      if (!value) continue;
-      if (key.includes('flex') || key == 'order' || key == 'self-align') node.c = 1;
-      // 填充链接
-      if (value.includes('url')) {
-        var j = value.indexOf('(');
-        if (j++ != -1) {
-          while (value[j] == '"' || value[j] == "'" || blankChar[value[j]]) {j++;}
-          value = value.substr(0, j) + this.getUrl(value.substr(j));
-        }
-      }
-      // 转换 rpx
-      else if (value.includes('rpx'))
-        value = value.replace(/[0-9.]+\s*rpx/g, function ($) {return parseFloat($) * windowWidth / 750 + 'px';});else
-        if (key == 'white-space' && value.includes('pre') && !close)
-        this.pre = node.pre = true;
-      style += ";".concat(key, ":").concat(value);
-    }
-    style = style.substr(1);
-    if (style) attrs.style = style;
-    if (!close) {
-      node.children = [];
-      if (node.name == 'pre' && cfg.highlight) {
-        this.remove(node);
-        this.pre = node.pre = true;
-      }
-      this.siblings().push(node);
-      this.STACK.push(node);
-    } else if (!cfg.filter || cfg.filter(node, this) != false)
-    this.siblings().push(node);
-  } else {
-    if (!close) this.remove(node);else
-    if (node.name == 'source') {
-      var parent = this.parent();
-      if (parent && (parent.name == 'video' || parent.name == 'audio') && node.attrs.src)
-      parent.attrs.source.push(node.attrs.src);
-    } else if (node.name == 'base' && !this.domain) this.domain = node.attrs.href;
-  }
-  if (this.data[this.i] == '/') this.i++;
-  this.start = this.i + 1;
-  this.state = this.Text;
-};
-// 移除标签
-MpHtmlParser.prototype.remove = function (node) {var _this2 = this;
-  var name = node.name,
-  j = this.i;
-  // 处理 svg
-  var handleSvg = function handleSvg() {
-    var src = _this2.data.substring(j, _this2.i + 1);
-    node.attrs.xmlns = 'http://www.w3.org/2000/svg';
-    for (var key in node.attrs) {
-      if (key == 'viewbox') src = " viewBox=\"".concat(node.attrs.viewbox, "\"") + src;else
-      if (key != 'style') src = " ".concat(key, "=\"").concat(node.attrs[key], "\"") + src;
-    }
-    src = '<svg' + src;
-    var parent = _this2.parent();
-    if (node.attrs.width == '100%' && parent && (parent.attrs.style || '').includes('inline'))
-    parent.attrs.style = 'width:300px;max-width:100%;' + parent.attrs.style;
-    _this2.siblings().push({
-      name: 'img',
-      attrs: {
-        src: 'data:image/svg+xml;utf8,' + src.replace(/#/g, '%23'),
-        style: node.attrs.style,
-        ignore: 'T' } });
-
-
-  };
-  if (node.name == 'svg' && this.data[j] == '/') return handleSvg(this.i++);
-  while (1) {
-    if ((this.i = this.data.indexOf('</', this.i + 1)) == -1) {
-      if (name == 'pre' || name == 'svg') this.i = j;else
-      this.i = this.data.length;
-      return;
-    }
-    this.start = this.i += 2;
-    while (!blankChar[this.data[this.i]] && !this.isClose()) {this.i++;}
-    if (this.section().toLowerCase() == name) {
-      // 代码块高亮
-      if (name == 'pre') {
-        this.data = this.data.substr(0, j + 1) + cfg.highlight(this.data.substring(j + 1, this.i - 5), node.attrs) + this.data.
-        substr(this.i - 5);
-        return this.i = j;
-      } else if (name == 'style')
-      this.CssHandler.getStyle(this.data.substring(j + 1, this.i - 7));else
-      if (name == 'title')
-      this.DOM.title = this.data.substring(j + 1, this.i - 7);
-      if ((this.i = this.data.indexOf('>', this.i)) == -1) this.i = this.data.length;
-      if (name == 'svg') handleSvg();
-      return;
-    }
-  }
-};
-// 节点出栈处理
-MpHtmlParser.prototype.popNode = function (node) {
-  // 空白符处理
-  if (node.pre) {
-    node.pre = this.pre = void 0;
-    for (var i = this.STACK.length; i--;) {
-      if (this.STACK[i].pre)
-      this.pre = true;}
-  }
-  var siblings = this.siblings(),
-  len = siblings.length,
-  childs = node.children;
-  if (node.name == 'head' || cfg.filter && cfg.filter(node, this) == false)
-  return siblings.pop();
-  var attrs = node.attrs;
-  // 替换一些标签名
-  if (cfg.blockTags[node.name]) node.name = 'div';else
-  if (!cfg.trustTags[node.name]) node.name = 'span';
-  // 处理列表
-  if (node.c && (node.name == 'ul' || node.name == 'ol')) {
-    if ((node.attrs.style || '').includes('list-style:none')) {
-      for (var _i = 0, child; child = childs[_i++];) {
-        if (child.name == 'li')
-        child.name = 'div';}
-    } else if (node.name == 'ul') {
-      var floor = 1;
-      for (var _i2 = this.STACK.length; _i2--;) {
-        if (this.STACK[_i2].name == 'ul') floor++;}
-      if (floor != 1)
-      for (var _i3 = childs.length; _i3--;) {
-        childs[_i3].floor = floor;}
-    } else {
-      for (var _i4 = 0, num = 1, _child; _child = childs[_i4++];) {
-        if (_child.name == 'li') {
-          _child.type = 'ol';
-          _child.num = function (num, type) {
-            if (type == 'a') return String.fromCharCode(97 + (num - 1) % 26);
-            if (type == 'A') return String.fromCharCode(65 + (num - 1) % 26);
-            if (type == 'i' || type == 'I') {
-              num = (num - 1) % 99 + 1;
-              var one = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'],
-              ten = ['X', 'XX', 'XXX', 'XL', 'L', 'LX', 'LXX', 'LXXX', 'XC'],
-              res = (ten[Math.floor(num / 10) - 1] || '') + (one[num % 10 - 1] || '');
-              if (type == 'i') return res.toLowerCase();
-              return res;
-            }
-            return num;
-          }(num++, attrs.type) + '.';
-        }}
-    }
-  }
-  // 处理表格
-  if (node.name == 'table') {
-    var padding = parseFloat(attrs.cellpadding),
-    spacing = parseFloat(attrs.cellspacing),
-    border = parseFloat(attrs.border);
-    if (node.c) {
-      if (isNaN(padding)) padding = 2;
-      if (isNaN(spacing)) spacing = 2;
-    }
-    if (border) attrs.style = "border:".concat(border, "px solid gray;").concat(attrs.style || '');
-    if (node.flag && node.c) {
-      // 有 colspan 或 rowspan 且含有链接的表格转为 grid 布局实现
-      attrs.style = "".concat(attrs.style || '', ";").concat(spacing ? ";grid-gap:".concat(spacing, "px") : ';border-left:0;border-top:0');
-      var row = 1,
-      col = 1,
-      colNum,
-      trs = [],
-      children = [],
-      map = {};
-      (function f(ns) {
-        for (var i = 0; i < ns.length; i++) {
-          if (ns[i].name == 'tr') trs.push(ns[i]);else
-          f(ns[i].children || []);
-        }
-      })(node.children);
-      for (var _i5 = 0; _i5 < trs.length; _i5++) {
-        for (var j = 0, td; td = trs[_i5].children[j]; j++) {
-          if (td.name == 'td' || td.name == 'th') {
-            while (map[row + '.' + col]) {col++;}
-            var cell = {
-              name: 'div',
-              c: 1,
-              attrs: {
-                style: (td.attrs.style || '') + (border ? ";border:".concat(border, "px solid gray") + (spacing ? '' :
-                ';border-right:0;border-bottom:0') : '') + (padding ? ";padding:".concat(padding, "px") : '') },
-
-              children: td.children };
-
-            if (td.attrs.colspan) {
-              cell.attrs.style += ';grid-column-start:' + col + ';grid-column-end:' + (col + parseInt(td.attrs.colspan));
-              if (!td.attrs.rowspan) cell.attrs.style += ';grid-row-start:' + row + ';grid-row-end:' + (row + 1);
-              col += parseInt(td.attrs.colspan) - 1;
-            }
-            if (td.attrs.rowspan) {
-              cell.attrs.style += ';grid-row-start:' + row + ';grid-row-end:' + (row + parseInt(td.attrs.rowspan));
-              if (!td.attrs.colspan) cell.attrs.style += ';grid-column-start:' + col + ';grid-column-end:' + (col + 1);
-              for (var k = 1; k < td.attrs.rowspan; k++) {map[row + k + '.' + col] = 1;}
-            }
-            children.push(cell);
-            col++;
-          }
-        }
-        if (!colNum) {
-          colNum = col - 1;
-          attrs.style += ";grid-template-columns:repeat(".concat(colNum, ",auto)");
-        }
-        col = 1;
-        row++;
-      }
-      node.children = children;
-    } else {
-      attrs.style = "border-spacing:".concat(spacing, "px;").concat(attrs.style || '');
-      if (border || padding)
-      (function f(ns) {
-        for (var i = 0, n; n = ns[i]; i++) {
-          if (n.name == 'th' || n.name == 'td') {
-            if (border) n.attrs.style = "border:".concat(border, "px solid gray;").concat(n.attrs.style || '');
-            if (padding) n.attrs.style = "padding:".concat(padding, "px;").concat(n.attrs.style || '');
-          } else f(n.children || []);
-        }
-      })(childs);
-    }
-    if (this.options.autoscroll) {
-      var table = Object.assign({}, node);
-      node.name = 'div';
-      node.attrs = {
-        style: 'overflow:scroll' };
-
-      node.children = [table];
-    }
-  }
-  this.CssHandler.pop && this.CssHandler.pop(node);
-  // 自动压缩
-  if (node.name == 'div' && !Object.keys(attrs).length && childs.length == 1 && childs[0].name == 'div')
-  siblings[len - 1] = childs[0];
-};
-// 状态机
-MpHtmlParser.prototype.Text = function (c) {
-  if (c == '<') {
-    var next = this.data[this.i + 1],
-    isLetter = function isLetter(c) {return c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z';};
-    if (isLetter(next)) {
-      this.setText();
-      this.start = this.i + 1;
-      this.state = this.TagName;
-    } else if (next == '/') {
-      this.setText();
-      if (isLetter(this.data[++this.i + 1])) {
-        this.start = this.i + 1;
-        this.state = this.EndTag;
-      } else this.Comment();
-    } else if (next == '!' || next == '?') {
-      this.setText();
-      this.Comment();
-    }
-  }
-};
-MpHtmlParser.prototype.Comment = function () {
-  var key;
-  if (this.data.substring(this.i + 2, this.i + 4) == '--') key = '-->';else
-  if (this.data.substring(this.i + 2, this.i + 9) == '[CDATA[') key = ']]>';else
-  key = '>';
-  if ((this.i = this.data.indexOf(key, this.i + 2)) == -1) this.i = this.data.length;else
-  this.i += key.length - 1;
-  this.start = this.i + 1;
-  this.state = this.Text;
-};
-MpHtmlParser.prototype.TagName = function (c) {
-  if (blankChar[c]) {
-    this.tagName = this.section();
-    while (blankChar[this.data[this.i]]) {this.i++;}
-    if (this.isClose()) this.setNode();else
-    {
-      this.start = this.i;
-      this.state = this.AttrName;
-    }
-  } else if (this.isClose()) {
-    this.tagName = this.section();
-    this.setNode();
-  }
-};
-MpHtmlParser.prototype.AttrName = function (c) {
-  if (c == '=' || blankChar[c] || this.isClose()) {
-    this.attrName = this.section();
-    if (blankChar[c])
-    while (blankChar[this.data[++this.i]]) {;}
-    if (this.data[this.i] == '=') {
-      while (blankChar[this.data[++this.i]]) {;}
-      this.start = this.i--;
-      this.state = this.AttrValue;
-    } else this.setAttr();
-  }
-};
-MpHtmlParser.prototype.AttrValue = function (c) {
-  if (c == '"' || c == "'") {
-    this.start++;
-    if ((this.i = this.data.indexOf(c, this.i + 1)) == -1) return this.i = this.data.length;
-    this.attrVal = this.section();
-    this.i++;
-  } else {
-    for (; !blankChar[this.data[this.i]] && !this.isClose(); this.i++) {;}
-    this.attrVal = this.section();
-  }
-  this.setAttr();
-};
-MpHtmlParser.prototype.EndTag = function (c) {
-  if (blankChar[c] || c == '>' || c == '/') {
-    var name = this.section().toLowerCase();
-    for (var i = this.STACK.length; i--;) {
-      if (this.STACK[i].name == name) break;}
-    if (i != -1) {
-      var node;
-      while ((node = this.STACK.pop()).name != name) {this.popNode(node);}
-      this.popNode(node);
-    } else if (name == 'p' || name == 'br')
-    this.siblings().push({
-      name: name,
-      attrs: {} });
-
-    this.i = this.data.indexOf('>', this.i);
-    this.start = this.i + 1;
-    if (this.i == -1) this.i = this.data.length;else
-    this.state = this.Text;
-  }
-};
-module.exports = MpHtmlParser;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
-
-/***/ }),
-
-/***/ 347:
-/*!**********************************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/components/u-parse/libs/config.js ***!
-  \**********************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-/* 配置文件 */
-var cfg = {
-  // 出错占位图
-  errorImg: null,
-  // 过滤器函数
-  filter: null,
-  // 代码高亮函数
-  highlight: null,
-  // 文本处理函数
-  onText: null,
-  // 实体编码列表
-  entities: {
-    quot: '"',
-    apos: "'",
-    semi: ';',
-    nbsp: '\xA0',
-    ensp: "\u2002",
-    emsp: "\u2003",
-    ndash: '–',
-    mdash: '—',
-    middot: '·',
-    lsquo: '‘',
-    rsquo: '’',
-    ldquo: '“',
-    rdquo: '”',
-    bull: '•',
-    hellip: '…' },
-
-  blankChar: makeMap(' ,\xA0,\t,\r,\n,\f'),
-  boolAttrs: makeMap('allowfullscreen,autoplay,autostart,controls,ignore,loop,muted'),
-  // 块级标签，将被转为 div
-  blockTags: makeMap('address,article,aside,body,caption,center,cite,footer,header,html,nav,pre,section'),
-  // 将被移除的标签
-  ignoreTags: makeMap('area,base,canvas,frame,iframe,input,link,map,meta,param,script,source,style,svg,textarea,title,track,wbr'),
-  // 只能被 rich-text 显示的标签
-  richOnlyTags: makeMap('a,colgroup,fieldset,legend'),
-  // 自闭合的标签
-  selfClosingTags: makeMap('area,base,br,col,circle,ellipse,embed,frame,hr,img,input,line,link,meta,param,path,polygon,rect,source,track,use,wbr'),
-  // 信任的标签
-  trustTags: makeMap('a,abbr,ad,audio,b,blockquote,br,code,col,colgroup,dd,del,dl,dt,div,em,fieldset,h1,h2,h3,h4,h5,h6,hr,i,img,ins,label,legend,li,ol,p,q,source,span,strong,sub,sup,table,tbody,td,tfoot,th,thead,tr,title,ul,video'),
-  // 默认的标签样式
-  userAgentStyles: {
-    address: 'font-style:italic',
-    big: 'display:inline;font-size:1.2em',
-    blockquote: 'background-color:#f6f6f6;border-left:3px solid #dbdbdb;color:#6c6c6c;padding:5px 0 5px 10px',
-    caption: 'display:table-caption;text-align:center',
-    center: 'text-align:center',
-    cite: 'font-style:italic',
-    dd: 'margin-left:40px',
-    mark: 'background-color:yellow',
-    pre: 'font-family:monospace;white-space:pre;overflow:scroll',
-    s: 'text-decoration:line-through',
-    small: 'display:inline;font-size:0.8em',
-    u: 'text-decoration:underline' } };
-
-
-
-function makeMap(str) {
-  var map = Object.create(null),
-  list = str.split(',');
-  for (var i = list.length; i--;) {
-    map[list[i]] = true;}
-  return map;
-}
-
-
-if (wx.canIUse('editor')) {
-  cfg.blockTags.pre = void 0;
-  cfg.ignoreTags.rp = true;
-  Object.assign(cfg.richOnlyTags, makeMap('bdi,bdo,caption,rt,ruby'));
-  Object.assign(cfg.trustTags, makeMap('bdi,bdo,caption,pre,rt,ruby'));
-}
-
-
-
-
-
-
-
-module.exports = cfg;
-
-/***/ }),
-
-/***/ 348:
-/*!**************************************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/components/u-parse/libs/CssHandler.js ***!
-  \**************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var cfg = __webpack_require__(/*! ./config.js */ 347),
-isLetter = function isLetter(c) {return c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z';};
-
-function CssHandler(tagStyle) {
-  var styles = Object.assign(Object.create(null), cfg.userAgentStyles);
-  for (var item in tagStyle) {
-    styles[item] = (styles[item] ? styles[item] + ';' : '') + tagStyle[item];}
-  this.styles = styles;
-}
-CssHandler.prototype.getStyle = function (data) {
-  this.styles = new parser(data, this.styles).parse();
-};
-CssHandler.prototype.match = function (name, attrs) {
-  var tmp,matched = (tmp = this.styles[name]) ? tmp + ';' : '';
-  if (attrs.class) {
-    var items = attrs.class.split(' ');
-    for (var i = 0, item; item = items[i]; i++) {
-      if (tmp = this.styles['.' + item])
-      matched += tmp + ';';}
-  }
-  if (tmp = this.styles['#' + attrs.id])
-  matched += tmp + ';';
-  return matched;
-};
-module.exports = CssHandler;
-
-function parser(data, init) {
-  this.data = data;
-  this.floor = 0;
-  this.i = 0;
-  this.list = [];
-  this.res = init;
-  this.state = this.Space;
-}
-parser.prototype.parse = function () {
-  for (var c; c = this.data[this.i]; this.i++) {
-    this.state(c);}
-  return this.res;
-};
-parser.prototype.section = function () {
-  return this.data.substring(this.start, this.i);
-};
-// 状态机
-parser.prototype.Space = function (c) {
-  if (c == '.' || c == '#' || isLetter(c)) {
-    this.start = this.i;
-    this.state = this.Name;
-  } else if (c == '/' && this.data[this.i + 1] == '*')
-  this.Comment();else
-  if (!cfg.blankChar[c] && c != ';')
-  this.state = this.Ignore;
-};
-parser.prototype.Comment = function () {
-  this.i = this.data.indexOf('*/', this.i) + 1;
-  if (!this.i) this.i = this.data.length;
-  this.state = this.Space;
-};
-parser.prototype.Ignore = function (c) {
-  if (c == '{') this.floor++;else
-  if (c == '}' && ! --this.floor) {
-    this.list = [];
-    this.state = this.Space;
-  }
-};
-parser.prototype.Name = function (c) {
-  if (cfg.blankChar[c]) {
-    this.list.push(this.section());
-    this.state = this.NameSpace;
-  } else if (c == '{') {
-    this.list.push(this.section());
-    this.Content();
-  } else if (c == ',') {
-    this.list.push(this.section());
-    this.Comma();
-  } else if (!isLetter(c) && (c < '0' || c > '9') && c != '-' && c != '_')
-  this.state = this.Ignore;
-};
-parser.prototype.NameSpace = function (c) {
-  if (c == '{') this.Content();else
-  if (c == ',') this.Comma();else
-  if (!cfg.blankChar[c]) this.state = this.Ignore;
-};
-parser.prototype.Comma = function () {
-  while (cfg.blankChar[this.data[++this.i]]) {;}
-  if (this.data[this.i] == '{') this.Content();else
-  {
-    this.start = this.i--;
-    this.state = this.Name;
-  }
-};
-parser.prototype.Content = function () {
-  this.start = ++this.i;
-  if ((this.i = this.data.indexOf('}', this.i)) == -1) this.i = this.data.length;
-  var content = this.section();
-  for (var i = 0, item; item = this.list[i++];) {
-    if (this.res[item]) this.res[item] += ';' + content;else
-    this.res[item] = content;}
-  this.list = [];
-  this.state = this.Space;
-};
-
-/***/ }),
-
 /***/ 35:
-/*!*********************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/function/sys.js ***!
-  \*********************************************************************************************************/
+/*!******************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/function/sys.js ***!
+  \******************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -11269,9 +10575,9 @@ function sys() {
 /***/ }),
 
 /***/ 36:
-/*!**************************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/function/debounce.js ***!
-  \**************************************************************************************************************/
+/*!***********************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/function/debounce.js ***!
+  \***********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -11309,9 +10615,9 @@ debounce;exports.default = _default;
 /***/ }),
 
 /***/ 37:
-/*!**************************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/function/throttle.js ***!
-  \**************************************************************************************************************/
+/*!***********************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/function/throttle.js ***!
+  \***********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -11352,9 +10658,9 @@ throttle;exports.default = _default;
 /***/ }),
 
 /***/ 38:
-/*!**********************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/config/config.js ***!
-  \**********************************************************************************************************/
+/*!*******************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/config/config.js ***!
+  \*******************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -11376,9 +10682,9 @@ var version = '1.8.3';var _default =
 /***/ }),
 
 /***/ 39:
-/*!**********************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/config/zIndex.js ***!
-  \**********************************************************************************************************/
+/*!*******************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/config/zIndex.js ***!
+  \*******************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -11405,1377 +10711,10 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
 
 /***/ }),
 
-/***/ 398:
-/*!*****************************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/uview-ui/libs/util/async-validator.js ***!
-  \*****************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;function _extends() {
-  _extends = Object.assign || function (target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
-
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
-    }
-
-    return target;
-  };
-
-  return _extends.apply(this, arguments);
-}
-
-/* eslint no-console:0 */
-var formatRegExp = /%[sdj%]/g;
-var warning = function warning() {}; // don't print warning message when in production env or node runtime
-
-if (typeof process !== 'undefined' && Object({"VUE_APP_NAME":"shop","VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}) && "development" !== 'production' && typeof window !==
-'undefined' && typeof document !== 'undefined') {
-  warning = function warning(type, errors) {
-    if (typeof console !== 'undefined' && console.warn) {
-      if (errors.every(function (e) {
-        return typeof e === 'string';
-      })) {
-        console.warn(type, errors);
-      }
-    }
-  };
-}
-
-function convertFieldsError(errors) {
-  if (!errors || !errors.length) return null;
-  var fields = {};
-  errors.forEach(function (error) {
-    var field = error.field;
-    fields[field] = fields[field] || [];
-    fields[field].push(error);
-  });
-  return fields;
-}
-
-function format() {
-  for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-    args[_key] = arguments[_key];
-  }
-
-  var i = 1;
-  var f = args[0];
-  var len = args.length;
-
-  if (typeof f === 'function') {
-    return f.apply(null, args.slice(1));
-  }
-
-  if (typeof f === 'string') {
-    var str = String(f).replace(formatRegExp, function (x) {
-      if (x === '%%') {
-        return '%';
-      }
-
-      if (i >= len) {
-        return x;
-      }
-
-      switch (x) {
-        case '%s':
-          return String(args[i++]);
-
-        case '%d':
-          return Number(args[i++]);
-
-        case '%j':
-          try {
-            return JSON.stringify(args[i++]);
-          } catch (_) {
-            return '[Circular]';
-          }
-
-          break;
-
-        default:
-          return x;}
-
-    });
-
-    for (var arg = args[i]; i < len; arg = args[++i]) {
-      str += " " + arg;
-    }
-
-    return str;
-  }
-
-  return f;
-}
-
-function isNativeStringType(type) {
-  return type === 'string' || type === 'url' || type === 'hex' || type === 'email' || type === 'pattern';
-}
-
-function isEmptyValue(value, type) {
-  if (value === undefined || value === null) {
-    return true;
-  }
-
-  if (type === 'array' && Array.isArray(value) && !value.length) {
-    return true;
-  }
-
-  if (isNativeStringType(type) && typeof value === 'string' && !value) {
-    return true;
-  }
-
-  return false;
-}
-
-function asyncParallelArray(arr, func, callback) {
-  var results = [];
-  var total = 0;
-  var arrLength = arr.length;
-
-  function count(errors) {
-    results.push.apply(results, errors);
-    total++;
-
-    if (total === arrLength) {
-      callback(results);
-    }
-  }
-
-  arr.forEach(function (a) {
-    func(a, count);
-  });
-}
-
-function asyncSerialArray(arr, func, callback) {
-  var index = 0;
-  var arrLength = arr.length;
-
-  function next(errors) {
-    if (errors && errors.length) {
-      callback(errors);
-      return;
-    }
-
-    var original = index;
-    index = index + 1;
-
-    if (original < arrLength) {
-      func(arr[original], next);
-    } else {
-      callback([]);
-    }
-  }
-
-  next([]);
-}
-
-function flattenObjArr(objArr) {
-  var ret = [];
-  Object.keys(objArr).forEach(function (k) {
-    ret.push.apply(ret, objArr[k]);
-  });
-  return ret;
-}
-
-function asyncMap(objArr, option, func, callback) {
-  if (option.first) {
-    var _pending = new Promise(function (resolve, reject) {
-      var next = function next(errors) {
-        callback(errors);
-        return errors.length ? reject({
-          errors: errors,
-          fields: convertFieldsError(errors) }) :
-        resolve();
-      };
-
-      var flattenArr = flattenObjArr(objArr);
-      asyncSerialArray(flattenArr, func, next);
-    });
-
-    _pending["catch"](function (e) {
-      return e;
-    });
-
-    return _pending;
-  }
-
-  var firstFields = option.firstFields || [];
-
-  if (firstFields === true) {
-    firstFields = Object.keys(objArr);
-  }
-
-  var objArrKeys = Object.keys(objArr);
-  var objArrLength = objArrKeys.length;
-  var total = 0;
-  var results = [];
-  var pending = new Promise(function (resolve, reject) {
-    var next = function next(errors) {
-      results.push.apply(results, errors);
-      total++;
-
-      if (total === objArrLength) {
-        callback(results);
-        return results.length ? reject({
-          errors: results,
-          fields: convertFieldsError(results) }) :
-        resolve();
-      }
-    };
-
-    if (!objArrKeys.length) {
-      callback(results);
-      resolve();
-    }
-
-    objArrKeys.forEach(function (key) {
-      var arr = objArr[key];
-
-      if (firstFields.indexOf(key) !== -1) {
-        asyncSerialArray(arr, func, next);
-      } else {
-        asyncParallelArray(arr, func, next);
-      }
-    });
-  });
-  pending["catch"](function (e) {
-    return e;
-  });
-  return pending;
-}
-
-function complementError(rule) {
-  return function (oe) {
-    if (oe && oe.message) {
-      oe.field = oe.field || rule.fullField;
-      return oe;
-    }
-
-    return {
-      message: typeof oe === 'function' ? oe() : oe,
-      field: oe.field || rule.fullField };
-
-  };
-}
-
-function deepMerge(target, source) {
-  if (source) {
-    for (var s in source) {
-      if (source.hasOwnProperty(s)) {
-        var value = source[s];
-
-        if (typeof value === 'object' && typeof target[s] === 'object') {
-          target[s] = _extends({}, target[s], {}, value);
-        } else {
-          target[s] = value;
-        }
-      }
-    }
-  }
-
-  return target;
-}
-
-/**
-   *  Rule for validating required fields.
-   *
-   *  @param rule The validation rule.
-   *  @param value The value of the field on the source object.
-   *  @param source The source object being validated.
-   *  @param errors An array of errors that this rule may add
-   *  validation errors to.
-   *  @param options The validation options.
-   *  @param options.messages The validation messages.
-   */
-
-function required(rule, value, source, errors, options, type) {
-  if (rule.required && (!source.hasOwnProperty(rule.field) || isEmptyValue(value, type || rule.type))) {
-    errors.push(format(options.messages.required, rule.fullField));
-  }
-}
-
-/**
-   *  Rule for validating whitespace.
-   *
-   *  @param rule The validation rule.
-   *  @param value The value of the field on the source object.
-   *  @param source The source object being validated.
-   *  @param errors An array of errors that this rule may add
-   *  validation errors to.
-   *  @param options The validation options.
-   *  @param options.messages The validation messages.
-   */
-
-function whitespace(rule, value, source, errors, options) {
-  if (/^\s+$/.test(value) || value === '') {
-    errors.push(format(options.messages.whitespace, rule.fullField));
-  }
-}
-
-/* eslint max-len:0 */
-
-var pattern = {
-  // http://emailregex.com/
-  email: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-  url: new RegExp(
-  "^(?!mailto:)(?:(?:http|https|ftp)://|//)(?:\\S+(?::\\S*)?@)?(?:(?:(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[0-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\\u00a1-\\uffff0-9]+-*)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]+-*)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))|localhost)(?::\\d{2,5})?(?:(/|\\?|#)[^\\s]*)?$",
-  'i'),
-  hex: /^#?([a-f0-9]{6}|[a-f0-9]{3})$/i };
-
-var types = {
-  integer: function integer(value) {
-    return types.number(value) && parseInt(value, 10) === value;
-  },
-  "float": function _float(value) {
-    return types.number(value) && !types.integer(value);
-  },
-  array: function array(value) {
-    return Array.isArray(value);
-  },
-  regexp: function regexp(value) {
-    if (value instanceof RegExp) {
-      return true;
-    }
-
-    try {
-      return !!new RegExp(value);
-    } catch (e) {
-      return false;
-    }
-  },
-  date: function date(value) {
-    return typeof value.getTime === 'function' && typeof value.getMonth === 'function' && typeof value.getYear ===
-    'function';
-  },
-  number: function number(value) {
-    if (isNaN(value)) {
-      return false;
-    }
-
-    // 修改源码，将字符串数值先转为数值
-    return typeof +value === 'number';
-  },
-  object: function object(value) {
-    return typeof value === 'object' && !types.array(value);
-  },
-  method: function method(value) {
-    return typeof value === 'function';
-  },
-  email: function email(value) {
-    return typeof value === 'string' && !!value.match(pattern.email) && value.length < 255;
-  },
-  url: function url(value) {
-    return typeof value === 'string' && !!value.match(pattern.url);
-  },
-  hex: function hex(value) {
-    return typeof value === 'string' && !!value.match(pattern.hex);
-  } };
-
-/**
-        *  Rule for validating the type of a value.
-        *
-        *  @param rule The validation rule.
-        *  @param value The value of the field on the source object.
-        *  @param source The source object being validated.
-        *  @param errors An array of errors that this rule may add
-        *  validation errors to.
-        *  @param options The validation options.
-        *  @param options.messages The validation messages.
-        */
-
-function type(rule, value, source, errors, options) {
-  if (rule.required && value === undefined) {
-    required(rule, value, source, errors, options);
-    return;
-  }
-
-  var custom = ['integer', 'float', 'array', 'regexp', 'object', 'method', 'email', 'number', 'date', 'url', 'hex'];
-  var ruleType = rule.type;
-
-  if (custom.indexOf(ruleType) > -1) {
-    if (!types[ruleType](value)) {
-      errors.push(format(options.messages.types[ruleType], rule.fullField, rule.type));
-    } // straight typeof check
-
-  } else if (ruleType && typeof value !== rule.type) {
-    errors.push(format(options.messages.types[ruleType], rule.fullField, rule.type));
-  }
-}
-
-/**
-   *  Rule for validating minimum and maximum allowed values.
-   *
-   *  @param rule The validation rule.
-   *  @param value The value of the field on the source object.
-   *  @param source The source object being validated.
-   *  @param errors An array of errors that this rule may add
-   *  validation errors to.
-   *  @param options The validation options.
-   *  @param options.messages The validation messages.
-   */
-
-function range(rule, value, source, errors, options) {
-  var len = typeof rule.len === 'number';
-  var min = typeof rule.min === 'number';
-  var max = typeof rule.max === 'number'; // 正则匹配码点范围从U+010000一直到U+10FFFF的文字（补充平面Supplementary Plane）
-
-  var spRegexp = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
-  var val = value;
-  var key = null;
-  var num = typeof value === 'number';
-  var str = typeof value === 'string';
-  var arr = Array.isArray(value);
-
-  if (num) {
-    key = 'number';
-  } else if (str) {
-    key = 'string';
-  } else if (arr) {
-    key = 'array';
-  } // if the value is not of a supported type for range validation
-  // the validation rule rule should use the
-  // type property to also test for a particular type
-
-
-  if (!key) {
-    return false;
-  }
-
-  if (arr) {
-    val = value.length;
-  }
-
-  if (str) {
-    // 处理码点大于U+010000的文字length属性不准确的bug，如"𠮷𠮷𠮷".lenght !== 3
-    val = value.replace(spRegexp, '_').length;
-  }
-
-  if (len) {
-    if (val !== rule.len) {
-      errors.push(format(options.messages[key].len, rule.fullField, rule.len));
-    }
-  } else if (min && !max && val < rule.min) {
-    errors.push(format(options.messages[key].min, rule.fullField, rule.min));
-  } else if (max && !min && val > rule.max) {
-    errors.push(format(options.messages[key].max, rule.fullField, rule.max));
-  } else if (min && max && (val < rule.min || val > rule.max)) {
-    errors.push(format(options.messages[key].range, rule.fullField, rule.min, rule.max));
-  }
-}
-
-var ENUM = 'enum';
-/**
-                    *  Rule for validating a value exists in an enumerable list.
-                    *
-                    *  @param rule The validation rule.
-                    *  @param value The value of the field on the source object.
-                    *  @param source The source object being validated.
-                    *  @param errors An array of errors that this rule may add
-                    *  validation errors to.
-                    *  @param options The validation options.
-                    *  @param options.messages The validation messages.
-                    */
-
-function enumerable(rule, value, source, errors, options) {
-  rule[ENUM] = Array.isArray(rule[ENUM]) ? rule[ENUM] : [];
-
-  if (rule[ENUM].indexOf(value) === -1) {
-    errors.push(format(options.messages[ENUM], rule.fullField, rule[ENUM].join(', ')));
-  }
-}
-
-/**
-   *  Rule for validating a regular expression pattern.
-   *
-   *  @param rule The validation rule.
-   *  @param value The value of the field on the source object.
-   *  @param source The source object being validated.
-   *  @param errors An array of errors that this rule may add
-   *  validation errors to.
-   *  @param options The validation options.
-   *  @param options.messages The validation messages.
-   */
-
-function pattern$1(rule, value, source, errors, options) {
-  if (rule.pattern) {
-    if (rule.pattern instanceof RegExp) {
-      // if a RegExp instance is passed, reset `lastIndex` in case its `global`
-      // flag is accidentally set to `true`, which in a validation scenario
-      // is not necessary and the result might be misleading
-      rule.pattern.lastIndex = 0;
-
-      if (!rule.pattern.test(value)) {
-        errors.push(format(options.messages.pattern.mismatch, rule.fullField, value, rule.pattern));
-      }
-    } else if (typeof rule.pattern === 'string') {
-      var _pattern = new RegExp(rule.pattern);
-
-      if (!_pattern.test(value)) {
-        errors.push(format(options.messages.pattern.mismatch, rule.fullField, value, rule.pattern));
-      }
-    }
-  }
-}
-
-var rules = {
-  required: required,
-  whitespace: whitespace,
-  type: type,
-  range: range,
-  "enum": enumerable,
-  pattern: pattern$1 };
-
-
-/**
-                         *  Performs validation for string types.
-                         *
-                         *  @param rule The validation rule.
-                         *  @param value The value of the field on the source object.
-                         *  @param callback The callback function.
-                         *  @param source The source object being validated.
-                         *  @param options The validation options.
-                         *  @param options.messages The validation messages.
-                         */
-
-function string(rule, value, callback, source, options) {
-  var errors = [];
-  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
-
-  if (validate) {
-    if (isEmptyValue(value, 'string') && !rule.required) {
-      return callback();
-    }
-
-    rules.required(rule, value, source, errors, options, 'string');
-
-    if (!isEmptyValue(value, 'string')) {
-      rules.type(rule, value, source, errors, options);
-      rules.range(rule, value, source, errors, options);
-      rules.pattern(rule, value, source, errors, options);
-
-      if (rule.whitespace === true) {
-        rules.whitespace(rule, value, source, errors, options);
-      }
-    }
-  }
-
-  callback(errors);
-}
-
-/**
-   *  Validates a function.
-   *
-   *  @param rule The validation rule.
-   *  @param value The value of the field on the source object.
-   *  @param callback The callback function.
-   *  @param source The source object being validated.
-   *  @param options The validation options.
-   *  @param options.messages The validation messages.
-   */
-
-function method(rule, value, callback, source, options) {
-  var errors = [];
-  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
-
-  if (validate) {
-    if (isEmptyValue(value) && !rule.required) {
-      return callback();
-    }
-
-    rules.required(rule, value, source, errors, options);
-
-    if (value !== undefined) {
-      rules.type(rule, value, source, errors, options);
-    }
-  }
-
-  callback(errors);
-}
-
-/**
-   *  Validates a number.
-   *
-   *  @param rule The validation rule.
-   *  @param value The value of the field on the source object.
-   *  @param callback The callback function.
-   *  @param source The source object being validated.
-   *  @param options The validation options.
-   *  @param options.messages The validation messages.
-   */
-
-function number(rule, value, callback, source, options) {
-  var errors = [];
-  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
-
-  if (validate) {
-    if (value === '') {
-      value = undefined;
-    }
-
-    if (isEmptyValue(value) && !rule.required) {
-      return callback();
-    }
-
-    rules.required(rule, value, source, errors, options);
-
-    if (value !== undefined) {
-      rules.type(rule, value, source, errors, options);
-      rules.range(rule, value, source, errors, options);
-    }
-  }
-
-  callback(errors);
-}
-
-/**
-   *  Validates a boolean.
-   *
-   *  @param rule The validation rule.
-   *  @param value The value of the field on the source object.
-   *  @param callback The callback function.
-   *  @param source The source object being validated.
-   *  @param options The validation options.
-   *  @param options.messages The validation messages.
-   */
-
-function _boolean(rule, value, callback, source, options) {
-  var errors = [];
-  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
-
-  if (validate) {
-    if (isEmptyValue(value) && !rule.required) {
-      return callback();
-    }
-
-    rules.required(rule, value, source, errors, options);
-
-    if (value !== undefined) {
-      rules.type(rule, value, source, errors, options);
-    }
-  }
-
-  callback(errors);
-}
-
-/**
-   *  Validates the regular expression type.
-   *
-   *  @param rule The validation rule.
-   *  @param value The value of the field on the source object.
-   *  @param callback The callback function.
-   *  @param source The source object being validated.
-   *  @param options The validation options.
-   *  @param options.messages The validation messages.
-   */
-
-function regexp(rule, value, callback, source, options) {
-  var errors = [];
-  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
-
-  if (validate) {
-    if (isEmptyValue(value) && !rule.required) {
-      return callback();
-    }
-
-    rules.required(rule, value, source, errors, options);
-
-    if (!isEmptyValue(value)) {
-      rules.type(rule, value, source, errors, options);
-    }
-  }
-
-  callback(errors);
-}
-
-/**
-   *  Validates a number is an integer.
-   *
-   *  @param rule The validation rule.
-   *  @param value The value of the field on the source object.
-   *  @param callback The callback function.
-   *  @param source The source object being validated.
-   *  @param options The validation options.
-   *  @param options.messages The validation messages.
-   */
-
-function integer(rule, value, callback, source, options) {
-  var errors = [];
-  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
-
-  if (validate) {
-    if (isEmptyValue(value) && !rule.required) {
-      return callback();
-    }
-
-    rules.required(rule, value, source, errors, options);
-
-    if (value !== undefined) {
-      rules.type(rule, value, source, errors, options);
-      rules.range(rule, value, source, errors, options);
-    }
-  }
-
-  callback(errors);
-}
-
-/**
-   *  Validates a number is a floating point number.
-   *
-   *  @param rule The validation rule.
-   *  @param value The value of the field on the source object.
-   *  @param callback The callback function.
-   *  @param source The source object being validated.
-   *  @param options The validation options.
-   *  @param options.messages The validation messages.
-   */
-
-function floatFn(rule, value, callback, source, options) {
-  var errors = [];
-  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
-
-  if (validate) {
-    if (isEmptyValue(value) && !rule.required) {
-      return callback();
-    }
-
-    rules.required(rule, value, source, errors, options);
-
-    if (value !== undefined) {
-      rules.type(rule, value, source, errors, options);
-      rules.range(rule, value, source, errors, options);
-    }
-  }
-
-  callback(errors);
-}
-
-/**
-   *  Validates an array.
-   *
-   *  @param rule The validation rule.
-   *  @param value The value of the field on the source object.
-   *  @param callback The callback function.
-   *  @param source The source object being validated.
-   *  @param options The validation options.
-   *  @param options.messages The validation messages.
-   */
-
-function array(rule, value, callback, source, options) {
-  var errors = [];
-  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
-
-  if (validate) {
-    if (isEmptyValue(value, 'array') && !rule.required) {
-      return callback();
-    }
-
-    rules.required(rule, value, source, errors, options, 'array');
-
-    if (!isEmptyValue(value, 'array')) {
-      rules.type(rule, value, source, errors, options);
-      rules.range(rule, value, source, errors, options);
-    }
-  }
-
-  callback(errors);
-}
-
-/**
-   *  Validates an object.
-   *
-   *  @param rule The validation rule.
-   *  @param value The value of the field on the source object.
-   *  @param callback The callback function.
-   *  @param source The source object being validated.
-   *  @param options The validation options.
-   *  @param options.messages The validation messages.
-   */
-
-function object(rule, value, callback, source, options) {
-  var errors = [];
-  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
-
-  if (validate) {
-    if (isEmptyValue(value) && !rule.required) {
-      return callback();
-    }
-
-    rules.required(rule, value, source, errors, options);
-
-    if (value !== undefined) {
-      rules.type(rule, value, source, errors, options);
-    }
-  }
-
-  callback(errors);
-}
-
-var ENUM$1 = 'enum';
-/**
-                      *  Validates an enumerable list.
-                      *
-                      *  @param rule The validation rule.
-                      *  @param value The value of the field on the source object.
-                      *  @param callback The callback function.
-                      *  @param source The source object being validated.
-                      *  @param options The validation options.
-                      *  @param options.messages The validation messages.
-                      */
-
-function enumerable$1(rule, value, callback, source, options) {
-  var errors = [];
-  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
-
-  if (validate) {
-    if (isEmptyValue(value) && !rule.required) {
-      return callback();
-    }
-
-    rules.required(rule, value, source, errors, options);
-
-    if (value !== undefined) {
-      rules[ENUM$1](rule, value, source, errors, options);
-    }
-  }
-
-  callback(errors);
-}
-
-/**
-   *  Validates a regular expression pattern.
-   *
-   *  Performs validation when a rule only contains
-   *  a pattern property but is not declared as a string type.
-   *
-   *  @param rule The validation rule.
-   *  @param value The value of the field on the source object.
-   *  @param callback The callback function.
-   *  @param source The source object being validated.
-   *  @param options The validation options.
-   *  @param options.messages The validation messages.
-   */
-
-function pattern$2(rule, value, callback, source, options) {
-  var errors = [];
-  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
-
-  if (validate) {
-    if (isEmptyValue(value, 'string') && !rule.required) {
-      return callback();
-    }
-
-    rules.required(rule, value, source, errors, options);
-
-    if (!isEmptyValue(value, 'string')) {
-      rules.pattern(rule, value, source, errors, options);
-    }
-  }
-
-  callback(errors);
-}
-
-function date(rule, value, callback, source, options) {
-  var errors = [];
-  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
-
-  if (validate) {
-    if (isEmptyValue(value) && !rule.required) {
-      return callback();
-    }
-
-    rules.required(rule, value, source, errors, options);
-
-    if (!isEmptyValue(value)) {
-      var dateObject;
-
-      if (typeof value === 'number') {
-        dateObject = new Date(value);
-      } else {
-        dateObject = value;
-      }
-
-      rules.type(rule, dateObject, source, errors, options);
-
-      if (dateObject) {
-        rules.range(rule, dateObject.getTime(), source, errors, options);
-      }
-    }
-  }
-
-  callback(errors);
-}
-
-function required$1(rule, value, callback, source, options) {
-  var errors = [];
-  var type = Array.isArray(value) ? 'array' : typeof value;
-  rules.required(rule, value, source, errors, options, type);
-  callback(errors);
-}
-
-function type$1(rule, value, callback, source, options) {
-  var ruleType = rule.type;
-  var errors = [];
-  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
-
-  if (validate) {
-    if (isEmptyValue(value, ruleType) && !rule.required) {
-      return callback();
-    }
-
-    rules.required(rule, value, source, errors, options, ruleType);
-
-    if (!isEmptyValue(value, ruleType)) {
-      rules.type(rule, value, source, errors, options);
-    }
-  }
-
-  callback(errors);
-}
-
-/**
-   *  Performs validation for any type.
-   *
-   *  @param rule The validation rule.
-   *  @param value The value of the field on the source object.
-   *  @param callback The callback function.
-   *  @param source The source object being validated.
-   *  @param options The validation options.
-   *  @param options.messages The validation messages.
-   */
-
-function any(rule, value, callback, source, options) {
-  var errors = [];
-  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
-
-  if (validate) {
-    if (isEmptyValue(value) && !rule.required) {
-      return callback();
-    }
-
-    rules.required(rule, value, source, errors, options);
-  }
-
-  callback(errors);
-}
-
-var validators = {
-  string: string,
-  method: method,
-  number: number,
-  "boolean": _boolean,
-  regexp: regexp,
-  integer: integer,
-  "float": floatFn,
-  array: array,
-  object: object,
-  "enum": enumerable$1,
-  pattern: pattern$2,
-  date: date,
-  url: type$1,
-  hex: type$1,
-  email: type$1,
-  required: required$1,
-  any: any };
-
-
-function newMessages() {
-  return {
-    "default": 'Validation error on field %s',
-    required: '%s is required',
-    "enum": '%s must be one of %s',
-    whitespace: '%s cannot be empty',
-    date: {
-      format: '%s date %s is invalid for format %s',
-      parse: '%s date could not be parsed, %s is invalid ',
-      invalid: '%s date %s is invalid' },
-
-    types: {
-      string: '%s is not a %s',
-      method: '%s is not a %s (function)',
-      array: '%s is not an %s',
-      object: '%s is not an %s',
-      number: '%s is not a %s',
-      date: '%s is not a %s',
-      "boolean": '%s is not a %s',
-      integer: '%s is not an %s',
-      "float": '%s is not a %s',
-      regexp: '%s is not a valid %s',
-      email: '%s is not a valid %s',
-      url: '%s is not a valid %s',
-      hex: '%s is not a valid %s' },
-
-    string: {
-      len: '%s must be exactly %s characters',
-      min: '%s must be at least %s characters',
-      max: '%s cannot be longer than %s characters',
-      range: '%s must be between %s and %s characters' },
-
-    number: {
-      len: '%s must equal %s',
-      min: '%s cannot be less than %s',
-      max: '%s cannot be greater than %s',
-      range: '%s must be between %s and %s' },
-
-    array: {
-      len: '%s must be exactly %s in length',
-      min: '%s cannot be less than %s in length',
-      max: '%s cannot be greater than %s in length',
-      range: '%s must be between %s and %s in length' },
-
-    pattern: {
-      mismatch: '%s value %s does not match pattern %s' },
-
-    clone: function clone() {
-      var cloned = JSON.parse(JSON.stringify(this));
-      cloned.clone = this.clone;
-      return cloned;
-    } };
-
-}
-var messages = newMessages();
-
-/**
-                               *  Encapsulates a validation schema.
-                               *
-                               *  @param descriptor An object declaring validation rules
-                               *  for this schema.
-                               */
-
-function Schema(descriptor) {
-  this.rules = null;
-  this._messages = messages;
-  this.define(descriptor);
-}
-
-Schema.prototype = {
-  messages: function messages(_messages) {
-    if (_messages) {
-      this._messages = deepMerge(newMessages(), _messages);
-    }
-
-    return this._messages;
-  },
-  define: function define(rules) {
-    if (!rules) {
-      throw new Error('Cannot configure a schema with no rules');
-    }
-
-    if (typeof rules !== 'object' || Array.isArray(rules)) {
-      throw new Error('Rules must be an object');
-    }
-
-    this.rules = {};
-    var z;
-    var item;
-
-    for (z in rules) {
-      if (rules.hasOwnProperty(z)) {
-        item = rules[z];
-        this.rules[z] = Array.isArray(item) ? item : [item];
-      }
-    }
-  },
-  validate: function validate(source_, o, oc) {
-    var _this = this;
-
-    if (o === void 0) {
-      o = {};
-    }
-
-    if (oc === void 0) {
-      oc = function oc() {};
-    }
-
-    var source = source_;
-    var options = o;
-    var callback = oc;
-
-    if (typeof options === 'function') {
-      callback = options;
-      options = {};
-    }
-
-    if (!this.rules || Object.keys(this.rules).length === 0) {
-      if (callback) {
-        callback();
-      }
-
-      return Promise.resolve();
-    }
-
-    function complete(results) {
-      var i;
-      var errors = [];
-      var fields = {};
-
-      function add(e) {
-        if (Array.isArray(e)) {
-          var _errors;
-
-          errors = (_errors = errors).concat.apply(_errors, e);
-        } else {
-          errors.push(e);
-        }
-      }
-
-      for (i = 0; i < results.length; i++) {
-        add(results[i]);
-      }
-
-      if (!errors.length) {
-        errors = null;
-        fields = null;
-      } else {
-        fields = convertFieldsError(errors);
-      }
-
-      callback(errors, fields);
-    }
-
-    if (options.messages) {
-      var messages$1 = this.messages();
-
-      if (messages$1 === messages) {
-        messages$1 = newMessages();
-      }
-
-      deepMerge(messages$1, options.messages);
-      options.messages = messages$1;
-    } else {
-      options.messages = this.messages();
-    }
-
-    var arr;
-    var value;
-    var series = {};
-    var keys = options.keys || Object.keys(this.rules);
-    keys.forEach(function (z) {
-      arr = _this.rules[z];
-      value = source[z];
-      arr.forEach(function (r) {
-        var rule = r;
-
-        if (typeof rule.transform === 'function') {
-          if (source === source_) {
-            source = _extends({}, source);
-          }
-
-          value = source[z] = rule.transform(value);
-        }
-
-        if (typeof rule === 'function') {
-          rule = {
-            validator: rule };
-
-        } else {
-          rule = _extends({}, rule);
-        }
-
-        rule.validator = _this.getValidationMethod(rule);
-        rule.field = z;
-        rule.fullField = rule.fullField || z;
-        rule.type = _this.getType(rule);
-
-        if (!rule.validator) {
-          return;
-        }
-
-        series[z] = series[z] || [];
-        series[z].push({
-          rule: rule,
-          value: value,
-          source: source,
-          field: z });
-
-      });
-    });
-    var errorFields = {};
-    return asyncMap(series, options, function (data, doIt) {
-      var rule = data.rule;
-      var deep = (rule.type === 'object' || rule.type === 'array') && (typeof rule.fields === 'object' || typeof rule.defaultField ===
-      'object');
-      deep = deep && (rule.required || !rule.required && data.value);
-      rule.field = data.field;
-
-      function addFullfield(key, schema) {
-        return _extends({}, schema, {
-          fullField: rule.fullField + "." + key });
-
-      }
-
-      function cb(e) {
-        if (e === void 0) {
-          e = [];
-        }
-
-        var errors = e;
-
-        if (!Array.isArray(errors)) {
-          errors = [errors];
-        }
-
-        if (!options.suppressWarning && errors.length) {
-          Schema.warning('async-validator:', errors);
-        }
-
-        if (errors.length && rule.message) {
-          errors = [].concat(rule.message);
-        }
-
-        errors = errors.map(complementError(rule));
-
-        if (options.first && errors.length) {
-          errorFields[rule.field] = 1;
-          return doIt(errors);
-        }
-
-        if (!deep) {
-          doIt(errors);
-        } else {
-          // if rule is required but the target object
-          // does not exist fail at the rule level and don't
-          // go deeper
-          if (rule.required && !data.value) {
-            if (rule.message) {
-              errors = [].concat(rule.message).map(complementError(rule));
-            } else if (options.error) {
-              errors = [options.error(rule, format(options.messages.required, rule.field))];
-            } else {
-              errors = [];
-            }
-
-            return doIt(errors);
-          }
-
-          var fieldsSchema = {};
-
-          if (rule.defaultField) {
-            for (var k in data.value) {
-              if (data.value.hasOwnProperty(k)) {
-                fieldsSchema[k] = rule.defaultField;
-              }
-            }
-          }
-
-          fieldsSchema = _extends({}, fieldsSchema, {}, data.rule.fields);
-
-          for (var f in fieldsSchema) {
-            if (fieldsSchema.hasOwnProperty(f)) {
-              var fieldSchema = Array.isArray(fieldsSchema[f]) ? fieldsSchema[f] : [fieldsSchema[f]];
-              fieldsSchema[f] = fieldSchema.map(addFullfield.bind(null, f));
-            }
-          }
-
-          var schema = new Schema(fieldsSchema);
-          schema.messages(options.messages);
-
-          if (data.rule.options) {
-            data.rule.options.messages = options.messages;
-            data.rule.options.error = options.error;
-          }
-
-          schema.validate(data.value, data.rule.options || options, function (errs) {
-            var finalErrors = [];
-
-            if (errors && errors.length) {
-              finalErrors.push.apply(finalErrors, errors);
-            }
-
-            if (errs && errs.length) {
-              finalErrors.push.apply(finalErrors, errs);
-            }
-
-            doIt(finalErrors.length ? finalErrors : null);
-          });
-        }
-      }
-
-      var res;
-
-      if (rule.asyncValidator) {
-        res = rule.asyncValidator(rule, data.value, cb, data.source, options);
-      } else if (rule.validator) {
-        res = rule.validator(rule, data.value, cb, data.source, options);
-
-        if (res === true) {
-          cb();
-        } else if (res === false) {
-          cb(rule.message || rule.field + " fails");
-        } else if (res instanceof Array) {
-          cb(res);
-        } else if (res instanceof Error) {
-          cb(res.message);
-        }
-      }
-
-      if (res && res.then) {
-        res.then(function () {
-          return cb();
-        }, function (e) {
-          return cb(e);
-        });
-      }
-    }, function (results) {
-      complete(results);
-    });
-  },
-  getType: function getType(rule) {
-    if (rule.type === undefined && rule.pattern instanceof RegExp) {
-      rule.type = 'pattern';
-    }
-
-    if (typeof rule.validator !== 'function' && rule.type && !validators.hasOwnProperty(rule.type)) {
-      throw new Error(format('Unknown rule type %s', rule.type));
-    }
-
-    return rule.type || 'string';
-  },
-  getValidationMethod: function getValidationMethod(rule) {
-    if (typeof rule.validator === 'function') {
-      return rule.validator;
-    }
-
-    var keys = Object.keys(rule);
-    var messageIndex = keys.indexOf('message');
-
-    if (messageIndex !== -1) {
-      keys.splice(messageIndex, 1);
-    }
-
-    if (keys.length === 1 && keys[0] === 'required') {
-      return validators.required;
-    }
-
-    return validators[this.getType(rule)] || false;
-  } };
-
-
-Schema.register = function register(type, validator) {
-  if (typeof validator !== 'function') {
-    throw new Error('Cannot register a validator by type, validator is not a function');
-  }
-
-  validators[type] = validator;
-};
-
-Schema.warning = warning;
-Schema.messages = messages;var _default =
-
-Schema;exports.default = _default;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../../../../../QMDownload/SoftMgr/HBuilderX/plugins/uniapp-cli/node_modules/node-libs-browser/mock/process.js */ 52)))
-
-/***/ }),
-
 /***/ 4:
-/*!*************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/pages.json ***!
-  \*************************************************************************/
+/*!**********************************************!*\
+  !*** D:/HBuilderProjects/rushifu/pages.json ***!
+  \**********************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -12784,9 +10723,9 @@ Schema;exports.default = _default;
 /***/ }),
 
 /***/ 40:
-/*!***************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/api/index.js ***!
-  \***************************************************************************/
+/*!************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/api/index.js ***!
+  \************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -12839,33 +10778,31 @@ _axios.default.defaults.adapter = function (config) {//自己定义个适配器�
 };
 
 myPost.interceptors.request.use(function (config) {
-  // if (sessionStorage.getItem("token")) {
-  // config.headers.token = sessionStorage.token;
-  // config.data = {
-  //     pageNum: 1,
-  //     pageSize: 1,
-  // };
-  // config.headers = {
-  //     // 'token': sessionStorage.token,
-  //     'Access-Control-Allow-Origin': '*',
-  //     "access-control-allow-credentials": "true"
-  // }
-  // }
-  // console.log(config)
+  if (uni.getStorageSync('token')) {
+    config.headers = {
+      'Accept': 'application/json'
+      // 'token':  uni.getStorageSync('token'),
+      // 'Access-Control-Allow-Origin': '*',
+      // "access-control-allow-credentials": "true"
+    };
+    // config.headers.token = uni.getStorageSync('token');
+  }
+  console.log(config);
   return config;
 }, function (error) {
   console.log(error);
   return Promise.reject();
 });
 myGet.interceptors.request.use(function (config) {
-  // if (sessionStorage.getItem("token")) {
-  // config.headers = {
-  // 	// 'token': sessionStorage.token,
-  // 	'Access-Control-Allow-Origin': '*',
-  // 	"access-control-allow-credentials": "true"
-  // }
-  // config.headers.token = sessionStorage.token;
-  // }
+  if (uni.getStorageSync('token')) {
+    config.headers = {
+      'Accept': 'application/json'
+      // 'token': sessionStorage.token,
+      // 'Access-Control-Allow-Origin': '*',
+      // "access-control-allow-credentials": "true"
+    };
+    config.headers.token = uni.getStorageSync('token');
+  }
   return config;
 }, function (error) {
   console.log(error);
@@ -12963,429 +10900,11 @@ myGet.interceptors.response.use(function (response) {
 });var _default =
 
 {
-  login: function login(obj) {
+  loginWechat: function loginWechat(obj) {
     return myPost({
-      url: _url.default.login,
-      params: _objectSpread({},
-      obj)
-
-      // 要在这里写 headers,从sessionStorage中拿,并给headers设置token
-      // headers: {
-      //     'token': sessionStorage.getItem("token")
-      // },
-    });
-  },
-  wx_login: function wx_login(code, rawData, iv, signature, encryptedData) {
-    return myPost({
-      url: _url.default.wx_login,
-      data: {
-        code: code,
-        rawData: rawData,
-        iv: iv,
-        signature: signature,
-        encryptedData: encryptedData } });
-
-
-  },
-  wx_userinfo: function wx_userinfo(openid) {
-    return myPost({
-      url: _url.default.wx_userinfo,
-      data: {
-        openid: openid } });
-
-
-  },
-  wx_index: function wx_index() {
-    return myPost({
-      url: _url.default.wx_index });
-
-  },
-  wx_goodsview: function wx_goodsview(id, openid) {
-    return myPost({
-      url: _url.default.wx_goodsview,
-      data: {
-        id: id,
-        openid: openid } });
-
-
-  },
-  wx_goodslist: function wx_goodslist(obj) {
-    return myPost({
-      url: _url.default.wx_goodslist,
+      url: _url.default.loginWechat,
       data: _objectSpread({},
       obj) });
-
-
-  },
-  wx_search: function wx_search() {
-    return myPost({
-      url: _url.default.wx_search });
-
-  },
-  wx_cartlist: function wx_cartlist(openid) {
-    return myPost({
-      url: _url.default.wx_cartlist,
-      data: {
-        openid: openid } });
-
-
-  },
-  wx_editcartnum: function wx_editcartnum(openid, cartid, num, cal_type, sign) {
-    return myPost({
-      url: _url.default.wx_editcartnum,
-      data: {
-        openid: openid,
-        cartid: cartid,
-        num: num,
-        cal_type: cal_type,
-        sign: sign } });
-
-
-  },
-  wx_addcart: function wx_addcart(openid, color, size, goods_id, num, sign) {
-    return myPost({
-      url: _url.default.wx_addcart,
-      data: {
-        openid: openid,
-        color: color,
-        size: size,
-        goods_id: goods_id,
-        num: num,
-        sign: sign } });
-
-
-  },
-  wx_cartdel: function wx_cartdel(openid, cartid, sign) {
-    return myPost({
-      url: _url.default.wx_cartdel,
-      data: {
-        openid: openid,
-        cartid: cartid,
-        sign: sign } });
-
-
-  },
-  wx_goodslike: function wx_goodslike(openid) {
-    return myPost({
-      url: _url.default.wx_goodslike,
-      data: {
-        openid: openid } });
-
-
-  },
-  billagreement_view: function billagreement_view() {
-    return myPost({
-      url: _url.default.billagreement_view });
-
-  },
-  wx_userreceiver: function wx_userreceiver(openid) {
-    return myPost({
-      url: _url.default.wx_userreceiver,
-      data: {
-        openid: openid } });
-
-
-  },
-  wx_adduserreceiver: function wx_adduserreceiver(openid, realname, mobile, city, address, is_default, sign) {
-    return myPost({
-      url: _url.default.wx_adduserreceiver,
-      data: {
-        openid: openid,
-        realname: realname,
-        mobile: mobile,
-        city: city,
-        address: address,
-        is_default: is_default,
-        sign: sign } });
-
-
-  },
-  wx_edituserreceiver: function wx_edituserreceiver(openid, id, realname, mobile, city, address, is_default, sign) {
-    return myPost({
-      url: _url.default.wx_edituserreceiver,
-      data: {
-        openid: openid,
-        id: id,
-        realname: realname,
-        mobile: mobile,
-        city: city,
-        address: address,
-        is_default: is_default,
-        sign: sign } });
-
-
-  },
-  wx_deluserreceiver: function wx_deluserreceiver(openid, id, sign) {
-    return myPost({
-      url: _url.default.wx_deluserreceiver,
-      data: {
-        openid: openid,
-        id: id,
-        sign: sign } });
-
-
-  },
-  order_submission: function order_submission(openid, order_type, buy_type, goods_id, color, size, num, sign) {
-    return myPost({
-      url: _url.default.order_submission,
-      data: {
-        openid: openid,
-        order_type: order_type,
-        buy_type: buy_type,
-        goods_id: goods_id,
-        color: color,
-        size: size,
-        num: num,
-        sign: sign } });
-
-
-  },
-  wx_payment: function wx_payment(openid, order_type, buy_type, goods_json, address_id, pay_money, goods_money, totalpostage, pay_type,
-  sign, recommend_userid) {
-    return myPost({
-      url: _url.default.wx_payment,
-      data: {
-        openid: openid,
-        order_type: order_type,
-        buy_type: buy_type,
-        goods_json: goods_json,
-        address_id: address_id,
-        pay_money: pay_money,
-        goods_money: goods_money,
-        totalpostage: totalpostage,
-        pay_type: pay_type,
-        sign: sign,
-        recommend_userid: recommend_userid } });
-
-
-  },
-  wx_userorder: function wx_userorder(openid, is_free, page, pagesize, orders_status) {
-    return myPost({
-      url: _url.default.wx_userorder,
-      data: {
-        openid: openid,
-        is_free: is_free,
-        page: page,
-        pagesize: pagesize,
-        orders_status: orders_status } });
-
-
-  },
-  wx_orderspay: function wx_orderspay(openid, order_id, pay_type, sign) {
-    return myPost({
-      url: _url.default.wx_orderspay,
-      data: {
-        openid: openid,
-        order_id: order_id,
-        pay_type: pay_type,
-        sign: sign } });
-
-
-  },
-  wx_orderscancel: function wx_orderscancel(openid, order_id, sign) {
-    return myPost({
-      url: _url.default.wx_orderscancel,
-      data: {
-        openid: openid,
-        order_id: order_id,
-        sign: sign } });
-
-
-  },
-  wx_orderspostsaleview: function wx_orderspostsaleview(openid, order_id) {
-    return myPost({
-      url: _url.default.wx_orderspostsaleview,
-      data: {
-        openid: openid,
-        order_id: order_id } });
-
-
-  },
-  wx_orderspostsale: function wx_orderspostsale(openid, order_id, postsale_types, postsale_refundmoney, postsale_remark, sign) {
-    return myPost({
-      url: _url.default.wx_orderspostsale,
-      data: {
-        openid: openid,
-        order_id: order_id,
-        postsale_types: postsale_types,
-        postsale_refundmoney: postsale_refundmoney,
-        postsale_remark: postsale_remark,
-        sign: sign } });
-
-
-  },
-  wx_orderspostsalecancel: function wx_orderspostsalecancel(openid, order_id, sign) {
-    return myPost({
-      url: _url.default.wx_orderspostsalecancel,
-      data: {
-        openid: openid,
-        order_id: order_id,
-        sign: sign } });
-
-
-  },
-  wx_orderspostsalesubview: function wx_orderspostsalesubview(openid, order_id) {
-    return myPost({
-      url: _url.default.wx_orderspostsalesubview,
-      data: {
-        openid: openid,
-        order_id: order_id } });
-
-
-  },
-  wx_orderscomment: function wx_orderscomment(openid, order_id, comment, sign) {
-    return myPost({
-      url: _url.default.wx_orderscomment,
-      data: {
-        openid: openid,
-        order_id: order_id,
-        comment: comment,
-        sign: sign } });
-
-
-  },
-  wx_orderconfirmreceipt: function wx_orderconfirmreceipt(openid, order_id, sign) {
-    return myPost({
-      url: _url.default.wx_orderconfirmreceipt,
-      data: {
-        openid: openid,
-        order_id: order_id,
-        sign: sign } });
-
-
-  },
-  wx_goodscomment: function wx_goodscomment(goods_id) {
-    return myPost({
-      url: _url.default.wx_goodscomment,
-      data: {
-        goods_id: goods_id } });
-
-
-  },
-  guide_content: function guide_content() {
-    return myPost({
-      url: _url.default.guide_content });
-
-  },
-  wx_freeordersubmit: function wx_freeordersubmit(openid, sub_orderid) {
-    return myPost({
-      url: _url.default.wx_freeordersubmit,
-      data: {
-        openid: openid,
-        sub_orderid: sub_orderid } });
-
-
-  },
-  wx_freeorder: function wx_freeorder(openid, sub_orderid) {
-    return myPost({
-      url: _url.default.wx_freeorder,
-      data: {
-        openid: openid,
-        sub_orderid: sub_orderid } });
-
-
-  },
-  wx_freeorderrecord: function wx_freeorderrecord(openid, page, pagesize) {
-    return myPost({
-      url: _url.default.wx_freeorderrecord,
-      data: {
-        openid: openid,
-        page: page,
-        pagesize: pagesize } });
-
-
-  },
-  wx_shareqr: function wx_shareqr(openid, goods_id, sign) {
-    return myPost({
-      url: _url.default.wx_shareqr,
-      data: {
-        openid: openid,
-        goods_id: goods_id,
-        sign: sign } });
-
-
-  },
-  wx_usercommission: function wx_usercommission(openid, page, pagesize) {
-    return myPost({
-      url: _url.default.wx_usercommission,
-      data: {
-        openid: openid,
-        page: page,
-        pagesize: pagesize } });
-
-
-  },
-  wx_usercommissionmore: function wx_usercommissionmore(openid, page, pagesize) {
-    return myPost({
-      url: _url.default.wx_usercommissionmore,
-      data: {
-        openid: openid,
-        page: page,
-        pagesize: pagesize } });
-
-
-  },
-  wx_userconsume: function wx_userconsume(openid, page, pagesize) {
-    return myPost({
-      url: _url.default.wx_userconsume,
-      data: {
-        openid: openid,
-        page: page,
-        pagesize: pagesize } });
-
-
-  },
-  wx_addcollect: function wx_addcollect(openid, goods_id, sign) {
-    return myPost({
-      url: _url.default.wx_addcollect,
-      data: {
-        openid: openid,
-        goods_id: goods_id,
-        sign: sign } });
-
-
-  },
-  wx_mycollectdel: function wx_mycollectdel(openid, goods_id, sign) {
-    return myPost({
-      url: _url.default.wx_mycollectdel,
-      data: {
-        openid: openid,
-        goods_id: goods_id,
-        sign: sign } });
-
-
-  },
-  wx_withdrawal: function wx_withdrawal(openid, withdrawal_type, realname, account, bankname, money, sign) {
-    return myPost({
-      url: _url.default.wx_withdrawal,
-      data: {
-        openid: openid,
-        withdrawal_type: withdrawal_type,
-        realname: realname,
-        account: account,
-        bankname: bankname,
-        money: money,
-        sign: sign } });
-
-
-  },
-  wx_mywithdrawal: function wx_mywithdrawal(openid, page, pagesize) {
-    return myPost({
-      url: _url.default.wx_mywithdrawal,
-      data: {
-        openid: openid,
-        page: page,
-        pagesize: pagesize } });
-
-
-  },
-  wx_mycollect: function wx_mycollect(openid, page, pagesize) {
-    return myPost({
-      url: _url.default.wx_mycollect,
-      data: {
-        openid: openid,
-        page: page,
-        pagesize: pagesize } });
 
 
   } };exports.default = _default;
@@ -13393,695 +10912,10 @@ myGet.interceptors.response.use(function (response) {
 
 /***/ }),
 
-/***/ 41:
-/*!******************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/index.js ***!
-  \******************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(/*! ./lib/axios */ 42);
-
-/***/ }),
-
-/***/ 413:
-/*!*********************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/components/evan-icons/icons.js ***!
-  \*********************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = { "glass": "\uF000", "music": "\uF001", "search": "\uF002", "envelope-o": "\uF003", "heart": "\uF004", "star": "\uF005", "star-o": "\uF006", "user": "\uF007", "film": "\uF008", "th-large": "\uF009", "th": "\uF00A", "th-list": "\uF00B", "check": "\uF00C", "remove": "\uF00D", "close": "\uF00D", "times": "\uF00D", "search-plus": "\uF00E", "search-minus": "\uF010", "power-off": "\uF011", "signal": "\uF012", "gear": "\uF013", "cog": "\uF013", "trash-o": "\uF014", "home": "\uF015", "file-o": "\uF016", "clock-o": "\uF017", "road": "\uF018", "download": "\uF019", "arrow-circle-o-down": "\uF01A", "arrow-circle-o-up": "\uF01B", "inbox": "\uF01C", "play-circle-o": "\uF01D", "rotate-right": "\uF01E", "repeat": "\uF01E", "refresh": "\uF021", "list-alt": "\uF022", "lock": "\uF023", "flag": "\uF024", "headphones": "\uF025", "volume-off": "\uF026", "volume-down": "\uF027", "volume-up": "\uF028", "qrcode": "\uF029", "barcode": "\uF02A", "tag": "\uF02B", "tags": "\uF02C", "book": "\uF02D", "bookmark": "\uF02E", "print": "\uF02F", "camera": "\uF030", "font": "\uF031", "bold": "\uF032", "italic": "\uF033", "text-height": "\uF034", "text-width": "\uF035", "align-left": "\uF036", "align-center": "\uF037", "align-right": "\uF038", "align-justify": "\uF039", "list": "\uF03A", "dedent": "\uF03B", "outdent": "\uF03B", "indent": "\uF03C", "video-camera": "\uF03D", "photo": "\uF03E", "image": "\uF03E", "picture-o": "\uF03E", "pencil": "\uF040", "map-marker": "\uF041", "adjust": "\uF042", "tint": "\uF043", "edit": "\uF044", "pencil-square-o": "\uF044", "share-square-o": "\uF045", "check-square-o": "\uF046", "arrows": "\uF047", "step-backward": "\uF048", "fast-backward": "\uF049", "backward": "\uF04A", "play": "\uF04B", "pause": "\uF04C", "stop": "\uF04D", "forward": "\uF04E", "fast-forward": "\uF050", "step-forward": "\uF051", "eject": "\uF052", "chevron-left": "\uF053", "chevron-right": "\uF054", "plus-circle": "\uF055", "minus-circle": "\uF056", "times-circle": "\uF057", "check-circle": "\uF058", "question-circle": "\uF059", "info-circle": "\uF05A", "crosshairs": "\uF05B", "times-circle-o": "\uF05C", "check-circle-o": "\uF05D", "ban": "\uF05E", "arrow-left": "\uF060", "arrow-right": "\uF061", "arrow-up": "\uF062", "arrow-down": "\uF063", "mail-forward": "\uF064", "share": "\uF064", "expand": "\uF065", "compress": "\uF066", "plus": "\uF067", "minus": "\uF068", "asterisk": "\uF069", "exclamation-circle": "\uF06A", "gift": "\uF06B", "leaf": "\uF06C", "fire": "\uF06D", "eye": "\uF06E", "eye-slash": "\uF070", "warning": "\uF071", "exclamation-triangle": "\uF071", "plane": "\uF072", "calendar": "\uF073", "random": "\uF074", "comment": "\uF075", "magnet": "\uF076", "chevron-up": "\uF077", "chevron-down": "\uF078", "retweet": "\uF079", "shopping-cart": "\uF07A", "folder": "\uF07B", "folder-open": "\uF07C", "arrows-v": "\uF07D", "arrows-h": "\uF07E", "bar-chart-o": "\uF080", "bar-chart": "\uF080", "twitter-square": "\uF081", "facebook-square": "\uF082", "camera-retro": "\uF083", "key": "\uF084", "gears": "\uF085", "cogs": "\uF085", "comments": "\uF086", "thumbs-o-up": "\uF087", "thumbs-o-down": "\uF088", "star-half": "\uF089", "heart-o": "\uF08A", "sign-out": "\uF08B", "linkedin-square": "\uF08C", "thumb-tack": "\uF08D", "external-link": "\uF08E", "sign-in": "\uF090", "trophy": "\uF091", "github-square": "\uF092", "upload": "\uF093", "lemon-o": "\uF094", "phone": "\uF095", "square-o": "\uF096", "bookmark-o": "\uF097", "phone-square": "\uF098", "twitter": "\uF099", "facebook-f": "\uF09A", "facebook": "\uF09A", "github": "\uF09B", "unlock": "\uF09C", "credit-card": "\uF09D", "feed": "\uF09E", "rss": "\uF09E", "hdd-o": "\uF0A0", "bullhorn": "\uF0A1", "bell-o": "\uF0A2", "certificate": "\uF0A3", "hand-o-right": "\uF0A4", "hand-o-left": "\uF0A5", "hand-o-up": "\uF0A6", "hand-o-down": "\uF0A7", "arrow-circle-left": "\uF0A8", "arrow-circle-right": "\uF0A9", "arrow-circle-up": "\uF0AA", "arrow-circle-down": "\uF0AB", "globe": "\uF0AC", "wrench": "\uF0AD", "tasks": "\uF0AE", "filter": "\uF0B0", "briefcase": "\uF0B1", "arrows-alt": "\uF0B2", "group": "\uF0C0", "users": "\uF0C0", "chain": "\uF0C1", "link": "\uF0C1", "cloud": "\uF0C2", "flask": "\uF0C3", "cut": "\uF0C4", "scissors": "\uF0C4", "copy": "\uF0C5", "files-o": "\uF0C5", "paperclip": "\uF0C6", "save": "\uF0C7", "floppy-o": "\uF0C7", "square": "\uF0C8", "navicon": "\uF0C9", "reorder": "\uF0C9", "bars": "\uF0C9", "list-ul": "\uF0CA", "list-ol": "\uF0CB", "strikethrough": "\uF0CC", "underline": "\uF0CD", "table": "\uF0CE", "magic": "\uF0D0", "truck": "\uF0D1", "pinterest": "\uF0D2", "pinterest-square": "\uF0D3", "google-plus-square": "\uF0D4", "google-plus": "\uF0D5", "money": "\uF0D6", "caret-down": "\uF0D7", "caret-up": "\uF0D8", "caret-left": "\uF0D9", "caret-right": "\uF0DA", "columns": "\uF0DB", "unsorted": "\uF0DC", "sort": "\uF0DC", "sort-down": "\uF0DD", "sort-desc": "\uF0DD", "sort-up": "\uF0DE", "sort-asc": "\uF0DE", "envelope": "\uF0E0", "linkedin": "\uF0E1", "rotate-left": "\uF0E2", "undo": "\uF0E2", "legal": "\uF0E3", "gavel": "\uF0E3", "dashboard": "\uF0E4", "tachometer": "\uF0E4", "comment-o": "\uF0E5", "comments-o": "\uF0E6", "flash": "\uF0E7", "bolt": "\uF0E7", "sitemap": "\uF0E8", "umbrella": "\uF0E9", "paste": "\uF0EA", "clipboard": "\uF0EA", "lightbulb-o": "\uF0EB", "exchange": "\uF0EC", "cloud-download": "\uF0ED", "cloud-upload": "\uF0EE", "user-md": "\uF0F0", "stethoscope": "\uF0F1", "suitcase": "\uF0F2", "bell": "\uF0F3", "coffee": "\uF0F4", "cutlery": "\uF0F5", "file-text-o": "\uF0F6", "building-o": "\uF0F7", "hospital-o": "\uF0F8", "ambulance": "\uF0F9", "medkit": "\uF0FA", "fighter-jet": "\uF0FB", "beer": "\uF0FC", "h-square": "\uF0FD", "plus-square": "\uF0FE", "angle-double-left": "\uF100", "angle-double-right": "\uF101", "angle-double-up": "\uF102", "angle-double-down": "\uF103", "angle-left": "\uF104", "angle-right": "\uF105", "angle-up": "\uF106", "angle-down": "\uF107", "desktop": "\uF108", "laptop": "\uF109", "tablet": "\uF10A", "mobile-phone": "\uF10B", "mobile": "\uF10B", "circle-o": "\uF10C", "quote-left": "\uF10D", "quote-right": "\uF10E", "spinner": "\uF110", "circle": "\uF111", "mail-reply": "\uF112", "reply": "\uF112", "github-alt": "\uF113", "folder-o": "\uF114", "folder-open-o": "\uF115", "smile-o": "\uF118", "frown-o": "\uF119", "meh-o": "\uF11A", "gamepad": "\uF11B", "keyboard-o": "\uF11C", "flag-o": "\uF11D", "flag-checkered": "\uF11E", "terminal": "\uF120", "code": "\uF121", "mail-reply-all": "\uF122", "reply-all": "\uF122", "star-half-empty": "\uF123", "star-half-full": "\uF123", "star-half-o": "\uF123", "location-arrow": "\uF124", "crop": "\uF125", "code-fork": "\uF126", "unlink": "\uF127", "chain-broken": "\uF127", "question": "\uF128", "info": "\uF129", "exclamation": "\uF12A", "superscript": "\uF12B", "subscript": "\uF12C", "eraser": "\uF12D", "puzzle-piece": "\uF12E", "microphone": "\uF130", "microphone-slash": "\uF131", "shield": "\uF132", "calendar-o": "\uF133", "fire-extinguisher": "\uF134", "rocket": "\uF135", "maxcdn": "\uF136", "chevron-circle-left": "\uF137", "chevron-circle-right": "\uF138", "chevron-circle-up": "\uF139", "chevron-circle-down": "\uF13A", "html5": "\uF13B", "css3": "\uF13C", "anchor": "\uF13D", "unlock-alt": "\uF13E", "bullseye": "\uF140", "ellipsis-h": "\uF141", "ellipsis-v": "\uF142", "rss-square": "\uF143", "play-circle": "\uF144", "ticket": "\uF145", "minus-square": "\uF146", "minus-square-o": "\uF147", "level-up": "\uF148", "level-down": "\uF149", "check-square": "\uF14A", "pencil-square": "\uF14B", "external-link-square": "\uF14C", "share-square": "\uF14D", "compass": "\uF14E", "toggle-down": "\uF150", "caret-square-o-down": "\uF150", "toggle-up": "\uF151", "caret-square-o-up": "\uF151", "toggle-right": "\uF152", "caret-square-o-right": "\uF152", "fa-euro": "\uF153", "fa-eur": "\uF153", "gbp": "\uF154", "dollar": "\uF155", "usd": "\uF155", "rupee": "\uF156", "inr": "\uF156", "cny": "\uF157", "rmb": "\uF157", "yen": "\uF157", "jpy": "\uF157", "ruble": "\uF158", "rouble": "\uF158", "rub": "\uF158", "won": "\uF159", "krw": "\uF159", "bitcoin": "\uF15A", "btc": "\uF15A", "file": "\uF15B", "file-text": "\uF15C", "sort-alpha-asc": "\uF15D", "sort-alpha-desc": "\uF15E", "sort-amount-asc": "\uF160", "sort-amount-desc": "\uF161", "sort-numeric-asc": "\uF162", "sort-numeric-desc": "\uF163", "thumbs-up": "\uF164", "thumbs-down": "\uF165", "youtube-square": "\uF166", "youtube": "\uF167", "xing": "\uF168", "xing-square": "\uF169", "youtube-play": "\uF16A", "dropbox": "\uF16B", "stack-overflow": "\uF16C", "instagram": "\uF16D", "flickr": "\uF16E", "adn": "\uF170", "bitbucket": "\uF171", "bitbucket-square": "\uF172", "tumblr": "\uF173", "tumblr-square": "\uF174", "long-arrow-down": "\uF175", "long-arrow-up": "\uF176", "long-arrow-left": "\uF177", "long-arrow-right": "\uF178", "apple": "\uF179", "windows": "\uF17A", "android": "\uF17B", "linux": "\uF17C", "dribbble": "\uF17D", "skype": "\uF17E", "foursquare": "\uF180", "trello": "\uF181", "female": "\uF182", "male": "\uF183", "gittip": "\uF184", "gratipay": "\uF184", "sun-o": "\uF185", "moon-o": "\uF186", "archive": "\uF187", "bug": "\uF188", "vk": "\uF189", "weibo": "\uF18A", "renren": "\uF18B", "pagelines": "\uF18C", "stack-exchange": "\uF18D", "arrow-circle-o-right": "\uF18E", "arrow-circle-o-left": "\uF190", "toggle-left": "\uF191", "caret-square-o-left": "\uF191", "dot-circle-o": "\uF192", "wheelchair": "\uF193", "vimeo-square": "\uF194", "turkish-lira": "\uF195", "try": "\uF195", "plus-square-o": "\uF196", "space-shuttle": "\uF197", "slack": "\uF198", "envelope-square": "\uF199", "wordpress": "\uF19A", "openid": "\uF19B", "institution": "\uF19C", "bank": "\uF19C", "university": "\uF19C", "mortar-board": "\uF19D", "graduation-cap": "\uF19D", "yahoo": "\uF19E", "google": "\uF1A0", "reddit": "\uF1A1", "reddit-square": "\uF1A2", "stumbleupon-circle": "\uF1A3", "stumbleupon": "\uF1A4", "delicious": "\uF1A5", "digg": "\uF1A6", "pied-piper-pp": "\uF1A7", "pied-piper-alt": "\uF1A8", "drupal": "\uF1A9", "joomla": "\uF1AA", "language": "\uF1AB", "fax": "\uF1AC", "building": "\uF1AD", "child": "\uF1AE", "paw": "\uF1B0", "spoon": "\uF1B1", "cube": "\uF1B2", "cubes": "\uF1B3", "behance": "\uF1B4", "behance-square": "\uF1B5", "steam": "\uF1B6", "steam-square": "\uF1B7", "recycle": "\uF1B8", "automobile": "\uF1B9", "car": "\uF1B9", "cab": "\uF1BA", "taxi": "\uF1BA", "tree": "\uF1BB", "spotify": "\uF1BC", "deviantart": "\uF1BD", "soundcloud": "\uF1BE", "database": "\uF1C0", "file-pdf-o": "\uF1C1", "file-word-o": "\uF1C2", "file-excel-o": "\uF1C3", "file-powerpoint-o": "\uF1C4", "file-photo-o": "\uF1C5", "file-picture-o": "\uF1C5", "file-image-o": "\uF1C5", "file-zip-o": "\uF1C6", "file-archive-o": "\uF1C6", "file-sound-o": "\uF1C7", "file-audio-o": "\uF1C7", "file-movie-o": "\uF1C8", "file-video-o": "\uF1C8", "file-code-o": "\uF1C9", "vine": "\uF1CA", "codepen": "\uF1CB", "jsfiddle": "\uF1CC", "life-bouy": "\uF1CD", "life-buoy": "\uF1CD", "life-saver": "\uF1CD", "support": "\uF1CD", "life-ring": "\uF1CD", "circle-o-notch": "\uF1CE", "ra": "\uF1D0", "resistance": "\uF1D0", "rebel": "\uF1D0", "ge": "\uF1D1", "empire": "\uF1D1", "git-square": "\uF1D2", "git": "\uF1D3", "y-combinator-square": "\uF1D4", "yc-square": "\uF1D4", "hacker-news": "\uF1D4", "tencent-weibo": "\uF1D5", "qq": "\uF1D6", "wechat": "\uF1D7", "weixin": "\uF1D7", "send": "\uF1D8", "paper-plane": "\uF1D8", "send-o": "\uF1D9", "paper-plane-o": "\uF1D9", "history": "\uF1DA", "circle-thin": "\uF1DB", "header": "\uF1DC", "paragraph": "\uF1DD", "sliders": "\uF1DE", "share-alt": "\uF1E0", "share-alt-square": "\uF1E1", "bomb": "\uF1E2", "soccer-ball-o": "\uF1E3", "futbol-o": "\uF1E3", "tty": "\uF1E4", "binoculars": "\uF1E5", "plug": "\uF1E6", "slideshare": "\uF1E7", "twitch": "\uF1E8", "yelp": "\uF1E9", "newspaper-o": "\uF1EA", "wifi": "\uF1EB", "calculator": "\uF1EC", "paypal": "\uF1ED", "google-wallet": "\uF1EE", "cc-visa": "\uF1F0", "cc-mastercard": "\uF1F1", "cc-discover": "\uF1F2", "cc-amex": "\uF1F3", "cc-paypal": "\uF1F4", "cc-stripe": "\uF1F5", "bell-slash": "\uF1F6", "bell-slash-o": "\uF1F7", "trash": "\uF1F8", "copyright": "\uF1F9", "at": "\uF1FA", "eyedropper": "\uF1FB", "paint-brush": "\uF1FC", "birthday-cake": "\uF1FD", "area-chart": "\uF1FE", "pie-chart": "\uF200", "line-chart": "\uF201", "lastfm": "\uF202", "lastfm-square": "\uF203", "toggle-off": "\uF204", "toggle-on": "\uF205", "bicycle": "\uF206", "bus": "\uF207", "ioxhost": "\uF208", "angellist": "\uF209", "cc": "\uF20A", "shekel": "\uF20B", "sheqel": "\uF20B", "ils": "\uF20B", "meanpath": "\uF20C", "buysellads": "\uF20D", "connectdevelop": "\uF20E", "dashcube": "\uF210", "forumbee": "\uF211", "leanpub": "\uF212", "sellsy": "\uF213", "shirtsinbulk": "\uF214", "simplybuilt": "\uF215", "skyatlas": "\uF216", "cart-plus": "\uF217", "cart-arrow-down": "\uF218", "diamond": "\uF219", "ship": "\uF21A", "user-secret": "\uF21B", "motorcycle": "\uF21C", "street-view": "\uF21D", "heartbeat": "\uF21E", "venus": "\uF221", "mars": "\uF222", "mercury": "\uF223", "intersex": "\uF224", "transgender": "\uF224", "transgender-alt": "\uF225", "venus-double": "\uF226", "mars-double": "\uF227", "venus-mars": "\uF228", "mars-stroke": "\uF229", "mars-stroke-v": "\uF22A", "mars-stroke-h": "\uF22B", "neuter": "\uF22C", "genderless": "\uF22D", "facebook-official": "\uF230", "pinterest-p": "\uF231", "whatsapp": "\uF232", "server": "\uF233", "user-plus": "\uF234", "user-times": "\uF235", "hotel": "\uF236", "bed": "\uF236", "viacoin": "\uF237", "train": "\uF238", "subway": "\uF239", "medium": "\uF23A", "yc": "\uF23B", "y-combinator": "\uF23B", "optin-monster": "\uF23C", "opencart": "\uF23D", "expeditedssl": "\uF23E", "battery-4": "\uF240", "battery": "\uF240", "battery-full": "\uF240", "battery-3": "\uF241", "battery-three-quarters": "\uF241", "battery-2": "\uF242", "battery-half": "\uF242", "battery-1": "\uF243", "battery-quarter": "\uF243", "battery-0": "\uF244", "battery-empty": "\uF244", "mouse-pointer": "\uF245", "i-cursor": "\uF246", "object-group": "\uF247", "object-ungroup": "\uF248", "sticky-note": "\uF249", "sticky-note-o": "\uF24A", "cc-jcb": "\uF24B", "cc-diners-club": "\uF24C", "clone": "\uF24D", "balance-scale": "\uF24E", "hourglass-o": "\uF250", "hourglass-1": "\uF251", "hourglass-start": "\uF251", "hourglass-2": "\uF252", "hourglass-half": "\uF252", "hourglass-3": "\uF253", "hourglass-end": "\uF253", "hourglass": "\uF254", "hand-grab-o": "\uF255", "hand-rock-o": "\uF255", "hand-stop-o": "\uF256", "hand-paper-o": "\uF256", "hand-scissors-o": "\uF257", "hand-lizard-o": "\uF258", "hand-spock-o": "\uF259", "hand-pointer-o": "\uF25A", "hand-peace-o": "\uF25B", "trademark": "\uF25C", "registered": "\uF25D", "creative-commons": "\uF25E", "gg": "\uF260", "gg-circle": "\uF261", "tripadvisor": "\uF262", "odnoklassniki": "\uF263", "odnoklassniki-square": "\uF264", "get-pocket": "\uF265", "wikipedia-w": "\uF266", "safari": "\uF267", "chrome": "\uF268", "firefox": "\uF269", "opera": "\uF26A", "internet-explorer": "\uF26B", "tv": "\uF26C", "television": "\uF26C", "contao": "\uF26D", "500px": "\uF26E", "amazon": "\uF270", "calendar-plus-o": "\uF271", "calendar-minus-o": "\uF272", "calendar-times-o": "\uF273", "calendar-check-o": "\uF274", "industry": "\uF275", "map-pin": "\uF276", "map-signs": "\uF277", "map-o": "\uF278", "map": "\uF279", "commenting": "\uF27A", "commenting-o": "\uF27B", "houzz": "\uF27C", "vimeo": "\uF27D", "black-tie": "\uF27E", "fonticons": "\uF280", "reddit-alien": "\uF281", "edge": "\uF282", "credit-card-alt": "\uF283", "codiepie": "\uF284", "modx": "\uF285", "fort-awesome": "\uF286", "usb": "\uF287", "product-hunt": "\uF288", "mixcloud": "\uF289", "scribd": "\uF28A", "pause-circle": "\uF28B", "pause-circle-o": "\uF28C", "stop-circle": "\uF28D", "stop-circle-o": "\uF28E", "shopping-bag": "\uF290", "shopping-basket": "\uF291", "hashtag": "\uF292", "bluetooth": "\uF293", "bluetooth-b": "\uF294", "percent": "\uF295", "gitlab": "\uF296", "wpbeginner": "\uF297", "wpforms": "\uF298", "envira": "\uF299", "universal-access": "\uF29A", "wheelchair-alt": "\uF29B", "question-circle-o": "\uF29C", "blind": "\uF29D", "audio-description": "\uF29E", "volume-control-phone": "\uF2A0", "braille": "\uF2A1", "assistive-listening-systems": "\uF2A2", "asl-interpreting": "\uF2A3", "american-sign-language-interpreting": "\uF2A3", "deafness": "\uF2A4", "hard-of-hearing": "\uF2A4", "deaf": "\uF2A4", "glide": "\uF2A5", "glide-g": "\uF2A6", "signing": "\uF2A7", "sign-language": "\uF2A7", "low-vision": "\uF2A8", "viadeo": "\uF2A9", "viadeo-square": "\uF2AA", "snapchat": "\uF2AB", "snapchat-ghost": "\uF2AC", "snapchat-square": "\uF2AD", "pied-piper": "\uF2AE", "first-order": "\uF2B0", "yoast": "\uF2B1", "themeisle": "\uF2B2", "google-plus-circle": "\uF2B3", "google-plus-official": "\uF2B3", "fa": "\uF2B4", "font-awesome": "\uF2B4", "handshake-o": "\uF2B5", "envelope-open": "\uF2B6", "envelope-open-o": "\uF2B7", "linode": "\uF2B8", "address-book": "\uF2B9", "address-book-o": "\uF2BA", "vcard": "\uF2BB", "address-card": "\uF2BB", "vcard-o": "\uF2BC", "address-card-o": "\uF2BC", "user-circle": "\uF2BD", "user-circle-o": "\uF2BE", "user-o": "\uF2C0", "id-badge": "\uF2C1", "drivers-license": "\uF2C2", "id-card": "\uF2C2", "drivers-license-o": "\uF2C3", "id-card-o": "\uF2C3", "quora": "\uF2C4", "free-code-camp": "\uF2C5", "telegram": "\uF2C6", "thermometer-4": "\uF2C7", "thermometer": "\uF2C7", "thermometer-full": "\uF2C7", "thermometer-3": "\uF2C8", "thermometer-three-quarters": "\uF2C8", "thermometer-2": "\uF2C9", "thermometer-half": "\uF2C9", "thermometer-1": "\uF2CA", "thermometer-quarter": "\uF2CA", "thermometer-0": "\uF2CB", "thermometer-empty": "\uF2CB", "shower": "\uF2CC", "bathtub": "\uF2CD", "s15": "\uF2CD", "bath": "\uF2CD", "podcast": "\uF2CE", "window-maximize": "\uF2D0", "window-minimize": "\uF2D1", "window-restore": "\uF2D2", "times-rectangle": "\uF2D3", "window-close": "\uF2D3", "times-rectangle-o": "\uF2D4", "window-close-o": "\uF2D4", "bandcamp": "\uF2D5", "grav": "\uF2D6", "etsy": "\uF2D7", "imdb": "\uF2D8", "ravelry": "\uF2D9", "eercast": "\uF2DA", "microchip": "\uF2DB", "snowflake-o": "\uF2DC", "superpowers": "\uF2DD", "wpexplorer": "\uF2DE", "meetup": "\uF2E0" };exports.default = _default;
-
-/***/ }),
-
-/***/ 42:
-/*!**********************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/lib/axios.js ***!
-  \**********************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var utils = __webpack_require__(/*! ./utils */ 43);
-var bind = __webpack_require__(/*! ./helpers/bind */ 44);
-var Axios = __webpack_require__(/*! ./core/Axios */ 45);
-var mergeConfig = __webpack_require__(/*! ./core/mergeConfig */ 65);
-var defaults = __webpack_require__(/*! ./defaults */ 51);
-
-/**
-                                       * Create an instance of Axios
-                                       *
-                                       * @param {Object} defaultConfig The default config for the instance
-                                       * @return {Axios} A new instance of Axios
-                                       */
-function createInstance(defaultConfig) {
-  var context = new Axios(defaultConfig);
-  var instance = bind(Axios.prototype.request, context);
-
-  // Copy axios.prototype to instance
-  utils.extend(instance, Axios.prototype, context);
-
-  // Copy context to instance
-  utils.extend(instance, context);
-
-  return instance;
-}
-
-// Create the default instance to be exported
-var axios = createInstance(defaults);
-
-// Expose Axios class to allow class inheritance
-axios.Axios = Axios;
-
-// Factory for creating new instances
-axios.create = function create(instanceConfig) {
-  return createInstance(mergeConfig(axios.defaults, instanceConfig));
-};
-
-// Expose Cancel & CancelToken
-axios.Cancel = __webpack_require__(/*! ./cancel/Cancel */ 66);
-axios.CancelToken = __webpack_require__(/*! ./cancel/CancelToken */ 67);
-axios.isCancel = __webpack_require__(/*! ./cancel/isCancel */ 50);
-
-// Expose all/spread
-axios.all = function all(promises) {
-  return Promise.all(promises);
-};
-axios.spread = __webpack_require__(/*! ./helpers/spread */ 68);
-
-// Expose isAxiosError
-axios.isAxiosError = __webpack_require__(/*! ./helpers/isAxiosError */ 69);
-
-module.exports = axios;
-
-// Allow use of default import syntax in TypeScript
-module.exports.default = axios;
-
-/***/ }),
-
-/***/ 428:
-/*!********************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/components/uni-icons/icons.js ***!
-  \********************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = {
-  'contact': "\uE100",
-  'person': "\uE101",
-  'personadd': "\uE102",
-  'contact-filled': "\uE130",
-  'person-filled': "\uE131",
-  'personadd-filled': "\uE132",
-  'phone': "\uE200",
-  'email': "\uE201",
-  'chatbubble': "\uE202",
-  'chatboxes': "\uE203",
-  'phone-filled': "\uE230",
-  'email-filled': "\uE231",
-  'chatbubble-filled': "\uE232",
-  'chatboxes-filled': "\uE233",
-  'weibo': "\uE260",
-  'weixin': "\uE261",
-  'pengyouquan': "\uE262",
-  'chat': "\uE263",
-  'qq': "\uE264",
-  'videocam': "\uE300",
-  'camera': "\uE301",
-  'mic': "\uE302",
-  'location': "\uE303",
-  'mic-filled': "\uE332",
-  'speech': "\uE332",
-  'location-filled': "\uE333",
-  'micoff': "\uE360",
-  'image': "\uE363",
-  'map': "\uE364",
-  'compose': "\uE400",
-  'trash': "\uE401",
-  'upload': "\uE402",
-  'download': "\uE403",
-  'close': "\uE404",
-  'redo': "\uE405",
-  'undo': "\uE406",
-  'refresh': "\uE407",
-  'star': "\uE408",
-  'plus': "\uE409",
-  'minus': "\uE410",
-  'circle': "\uE411",
-  'checkbox': "\uE411",
-  'close-filled': "\uE434",
-  'clear': "\uE434",
-  'refresh-filled': "\uE437",
-  'star-filled': "\uE438",
-  'plus-filled': "\uE439",
-  'minus-filled': "\uE440",
-  'circle-filled': "\uE441",
-  'checkbox-filled': "\uE442",
-  'closeempty': "\uE460",
-  'refreshempty': "\uE461",
-  'reload': "\uE462",
-  'starhalf': "\uE463",
-  'spinner': "\uE464",
-  'spinner-cycle': "\uE465",
-  'search': "\uE466",
-  'plusempty': "\uE468",
-  'forward': "\uE470",
-  'back': "\uE471",
-  'left-nav': "\uE471",
-  'checkmarkempty': "\uE472",
-  'home': "\uE500",
-  'navigate': "\uE501",
-  'gear': "\uE502",
-  'paperplane': "\uE503",
-  'info': "\uE504",
-  'help': "\uE505",
-  'locked': "\uE506",
-  'more': "\uE507",
-  'flag': "\uE508",
-  'home-filled': "\uE530",
-  'gear-filled': "\uE532",
-  'info-filled': "\uE534",
-  'help-filled': "\uE535",
-  'more-filled': "\uE537",
-  'settings': "\uE560",
-  'list': "\uE562",
-  'bars': "\uE563",
-  'loop': "\uE565",
-  'paperclip': "\uE567",
-  'eye': "\uE568",
-  'arrowup': "\uE580",
-  'arrowdown': "\uE581",
-  'arrowleft': "\uE582",
-  'arrowright': "\uE583",
-  'arrowthinup': "\uE584",
-  'arrowthindown': "\uE585",
-  'arrowthinleft': "\uE586",
-  'arrowthinright': "\uE587",
-  'pulldown': "\uE588",
-  'closefill': "\uE589",
-  'sound': "\uE590",
-  'scan': "\uE612" };exports.default = _default;
-
-/***/ }),
-
-/***/ 43:
-/*!**********************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/lib/utils.js ***!
-  \**********************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var bind = __webpack_require__(/*! ./helpers/bind */ 44);
-
-/*global toString:true*/
-
-// utils is a library of generic helper functions non-specific to axios
-
-var toString = Object.prototype.toString;
-
-/**
-                                           * Determine if a value is an Array
-                                           *
-                                           * @param {Object} val The value to test
-                                           * @returns {boolean} True if value is an Array, otherwise false
-                                           */
-function isArray(val) {
-  return toString.call(val) === '[object Array]';
-}
-
-/**
-   * Determine if a value is undefined
-   *
-   * @param {Object} val The value to test
-   * @returns {boolean} True if the value is undefined, otherwise false
-   */
-function isUndefined(val) {
-  return typeof val === 'undefined';
-}
-
-/**
-   * Determine if a value is a Buffer
-   *
-   * @param {Object} val The value to test
-   * @returns {boolean} True if value is a Buffer, otherwise false
-   */
-function isBuffer(val) {
-  return val !== null && !isUndefined(val) && val.constructor !== null && !isUndefined(val.constructor) &&
-  typeof val.constructor.isBuffer === 'function' && val.constructor.isBuffer(val);
-}
-
-/**
-   * Determine if a value is an ArrayBuffer
-   *
-   * @param {Object} val The value to test
-   * @returns {boolean} True if value is an ArrayBuffer, otherwise false
-   */
-function isArrayBuffer(val) {
-  return toString.call(val) === '[object ArrayBuffer]';
-}
-
-/**
-   * Determine if a value is a FormData
-   *
-   * @param {Object} val The value to test
-   * @returns {boolean} True if value is an FormData, otherwise false
-   */
-function isFormData(val) {
-  return typeof FormData !== 'undefined' && val instanceof FormData;
-}
-
-/**
-   * Determine if a value is a view on an ArrayBuffer
-   *
-   * @param {Object} val The value to test
-   * @returns {boolean} True if value is a view on an ArrayBuffer, otherwise false
-   */
-function isArrayBufferView(val) {
-  var result;
-  if (typeof ArrayBuffer !== 'undefined' && ArrayBuffer.isView) {
-    result = ArrayBuffer.isView(val);
-  } else {
-    result = val && val.buffer && val.buffer instanceof ArrayBuffer;
-  }
-  return result;
-}
-
-/**
-   * Determine if a value is a String
-   *
-   * @param {Object} val The value to test
-   * @returns {boolean} True if value is a String, otherwise false
-   */
-function isString(val) {
-  return typeof val === 'string';
-}
-
-/**
-   * Determine if a value is a Number
-   *
-   * @param {Object} val The value to test
-   * @returns {boolean} True if value is a Number, otherwise false
-   */
-function isNumber(val) {
-  return typeof val === 'number';
-}
-
-/**
-   * Determine if a value is an Object
-   *
-   * @param {Object} val The value to test
-   * @returns {boolean} True if value is an Object, otherwise false
-   */
-function isObject(val) {
-  return val !== null && typeof val === 'object';
-}
-
-/**
-   * Determine if a value is a plain Object
-   *
-   * @param {Object} val The value to test
-   * @return {boolean} True if value is a plain Object, otherwise false
-   */
-function isPlainObject(val) {
-  if (toString.call(val) !== '[object Object]') {
-    return false;
-  }
-
-  var prototype = Object.getPrototypeOf(val);
-  return prototype === null || prototype === Object.prototype;
-}
-
-/**
-   * Determine if a value is a Date
-   *
-   * @param {Object} val The value to test
-   * @returns {boolean} True if value is a Date, otherwise false
-   */
-function isDate(val) {
-  return toString.call(val) === '[object Date]';
-}
-
-/**
-   * Determine if a value is a File
-   *
-   * @param {Object} val The value to test
-   * @returns {boolean} True if value is a File, otherwise false
-   */
-function isFile(val) {
-  return toString.call(val) === '[object File]';
-}
-
-/**
-   * Determine if a value is a Blob
-   *
-   * @param {Object} val The value to test
-   * @returns {boolean} True if value is a Blob, otherwise false
-   */
-function isBlob(val) {
-  return toString.call(val) === '[object Blob]';
-}
-
-/**
-   * Determine if a value is a Function
-   *
-   * @param {Object} val The value to test
-   * @returns {boolean} True if value is a Function, otherwise false
-   */
-function isFunction(val) {
-  return toString.call(val) === '[object Function]';
-}
-
-/**
-   * Determine if a value is a Stream
-   *
-   * @param {Object} val The value to test
-   * @returns {boolean} True if value is a Stream, otherwise false
-   */
-function isStream(val) {
-  return isObject(val) && isFunction(val.pipe);
-}
-
-/**
-   * Determine if a value is a URLSearchParams object
-   *
-   * @param {Object} val The value to test
-   * @returns {boolean} True if value is a URLSearchParams object, otherwise false
-   */
-function isURLSearchParams(val) {
-  return typeof URLSearchParams !== 'undefined' && val instanceof URLSearchParams;
-}
-
-/**
-   * Trim excess whitespace off the beginning and end of a string
-   *
-   * @param {String} str The String to trim
-   * @returns {String} The String freed of excess whitespace
-   */
-function trim(str) {
-  return str.replace(/^\s*/, '').replace(/\s*$/, '');
-}
-
-/**
-   * Determine if we're running in a standard browser environment
-   *
-   * This allows axios to run in a web worker, and react-native.
-   * Both environments support XMLHttpRequest, but not fully standard globals.
-   *
-   * web workers:
-   *  typeof window -> undefined
-   *  typeof document -> undefined
-   *
-   * react-native:
-   *  navigator.product -> 'ReactNative'
-   * nativescript
-   *  navigator.product -> 'NativeScript' or 'NS'
-   */
-function isStandardBrowserEnv() {
-  if (typeof navigator !== 'undefined' && (navigator.product === 'ReactNative' ||
-  navigator.product === 'NativeScript' ||
-  navigator.product === 'NS')) {
-    return false;
-  }
-  return (
-    typeof window !== 'undefined' &&
-    typeof document !== 'undefined');
-
-}
-
-/**
-   * Iterate over an Array or an Object invoking a function for each item.
-   *
-   * If `obj` is an Array callback will be called passing
-   * the value, index, and complete array for each item.
-   *
-   * If 'obj' is an Object callback will be called passing
-   * the value, key, and complete object for each property.
-   *
-   * @param {Object|Array} obj The object to iterate
-   * @param {Function} fn The callback to invoke for each item
-   */
-function forEach(obj, fn) {
-  // Don't bother if no value provided
-  if (obj === null || typeof obj === 'undefined') {
-    return;
-  }
-
-  // Force an array if not already something iterable
-  if (typeof obj !== 'object') {
-    /*eslint no-param-reassign:0*/
-    obj = [obj];
-  }
-
-  if (isArray(obj)) {
-    // Iterate over array values
-    for (var i = 0, l = obj.length; i < l; i++) {
-      fn.call(null, obj[i], i, obj);
-    }
-  } else {
-    // Iterate over object keys
-    for (var key in obj) {
-      if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        fn.call(null, obj[key], key, obj);
-      }
-    }
-  }
-}
-
-/**
-   * Accepts varargs expecting each argument to be an object, then
-   * immutably merges the properties of each object and returns result.
-   *
-   * When multiple objects contain the same key the later object in
-   * the arguments list will take precedence.
-   *
-   * Example:
-   *
-   * ```js
-   * var result = merge({foo: 123}, {foo: 456});
-   * console.log(result.foo); // outputs 456
-   * ```
-   *
-   * @param {Object} obj1 Object to merge
-   * @returns {Object} Result of all merge properties
-   */
-function merge() /* obj1, obj2, obj3, ... */{
-  var result = {};
-  function assignValue(val, key) {
-    if (isPlainObject(result[key]) && isPlainObject(val)) {
-      result[key] = merge(result[key], val);
-    } else if (isPlainObject(val)) {
-      result[key] = merge({}, val);
-    } else if (isArray(val)) {
-      result[key] = val.slice();
-    } else {
-      result[key] = val;
-    }
-  }
-
-  for (var i = 0, l = arguments.length; i < l; i++) {
-    forEach(arguments[i], assignValue);
-  }
-  return result;
-}
-
-/**
-   * Extends object a by mutably adding to it the properties of object b.
-   *
-   * @param {Object} a The object to be extended
-   * @param {Object} b The object to copy properties from
-   * @param {Object} thisArg The object to bind function to
-   * @return {Object} The resulting value of object a
-   */
-function extend(a, b, thisArg) {
-  forEach(b, function assignValue(val, key) {
-    if (thisArg && typeof val === 'function') {
-      a[key] = bind(val, thisArg);
-    } else {
-      a[key] = val;
-    }
-  });
-  return a;
-}
-
-/**
-   * Remove byte order marker. This catches EF BB BF (the UTF-8 BOM)
-   *
-   * @param {string} content with BOM
-   * @return {string} content value without BOM
-   */
-function stripBOM(content) {
-  if (content.charCodeAt(0) === 0xFEFF) {
-    content = content.slice(1);
-  }
-  return content;
-}
-
-module.exports = {
-  isArray: isArray,
-  isArrayBuffer: isArrayBuffer,
-  isBuffer: isBuffer,
-  isFormData: isFormData,
-  isArrayBufferView: isArrayBufferView,
-  isString: isString,
-  isNumber: isNumber,
-  isObject: isObject,
-  isPlainObject: isPlainObject,
-  isUndefined: isUndefined,
-  isDate: isDate,
-  isFile: isFile,
-  isBlob: isBlob,
-  isFunction: isFunction,
-  isStream: isStream,
-  isURLSearchParams: isURLSearchParams,
-  isStandardBrowserEnv: isStandardBrowserEnv,
-  forEach: forEach,
-  merge: merge,
-  extend: extend,
-  trim: trim,
-  stripBOM: stripBOM };
-
-/***/ }),
-
-/***/ 44:
-/*!*****************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/lib/helpers/bind.js ***!
-  \*****************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = function bind(fn, thisArg) {
-  return function wrap() {
-    var args = new Array(arguments.length);
-    for (var i = 0; i < args.length; i++) {
-      args[i] = arguments[i];
-    }
-    return fn.apply(thisArg, args);
-  };
-};
-
-/***/ }),
-
-/***/ 45:
-/*!***************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/lib/core/Axios.js ***!
-  \***************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var utils = __webpack_require__(/*! ./../utils */ 43);
-var buildURL = __webpack_require__(/*! ../helpers/buildURL */ 46);
-var InterceptorManager = __webpack_require__(/*! ./InterceptorManager */ 47);
-var dispatchRequest = __webpack_require__(/*! ./dispatchRequest */ 48);
-var mergeConfig = __webpack_require__(/*! ./mergeConfig */ 65);
-
-/**
-                                             * Create a new instance of Axios
-                                             *
-                                             * @param {Object} instanceConfig The default config for the instance
-                                             */
-function Axios(instanceConfig) {
-  this.defaults = instanceConfig;
-  this.interceptors = {
-    request: new InterceptorManager(),
-    response: new InterceptorManager() };
-
-}
-
-/**
-   * Dispatch a request
-   *
-   * @param {Object} config The config specific for this request (merged with this.defaults)
-   */
-Axios.prototype.request = function request(config) {
-  /*eslint no-param-reassign:0*/
-  // Allow for axios('example/url'[, config]) a la fetch API
-  if (typeof config === 'string') {
-    config = arguments[1] || {};
-    config.url = arguments[0];
-  } else {
-    config = config || {};
-  }
-
-  config = mergeConfig(this.defaults, config);
-
-  // Set config.method
-  if (config.method) {
-    config.method = config.method.toLowerCase();
-  } else if (this.defaults.method) {
-    config.method = this.defaults.method.toLowerCase();
-  } else {
-    config.method = 'get';
-  }
-
-  // Hook up interceptors middleware
-  var chain = [dispatchRequest, undefined];
-  var promise = Promise.resolve(config);
-
-  this.interceptors.request.forEach(function unshiftRequestInterceptors(interceptor) {
-    chain.unshift(interceptor.fulfilled, interceptor.rejected);
-  });
-
-  this.interceptors.response.forEach(function pushResponseInterceptors(interceptor) {
-    chain.push(interceptor.fulfilled, interceptor.rejected);
-  });
-
-  while (chain.length) {
-    promise = promise.then(chain.shift(), chain.shift());
-  }
-
-  return promise;
-};
-
-Axios.prototype.getUri = function getUri(config) {
-  config = mergeConfig(this.defaults, config);
-  return buildURL(config.url, config.params, config.paramsSerializer).replace(/^\?/, '');
-};
-
-// Provide aliases for supported request methods
-utils.forEach(['delete', 'get', 'head', 'options'], function forEachMethodNoData(method) {
-  /*eslint func-names:0*/
-  Axios.prototype[method] = function (url, config) {
-    return this.request(mergeConfig(config || {}, {
-      method: method,
-      url: url,
-      data: (config || {}).data }));
-
-  };
-});
-
-utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
-  /*eslint func-names:0*/
-  Axios.prototype[method] = function (url, data, config) {
-    return this.request(mergeConfig(config || {}, {
-      method: method,
-      url: url,
-      data: data }));
-
-  };
-});
-
-module.exports = Axios;
-
-/***/ }),
-
-/***/ 450:
-/*!**********************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/components/pcaPicker/pcaData.js ***!
-  \**********************************************************************************************/
+/***/ 408:
+/*!*******************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/components/pcaPicker/pcaData.js ***!
+  \*******************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -17974,10 +14808,2067 @@ module.exports = {
 
 /***/ }),
 
+/***/ 41:
+/*!***************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/index.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(/*! ./lib/axios */ 42);
+
+/***/ }),
+
+/***/ 416:
+/*!***********************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uni-luck-draw/utils.js ***!
+  \***********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.resolveImage = exports.base64src = exports.changeUnits = exports.rpx2px = void 0;var _regenerator = _interopRequireDefault(__webpack_require__(/*! ./node_modules/@babel/runtime/regenerator */ 19));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function ownKeys(object, enumerableOnly) {var keys = Object.keys(object);if (Object.getOwnPropertySymbols) {var symbols = Object.getOwnPropertySymbols(object);if (enumerableOnly) symbols = symbols.filter(function (sym) {return Object.getOwnPropertyDescriptor(object, sym).enumerable;});keys.push.apply(keys, symbols);}return keys;}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};if (i % 2) {ownKeys(Object(source), true).forEach(function (key) {_defineProperty(target, key, source[key]);});} else if (Object.getOwnPropertyDescriptors) {Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));} else {ownKeys(Object(source)).forEach(function (key) {Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));});}}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {try {var info = gen[key](arg);var value = info.value;} catch (error) {reject(error);return;}if (info.done) {resolve(value);} else {Promise.resolve(value).then(_next, _throw);}}function _asyncToGenerator(fn) {return function () {var self = this,args = arguments;return new Promise(function (resolve, reject) {var gen = fn.apply(self, args);function _next(value) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);}function _throw(err) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);}_next(undefined);});};}function _slicedToArray(arr, i) {return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();}function _nonIterableRest() {throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}function _unsupportedIterableToArray(o, minLen) {if (!o) return;if (typeof o === "string") return _arrayLikeToArray(o, minLen);var n = Object.prototype.toString.call(o).slice(8, -1);if (n === "Object" && o.constructor) n = o.constructor.name;if (n === "Map" || n === "Set") return Array.from(o);if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);}function _arrayLikeToArray(arr, len) {if (len == null || len > arr.length) len = arr.length;for (var i = 0, arr2 = new Array(len); i < len; i++) {arr2[i] = arr[i];}return arr2;}function _iterableToArrayLimit(arr, i) {if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;var _arr = [];var _n = true;var _d = false;var _e = undefined;try {for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {_arr.push(_s.value);if (i && _arr.length === i) break;}} catch (err) {_d = true;_e = err;} finally {try {if (!_n && _i["return"] != null) _i["return"]();} finally {if (_d) throw _e;}}return _arr;}function _arrayWithHoles(arr) {if (Array.isArray(arr)) return arr;}var windowWidth = uni.getSystemInfoSync().windowWidth;
+// uni-app@2.9起, 屏幕最多适配到960, 超出则按375计算
+if (windowWidth > 960) windowWidth = 375;
+
+var rpx2px = function rpx2px(value) {
+  if (typeof value === 'string') value = Number(value.replace(/[a-z]*/g, ''));
+  return windowWidth / 750 * value;
+};exports.rpx2px = rpx2px;
+
+var changeUnits = function changeUnits(value) {
+  return Number(value.replace(/^(\-*[0-9.]*)([a-z%]*)$/, function (value, num, unit) {
+    switch (unit) {
+      case 'px':
+        num *= 1;
+        break;
+      case 'rpx':
+        num = rpx2px(num);
+        break;
+      default:
+        num *= 1;
+        break;}
+
+    return num;
+  }));
+};exports.changeUnits = changeUnits;
+
+var fsm;
+var tempImageFlag = 0;
+var base64src = function base64src(base64data) {
+  return new Promise(function (resolve, reject) {
+    // 如果不是base64就直接返回路径
+    if (!/^data:image\/([a-z]+);base64,/.test(base64data)) return resolve(base64data);var _ref =
+    /data:image\/([a-z]+);base64,(.*)/.exec(base64data) || [],_ref2 = _slicedToArray(_ref, 3),format = _ref2[1],bodyData = _ref2[2];
+    if (!format) return resolve(base64data);
+    var filePath = "".concat(wx.env.USER_DATA_PATH, "/lucky_").concat(Date.now()).concat(tempImageFlag++, ".").concat(format);
+    var buffer = wx.base64ToArrayBuffer(bodyData);
+    wx.getFileSystemManager().writeFile({
+      filePath: filePath,
+      data: buffer,
+      encoding: 'binary',
+      success: function success() {return resolve(filePath);},
+      fail: function fail(res) {
+        console.error('API `fsm.writeFile` 进入失败回调', {
+          errMsg: res.errMsg,
+          ArrayBuffer: buffer });
+
+        reject(new Error('base64图片缓存失败'));
+      } });
+
+  });
+};exports.base64src = base64src;
+
+var resolveImage = /*#__PURE__*/function () {var _ref3 = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee(res, img) {var imgName,resolveName,src,$resolve,path,_args = arguments;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:imgName = _args.length > 2 && _args[2] !== undefined ? _args[2] : 'src';resolveName = _args.length > 3 && _args[3] !== undefined ? _args[3] : '$resolve';
+            src = img[imgName];
+            $resolve = img[resolveName];
+
+            // 如果是base64就调用base64src()方法把图片写入本地, 然后渲染临时路径
+            if (!/^data:image\/([a-z]+);base64,/.test(src)) {_context.next = 10;break;}_context.next = 7;return (
+              base64src(src));case 7:path = _context.sent;
+            $resolve(_objectSpread(_objectSpread({}, res.detail), {}, { path: path }));return _context.abrupt("return");case 10:if (!(
+
+
+
+
+            src.indexOf('http') !== 0)) {_context.next = 13;break;}
+            $resolve(_objectSpread(_objectSpread({}, res.detail), {}, { path: src }));return _context.abrupt("return");case 13:
+
+
+            // 如果是网络图片, 则通过getImageInfo()方法获取图片宽高
+            uni.getImageInfo({
+              src: src,
+              success: function success(imgObj) {return $resolve(imgObj);},
+              fail: function fail() {return console.error('API `uni.getImageInfo` 加载图片失败', src);} });case 14:case "end":return _context.stop();}}}, _callee);}));return function resolveImage(_x, _x2) {return _ref3.apply(this, arguments);};}();exports.resolveImage = resolveImage;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
+
+/***/ }),
+
+/***/ 417:
+/*!**********************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/lucky-canvas/index.js ***!
+  \**********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(/*! ./dist/lucky-canvas.cjs.min.js */ 418);
+
+/***/ }),
+
+/***/ 418:
+/*!******************************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/lucky-canvas/dist/lucky-canvas.cjs.min.js ***!
+  \******************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: !0 });
+/*! *****************************************************************************
+                                                                          Copyright (c) Microsoft Corporation.
+                                                                          
+                                                                          Permission to use, copy, modify, and/or distribute this software for any
+                                                                          purpose with or without fee is hereby granted.
+                                                                          
+                                                                          THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+                                                                          REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+                                                                          AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+                                                                          INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+                                                                          LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+                                                                          OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+                                                                          PERFORMANCE OF THIS SOFTWARE.
+                                                                          ***************************************************************************** */
+var _t = function t(e, i) {return (_t = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (t, e) {t.__proto__ = e;} || function (t, e) {for (var i in e) {Object.prototype.hasOwnProperty.call(e, i) && (t[i] = e[i]);}})(e, i);};function e(e, i) {if ("function" != typeof i && null !== i) throw new TypeError("Class extends value " + String(i) + " is not a constructor or null");function n() {this.constructor = e;}_t(e, i), e.prototype = null === i ? Object.create(i) : (n.prototype = i.prototype, new n());}var _i = function i() {return (_i = Object.assign || function (t) {for (var e, i = 1, n = arguments.length; i < n; i++) {for (var r in e = arguments[i]) {Object.prototype.hasOwnProperty.call(e, r) && (t[r] = e[r]);}}return t;}).apply(this, arguments);};function n(t, e, i, n) {return new (i || (i = Promise))(function (r, o) {function s(t) {try {u(n.next(t));} catch (t) {o(t);}}function a(t) {try {u(n.throw(t));} catch (t) {o(t);}}function u(t) {var e;t.done ? r(t.value) : (e = t.value, e instanceof i ? e : new i(function (t) {t(e);})).then(s, a);}u((n = n.apply(t, e || [])).next());});}function r(t, e) {var i,n,r,o,s = { label: 0, sent: function sent() {if (1 & r[0]) throw r[1];return r[1];}, trys: [], ops: [] };return o = { next: a(0), throw: a(1), return: a(2) }, "function" == typeof Symbol && (o[Symbol.iterator] = function () {return this;}), o;function a(o) {return function (a) {return function (o) {if (i) throw new TypeError("Generator is already executing.");for (; s;) {try {if (i = 1, n && (r = 2 & o[0] ? n.return : o[0] ? n.throw || ((r = n.return) && r.call(n), 0) : n.next) && !(r = r.call(n, o[1])).done) return r;switch (n = 0, r && (o = [2 & o[0], r.value]), o[0]) {case 0:case 1:r = o;break;case 4:return s.label++, { value: o[1], done: !1 };case 5:s.label++, n = o[1], o = [0];continue;case 7:o = s.ops.pop(), s.trys.pop();continue;default:if (!(r = s.trys, (r = r.length > 0 && r[r.length - 1]) || 6 !== o[0] && 2 !== o[0])) {s = 0;continue;}if (3 === o[0] && (!r || o[1] > r[0] && o[1] < r[3])) {s.label = o[1];break;}if (6 === o[0] && s.label < r[1]) {s.label = r[1], r = o;break;}if (r && s.label < r[2]) {s.label = r[2], s.ops.push(o);break;}r[2] && s.ops.pop(), s.trys.pop();continue;}o = e.call(t, s);} catch (t) {o = [6, t], n = 0;} finally {i = r = 0;}}if (5 & o[0]) throw o[1];return { value: o[0] ? o[1] : void 0, done: !0 };}([o, a]);};}}function o(t, e) {for (var i = 0, n = e.length, r = t.length; i < n; i++, r++) {t[r] = e[i];}return t;}String.prototype.includes || (String.prototype.includes = function (t, e) {return "number" != typeof e && (e = 0), !(e + t.length > this.length) && -1 !== this.indexOf(t, e);}), Array.prototype.find || Object.defineProperty(Array.prototype, "find", { value: function value(t) {if (null == this) throw new TypeError('"this" is null or not defined');var e = Object(this),i = e.length >>> 0;if ("function" != typeof t) throw new TypeError("predicate must be a function");for (var n = arguments[1], r = 0; r < i;) {var o = e[r];if (t.call(n, o, r, e)) return o;r++;}} });var s = function s(t) {for (var e = [], i = 1; i < arguments.length; i++) {e[i - 1] = arguments[i];}return e.some(function (e) {return Object.prototype.toString.call(t).slice(8, -1).toLowerCase() === e;});},a = function a(t) {return [].filter.call(t, function (t) {return "\n" !== t;}).join("");},u = function u(t) {if ("string" != typeof t) return !1;if ("transparent" === (t = t.toLocaleLowerCase().trim())) return !1;if (/^rgba/.test(t)) {var e = /([^\s,]+)\)$/.exec(t);if (0 === (null === (i = e) ? 0 : "object" == typeof i ? NaN : "number" == typeof i ? i : "string" == typeof i ? "%" === i[i.length - 1] ? Number(i.slice(0, -1)) / 100 : Number(i) : NaN)) return !1;}var i;return !0;},h = function () {function t() {this.subs = [];}return t.prototype.addSub = function (t) {this.subs.includes(t) || this.subs.push(t);}, t.prototype.notify = function () {this.subs.forEach(function (t) {t.update();});}, t;}(),c = ("__proto__" in {});function l(t, e, i, n) {Object.defineProperty(t, e, { value: i, enumerable: !!n, writable: !0, configurable: !0 });}var f = Array.prototype,d = Object.create(f);["push", "pop", "shift", "unshift", "sort", "splice", "reverse"].forEach(function (t) {d[t] = function () {for (var e = [], i = 0; i < arguments.length; i++) {e[i] = arguments[i];}var n = f[t].apply(this, e),r = this.__luckyOb__;return ["push", "unshift", "splice"].includes(t) && r.walk(this), r.dep.notify(), n;};});var p = function () {function t(t) {this.dep = new h(), l(t, "__luckyOb__", this), Array.isArray(t) && (c ? t.__proto__ = d : Object.getOwnPropertyNames(d).forEach(function (e) {l(t, e, d[e]);})), this.walk(t);}return t.prototype.walk = function (t) {Object.keys(t).forEach(function (e) {m(t, e, t[e]);});}, t;}();function g(t) {if (t && "object" == typeof t) return "__luckyOb__" in t ? t.__luckyOb__ : new p(t);}function m(t, e, i) {var n = new h(),r = Object.getOwnPropertyDescriptor(t, e);if (!r || !1 !== r.configurable) {var o = r && r.get,s = r && r.set;o && !s || 2 !== arguments.length || (i = t[e]);var a = g(i);Object.defineProperty(t, e, { get: function get() {var e = o ? o.call(t) : i;return h.target && (n.addSub(h.target), a && a.dep.addSub(h.target)), e;}, set: function set(e) {e !== i && (i = e, o && !s || (s ? s.call(t, e) : i = e, a = g(e), n.notify()));} });}}var v = 0,b = function () {function t(t, e, i, n) {void 0 === n && (n = {}), this.id = v++, this.$lucky = t, this.expr = e, this.deep = !!n.deep, this.getter = "function" == typeof e ? e : function (t) {t += ".";for (var e = [], i = "", n = 0; n < t.length; n++) {var r = t[n];if (/\[|\./.test(r)) e.push(i), i = "";else {if (/\W/.test(r)) continue;i += r;}}return function (t) {return e.reduce(function (t, e) {return t[e];}, t);};}(e), this.cb = i, this.value = this.get();}return t.prototype.get = function () {h.target = this;var t = this.getter.call(this.$lucky, this.$lucky);return this.deep && function (t) {var e = function e(t) {s(t, "array", "object") && Object.keys(t).forEach(function (i) {var n = t[i];e(n);});};e(t);}(t), h.target = null, t;}, t.prototype.update = function () {var t = this.get(),e = this.value;this.value = t, this.cb.call(this.$lucky, t, e);}, t;}(),y = function () {function t(t) {var e = this;this.htmlFontSize = 16, this.rAF = function () {}, this.boxWidth = 0, this.boxHeight = 0, this.setHTMLFontSize(), "string" == typeof t ? t = { el: t } : 1 === t.nodeType && (t = { el: "", divElement: t }), t = t, this.config = t, this.setDpr(), this.initWindowFunction(), t.flag || (t.flag = "WEB"), Object.prototype.hasOwnProperty.call(t, "ob") || (t.ob = !0), t.el && (t.divElement = document.querySelector(t.el)), t.divElement && (t.canvasElement = document.createElement("canvas"), t.divElement.appendChild(t.canvasElement)), this.resetWidthAndHeight(), t.canvasElement && (t.ctx = t.canvasElement.getContext("2d"), t.canvasElement.setAttribute("package", "lucky-canvas@1.5.4"), t.canvasElement.addEventListener("click", function (t) {return e.handleClick(t);}), t.canvasElement.addEventListener("mousemove", function (t) {return e.handleMouseMove(t);}), t.canvasElement.addEventListener("mousedown", function (t) {return e.handleMouseDown(t);}), t.canvasElement.addEventListener("mouseup", function (t) {return e.handleMouseUp(t);})), this.ctx = t.ctx, t.ctx ? this.boxWidth && this.boxHeight || console.error("无法获取到宽度或高度") : console.error("无法获取到 CanvasContext2D");}return t.prototype.init = function (t) {this.setDpr(), this.setHTMLFontSize(), this.resetWidthAndHeight(), this.zoomCanvas();}, t.prototype.handleClick = function (t) {}, t.prototype.handleMouseDown = function (t) {}, t.prototype.handleMouseUp = function (t) {}, t.prototype.handleMouseMove = function (t) {}, t.prototype.conversionAxis = function (t, e) {return [0, 0];}, t.prototype.setDpr = function () {var t = this.config;t.dpr || (window ? window.dpr = t.dpr = window.devicePixelRatio || 1 : t.dpr || console.error(t, "未传入 dpr 可能会导致绘制异常"));}, t.prototype.setHTMLFontSize = function () {window && (this.htmlFontSize = +window.getComputedStyle(document.documentElement).fontSize.slice(0, -2));}, t.prototype.resetWidthAndHeight = function () {var t = this.config,e = 0,i = 0;t.divElement && (e = t.divElement.offsetWidth, i = t.divElement.offsetHeight), this.boxWidth = this.getLength(t.width) || e, this.boxHeight = this.getLength(t.height) || i, t.divElement && (t.divElement.style.overflow = "hidden", t.divElement.style.width = this.boxWidth + "px", t.divElement.style.height = this.boxHeight + "px");}, t.prototype.initWindowFunction = function () {var t = this.config;if (window) return this.rAF = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (t) {window.setTimeout(t, 1e3 / 60);}, t.setTimeout = window.setTimeout, t.setInterval = window.setInterval, t.clearTimeout = window.clearTimeout, void (t.clearInterval = window.clearInterval);if (t.rAF) this.rAF = t.rAF;else if (t.setTimeout) {var e = t.setTimeout;this.rAF = function (t) {return e(t, 16.7);};} else this.rAF = function (t) {return setTimeout(t, 16.7);};}, t.prototype.zoomCanvas = function () {var t = this.config,e = this.ctx,i = t.canvasElement,n = t.dpr,r = [this.boxWidth * n, this.boxHeight * n],o = r[0],s = r[1],a = function a(t) {return (t * n - t) / (t * n) * (n / 2) * 100;};i && (i.width = o, i.height = s, i.style.width = o + "px", i.style.height = s + "px", i.style.transform = "scale(" + 1 / n + ") translate(" + -a(o) + "%, " + -a(s) + "%)", e.scale(n, n));}, t.prototype.loadImg = function (t, e, i) {var n = this;return void 0 === i && (i = "$resolve"), new Promise(function (r, o) {if (t || o("=> '" + e.src + "' 不能为空或不合法"), "WEB" === n.config.flag) {var s = new Image();s.src = t, s.onload = function () {return r(s);}, s.onerror = function () {return o("=> '" + e.src + "' 图片加载失败");};} else e[i] = r;});}, t.prototype.drawImage = function (t, e, i, n, r) {var o,s = this.config,a = this.ctx;return ["WEB", "MP-WX"].includes(s.flag) ? o = t : ["UNI-H5", "UNI-MP", "TARO-H5", "TARO-MP"].includes(s.flag) && (o = t.path), a.drawImage(o, e, i, n, r);}, t.prototype.getLength = function (t) {return s(t, "number") ? t : s(t, "string") ? this.changeUnits(t) : 0;}, t.prototype.changeUnits = function (t, e) {var i = this;return void 0 === e && (e = 1), Number(t.replace(/^([-]*[0-9.]*)([a-z%]*)$/, function (t, n, r) {var o = { "%": function _(t) {return t * (e / 100);}, px: function px(t) {return 1 * t;}, rem: function rem(t) {return t * i.htmlFontSize;} }[r];if (o) return o(n);var s = i.config.unitFunc;return s ? s(n, r) : n;}));}, t.prototype.$set = function (t, e, i) {t && "object" == typeof t && m(t, e, i);}, t.prototype.$computed = function (t, e, i) {var n = this;Object.defineProperty(t, e, { get: function get() {return i.call(n);} });}, t.prototype.$watch = function (t, e, i) {void 0 === i && (i = {}), "object" == typeof e && (e = (i = e).handler);var n = new b(this, t, e, i);return i.immediate && e.call(this, n.value), function () {};}, t;}(),w = function w(t) {return Math.PI / 180 * t;},x = function x(t, e) {return [+(Math.cos(t) * e).toFixed(8), +(Math.sin(t) * e).toFixed(8)];},z = function z(t, e) {var i = -t / e;return [i, -i * t + e];},I = function I(t, e, i, n, r, o) {var s;if (void 0 === o && (o = !0), Math.abs(r - n).toFixed(8) >= w(180).toFixed(8)) {var a = (r + n) / 2;return o ? (I(t, e, i, n, a, o), I(t, e, i, a, r, o)) : (I(t, e, i, a, r, o), I(t, e, i, n, a, o)), !1;}o || (n = (s = [r, n])[0], r = s[1]);var u = x(n, i),h = u[0],c = u[1],l = x(r, i),f = l[0],d = l[1],p = z(h, c),g = p[0],m = p[1],v = z(f, d),b = v[0],y = v[1],k = (y - m) / (g - b),S = (b * m - g * y) / (b - g);isNaN(k) && (Math.abs(h) === +i.toFixed(8) && (k = h), Math.abs(f) === +i.toFixed(8) && (k = f)), g === 1 / 0 || g === -1 / 0 ? S = b * k + y : b !== 1 / 0 && b !== -1 / 0 || (S = g * k + m), e.lineTo(h, c), t.indexOf("MP") > 0 ? e.quadraticCurveTo(k, S, f, d) : e.arcTo(k, S, f, d, i);},k = function k(t, e, i, n, r, o, s, a) {i || (i = s);var u = w(90 / Math.PI / n * s),h = w(90 / Math.PI / i * s),c = r + u,l = o - u,f = r + h,d = o - h;e.beginPath(), e.fillStyle = a, e.moveTo.apply(e, x(c, n)), I(t, e, n, c, l, !0), d > f ? I(t, e, i, f, d, !1) : e.lineTo.apply(e, x((r + o) / 2, s / 2 / Math.abs(Math.sin((r - o) / 2)))), e.closePath(), e.fill();},S = function S(t, e, i, n, r, o, s) {var a = Math.min(n, r);o > a / 2 && (o = a / 2), t.beginPath(), t.fillStyle = s, t.moveTo(e + o, i), t.lineTo(e + o, i), t.lineTo(e + n - o, i), t.quadraticCurveTo(e + n, i, e + n, i + o), t.lineTo(e + n, i + r - o), t.quadraticCurveTo(e + n, i + r, e + n - o, i + r), t.lineTo(e + o, i + r), t.quadraticCurveTo(e, i + r, e, i + r - o), t.lineTo(e, i + o), t.quadraticCurveTo(e, i, e + o, i), t.closePath(), t.fill();},C = { easeIn: function easeIn(t, e, i, n) {return t >= n && (t = n), i * (t /= n) * t + e;}, easeOut: function easeOut(t, e, i, n) {return t >= n && (t = n), -i * (t /= n) * (t - 2) + e;} },T = { easeIn: function easeIn(t, e, i, n) {return t >= n && (t = n), -i * Math.cos(t / n * (Math.PI / 2)) + i + e;}, easeOut: function easeOut(t, e, i, n) {return t >= n && (t = n), i * Math.sin(t / n * (Math.PI / 2)) + e;} },W = { easeIn: function easeIn(t, e, i, n) {return t >= n && (t = n), 0 == t ? e : i * Math.pow(2, 10 * (t / n - 1)) + e;}, easeOut: function easeOut(t, e, i, n) {return t >= n && (t = n), t == n ? e + i : i * (1 - Math.pow(2, -10 * t / n)) + e;} },O = { easeIn: function easeIn(t, e, i, n) {return t >= n && (t = n), -i * (Math.sqrt(1 - (t /= n) * t) - 1) + e;}, easeOut: function easeOut(t, e, i, n) {return t >= n && (t = n), i * Math.sqrt(1 - (t = t / n - 1) * t) + e;} },_ = Object.freeze({ __proto__: null, quad: C, cubic: { easeIn: function easeIn(t, e, i, n) {return t >= n && (t = n), i * (t /= n) * t * t + e;}, easeOut: function easeOut(t, e, i, n) {return t >= n && (t = n), i * ((t = t / n - 1) * t * t + 1) + e;} }, quart: { easeIn: function easeIn(t, e, i, n) {return t >= n && (t = n), i * (t /= n) * t * t * t + e;}, easeOut: function easeOut(t, e, i, n) {return t >= n && (t = n), -i * ((t = t / n - 1) * t * t * t - 1) + e;} }, quint: { easeIn: function easeIn(t, e, i, n) {return t >= n && (t = n), i * (t /= n) * t * t * t * t + e;}, easeOut: function easeOut(t, e, i, n) {return t >= n && (t = n), i * ((t = t / n - 1) * t * t * t * t + 1) + e;} }, sine: T, expo: W, circ: O }),E = function (t) {function o(e, i) {var n;void 0 === i && (i = {});var r = t.call(this, e) || this;return r.blocks = [], r.prizes = [], r.buttons = [], r.defaultConfig = {}, r._defaultConfig = { gutter: "0px", offsetDegree: 0, speed: 20, speedFunction: "quad", accelerationTime: 2500, decelerationTime: 2500, stopRange: .8 }, r.defaultStyle = {}, r._defaultStyle = { fontSize: "18px", fontColor: "#000", fontStyle: "sans-serif", fontWeight: "400", lineHeight: "", background: "rgba(0,0,0,0)", wordWrap: !0, lengthLimit: "90%" }, r.Radius = 0, r.prizeRadius = 0, r.prizeDeg = 0, r.prizeRadian = 0, r.rotateDeg = 0, r.maxBtnRadius = 0, r.startTime = 0, r.endTime = 0, r.stopDeg = 0, r.endDeg = 0, r.FPS = 16.6, r.blockImgs = [[]], r.prizeImgs = [[]], r.btnImgs = [[]], e.ob && (r.initData(i), r.initWatch()), r.initComputed(), null === (n = e.beforeCreate) || void 0 === n || n.call(r), r.init({ blockImgs: r.blocks.map(function (t) {return t.imgs;}), prizeImgs: r.prizes.map(function (t) {return t.imgs;}), btnImgs: r.buttons.map(function (t) {return t.imgs;}) }), r;}return e(o, t), o.prototype.initData = function (t) {this.$set(this, "blocks", t.blocks || []), this.$set(this, "prizes", t.prizes || []), this.$set(this, "buttons", t.buttons || []), this.$set(this, "defaultConfig", t.defaultConfig || {}), this.$set(this, "defaultStyle", t.defaultStyle || {}), this.$set(this, "startCallback", t.start), this.$set(this, "endCallback", t.end);}, o.prototype.initComputed = function () {var t = this;this.$computed(this, "_defaultConfig", function () {return _i({ gutter: "0px", offsetDegree: 0, speed: 20, speedFunction: "quad", accelerationTime: 2500, decelerationTime: 2500, stopRange: .8 }, t.defaultConfig);}), this.$computed(this, "_defaultStyle", function () {return _i({ fontSize: "18px", fontColor: "#000", fontStyle: "sans-serif", fontWeight: "400", background: "rgba(0,0,0,0)", wordWrap: !0, lengthLimit: "90%" }, t.defaultStyle);});}, o.prototype.initWatch = function () {var t = this;this.$watch("blocks", function (e) {return t.init({ blockImgs: e.map(function (t) {return t.imgs;}) });}, { deep: !0 }), this.$watch("prizes", function (e) {return t.init({ prizeImgs: e.map(function (t) {return t.imgs;}) });}, { deep: !0 }), this.$watch("buttons", function (e) {return t.init({ btnImgs: e.map(function (t) {return t.imgs;}) });}, { deep: !0 }), this.$watch("defaultConfig", function () {return t.draw();}, { deep: !0 }), this.$watch("defaultStyle", function () {return t.draw();}, { deep: !0 }), this.$watch("startCallback", function () {return t.init({});}), this.$watch("endCallback", function () {return t.init({});});}, o.prototype.init = function (e) {var i,n,r = this;t.prototype.init.call(this);var o = this.config,s = this.ctx;this.Radius = Math.min(this.boxWidth, this.boxHeight) / 2, null === (i = o.beforeInit) || void 0 === i || i.call(this), s.translate(this.Radius, this.Radius), this.draw(), this.draw(), Object.keys(e).forEach(function (t) {var i = t,n = { blockImgs: "blocks", prizeImgs: "prizes", btnImgs: "buttons" }[i],o = e[i];o && o.forEach(function (t, e) {t && t.forEach(function (t, o) {r.loadAndCacheImg(n, e, i, o, function () {r.draw();});});});}), null === (n = o.afterInit) || void 0 === n || n.call(this);}, o.prototype.handleClick = function (t) {var e,i = this.ctx;i.beginPath(), i.arc(0, 0, this.maxBtnRadius, 0, 2 * Math.PI, !1), i.isPointInPath(t.offsetX, t.offsetY) && (this.startTime || null === (e = this.startCallback) || void 0 === e || e.call(this, t));}, o.prototype.loadAndCacheImg = function (t, e, i, o, s) {return n(this, void 0, void 0, function () {var n,a,u = this;return r(this, function (r) {return (n = this[t][e]) && n.imgs && (a = n.imgs[o]) ? (this[i][e] || (this[i][e] = []), this.loadImg(a.src, a).then(function (t) {u[i][e][o] = t, s.call(u);}).catch(function (i) {console.error(t + "[" + e + "].imgs[" + o + "] " + i);}), [2]) : [2];});});}, o.prototype.computedWidthAndHeight = function (t, e, i, n) {if (!e.width && !e.height) return [t.width, t.height];if (e.width && !e.height) {var r = this.getWidth(e.width, i);return [r, t.height * (r / t.width)];}if (!e.width && e.height) {var o = this.getHeight(e.height, n);return [t.width * (o / t.height), o];}return [this.getWidth(e.width, i), this.getHeight(e.height, n)];}, o.prototype.draw = function () {var t,e,i = this,n = this,r = n.config,o = n.ctx,s = n._defaultConfig,h = n._defaultStyle;null === (t = r.beforeDraw) || void 0 === t || t.call(this, o), o.clearRect(-this.Radius, -this.Radius, 2 * this.Radius, 2 * this.Radius), this.prizeRadius = this.blocks.reduce(function (t, e, n) {return u(e.background) && (o.beginPath(), o.fillStyle = e.background, o.arc(0, 0, t, 0, 2 * Math.PI, !1), o.fill()), e.imgs && e.imgs.forEach(function (e, r) {if (i.blockImgs[n]) {var s = i.blockImgs[n][r];if (s) {var a = i.computedWidthAndHeight(s, e, 2 * t, 2 * t),u = a[0],h = a[1],c = [i.getOffsetX(u), i.getHeight(e.top, 2 * t) - t],l = c[0],f = c[1];o.save(), e.rotate && o.rotate(w(i.rotateDeg)), i.drawImage(s, l, f, u, h), o.restore();}}}), t - i.getLength(e.padding && e.padding.split(" ")[0]);}, this.Radius), this.prizeDeg = 360 / this.prizes.length, this.prizeRadian = w(this.prizeDeg);var c = w(-90 + this.rotateDeg + s.offsetDegree),l = function l(t) {return i.getOffsetX(o.measureText(t).width);},f = function f(t, e, n) {var r = t.lineHeight || h.lineHeight || t.fontSize || h.fontSize;return i.getHeight(t.top, e) + (n + 1) * i.getLength(r);};o.save(), this.prizes.forEach(function (t, e) {var n = c + e * i.prizeRadian,d = i.prizeRadius - i.maxBtnRadius,p = t.background || h.background;u(p) && function (t, e, i, n, r, o, s, a) {s ? k(t, e, i, n, r, o, s, a) : (e.beginPath(), e.fillStyle = a, e.moveTo(0, 0), e.arc(0, 0, n, r, o, !1), e.closePath(), e.fill());}(r.flag, o, i.maxBtnRadius, i.prizeRadius, n - i.prizeRadian / 2, n + i.prizeRadian / 2, i.getLength(s.gutter), p);var g = Math.cos(n) * i.prizeRadius,m = Math.sin(n) * i.prizeRadius;o.translate(g, m), o.rotate(n + w(90)), t.imgs && t.imgs.forEach(function (t, n) {if (i.prizeImgs[e]) {var r = i.prizeImgs[e][n];if (r) {var o = i.computedWidthAndHeight(r, t, i.prizeRadian * i.prizeRadius, d),s = o[0],a = o[1],u = [i.getOffsetX(s), i.getHeight(t.top, d)],h = u[0],c = u[1];i.drawImage(r, h, c, s, a);}}}), t.fonts && t.fonts.forEach(function (t) {var e = t.fontColor || h.fontColor,n = t.fontWeight || h.fontWeight,r = i.getLength(t.fontSize || h.fontSize),u = t.fontStyle || h.fontStyle;o.fillStyle = e, o.font = n + " " + (r >> 0) + "px " + u;var c = [],p = String(t.text);if (Object.prototype.hasOwnProperty.call(t, "wordWrap") ? t.wordWrap : h.wordWrap) {p = a(p);for (var g = "", m = 0; m < p.length; m++) {g += p[m];var v = o.measureText(g).width,b = (i.prizeRadius - f(t, d, c.length)) * Math.tan(i.prizeRadian / 2) * 2 - i.getLength(s.gutter);v > i.getWidth(t.lengthLimit || h.lengthLimit, b) && (c.push(g.slice(0, -1)), g = p[m]);}g && c.push(g), c.length || c.push(p);} else c = p.split("\n");c.filter(function (t) {return !!t;}).forEach(function (e, i) {o.fillText(e, l(e), f(t, d, i));});}), o.rotate(w(360) - n - w(90)), o.translate(-g, -m);}), o.restore(), this.buttons.forEach(function (t, e) {var n = i.getHeight(t.radius);i.maxBtnRadius = Math.max(i.maxBtnRadius, n), u(t.background) && (o.beginPath(), o.fillStyle = t.background, o.arc(0, 0, n, 0, 2 * Math.PI, !1), o.fill()), t.pointer && u(t.background) && (o.beginPath(), o.fillStyle = t.background, o.moveTo(-n, 0), o.lineTo(n, 0), o.lineTo(0, 2 * -n), o.closePath(), o.fill()), t.imgs && t.imgs.forEach(function (t, r) {if (i.btnImgs[e]) {var o = i.btnImgs[e][r];if (o) {var s = i.computedWidthAndHeight(o, t, 2 * n, 2 * n),a = s[0],u = s[1],h = [i.getOffsetX(a), i.getHeight(t.top, n)],c = h[0],l = h[1];i.drawImage(o, c, l, a, u);}}}), t.fonts && t.fonts.forEach(function (t) {var e = t.fontColor || h.fontColor,r = t.fontWeight || h.fontWeight,s = i.getLength(t.fontSize || h.fontSize),a = t.fontStyle || h.fontStyle;o.fillStyle = e, o.font = r + " " + (s >> 0) + "px " + a, String(t.text).split("\n").forEach(function (e, i) {o.fillText(e, l(e), f(t, n, i));});});}), null === (e = r.afterDraw) || void 0 === e || e.call(this, o);}, o.prototype.play = function () {this.startTime || (this.startTime = Date.now(), this.prizeFlag = void 0, this.run());}, o.prototype.stop = function (t) {this.prizeFlag = t < 0 ? -1 : t % this.prizes.length, -1 === this.prizeFlag && (this.rotateDeg = this.prizeDeg / 2 - this._defaultConfig.offsetDegree, this.draw());}, o.prototype.run = function (t) {void 0 === t && (t = 0);var e = this,i = e.rAF,n = e.prizeFlag,r = e.prizeDeg,o = e.rotateDeg,s = e._defaultConfig,a = Date.now() - this.startTime;if (a >= s.accelerationTime && void 0 !== n) {this.FPS = a / t, this.endTime = Date.now(), this.stopDeg = o;for (var u = (Math.random() * r - r / 2) * this.getLength(s.stopRange), h = 0; ++h;) {var c = 360 * h - n * r - o - s.offsetDegree + u;if (_[s.speedFunction].easeOut(this.FPS, this.stopDeg, c, s.decelerationTime) - this.stopDeg > s.speed) {this.endDeg = c;break;}}return this.slowDown();}this.rotateDeg = (o + _[s.speedFunction].easeIn(a, 0, s.speed, s.accelerationTime)) % 360, this.draw(), i(this.run.bind(this, t + 1));}, o.prototype.slowDown = function () {var t,e = this,n = e.rAF,r = e.prizes,o = e.prizeFlag,s = e.stopDeg,a = e.endDeg,u = e._defaultConfig,h = Date.now() - this.endTime;if (-1 !== o) {if (h >= u.decelerationTime) return this.startTime = 0, void (null === (t = this.endCallback) || void 0 === t || t.call(this, _i({}, r.find(function (t, e) {return e === o;}))));this.rotateDeg = _[u.speedFunction].easeOut(h, s, a, u.decelerationTime) % 360, this.draw(), n(this.slowDown.bind(this));} else this.startTime = 0;}, o.prototype.getWidth = function (t, e) {return void 0 === e && (e = this.prizeRadian * this.prizeRadius), s(t, "number") ? t : s(t, "string") ? this.changeUnits(t, e) : 0;}, o.prototype.getHeight = function (t, e) {return void 0 === e && (e = this.prizeRadius), s(t, "number") ? t : s(t, "string") ? this.changeUnits(t, e) : 0;}, o.prototype.getOffsetX = function (t) {return -t / 2;}, o.prototype.conversionAxis = function (t, e) {var i = this.config;return [t / i.dpr - this.Radius, e / i.dpr - this.Radius];}, o;}(y),P = function (t) {function h(e, i) {var n;void 0 === i && (i = {});var r = t.call(this, e) || this;r.rows = 3, r.cols = 3, r.blocks = [], r.prizes = [], r.buttons = [], r.defaultConfig = {}, r._defaultConfig = { gutter: 5, speed: 20, accelerationTime: 2500, decelerationTime: 2500 }, r.defaultStyle = {}, r._defaultStyle = { borderRadius: 20, fontColor: "#000", fontSize: "18px", fontStyle: "sans-serif", fontWeight: "400", lineHeight: "", background: "rgba(0,0,0,0)", shadow: "", wordWrap: !0, lengthLimit: "90%" }, r.activeStyle = {}, r._activeStyle = { background: "#ffce98", shadow: "", fontStyle: "", fontWeight: "", fontSize: "", lineHeight: "", fontColor: "" }, r.cellWidth = 0, r.cellHeight = 0, r.startTime = 0, r.endTime = 0, r.currIndex = 0, r.stopIndex = 0, r.endIndex = 0, r.demo = !1, r.timer = 0, r.FPS = 16.6, r.prizeFlag = -1, r.cells = [], r.blockImgs = [[]], r.btnImgs = [[]], r.prizeImgs = [], e.ob && (r.initData(i), r.initWatch()), r.initComputed(), null === (n = e.beforeCreate) || void 0 === n || n.call(r);var o = r.buttons.map(function (t) {return t.imgs;});return r.button && o.push(r.button.imgs), r.init({ blockImgs: r.blocks.map(function (t) {return t.imgs;}), prizeImgs: r.prizes.map(function (t) {return t.imgs;}), btnImgs: o }), r;}return e(h, t), h.prototype.initData = function (t) {this.$set(this, "rows", Number(t.rows) || 3), this.$set(this, "cols", Number(t.cols) || 3), this.$set(this, "blocks", t.blocks || []), this.$set(this, "prizes", t.prizes || []), this.$set(this, "buttons", t.buttons || []), this.$set(this, "button", t.button), this.$set(this, "defaultConfig", t.defaultConfig || {}), this.$set(this, "defaultStyle", t.defaultStyle || {}), this.$set(this, "activeStyle", t.activeStyle || {}), this.$set(this, "startCallback", t.start), this.$set(this, "endCallback", t.end);}, h.prototype.initComputed = function () {var t = this;this.$computed(this, "_defaultConfig", function () {var e = _i({ gutter: 5, speed: 20, accelerationTime: 2500, decelerationTime: 2500 }, t.defaultConfig);return e.gutter = t.getLength(e.gutter), e.speed = e.speed / 40, e;}), this.$computed(this, "_defaultStyle", function () {return _i({ borderRadius: 20, fontColor: "#000", fontSize: "18px", fontStyle: "sans-serif", fontWeight: "400", background: "rgba(0,0,0,0)", shadow: "", wordWrap: !0, lengthLimit: "90%" }, t.defaultStyle);}), this.$computed(this, "_activeStyle", function () {return _i({ background: "#ffce98", shadow: "" }, t.activeStyle);});}, h.prototype.initWatch = function () {var t = this;this.$watch("blocks", function (e) {return t.init({ blockImgs: e.map(function (t) {return t.imgs;}) });}, { deep: !0 }), this.$watch("prizes", function (e) {return t.init({ prizeImgs: e.map(function (t) {return t.imgs;}) });}, { deep: !0 }), this.$watch("buttons", function (e) {var i = e.map(function (t) {return t.imgs;});return t.button && i.push(t.button.imgs), t.init({ btnImgs: i });}, { deep: !0 }), this.$watch("button", function () {var e = t.buttons.map(function (t) {return t.imgs;});return t.button && e.push(t.button.imgs), t.init({ btnImgs: e });}, { deep: !0 }), this.$watch("rows", function () {return t.init({});}), this.$watch("cols", function () {return t.init({});}), this.$watch("defaultConfig", function () {return t.draw();}, { deep: !0 }), this.$watch("defaultStyle", function () {return t.draw();}, { deep: !0 }), this.$watch("activeStyle", function () {return t.draw();}, { deep: !0 }), this.$watch("startCallback", function () {return t.init({});}), this.$watch("endCallback", function () {return t.init({});});}, h.prototype.init = function (e) {var i,n,r = this;t.prototype.init.call(this);var o = this,s = o.config;o.ctx, o.button, null === (i = s.beforeInit) || void 0 === i || i.call(this), this.draw(), Object.keys(e).forEach(function (t) {var i = t,n = e[i],o = { blockImgs: "blocks", prizeImgs: "prizes", btnImgs: "buttons" }[i];n && n.forEach(function (t, e) {t && t.forEach(function (t, n) {r.loadAndCacheImg(o, e, i, n, function () {r.draw();});});});}), null === (n = s.afterInit) || void 0 === n || n.call(this);}, h.prototype.handleClick = function (t) {var e = this,i = this.ctx;o(o([], this.buttons), [this.button]).forEach(function (n) {var r;if (n) {var o = e.getGeometricProperty([n.x, n.y, n.col || 1, n.row || 1]),s = o[0],a = o[1],u = o[2],h = o[3];i.beginPath(), i.rect(s, a, u, h), i.isPointInPath(t.offsetX, t.offsetY) && (e.startTime || ("function" == typeof n.callback && n.callback.call(e, n), null === (r = e.startCallback) || void 0 === r || r.call(e, t, n)));}});}, h.prototype.loadAndCacheImg = function (t, e, i, o, s) {return n(this, void 0, void 0, function () {var n,a,u,h = this;return r(this, function (r) {return n = this[t][e], "buttons" === t && !this.buttons.length && this.button && (n = this.button), n && n.imgs && (a = n.imgs[o]) ? (this[i][e] || (this[i][e] = []), u = [this.loadImg(a.src, a), a.activeSrc && this.loadImg(a.activeSrc, a, "$activeResolve")], Promise.all(u).then(function (t) {var n = t[0],r = t[1];h[i][e][o] = { defaultImg: n, activeImg: r }, s.call(h);}).catch(function (i) {console.error(t + "[" + e + "].imgs[" + o + "] " + i);}), [2]) : [2];});});}, h.prototype.computedWidthAndHeight = function (t, e, i) {if (!e.width && !e.height) return [t.width, t.height];if (e.width && !e.height) {var n = this.getWidth(e.width, i.col);return [n, t.height * (n / t.width)];}if (!e.width && e.height) {var r = this.getHeight(e.height, i.row);return [t.width * (r / t.height), r];}return [this.getWidth(e.width, i.col), this.getHeight(e.height, i.row)];}, h.prototype.draw = function () {var t,e,i = this,n = this,r = n.config,h = n.ctx,c = n._defaultConfig,l = n._defaultStyle,f = n._activeStyle;null === (t = r.beforeDraw) || void 0 === t || t.call(this, h), h.clearRect(0, 0, this.boxWidth, this.boxHeight), this.cells = o(o([], this.prizes), this.buttons), this.button && this.cells.push(this.button), this.cells.forEach(function (t) {t.col = t.col || 1, t.row = t.row || 1;}), this.prizeArea = this.blocks.reduce(function (t, e) {var n = t.x,r = t.y,o = t.w,a = t.h,c = function (t) {var e,i = (null === (e = t.padding) || void 0 === e ? void 0 : e.replace(/px/g, "").split(" ").map(function (t) {return ~~t;})) || [0],n = 0,r = 0,o = 0,a = 0;switch (i.length) {case 1:n = r = o = a = i[0];break;case 2:n = r = i[0], o = a = i[1];break;case 3:n = i[0], o = a = i[1], r = i[2];break;default:n = i[0], r = i[1], o = i[2], a = i[3];}var u = { paddingTop: n, paddingBottom: r, paddingLeft: o, paddingRight: a };for (var h in u) {u[h] = Object.prototype.hasOwnProperty.call(t, h) && s(t[h], "string", "number") ? ~~String(t[h]).replace(/px/g, "") : u[h];}return [n, r, o, a];}(e),f = c[0],d = c[1],p = c[2],g = c[3],m = e.borderRadius ? i.getLength(e.borderRadius) : 0,v = e.background || l.background;return u(v) && S(h, n, r, o, a, m, i.handleBackground(n, r, o, a, v)), { x: n + p, y: r + f, w: o - p - g, h: a - f - d };}, { x: 0, y: 0, w: this.boxWidth, h: this.boxHeight }), this.cellWidth = (this.prizeArea.w - c.gutter * (this.cols - 1)) / this.cols, this.cellHeight = (this.prizeArea.h - c.gutter * (this.rows - 1)) / this.rows, this.cells.forEach(function (t, e) {var n = i.getGeometricProperty([t.x, t.y, t.col, t.row]),o = n[0],s = n[1],c = n[2],d = n[3],p = !1;(void 0 === i.prizeFlag || i.prizeFlag > -1) && (p = e === i.currIndex % i.prizes.length >> 0);var g = p ? f.background : t.background || l.background;if (u(g)) {var m = (p ? f.shadow : t.shadow || l.shadow).replace(/px/g, "").split(",")[0].split(" ").map(function (t, e) {return e < 3 ? Number(t) : t;});4 === m.length && (h.shadowColor = m[3], h.shadowOffsetX = m[0] * r.dpr, h.shadowOffsetY = m[1] * r.dpr, h.shadowBlur = m[2], m[0] > 0 ? c -= m[0] : (c += m[0], o -= m[0]), m[1] > 0 ? d -= m[1] : (d += m[1], s -= m[1])), S(h, o, s, c, d, i.getLength(t.borderRadius ? t.borderRadius : l.borderRadius), i.handleBackground(o, s, c, d, g)), h.shadowColor = "rgba(0, 0, 0, 0)", h.shadowOffsetX = 0, h.shadowOffsetY = 0, h.shadowBlur = 0;}var v = "prizeImgs";e >= i.prizes.length && (v = "btnImgs", e -= i.prizes.length), t.imgs && t.imgs.forEach(function (n, r) {if (i[v][e]) {var a = i[v][e][r];if (a) {var u = p && a.activeImg || a.defaultImg;if (u) {var h = i.computedWidthAndHeight(u, n, t),c = h[0],l = h[1],f = [o + i.getOffsetX(c, t.col), s + i.getHeight(n.top, t.row)],d = f[0],g = f[1];i.drawImage(u, d, g, c, l);}}}}), t.fonts && t.fonts.forEach(function (e) {var n = p && f.fontStyle ? f.fontStyle : e.fontStyle || l.fontStyle,r = p && f.fontWeight ? f.fontWeight : e.fontWeight || l.fontWeight,u = p && f.fontSize ? i.getLength(f.fontSize) : i.getLength(e.fontSize || l.fontSize),c = p && f.lineHeight ? f.lineHeight : e.lineHeight || l.lineHeight || e.fontSize || l.fontSize;h.font = r + " " + (u >> 0) + "px " + n, h.fillStyle = p && f.fontColor ? f.fontColor : e.fontColor || l.fontColor;var d = [],g = String(e.text);if (Object.prototype.hasOwnProperty.call(e, "wordWrap") ? e.wordWrap : l.wordWrap) {g = a(g);for (var m = "", v = 0; v < g.length; v++) {m += g[v], h.measureText(m).width > i.getWidth(e.lengthLimit || l.lengthLimit, t.col) && (d.push(m.slice(0, -1)), m = g[v]);}m && d.push(m), d.length || d.push(g);} else d = g.split("\n");d.forEach(function (n, r) {h.fillText(n, o + i.getOffsetX(h.measureText(n).width, t.col), s + i.getHeight(e.top, t.row) + (r + 1) * i.getLength(c));});});}), null === (e = r.afterDraw) || void 0 === e || e.call(this, h);}, h.prototype.handleBackground = function (t, e, i, n, r) {var o = this.ctx;return r.includes("linear-gradient") && (r = function (t, e, i, n, r, o) {var s = /linear-gradient\((.+)\)/.exec(o)[1].split(",").map(function (t) {return t.trim();}),a = s.shift(),u = [0, 0, 0, 0];if (a.includes("deg")) {var h = function h(t) {return Math.tan(t / 180 * Math.PI);};(a = a.slice(0, -3) % 360) >= 0 && a < 45 ? u = [e, i + r, e + n, i + r - n * h(a - 0)] : a >= 45 && a < 90 ? u = [e, i + r, e + n - r * h(a - 45), i] : a >= 90 && a < 135 ? u = [e + n, i + r, e + n - r * h(a - 90), i] : a >= 135 && a < 180 ? u = [e + n, i + r, e, i + n * h(a - 135)] : a >= 180 && a < 225 ? u = [e + n, i, e, i + n * h(a - 180)] : a >= 225 && a < 270 ? u = [e + n, i, e + r * h(a - 225), i + r] : a >= 270 && a < 315 ? u = [e, i, e + r * h(a - 270), i + r] : a >= 315 && a < 360 && (u = [e, i, e + n, i + r - n * h(a - 315)]);} else a.includes("top") ? u = [e, i + r, e, i] : a.includes("bottom") ? u = [e, i, e, i + r] : a.includes("left") ? u = [e + n, i, e, i] : a.includes("right") && (u = [e, i, e + n, i]);var c = t.createLinearGradient.apply(t, u.map(function (t) {return t >> 0;}));return s.reduce(function (t, e, i) {var n = e.split(" ");return 1 === n.length ? t.addColorStop(i, n[0]) : 2 === n.length && t.addColorStop.apply(t, n), t;}, c);}(o, t, e, i, n, r)), r;}, h.prototype.play = function () {var t = this.config.clearInterval;this.startTime || (t(this.timer), this.startTime = Date.now(), this.prizeFlag = void 0, this.run());}, h.prototype.stop = function (t) {this.prizeFlag = t < 0 ? -1 : t % this.prizes.length, -1 === this.prizeFlag && (this.currIndex = 0, this.draw());}, h.prototype.run = function (t) {void 0 === t && (t = 0);var e = this,i = e.rAF,n = e.currIndex,r = e.prizes,o = e.prizeFlag,s = e.startTime,a = e._defaultConfig,u = Date.now() - s;if (u >= a.accelerationTime && void 0 !== o) {this.FPS = u / t, this.endTime = Date.now(), this.stopIndex = n;for (var h = 0; ++h;) {var c = r.length * h + o - (n >> 0);if (C.easeOut(this.FPS, this.stopIndex, c, a.decelerationTime) - this.stopIndex > a.speed) {this.endIndex = c;break;}}return this.slowDown();}this.currIndex = (n + C.easeIn(u, .1, a.speed, a.accelerationTime)) % r.length, this.draw(), i(this.run.bind(this, t + 1));}, h.prototype.slowDown = function () {var t,e = this,n = e.rAF,r = e.prizes,o = e.prizeFlag,s = e.stopIndex,a = e.endIndex,u = e._defaultConfig,h = Date.now() - this.endTime;if (-1 !== o) {if (h > u.decelerationTime) return this.startTime = 0, void (null === (t = this.endCallback) || void 0 === t || t.call(this, _i({}, r.find(function (t, e) {return e === o;}))));this.currIndex = C.easeOut(h, s, a, u.decelerationTime) % r.length, this.draw(), n(this.slowDown.bind(this));} else this.startTime = 0;}, h.prototype.walk = function () {var t = this,e = this.config,i = e.setInterval;(0, e.clearInterval)(this.timer), this.timer = i(function () {t.currIndex += 1, t.draw();}, 1300);}, h.prototype.getGeometricProperty = function (t) {var e = t[0],i = t[1],n = t[2],r = t[3],o = this.cellWidth,s = this.cellHeight,a = this._defaultConfig.gutter,u = [this.prizeArea.x + (o + a) * e, this.prizeArea.y + (s + a) * i];return n && r && u.push(o * n + a * (n - 1), s * r + a * (r - 1)), u;}, h.prototype.getWidth = function (t, e) {return void 0 === e && (e = 1), s(t, "number") ? t : s(t, "string") ? this.changeUnits(t, this.cellWidth * e + this._defaultConfig.gutter * (e - 1)) : 0;}, h.prototype.getHeight = function (t, e) {return void 0 === e && (e = 1), s(t, "number") ? t : s(t, "string") ? this.changeUnits(t, this.cellHeight * e + this._defaultConfig.gutter * (e - 1)) : 0;}, h.prototype.getOffsetX = function (t, e) {return void 0 === e && (e = 1), (this.cellWidth * e + this._defaultConfig.gutter * (e - 1) - t) / 2;}, h.prototype.conversionAxis = function (t, e) {var i = this.config;return [t / i.dpr, e / i.dpr];}, h;}(y);exports.LuckyGrid = P, exports.LuckyWheel = E;
+
+/***/ }),
+
+/***/ 42:
+/*!*******************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/lib/axios.js ***!
+  \*******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(/*! ./utils */ 43);
+var bind = __webpack_require__(/*! ./helpers/bind */ 44);
+var Axios = __webpack_require__(/*! ./core/Axios */ 45);
+var mergeConfig = __webpack_require__(/*! ./core/mergeConfig */ 65);
+var defaults = __webpack_require__(/*! ./defaults */ 51);
+
+/**
+                                       * Create an instance of Axios
+                                       *
+                                       * @param {Object} defaultConfig The default config for the instance
+                                       * @return {Axios} A new instance of Axios
+                                       */
+function createInstance(defaultConfig) {
+  var context = new Axios(defaultConfig);
+  var instance = bind(Axios.prototype.request, context);
+
+  // Copy axios.prototype to instance
+  utils.extend(instance, Axios.prototype, context);
+
+  // Copy context to instance
+  utils.extend(instance, context);
+
+  return instance;
+}
+
+// Create the default instance to be exported
+var axios = createInstance(defaults);
+
+// Expose Axios class to allow class inheritance
+axios.Axios = Axios;
+
+// Factory for creating new instances
+axios.create = function create(instanceConfig) {
+  return createInstance(mergeConfig(axios.defaults, instanceConfig));
+};
+
+// Expose Cancel & CancelToken
+axios.Cancel = __webpack_require__(/*! ./cancel/Cancel */ 66);
+axios.CancelToken = __webpack_require__(/*! ./cancel/CancelToken */ 67);
+axios.isCancel = __webpack_require__(/*! ./cancel/isCancel */ 50);
+
+// Expose all/spread
+axios.all = function all(promises) {
+  return Promise.all(promises);
+};
+axios.spread = __webpack_require__(/*! ./helpers/spread */ 68);
+
+// Expose isAxiosError
+axios.isAxiosError = __webpack_require__(/*! ./helpers/isAxiosError */ 69);
+
+module.exports = axios;
+
+// Allow use of default import syntax in TypeScript
+module.exports.default = axios;
+
+/***/ }),
+
+/***/ 43:
+/*!*******************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/lib/utils.js ***!
+  \*******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var bind = __webpack_require__(/*! ./helpers/bind */ 44);
+
+/*global toString:true*/
+
+// utils is a library of generic helper functions non-specific to axios
+
+var toString = Object.prototype.toString;
+
+/**
+                                           * Determine if a value is an Array
+                                           *
+                                           * @param {Object} val The value to test
+                                           * @returns {boolean} True if value is an Array, otherwise false
+                                           */
+function isArray(val) {
+  return toString.call(val) === '[object Array]';
+}
+
+/**
+   * Determine if a value is undefined
+   *
+   * @param {Object} val The value to test
+   * @returns {boolean} True if the value is undefined, otherwise false
+   */
+function isUndefined(val) {
+  return typeof val === 'undefined';
+}
+
+/**
+   * Determine if a value is a Buffer
+   *
+   * @param {Object} val The value to test
+   * @returns {boolean} True if value is a Buffer, otherwise false
+   */
+function isBuffer(val) {
+  return val !== null && !isUndefined(val) && val.constructor !== null && !isUndefined(val.constructor) &&
+  typeof val.constructor.isBuffer === 'function' && val.constructor.isBuffer(val);
+}
+
+/**
+   * Determine if a value is an ArrayBuffer
+   *
+   * @param {Object} val The value to test
+   * @returns {boolean} True if value is an ArrayBuffer, otherwise false
+   */
+function isArrayBuffer(val) {
+  return toString.call(val) === '[object ArrayBuffer]';
+}
+
+/**
+   * Determine if a value is a FormData
+   *
+   * @param {Object} val The value to test
+   * @returns {boolean} True if value is an FormData, otherwise false
+   */
+function isFormData(val) {
+  return typeof FormData !== 'undefined' && val instanceof FormData;
+}
+
+/**
+   * Determine if a value is a view on an ArrayBuffer
+   *
+   * @param {Object} val The value to test
+   * @returns {boolean} True if value is a view on an ArrayBuffer, otherwise false
+   */
+function isArrayBufferView(val) {
+  var result;
+  if (typeof ArrayBuffer !== 'undefined' && ArrayBuffer.isView) {
+    result = ArrayBuffer.isView(val);
+  } else {
+    result = val && val.buffer && val.buffer instanceof ArrayBuffer;
+  }
+  return result;
+}
+
+/**
+   * Determine if a value is a String
+   *
+   * @param {Object} val The value to test
+   * @returns {boolean} True if value is a String, otherwise false
+   */
+function isString(val) {
+  return typeof val === 'string';
+}
+
+/**
+   * Determine if a value is a Number
+   *
+   * @param {Object} val The value to test
+   * @returns {boolean} True if value is a Number, otherwise false
+   */
+function isNumber(val) {
+  return typeof val === 'number';
+}
+
+/**
+   * Determine if a value is an Object
+   *
+   * @param {Object} val The value to test
+   * @returns {boolean} True if value is an Object, otherwise false
+   */
+function isObject(val) {
+  return val !== null && typeof val === 'object';
+}
+
+/**
+   * Determine if a value is a plain Object
+   *
+   * @param {Object} val The value to test
+   * @return {boolean} True if value is a plain Object, otherwise false
+   */
+function isPlainObject(val) {
+  if (toString.call(val) !== '[object Object]') {
+    return false;
+  }
+
+  var prototype = Object.getPrototypeOf(val);
+  return prototype === null || prototype === Object.prototype;
+}
+
+/**
+   * Determine if a value is a Date
+   *
+   * @param {Object} val The value to test
+   * @returns {boolean} True if value is a Date, otherwise false
+   */
+function isDate(val) {
+  return toString.call(val) === '[object Date]';
+}
+
+/**
+   * Determine if a value is a File
+   *
+   * @param {Object} val The value to test
+   * @returns {boolean} True if value is a File, otherwise false
+   */
+function isFile(val) {
+  return toString.call(val) === '[object File]';
+}
+
+/**
+   * Determine if a value is a Blob
+   *
+   * @param {Object} val The value to test
+   * @returns {boolean} True if value is a Blob, otherwise false
+   */
+function isBlob(val) {
+  return toString.call(val) === '[object Blob]';
+}
+
+/**
+   * Determine if a value is a Function
+   *
+   * @param {Object} val The value to test
+   * @returns {boolean} True if value is a Function, otherwise false
+   */
+function isFunction(val) {
+  return toString.call(val) === '[object Function]';
+}
+
+/**
+   * Determine if a value is a Stream
+   *
+   * @param {Object} val The value to test
+   * @returns {boolean} True if value is a Stream, otherwise false
+   */
+function isStream(val) {
+  return isObject(val) && isFunction(val.pipe);
+}
+
+/**
+   * Determine if a value is a URLSearchParams object
+   *
+   * @param {Object} val The value to test
+   * @returns {boolean} True if value is a URLSearchParams object, otherwise false
+   */
+function isURLSearchParams(val) {
+  return typeof URLSearchParams !== 'undefined' && val instanceof URLSearchParams;
+}
+
+/**
+   * Trim excess whitespace off the beginning and end of a string
+   *
+   * @param {String} str The String to trim
+   * @returns {String} The String freed of excess whitespace
+   */
+function trim(str) {
+  return str.replace(/^\s*/, '').replace(/\s*$/, '');
+}
+
+/**
+   * Determine if we're running in a standard browser environment
+   *
+   * This allows axios to run in a web worker, and react-native.
+   * Both environments support XMLHttpRequest, but not fully standard globals.
+   *
+   * web workers:
+   *  typeof window -> undefined
+   *  typeof document -> undefined
+   *
+   * react-native:
+   *  navigator.product -> 'ReactNative'
+   * nativescript
+   *  navigator.product -> 'NativeScript' or 'NS'
+   */
+function isStandardBrowserEnv() {
+  if (typeof navigator !== 'undefined' && (navigator.product === 'ReactNative' ||
+  navigator.product === 'NativeScript' ||
+  navigator.product === 'NS')) {
+    return false;
+  }
+  return (
+    typeof window !== 'undefined' &&
+    typeof document !== 'undefined');
+
+}
+
+/**
+   * Iterate over an Array or an Object invoking a function for each item.
+   *
+   * If `obj` is an Array callback will be called passing
+   * the value, index, and complete array for each item.
+   *
+   * If 'obj' is an Object callback will be called passing
+   * the value, key, and complete object for each property.
+   *
+   * @param {Object|Array} obj The object to iterate
+   * @param {Function} fn The callback to invoke for each item
+   */
+function forEach(obj, fn) {
+  // Don't bother if no value provided
+  if (obj === null || typeof obj === 'undefined') {
+    return;
+  }
+
+  // Force an array if not already something iterable
+  if (typeof obj !== 'object') {
+    /*eslint no-param-reassign:0*/
+    obj = [obj];
+  }
+
+  if (isArray(obj)) {
+    // Iterate over array values
+    for (var i = 0, l = obj.length; i < l; i++) {
+      fn.call(null, obj[i], i, obj);
+    }
+  } else {
+    // Iterate over object keys
+    for (var key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        fn.call(null, obj[key], key, obj);
+      }
+    }
+  }
+}
+
+/**
+   * Accepts varargs expecting each argument to be an object, then
+   * immutably merges the properties of each object and returns result.
+   *
+   * When multiple objects contain the same key the later object in
+   * the arguments list will take precedence.
+   *
+   * Example:
+   *
+   * ```js
+   * var result = merge({foo: 123}, {foo: 456});
+   * console.log(result.foo); // outputs 456
+   * ```
+   *
+   * @param {Object} obj1 Object to merge
+   * @returns {Object} Result of all merge properties
+   */
+function merge() /* obj1, obj2, obj3, ... */{
+  var result = {};
+  function assignValue(val, key) {
+    if (isPlainObject(result[key]) && isPlainObject(val)) {
+      result[key] = merge(result[key], val);
+    } else if (isPlainObject(val)) {
+      result[key] = merge({}, val);
+    } else if (isArray(val)) {
+      result[key] = val.slice();
+    } else {
+      result[key] = val;
+    }
+  }
+
+  for (var i = 0, l = arguments.length; i < l; i++) {
+    forEach(arguments[i], assignValue);
+  }
+  return result;
+}
+
+/**
+   * Extends object a by mutably adding to it the properties of object b.
+   *
+   * @param {Object} a The object to be extended
+   * @param {Object} b The object to copy properties from
+   * @param {Object} thisArg The object to bind function to
+   * @return {Object} The resulting value of object a
+   */
+function extend(a, b, thisArg) {
+  forEach(b, function assignValue(val, key) {
+    if (thisArg && typeof val === 'function') {
+      a[key] = bind(val, thisArg);
+    } else {
+      a[key] = val;
+    }
+  });
+  return a;
+}
+
+/**
+   * Remove byte order marker. This catches EF BB BF (the UTF-8 BOM)
+   *
+   * @param {string} content with BOM
+   * @return {string} content value without BOM
+   */
+function stripBOM(content) {
+  if (content.charCodeAt(0) === 0xFEFF) {
+    content = content.slice(1);
+  }
+  return content;
+}
+
+module.exports = {
+  isArray: isArray,
+  isArrayBuffer: isArrayBuffer,
+  isBuffer: isBuffer,
+  isFormData: isFormData,
+  isArrayBufferView: isArrayBufferView,
+  isString: isString,
+  isNumber: isNumber,
+  isObject: isObject,
+  isPlainObject: isPlainObject,
+  isUndefined: isUndefined,
+  isDate: isDate,
+  isFile: isFile,
+  isBlob: isBlob,
+  isFunction: isFunction,
+  isStream: isStream,
+  isURLSearchParams: isURLSearchParams,
+  isStandardBrowserEnv: isStandardBrowserEnv,
+  forEach: forEach,
+  merge: merge,
+  extend: extend,
+  trim: trim,
+  stripBOM: stripBOM };
+
+/***/ }),
+
+/***/ 44:
+/*!**************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/lib/helpers/bind.js ***!
+  \**************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = function bind(fn, thisArg) {
+  return function wrap() {
+    var args = new Array(arguments.length);
+    for (var i = 0; i < args.length; i++) {
+      args[i] = arguments[i];
+    }
+    return fn.apply(thisArg, args);
+  };
+};
+
+/***/ }),
+
+/***/ 447:
+/*!**************************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/uview-ui/libs/util/async-validator.js ***!
+  \**************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+/* eslint no-console:0 */
+var formatRegExp = /%[sdj%]/g;
+var warning = function warning() {}; // don't print warning message when in production env or node runtime
+
+if (typeof process !== 'undefined' && Object({"VUE_APP_NAME":"shop","VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}) && "development" !== 'production' && typeof window !==
+'undefined' && typeof document !== 'undefined') {
+  warning = function warning(type, errors) {
+    if (typeof console !== 'undefined' && console.warn) {
+      if (errors.every(function (e) {
+        return typeof e === 'string';
+      })) {
+        console.warn(type, errors);
+      }
+    }
+  };
+}
+
+function convertFieldsError(errors) {
+  if (!errors || !errors.length) return null;
+  var fields = {};
+  errors.forEach(function (error) {
+    var field = error.field;
+    fields[field] = fields[field] || [];
+    fields[field].push(error);
+  });
+  return fields;
+}
+
+function format() {
+  for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+    args[_key] = arguments[_key];
+  }
+
+  var i = 1;
+  var f = args[0];
+  var len = args.length;
+
+  if (typeof f === 'function') {
+    return f.apply(null, args.slice(1));
+  }
+
+  if (typeof f === 'string') {
+    var str = String(f).replace(formatRegExp, function (x) {
+      if (x === '%%') {
+        return '%';
+      }
+
+      if (i >= len) {
+        return x;
+      }
+
+      switch (x) {
+        case '%s':
+          return String(args[i++]);
+
+        case '%d':
+          return Number(args[i++]);
+
+        case '%j':
+          try {
+            return JSON.stringify(args[i++]);
+          } catch (_) {
+            return '[Circular]';
+          }
+
+          break;
+
+        default:
+          return x;}
+
+    });
+
+    for (var arg = args[i]; i < len; arg = args[++i]) {
+      str += " " + arg;
+    }
+
+    return str;
+  }
+
+  return f;
+}
+
+function isNativeStringType(type) {
+  return type === 'string' || type === 'url' || type === 'hex' || type === 'email' || type === 'pattern';
+}
+
+function isEmptyValue(value, type) {
+  if (value === undefined || value === null) {
+    return true;
+  }
+
+  if (type === 'array' && Array.isArray(value) && !value.length) {
+    return true;
+  }
+
+  if (isNativeStringType(type) && typeof value === 'string' && !value) {
+    return true;
+  }
+
+  return false;
+}
+
+function asyncParallelArray(arr, func, callback) {
+  var results = [];
+  var total = 0;
+  var arrLength = arr.length;
+
+  function count(errors) {
+    results.push.apply(results, errors);
+    total++;
+
+    if (total === arrLength) {
+      callback(results);
+    }
+  }
+
+  arr.forEach(function (a) {
+    func(a, count);
+  });
+}
+
+function asyncSerialArray(arr, func, callback) {
+  var index = 0;
+  var arrLength = arr.length;
+
+  function next(errors) {
+    if (errors && errors.length) {
+      callback(errors);
+      return;
+    }
+
+    var original = index;
+    index = index + 1;
+
+    if (original < arrLength) {
+      func(arr[original], next);
+    } else {
+      callback([]);
+    }
+  }
+
+  next([]);
+}
+
+function flattenObjArr(objArr) {
+  var ret = [];
+  Object.keys(objArr).forEach(function (k) {
+    ret.push.apply(ret, objArr[k]);
+  });
+  return ret;
+}
+
+function asyncMap(objArr, option, func, callback) {
+  if (option.first) {
+    var _pending = new Promise(function (resolve, reject) {
+      var next = function next(errors) {
+        callback(errors);
+        return errors.length ? reject({
+          errors: errors,
+          fields: convertFieldsError(errors) }) :
+        resolve();
+      };
+
+      var flattenArr = flattenObjArr(objArr);
+      asyncSerialArray(flattenArr, func, next);
+    });
+
+    _pending["catch"](function (e) {
+      return e;
+    });
+
+    return _pending;
+  }
+
+  var firstFields = option.firstFields || [];
+
+  if (firstFields === true) {
+    firstFields = Object.keys(objArr);
+  }
+
+  var objArrKeys = Object.keys(objArr);
+  var objArrLength = objArrKeys.length;
+  var total = 0;
+  var results = [];
+  var pending = new Promise(function (resolve, reject) {
+    var next = function next(errors) {
+      results.push.apply(results, errors);
+      total++;
+
+      if (total === objArrLength) {
+        callback(results);
+        return results.length ? reject({
+          errors: results,
+          fields: convertFieldsError(results) }) :
+        resolve();
+      }
+    };
+
+    if (!objArrKeys.length) {
+      callback(results);
+      resolve();
+    }
+
+    objArrKeys.forEach(function (key) {
+      var arr = objArr[key];
+
+      if (firstFields.indexOf(key) !== -1) {
+        asyncSerialArray(arr, func, next);
+      } else {
+        asyncParallelArray(arr, func, next);
+      }
+    });
+  });
+  pending["catch"](function (e) {
+    return e;
+  });
+  return pending;
+}
+
+function complementError(rule) {
+  return function (oe) {
+    if (oe && oe.message) {
+      oe.field = oe.field || rule.fullField;
+      return oe;
+    }
+
+    return {
+      message: typeof oe === 'function' ? oe() : oe,
+      field: oe.field || rule.fullField };
+
+  };
+}
+
+function deepMerge(target, source) {
+  if (source) {
+    for (var s in source) {
+      if (source.hasOwnProperty(s)) {
+        var value = source[s];
+
+        if (typeof value === 'object' && typeof target[s] === 'object') {
+          target[s] = _extends({}, target[s], {}, value);
+        } else {
+          target[s] = value;
+        }
+      }
+    }
+  }
+
+  return target;
+}
+
+/**
+   *  Rule for validating required fields.
+   *
+   *  @param rule The validation rule.
+   *  @param value The value of the field on the source object.
+   *  @param source The source object being validated.
+   *  @param errors An array of errors that this rule may add
+   *  validation errors to.
+   *  @param options The validation options.
+   *  @param options.messages The validation messages.
+   */
+
+function required(rule, value, source, errors, options, type) {
+  if (rule.required && (!source.hasOwnProperty(rule.field) || isEmptyValue(value, type || rule.type))) {
+    errors.push(format(options.messages.required, rule.fullField));
+  }
+}
+
+/**
+   *  Rule for validating whitespace.
+   *
+   *  @param rule The validation rule.
+   *  @param value The value of the field on the source object.
+   *  @param source The source object being validated.
+   *  @param errors An array of errors that this rule may add
+   *  validation errors to.
+   *  @param options The validation options.
+   *  @param options.messages The validation messages.
+   */
+
+function whitespace(rule, value, source, errors, options) {
+  if (/^\s+$/.test(value) || value === '') {
+    errors.push(format(options.messages.whitespace, rule.fullField));
+  }
+}
+
+/* eslint max-len:0 */
+
+var pattern = {
+  // http://emailregex.com/
+  email: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+  url: new RegExp(
+  "^(?!mailto:)(?:(?:http|https|ftp)://|//)(?:\\S+(?::\\S*)?@)?(?:(?:(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[0-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\\u00a1-\\uffff0-9]+-*)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]+-*)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))|localhost)(?::\\d{2,5})?(?:(/|\\?|#)[^\\s]*)?$",
+  'i'),
+  hex: /^#?([a-f0-9]{6}|[a-f0-9]{3})$/i };
+
+var types = {
+  integer: function integer(value) {
+    return types.number(value) && parseInt(value, 10) === value;
+  },
+  "float": function _float(value) {
+    return types.number(value) && !types.integer(value);
+  },
+  array: function array(value) {
+    return Array.isArray(value);
+  },
+  regexp: function regexp(value) {
+    if (value instanceof RegExp) {
+      return true;
+    }
+
+    try {
+      return !!new RegExp(value);
+    } catch (e) {
+      return false;
+    }
+  },
+  date: function date(value) {
+    return typeof value.getTime === 'function' && typeof value.getMonth === 'function' && typeof value.getYear ===
+    'function';
+  },
+  number: function number(value) {
+    if (isNaN(value)) {
+      return false;
+    }
+
+    // 修改源码，将字符串数值先转为数值
+    return typeof +value === 'number';
+  },
+  object: function object(value) {
+    return typeof value === 'object' && !types.array(value);
+  },
+  method: function method(value) {
+    return typeof value === 'function';
+  },
+  email: function email(value) {
+    return typeof value === 'string' && !!value.match(pattern.email) && value.length < 255;
+  },
+  url: function url(value) {
+    return typeof value === 'string' && !!value.match(pattern.url);
+  },
+  hex: function hex(value) {
+    return typeof value === 'string' && !!value.match(pattern.hex);
+  } };
+
+/**
+        *  Rule for validating the type of a value.
+        *
+        *  @param rule The validation rule.
+        *  @param value The value of the field on the source object.
+        *  @param source The source object being validated.
+        *  @param errors An array of errors that this rule may add
+        *  validation errors to.
+        *  @param options The validation options.
+        *  @param options.messages The validation messages.
+        */
+
+function type(rule, value, source, errors, options) {
+  if (rule.required && value === undefined) {
+    required(rule, value, source, errors, options);
+    return;
+  }
+
+  var custom = ['integer', 'float', 'array', 'regexp', 'object', 'method', 'email', 'number', 'date', 'url', 'hex'];
+  var ruleType = rule.type;
+
+  if (custom.indexOf(ruleType) > -1) {
+    if (!types[ruleType](value)) {
+      errors.push(format(options.messages.types[ruleType], rule.fullField, rule.type));
+    } // straight typeof check
+
+  } else if (ruleType && typeof value !== rule.type) {
+    errors.push(format(options.messages.types[ruleType], rule.fullField, rule.type));
+  }
+}
+
+/**
+   *  Rule for validating minimum and maximum allowed values.
+   *
+   *  @param rule The validation rule.
+   *  @param value The value of the field on the source object.
+   *  @param source The source object being validated.
+   *  @param errors An array of errors that this rule may add
+   *  validation errors to.
+   *  @param options The validation options.
+   *  @param options.messages The validation messages.
+   */
+
+function range(rule, value, source, errors, options) {
+  var len = typeof rule.len === 'number';
+  var min = typeof rule.min === 'number';
+  var max = typeof rule.max === 'number'; // 正则匹配码点范围从U+010000一直到U+10FFFF的文字（补充平面Supplementary Plane）
+
+  var spRegexp = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
+  var val = value;
+  var key = null;
+  var num = typeof value === 'number';
+  var str = typeof value === 'string';
+  var arr = Array.isArray(value);
+
+  if (num) {
+    key = 'number';
+  } else if (str) {
+    key = 'string';
+  } else if (arr) {
+    key = 'array';
+  } // if the value is not of a supported type for range validation
+  // the validation rule rule should use the
+  // type property to also test for a particular type
+
+
+  if (!key) {
+    return false;
+  }
+
+  if (arr) {
+    val = value.length;
+  }
+
+  if (str) {
+    // 处理码点大于U+010000的文字length属性不准确的bug，如"𠮷𠮷𠮷".lenght !== 3
+    val = value.replace(spRegexp, '_').length;
+  }
+
+  if (len) {
+    if (val !== rule.len) {
+      errors.push(format(options.messages[key].len, rule.fullField, rule.len));
+    }
+  } else if (min && !max && val < rule.min) {
+    errors.push(format(options.messages[key].min, rule.fullField, rule.min));
+  } else if (max && !min && val > rule.max) {
+    errors.push(format(options.messages[key].max, rule.fullField, rule.max));
+  } else if (min && max && (val < rule.min || val > rule.max)) {
+    errors.push(format(options.messages[key].range, rule.fullField, rule.min, rule.max));
+  }
+}
+
+var ENUM = 'enum';
+/**
+                    *  Rule for validating a value exists in an enumerable list.
+                    *
+                    *  @param rule The validation rule.
+                    *  @param value The value of the field on the source object.
+                    *  @param source The source object being validated.
+                    *  @param errors An array of errors that this rule may add
+                    *  validation errors to.
+                    *  @param options The validation options.
+                    *  @param options.messages The validation messages.
+                    */
+
+function enumerable(rule, value, source, errors, options) {
+  rule[ENUM] = Array.isArray(rule[ENUM]) ? rule[ENUM] : [];
+
+  if (rule[ENUM].indexOf(value) === -1) {
+    errors.push(format(options.messages[ENUM], rule.fullField, rule[ENUM].join(', ')));
+  }
+}
+
+/**
+   *  Rule for validating a regular expression pattern.
+   *
+   *  @param rule The validation rule.
+   *  @param value The value of the field on the source object.
+   *  @param source The source object being validated.
+   *  @param errors An array of errors that this rule may add
+   *  validation errors to.
+   *  @param options The validation options.
+   *  @param options.messages The validation messages.
+   */
+
+function pattern$1(rule, value, source, errors, options) {
+  if (rule.pattern) {
+    if (rule.pattern instanceof RegExp) {
+      // if a RegExp instance is passed, reset `lastIndex` in case its `global`
+      // flag is accidentally set to `true`, which in a validation scenario
+      // is not necessary and the result might be misleading
+      rule.pattern.lastIndex = 0;
+
+      if (!rule.pattern.test(value)) {
+        errors.push(format(options.messages.pattern.mismatch, rule.fullField, value, rule.pattern));
+      }
+    } else if (typeof rule.pattern === 'string') {
+      var _pattern = new RegExp(rule.pattern);
+
+      if (!_pattern.test(value)) {
+        errors.push(format(options.messages.pattern.mismatch, rule.fullField, value, rule.pattern));
+      }
+    }
+  }
+}
+
+var rules = {
+  required: required,
+  whitespace: whitespace,
+  type: type,
+  range: range,
+  "enum": enumerable,
+  pattern: pattern$1 };
+
+
+/**
+                         *  Performs validation for string types.
+                         *
+                         *  @param rule The validation rule.
+                         *  @param value The value of the field on the source object.
+                         *  @param callback The callback function.
+                         *  @param source The source object being validated.
+                         *  @param options The validation options.
+                         *  @param options.messages The validation messages.
+                         */
+
+function string(rule, value, callback, source, options) {
+  var errors = [];
+  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
+
+  if (validate) {
+    if (isEmptyValue(value, 'string') && !rule.required) {
+      return callback();
+    }
+
+    rules.required(rule, value, source, errors, options, 'string');
+
+    if (!isEmptyValue(value, 'string')) {
+      rules.type(rule, value, source, errors, options);
+      rules.range(rule, value, source, errors, options);
+      rules.pattern(rule, value, source, errors, options);
+
+      if (rule.whitespace === true) {
+        rules.whitespace(rule, value, source, errors, options);
+      }
+    }
+  }
+
+  callback(errors);
+}
+
+/**
+   *  Validates a function.
+   *
+   *  @param rule The validation rule.
+   *  @param value The value of the field on the source object.
+   *  @param callback The callback function.
+   *  @param source The source object being validated.
+   *  @param options The validation options.
+   *  @param options.messages The validation messages.
+   */
+
+function method(rule, value, callback, source, options) {
+  var errors = [];
+  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
+
+  if (validate) {
+    if (isEmptyValue(value) && !rule.required) {
+      return callback();
+    }
+
+    rules.required(rule, value, source, errors, options);
+
+    if (value !== undefined) {
+      rules.type(rule, value, source, errors, options);
+    }
+  }
+
+  callback(errors);
+}
+
+/**
+   *  Validates a number.
+   *
+   *  @param rule The validation rule.
+   *  @param value The value of the field on the source object.
+   *  @param callback The callback function.
+   *  @param source The source object being validated.
+   *  @param options The validation options.
+   *  @param options.messages The validation messages.
+   */
+
+function number(rule, value, callback, source, options) {
+  var errors = [];
+  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
+
+  if (validate) {
+    if (value === '') {
+      value = undefined;
+    }
+
+    if (isEmptyValue(value) && !rule.required) {
+      return callback();
+    }
+
+    rules.required(rule, value, source, errors, options);
+
+    if (value !== undefined) {
+      rules.type(rule, value, source, errors, options);
+      rules.range(rule, value, source, errors, options);
+    }
+  }
+
+  callback(errors);
+}
+
+/**
+   *  Validates a boolean.
+   *
+   *  @param rule The validation rule.
+   *  @param value The value of the field on the source object.
+   *  @param callback The callback function.
+   *  @param source The source object being validated.
+   *  @param options The validation options.
+   *  @param options.messages The validation messages.
+   */
+
+function _boolean(rule, value, callback, source, options) {
+  var errors = [];
+  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
+
+  if (validate) {
+    if (isEmptyValue(value) && !rule.required) {
+      return callback();
+    }
+
+    rules.required(rule, value, source, errors, options);
+
+    if (value !== undefined) {
+      rules.type(rule, value, source, errors, options);
+    }
+  }
+
+  callback(errors);
+}
+
+/**
+   *  Validates the regular expression type.
+   *
+   *  @param rule The validation rule.
+   *  @param value The value of the field on the source object.
+   *  @param callback The callback function.
+   *  @param source The source object being validated.
+   *  @param options The validation options.
+   *  @param options.messages The validation messages.
+   */
+
+function regexp(rule, value, callback, source, options) {
+  var errors = [];
+  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
+
+  if (validate) {
+    if (isEmptyValue(value) && !rule.required) {
+      return callback();
+    }
+
+    rules.required(rule, value, source, errors, options);
+
+    if (!isEmptyValue(value)) {
+      rules.type(rule, value, source, errors, options);
+    }
+  }
+
+  callback(errors);
+}
+
+/**
+   *  Validates a number is an integer.
+   *
+   *  @param rule The validation rule.
+   *  @param value The value of the field on the source object.
+   *  @param callback The callback function.
+   *  @param source The source object being validated.
+   *  @param options The validation options.
+   *  @param options.messages The validation messages.
+   */
+
+function integer(rule, value, callback, source, options) {
+  var errors = [];
+  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
+
+  if (validate) {
+    if (isEmptyValue(value) && !rule.required) {
+      return callback();
+    }
+
+    rules.required(rule, value, source, errors, options);
+
+    if (value !== undefined) {
+      rules.type(rule, value, source, errors, options);
+      rules.range(rule, value, source, errors, options);
+    }
+  }
+
+  callback(errors);
+}
+
+/**
+   *  Validates a number is a floating point number.
+   *
+   *  @param rule The validation rule.
+   *  @param value The value of the field on the source object.
+   *  @param callback The callback function.
+   *  @param source The source object being validated.
+   *  @param options The validation options.
+   *  @param options.messages The validation messages.
+   */
+
+function floatFn(rule, value, callback, source, options) {
+  var errors = [];
+  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
+
+  if (validate) {
+    if (isEmptyValue(value) && !rule.required) {
+      return callback();
+    }
+
+    rules.required(rule, value, source, errors, options);
+
+    if (value !== undefined) {
+      rules.type(rule, value, source, errors, options);
+      rules.range(rule, value, source, errors, options);
+    }
+  }
+
+  callback(errors);
+}
+
+/**
+   *  Validates an array.
+   *
+   *  @param rule The validation rule.
+   *  @param value The value of the field on the source object.
+   *  @param callback The callback function.
+   *  @param source The source object being validated.
+   *  @param options The validation options.
+   *  @param options.messages The validation messages.
+   */
+
+function array(rule, value, callback, source, options) {
+  var errors = [];
+  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
+
+  if (validate) {
+    if (isEmptyValue(value, 'array') && !rule.required) {
+      return callback();
+    }
+
+    rules.required(rule, value, source, errors, options, 'array');
+
+    if (!isEmptyValue(value, 'array')) {
+      rules.type(rule, value, source, errors, options);
+      rules.range(rule, value, source, errors, options);
+    }
+  }
+
+  callback(errors);
+}
+
+/**
+   *  Validates an object.
+   *
+   *  @param rule The validation rule.
+   *  @param value The value of the field on the source object.
+   *  @param callback The callback function.
+   *  @param source The source object being validated.
+   *  @param options The validation options.
+   *  @param options.messages The validation messages.
+   */
+
+function object(rule, value, callback, source, options) {
+  var errors = [];
+  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
+
+  if (validate) {
+    if (isEmptyValue(value) && !rule.required) {
+      return callback();
+    }
+
+    rules.required(rule, value, source, errors, options);
+
+    if (value !== undefined) {
+      rules.type(rule, value, source, errors, options);
+    }
+  }
+
+  callback(errors);
+}
+
+var ENUM$1 = 'enum';
+/**
+                      *  Validates an enumerable list.
+                      *
+                      *  @param rule The validation rule.
+                      *  @param value The value of the field on the source object.
+                      *  @param callback The callback function.
+                      *  @param source The source object being validated.
+                      *  @param options The validation options.
+                      *  @param options.messages The validation messages.
+                      */
+
+function enumerable$1(rule, value, callback, source, options) {
+  var errors = [];
+  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
+
+  if (validate) {
+    if (isEmptyValue(value) && !rule.required) {
+      return callback();
+    }
+
+    rules.required(rule, value, source, errors, options);
+
+    if (value !== undefined) {
+      rules[ENUM$1](rule, value, source, errors, options);
+    }
+  }
+
+  callback(errors);
+}
+
+/**
+   *  Validates a regular expression pattern.
+   *
+   *  Performs validation when a rule only contains
+   *  a pattern property but is not declared as a string type.
+   *
+   *  @param rule The validation rule.
+   *  @param value The value of the field on the source object.
+   *  @param callback The callback function.
+   *  @param source The source object being validated.
+   *  @param options The validation options.
+   *  @param options.messages The validation messages.
+   */
+
+function pattern$2(rule, value, callback, source, options) {
+  var errors = [];
+  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
+
+  if (validate) {
+    if (isEmptyValue(value, 'string') && !rule.required) {
+      return callback();
+    }
+
+    rules.required(rule, value, source, errors, options);
+
+    if (!isEmptyValue(value, 'string')) {
+      rules.pattern(rule, value, source, errors, options);
+    }
+  }
+
+  callback(errors);
+}
+
+function date(rule, value, callback, source, options) {
+  var errors = [];
+  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
+
+  if (validate) {
+    if (isEmptyValue(value) && !rule.required) {
+      return callback();
+    }
+
+    rules.required(rule, value, source, errors, options);
+
+    if (!isEmptyValue(value)) {
+      var dateObject;
+
+      if (typeof value === 'number') {
+        dateObject = new Date(value);
+      } else {
+        dateObject = value;
+      }
+
+      rules.type(rule, dateObject, source, errors, options);
+
+      if (dateObject) {
+        rules.range(rule, dateObject.getTime(), source, errors, options);
+      }
+    }
+  }
+
+  callback(errors);
+}
+
+function required$1(rule, value, callback, source, options) {
+  var errors = [];
+  var type = Array.isArray(value) ? 'array' : typeof value;
+  rules.required(rule, value, source, errors, options, type);
+  callback(errors);
+}
+
+function type$1(rule, value, callback, source, options) {
+  var ruleType = rule.type;
+  var errors = [];
+  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
+
+  if (validate) {
+    if (isEmptyValue(value, ruleType) && !rule.required) {
+      return callback();
+    }
+
+    rules.required(rule, value, source, errors, options, ruleType);
+
+    if (!isEmptyValue(value, ruleType)) {
+      rules.type(rule, value, source, errors, options);
+    }
+  }
+
+  callback(errors);
+}
+
+/**
+   *  Performs validation for any type.
+   *
+   *  @param rule The validation rule.
+   *  @param value The value of the field on the source object.
+   *  @param callback The callback function.
+   *  @param source The source object being validated.
+   *  @param options The validation options.
+   *  @param options.messages The validation messages.
+   */
+
+function any(rule, value, callback, source, options) {
+  var errors = [];
+  var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
+
+  if (validate) {
+    if (isEmptyValue(value) && !rule.required) {
+      return callback();
+    }
+
+    rules.required(rule, value, source, errors, options);
+  }
+
+  callback(errors);
+}
+
+var validators = {
+  string: string,
+  method: method,
+  number: number,
+  "boolean": _boolean,
+  regexp: regexp,
+  integer: integer,
+  "float": floatFn,
+  array: array,
+  object: object,
+  "enum": enumerable$1,
+  pattern: pattern$2,
+  date: date,
+  url: type$1,
+  hex: type$1,
+  email: type$1,
+  required: required$1,
+  any: any };
+
+
+function newMessages() {
+  return {
+    "default": 'Validation error on field %s',
+    required: '%s is required',
+    "enum": '%s must be one of %s',
+    whitespace: '%s cannot be empty',
+    date: {
+      format: '%s date %s is invalid for format %s',
+      parse: '%s date could not be parsed, %s is invalid ',
+      invalid: '%s date %s is invalid' },
+
+    types: {
+      string: '%s is not a %s',
+      method: '%s is not a %s (function)',
+      array: '%s is not an %s',
+      object: '%s is not an %s',
+      number: '%s is not a %s',
+      date: '%s is not a %s',
+      "boolean": '%s is not a %s',
+      integer: '%s is not an %s',
+      "float": '%s is not a %s',
+      regexp: '%s is not a valid %s',
+      email: '%s is not a valid %s',
+      url: '%s is not a valid %s',
+      hex: '%s is not a valid %s' },
+
+    string: {
+      len: '%s must be exactly %s characters',
+      min: '%s must be at least %s characters',
+      max: '%s cannot be longer than %s characters',
+      range: '%s must be between %s and %s characters' },
+
+    number: {
+      len: '%s must equal %s',
+      min: '%s cannot be less than %s',
+      max: '%s cannot be greater than %s',
+      range: '%s must be between %s and %s' },
+
+    array: {
+      len: '%s must be exactly %s in length',
+      min: '%s cannot be less than %s in length',
+      max: '%s cannot be greater than %s in length',
+      range: '%s must be between %s and %s in length' },
+
+    pattern: {
+      mismatch: '%s value %s does not match pattern %s' },
+
+    clone: function clone() {
+      var cloned = JSON.parse(JSON.stringify(this));
+      cloned.clone = this.clone;
+      return cloned;
+    } };
+
+}
+var messages = newMessages();
+
+/**
+                               *  Encapsulates a validation schema.
+                               *
+                               *  @param descriptor An object declaring validation rules
+                               *  for this schema.
+                               */
+
+function Schema(descriptor) {
+  this.rules = null;
+  this._messages = messages;
+  this.define(descriptor);
+}
+
+Schema.prototype = {
+  messages: function messages(_messages) {
+    if (_messages) {
+      this._messages = deepMerge(newMessages(), _messages);
+    }
+
+    return this._messages;
+  },
+  define: function define(rules) {
+    if (!rules) {
+      throw new Error('Cannot configure a schema with no rules');
+    }
+
+    if (typeof rules !== 'object' || Array.isArray(rules)) {
+      throw new Error('Rules must be an object');
+    }
+
+    this.rules = {};
+    var z;
+    var item;
+
+    for (z in rules) {
+      if (rules.hasOwnProperty(z)) {
+        item = rules[z];
+        this.rules[z] = Array.isArray(item) ? item : [item];
+      }
+    }
+  },
+  validate: function validate(source_, o, oc) {
+    var _this = this;
+
+    if (o === void 0) {
+      o = {};
+    }
+
+    if (oc === void 0) {
+      oc = function oc() {};
+    }
+
+    var source = source_;
+    var options = o;
+    var callback = oc;
+
+    if (typeof options === 'function') {
+      callback = options;
+      options = {};
+    }
+
+    if (!this.rules || Object.keys(this.rules).length === 0) {
+      if (callback) {
+        callback();
+      }
+
+      return Promise.resolve();
+    }
+
+    function complete(results) {
+      var i;
+      var errors = [];
+      var fields = {};
+
+      function add(e) {
+        if (Array.isArray(e)) {
+          var _errors;
+
+          errors = (_errors = errors).concat.apply(_errors, e);
+        } else {
+          errors.push(e);
+        }
+      }
+
+      for (i = 0; i < results.length; i++) {
+        add(results[i]);
+      }
+
+      if (!errors.length) {
+        errors = null;
+        fields = null;
+      } else {
+        fields = convertFieldsError(errors);
+      }
+
+      callback(errors, fields);
+    }
+
+    if (options.messages) {
+      var messages$1 = this.messages();
+
+      if (messages$1 === messages) {
+        messages$1 = newMessages();
+      }
+
+      deepMerge(messages$1, options.messages);
+      options.messages = messages$1;
+    } else {
+      options.messages = this.messages();
+    }
+
+    var arr;
+    var value;
+    var series = {};
+    var keys = options.keys || Object.keys(this.rules);
+    keys.forEach(function (z) {
+      arr = _this.rules[z];
+      value = source[z];
+      arr.forEach(function (r) {
+        var rule = r;
+
+        if (typeof rule.transform === 'function') {
+          if (source === source_) {
+            source = _extends({}, source);
+          }
+
+          value = source[z] = rule.transform(value);
+        }
+
+        if (typeof rule === 'function') {
+          rule = {
+            validator: rule };
+
+        } else {
+          rule = _extends({}, rule);
+        }
+
+        rule.validator = _this.getValidationMethod(rule);
+        rule.field = z;
+        rule.fullField = rule.fullField || z;
+        rule.type = _this.getType(rule);
+
+        if (!rule.validator) {
+          return;
+        }
+
+        series[z] = series[z] || [];
+        series[z].push({
+          rule: rule,
+          value: value,
+          source: source,
+          field: z });
+
+      });
+    });
+    var errorFields = {};
+    return asyncMap(series, options, function (data, doIt) {
+      var rule = data.rule;
+      var deep = (rule.type === 'object' || rule.type === 'array') && (typeof rule.fields === 'object' || typeof rule.defaultField ===
+      'object');
+      deep = deep && (rule.required || !rule.required && data.value);
+      rule.field = data.field;
+
+      function addFullfield(key, schema) {
+        return _extends({}, schema, {
+          fullField: rule.fullField + "." + key });
+
+      }
+
+      function cb(e) {
+        if (e === void 0) {
+          e = [];
+        }
+
+        var errors = e;
+
+        if (!Array.isArray(errors)) {
+          errors = [errors];
+        }
+
+        if (!options.suppressWarning && errors.length) {
+          Schema.warning('async-validator:', errors);
+        }
+
+        if (errors.length && rule.message) {
+          errors = [].concat(rule.message);
+        }
+
+        errors = errors.map(complementError(rule));
+
+        if (options.first && errors.length) {
+          errorFields[rule.field] = 1;
+          return doIt(errors);
+        }
+
+        if (!deep) {
+          doIt(errors);
+        } else {
+          // if rule is required but the target object
+          // does not exist fail at the rule level and don't
+          // go deeper
+          if (rule.required && !data.value) {
+            if (rule.message) {
+              errors = [].concat(rule.message).map(complementError(rule));
+            } else if (options.error) {
+              errors = [options.error(rule, format(options.messages.required, rule.field))];
+            } else {
+              errors = [];
+            }
+
+            return doIt(errors);
+          }
+
+          var fieldsSchema = {};
+
+          if (rule.defaultField) {
+            for (var k in data.value) {
+              if (data.value.hasOwnProperty(k)) {
+                fieldsSchema[k] = rule.defaultField;
+              }
+            }
+          }
+
+          fieldsSchema = _extends({}, fieldsSchema, {}, data.rule.fields);
+
+          for (var f in fieldsSchema) {
+            if (fieldsSchema.hasOwnProperty(f)) {
+              var fieldSchema = Array.isArray(fieldsSchema[f]) ? fieldsSchema[f] : [fieldsSchema[f]];
+              fieldsSchema[f] = fieldSchema.map(addFullfield.bind(null, f));
+            }
+          }
+
+          var schema = new Schema(fieldsSchema);
+          schema.messages(options.messages);
+
+          if (data.rule.options) {
+            data.rule.options.messages = options.messages;
+            data.rule.options.error = options.error;
+          }
+
+          schema.validate(data.value, data.rule.options || options, function (errs) {
+            var finalErrors = [];
+
+            if (errors && errors.length) {
+              finalErrors.push.apply(finalErrors, errors);
+            }
+
+            if (errs && errs.length) {
+              finalErrors.push.apply(finalErrors, errs);
+            }
+
+            doIt(finalErrors.length ? finalErrors : null);
+          });
+        }
+      }
+
+      var res;
+
+      if (rule.asyncValidator) {
+        res = rule.asyncValidator(rule, data.value, cb, data.source, options);
+      } else if (rule.validator) {
+        res = rule.validator(rule, data.value, cb, data.source, options);
+
+        if (res === true) {
+          cb();
+        } else if (res === false) {
+          cb(rule.message || rule.field + " fails");
+        } else if (res instanceof Array) {
+          cb(res);
+        } else if (res instanceof Error) {
+          cb(res.message);
+        }
+      }
+
+      if (res && res.then) {
+        res.then(function () {
+          return cb();
+        }, function (e) {
+          return cb(e);
+        });
+      }
+    }, function (results) {
+      complete(results);
+    });
+  },
+  getType: function getType(rule) {
+    if (rule.type === undefined && rule.pattern instanceof RegExp) {
+      rule.type = 'pattern';
+    }
+
+    if (typeof rule.validator !== 'function' && rule.type && !validators.hasOwnProperty(rule.type)) {
+      throw new Error(format('Unknown rule type %s', rule.type));
+    }
+
+    return rule.type || 'string';
+  },
+  getValidationMethod: function getValidationMethod(rule) {
+    if (typeof rule.validator === 'function') {
+      return rule.validator;
+    }
+
+    var keys = Object.keys(rule);
+    var messageIndex = keys.indexOf('message');
+
+    if (messageIndex !== -1) {
+      keys.splice(messageIndex, 1);
+    }
+
+    if (keys.length === 1 && keys[0] === 'required') {
+      return validators.required;
+    }
+
+    return validators[this.getType(rule)] || false;
+  } };
+
+
+Schema.register = function register(type, validator) {
+  if (typeof validator !== 'function') {
+    throw new Error('Cannot register a validator by type, validator is not a function');
+  }
+
+  validators[type] = validator;
+};
+
+Schema.warning = warning;
+Schema.messages = messages;var _default =
+
+Schema;exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/node-libs-browser/mock/process.js */ 52)))
+
+/***/ }),
+
+/***/ 45:
+/*!************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/lib/core/Axios.js ***!
+  \************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(/*! ./../utils */ 43);
+var buildURL = __webpack_require__(/*! ../helpers/buildURL */ 46);
+var InterceptorManager = __webpack_require__(/*! ./InterceptorManager */ 47);
+var dispatchRequest = __webpack_require__(/*! ./dispatchRequest */ 48);
+var mergeConfig = __webpack_require__(/*! ./mergeConfig */ 65);
+
+/**
+                                             * Create a new instance of Axios
+                                             *
+                                             * @param {Object} instanceConfig The default config for the instance
+                                             */
+function Axios(instanceConfig) {
+  this.defaults = instanceConfig;
+  this.interceptors = {
+    request: new InterceptorManager(),
+    response: new InterceptorManager() };
+
+}
+
+/**
+   * Dispatch a request
+   *
+   * @param {Object} config The config specific for this request (merged with this.defaults)
+   */
+Axios.prototype.request = function request(config) {
+  /*eslint no-param-reassign:0*/
+  // Allow for axios('example/url'[, config]) a la fetch API
+  if (typeof config === 'string') {
+    config = arguments[1] || {};
+    config.url = arguments[0];
+  } else {
+    config = config || {};
+  }
+
+  config = mergeConfig(this.defaults, config);
+
+  // Set config.method
+  if (config.method) {
+    config.method = config.method.toLowerCase();
+  } else if (this.defaults.method) {
+    config.method = this.defaults.method.toLowerCase();
+  } else {
+    config.method = 'get';
+  }
+
+  // Hook up interceptors middleware
+  var chain = [dispatchRequest, undefined];
+  var promise = Promise.resolve(config);
+
+  this.interceptors.request.forEach(function unshiftRequestInterceptors(interceptor) {
+    chain.unshift(interceptor.fulfilled, interceptor.rejected);
+  });
+
+  this.interceptors.response.forEach(function pushResponseInterceptors(interceptor) {
+    chain.push(interceptor.fulfilled, interceptor.rejected);
+  });
+
+  while (chain.length) {
+    promise = promise.then(chain.shift(), chain.shift());
+  }
+
+  return promise;
+};
+
+Axios.prototype.getUri = function getUri(config) {
+  config = mergeConfig(this.defaults, config);
+  return buildURL(config.url, config.params, config.paramsSerializer).replace(/^\?/, '');
+};
+
+// Provide aliases for supported request methods
+utils.forEach(['delete', 'get', 'head', 'options'], function forEachMethodNoData(method) {
+  /*eslint func-names:0*/
+  Axios.prototype[method] = function (url, config) {
+    return this.request(mergeConfig(config || {}, {
+      method: method,
+      url: url,
+      data: (config || {}).data }));
+
+  };
+});
+
+utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
+  /*eslint func-names:0*/
+  Axios.prototype[method] = function (url, data, config) {
+    return this.request(mergeConfig(config || {}, {
+      method: method,
+      url: url,
+      data: data }));
+
+  };
+});
+
+module.exports = Axios;
+
+/***/ }),
+
 /***/ 46:
-/*!*********************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/lib/helpers/buildURL.js ***!
-  \*********************************************************************************************************/
+/*!******************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/lib/helpers/buildURL.js ***!
+  \******************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -18056,9 +16947,9 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 /***/ }),
 
 /***/ 47:
-/*!****************************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/lib/core/InterceptorManager.js ***!
-  \****************************************************************************************************************/
+/*!*************************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/lib/core/InterceptorManager.js ***!
+  \*************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -18119,9 +17010,9 @@ module.exports = InterceptorManager;
 /***/ }),
 
 /***/ 48:
-/*!*************************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/lib/core/dispatchRequest.js ***!
-  \*************************************************************************************************************/
+/*!**********************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/lib/core/dispatchRequest.js ***!
+  \**********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -18209,9 +17100,9 @@ module.exports = function dispatchRequest(config) {
 /***/ }),
 
 /***/ 49:
-/*!***********************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/lib/core/transformData.js ***!
-  \***********************************************************************************************************/
+/*!********************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/lib/core/transformData.js ***!
+  \********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -18240,9 +17131,9 @@ module.exports = function transformData(data, headers, fns) {
 /***/ }),
 
 /***/ 50:
-/*!********************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/lib/cancel/isCancel.js ***!
-  \********************************************************************************************************/
+/*!*****************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/lib/cancel/isCancel.js ***!
+  \*****************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -18256,9 +17147,9 @@ module.exports = function isCancel(value) {
 /***/ }),
 
 /***/ 51:
-/*!*************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/lib/defaults.js ***!
-  \*************************************************************************************************/
+/*!**********************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/lib/defaults.js ***!
+  \**********************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -18361,7 +17252,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 });
 
 module.exports = defaults;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../../../../QMDownload/SoftMgr/HBuilderX/plugins/uniapp-cli/node_modules/node-libs-browser/mock/process.js */ 52)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/node-libs-browser/mock/process.js */ 52)))
 
 /***/ }),
 
@@ -18725,9 +17616,9 @@ var substr = 'ab'.substr(-1) === 'b'
 /***/ }),
 
 /***/ 54:
-/*!********************************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/lib/helpers/normalizeHeaderName.js ***!
-  \********************************************************************************************************************/
+/*!*****************************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/lib/helpers/normalizeHeaderName.js ***!
+  \*****************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -18748,9 +17639,9 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 /***/ }),
 
 /***/ 55:
-/*!*****************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/lib/adapters/xhr.js ***!
-  \*****************************************************************************************************/
+/*!**************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/lib/adapters/xhr.js ***!
+  \**************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -18938,9 +17829,9 @@ module.exports = function xhrAdapter(config) {
 /***/ }),
 
 /***/ 56:
-/*!****************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/lib/core/settle.js ***!
-  \****************************************************************************************************/
+/*!*************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/lib/core/settle.js ***!
+  \*************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -18974,9 +17865,9 @@ module.exports = function settle(resolve, reject, response) {
 /***/ }),
 
 /***/ 57:
-/*!*********************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/lib/core/createError.js ***!
-  \*********************************************************************************************************/
+/*!******************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/lib/core/createError.js ***!
+  \******************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -19003,9 +17894,9 @@ module.exports = function createError(message, config, code, request, response) 
 /***/ }),
 
 /***/ 58:
-/*!**********************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/lib/core/enhanceError.js ***!
-  \**********************************************************************************************************/
+/*!*******************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/lib/core/enhanceError.js ***!
+  \*******************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -19056,9 +17947,9 @@ module.exports = function enhanceError(error, config, code, request, response) {
 /***/ }),
 
 /***/ 59:
-/*!********************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/lib/helpers/cookies.js ***!
-  \********************************************************************************************************/
+/*!*****************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/lib/helpers/cookies.js ***!
+  \*****************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -19119,9 +18010,9 @@ function nonStandardBrowserEnv() {
 /***/ }),
 
 /***/ 60:
-/*!***********************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/lib/core/buildFullPath.js ***!
-  \***********************************************************************************************************/
+/*!********************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/lib/core/buildFullPath.js ***!
+  \********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -19150,9 +18041,9 @@ module.exports = function buildFullPath(baseURL, requestedURL) {
 /***/ }),
 
 /***/ 61:
-/*!**************************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/lib/helpers/isAbsoluteURL.js ***!
-  \**************************************************************************************************************/
+/*!***********************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/lib/helpers/isAbsoluteURL.js ***!
+  \***********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -19175,9 +18066,9 @@ module.exports = function isAbsoluteURL(url) {
 /***/ }),
 
 /***/ 62:
-/*!************************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/lib/helpers/combineURLs.js ***!
-  \************************************************************************************************************/
+/*!*********************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/lib/helpers/combineURLs.js ***!
+  \*********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -19200,9 +18091,9 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 /***/ }),
 
 /***/ 63:
-/*!*************************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/lib/helpers/parseHeaders.js ***!
-  \*************************************************************************************************************/
+/*!**********************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/lib/helpers/parseHeaders.js ***!
+  \**********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -19264,9 +18155,9 @@ module.exports = function parseHeaders(headers) {
 /***/ }),
 
 /***/ 64:
-/*!****************************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/lib/helpers/isURLSameOrigin.js ***!
-  \****************************************************************************************************************/
+/*!*************************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/lib/helpers/isURLSameOrigin.js ***!
+  \*************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -19342,9 +18233,9 @@ function nonStandardBrowserEnv() {
 /***/ }),
 
 /***/ 65:
-/*!*********************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/lib/core/mergeConfig.js ***!
-  \*********************************************************************************************************/
+/*!******************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/lib/core/mergeConfig.js ***!
+  \******************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -19440,9 +18331,9 @@ module.exports = function mergeConfig(config1, config2) {
 /***/ }),
 
 /***/ 66:
-/*!******************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/lib/cancel/Cancel.js ***!
-  \******************************************************************************************************/
+/*!***************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/lib/cancel/Cancel.js ***!
+  \***************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -19470,9 +18361,9 @@ module.exports = Cancel;
 /***/ }),
 
 /***/ 67:
-/*!***********************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/lib/cancel/CancelToken.js ***!
-  \***********************************************************************************************************/
+/*!********************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/lib/cancel/CancelToken.js ***!
+  \********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -19538,9 +18429,9 @@ module.exports = CancelToken;
 /***/ }),
 
 /***/ 68:
-/*!*******************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/lib/helpers/spread.js ***!
-  \*******************************************************************************************************/
+/*!****************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/lib/helpers/spread.js ***!
+  \****************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -19576,9 +18467,9 @@ module.exports = function spread(callback) {
 /***/ }),
 
 /***/ 69:
-/*!*************************************************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/node_modules/axios/lib/helpers/isAxiosError.js ***!
-  \*************************************************************************************************************/
+/*!**********************************************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/node_modules/axios/lib/helpers/isAxiosError.js ***!
+  \**********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -19598,66 +18489,26 @@ module.exports = function isAxiosError(payload) {
 /***/ }),
 
 /***/ 70:
-/*!*************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/api/url.js ***!
-  \*************************************************************************/
+/*!**********************************************!*\
+  !*** D:/HBuilderProjects/rushifu/api/url.js ***!
+  \**********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = {
-  baseUrl: 'http://192.168.1.5/shop/admin',
-  login: '/login', //登录
-  logincheck: '/logincheck', //后台登录状态检测
-  wx_login: '/wx_login', //小程序端微信登录
-  wx_userinfo: '/wx_userinfo', //小程序端用户信息
-  wx_index: '/wx_index', //小程序端首页
-  wx_goodsview: '/wx_goodsview', //小程序端商品详情
-  wx_goodslist: '/wx_goodslist', //小程序端商品列表
-  wx_search: '/wx_search', //小程序端商品分类筛选
-  wx_cartlist: '/wx_cartlist', //小程序端购物车列表
-  wx_editcartnum: '/wx_editcartnum', //小程序端购物车商品数量修改
-  wx_addcart: '/wx_addcart', //小程序端添加购物车
-  wx_cartdel: '/wx_cartdel', //小程序端购物车商品删除
-  wx_goodslike: '/wx_goodslike', //小程序端购物车猜你喜欢
-  billagreement_view: '/billagreement_view', //后台免单购物协议查看
-  wx_userreceiver: '/wx_userreceiver', //小程序端收货人信息列表
-  wx_adduserreceiver: '/wx_adduserreceiver', //小程序端收货人信息添加
-  wx_edituserreceiver: '/wx_edituserreceiver', //小程序端收货人信息修改
-  wx_deluserreceiver: '/wx_deluserreceiver', //小程序端删除收货人信息
-  order_submission: '/order_submission', //小程序端结算页面展示
-  wx_payment: '/wx_payment', //小程序端支付
-  wx_userorder: '/wx_userorder', //小程序端订单列表
-  wx_orderspay: '/wx_orderspay', //小程序端待支付中的支付
-  wx_orderscancel: '/wx_orderscancel', //小程序端待支付中的取消订单
-  wx_orderspostsaleview: '/wx_orderspostsaleview', //小程序端订单售后详情
-  wx_orderspostsale: '/wx_orderspostsale', //小程序端订单售后提交
-  wx_orderspostsalecancel: '/wx_orderspostsalecancel', //小程序端订单申请售后取消
-  wx_orderspostsalesubview: '/wx_orderspostsalesubview',
-  wx_orderscomment: '/wx_orderscomment', //小程序端订单评价
-  wx_orderconfirmreceipt: '/wx_orderconfirmreceipt', //小程序端订单收货
-  wx_goodscomment: '/wx_goodscomment', //小程序端商品评价列表
-  guide_content: '/guide_content', //新手指南查看
-  wx_freeordersubmit: '/wx_freeordersubmit', //小程序端免单是否达标
-  wx_freeorder: '/wx_freeorder', //小程序端免单中奖页面
-  wx_freeorderrecord: '/wx_freeorderrecord', //小程序端免单记录
-  wx_shareqr: '/wx_shareqr', //小程序端商品详情分享
-  wx_usercommission: '/wx_usercommission', //小程序端邀请好友记录
-  wx_usercommissionmore: '/wx_usercommissionmore', //小程序端佣金记录
-  wx_userconsume: '/wx_userconsume', //小程序端消费记录
-  wx_addcollect: '/wx_addcollect', //小程序端我要收藏
-  wx_mycollectdel: '/wx_mycollectdel', //小程序端取消收藏
-  wx_withdrawal: '/wx_withdrawal', //小程序端提现提交
-  wx_mywithdrawal: '/wx_mywithdrawal', //小程序端提现列表
-  wx_mycollect: '/wx_mycollect' //小程序端我的收藏
+  baseUrl: 'http://192.168.50.96:8001',
+  // baseUrl:'https://hii7mo3m.dnat.tech',
+  // baseUrl:'https://fenxiao.5laoye.com',
+  loginWechat: '/api/login/wechat' //小程序登录
 };exports.default = _default;
 
 /***/ }),
 
 /***/ 71:
-/*!********************************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/static/md5.min.js ***!
-  \********************************************************************************/
+/*!*****************************************************!*\
+  !*** D:/HBuilderProjects/rushifu/static/md5.min.js ***!
+  \*****************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -19672,7 +18523,7 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
  */
 !function () {"use strict";function t(t) {if (t) d[0] = d[16] = d[1] = d[2] = d[3] = d[4] = d[5] = d[6] = d[7] = d[8] = d[9] = d[10] = d[11] = d[12] = d[13] = d[14] = d[15] = 0, this.blocks = d, this.buffer8 = l;else if (a) {var r = new ArrayBuffer(68);this.buffer8 = new Uint8Array(r), this.blocks = new Uint32Array(r);} else this.blocks = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];this.h0 = this.h1 = this.h2 = this.h3 = this.start = this.bytes = this.hBytes = 0, this.finalized = this.hashed = !1, this.first = !0;}var r = "input is invalid type",e = "object" == typeof window,i = e ? window : {};i.JS_MD5_NO_WINDOW && (e = !1);var s = !e && "object" == typeof self,h = !i.JS_MD5_NO_NODE_JS && "object" == typeof process && process.versions && process.versions.node;h ? i = global : s && (i = self);var f = !i.JS_MD5_NO_COMMON_JS && "object" == typeof module && module.exports,o =  true && __webpack_require__(/*! !webpack amd options */ 72),a = !i.JS_MD5_NO_ARRAY_BUFFER && "undefined" != typeof ArrayBuffer,n = "0123456789abcdef".split(""),u = [128, 32768, 8388608, -2147483648],y = [0, 8, 16, 24],c = ["hex", "array", "digest", "buffer", "arrayBuffer", "base64"],p = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".split(""),d = [],l;if (a) {var A = new ArrayBuffer(68);l = new Uint8Array(A), d = new Uint32Array(A);}!i.JS_MD5_NO_NODE_JS && Array.isArray || (Array.isArray = function (t) {return "[object Array]" === Object.prototype.toString.call(t);}), !a || !i.JS_MD5_NO_ARRAY_BUFFER_IS_VIEW && ArrayBuffer.isView || (ArrayBuffer.isView = function (t) {return "object" == typeof t && t.buffer && t.buffer.constructor === ArrayBuffer;});var b = function b(r) {return function (e) {return new t(!0).update(e)[r]();};},v = function v() {var r = b("hex");h && (r = w(r)), r.create = function () {return new t();}, r.update = function (t) {return r.create().update(t);};for (var e = 0; e < c.length; ++e) {var i = c[e];r[i] = b(i);}return r;},w = function w(t) {var e = eval("require('crypto')"),i = eval("require('buffer').Buffer"),s = function s(_s) {if ("string" == typeof _s) return e.createHash("md5").update(_s, "utf8").digest("hex");if (null === _s || void 0 === _s) throw r;return _s.constructor === ArrayBuffer && (_s = new Uint8Array(_s)), Array.isArray(_s) || ArrayBuffer.isView(_s) || _s.constructor === i ? e.createHash("md5").update(new i(_s)).digest("hex") : t(_s);};return s;};t.prototype.update = function (t) {if (!this.finalized) {var e,i = typeof t;if ("string" !== i) {if ("object" !== i) throw r;if (null === t) throw r;if (a && t.constructor === ArrayBuffer) t = new Uint8Array(t);else if (!(Array.isArray(t) || a && ArrayBuffer.isView(t))) throw r;e = !0;}for (var s, h, f = 0, o = t.length, n = this.blocks, u = this.buffer8; f < o;) {if (this.hashed && (this.hashed = !1, n[0] = n[16], n[16] = n[1] = n[2] = n[3] = n[4] = n[5] = n[6] = n[7] = n[8] = n[9] = n[10] = n[11] = n[12] = n[13] = n[14] = n[15] = 0), e) {if (a) for (h = this.start; f < o && h < 64; ++f) {u[h++] = t[f];} else for (h = this.start; f < o && h < 64; ++f) {n[h >> 2] |= t[f] << y[3 & h++];}} else if (a) for (h = this.start; f < o && h < 64; ++f) {(s = t.charCodeAt(f)) < 128 ? u[h++] = s : s < 2048 ? (u[h++] = 192 | s >> 6, u[h++] = 128 | 63 & s) : s < 55296 || s >= 57344 ? (u[h++] = 224 | s >> 12, u[h++] = 128 | s >> 6 & 63, u[h++] = 128 | 63 & s) : (s = 65536 + ((1023 & s) << 10 | 1023 & t.charCodeAt(++f)), u[h++] = 240 | s >> 18, u[h++] = 128 | s >> 12 & 63, u[h++] = 128 | s >> 6 & 63, u[h++] = 128 | 63 & s);} else for (h = this.start; f < o && h < 64; ++f) {(s = t.charCodeAt(f)) < 128 ? n[h >> 2] |= s << y[3 & h++] : s < 2048 ? (n[h >> 2] |= (192 | s >> 6) << y[3 & h++], n[h >> 2] |= (128 | 63 & s) << y[3 & h++]) : s < 55296 || s >= 57344 ? (n[h >> 2] |= (224 | s >> 12) << y[3 & h++], n[h >> 2] |= (128 | s >> 6 & 63) << y[3 & h++], n[h >> 2] |= (128 | 63 & s) << y[3 & h++]) : (s = 65536 + ((1023 & s) << 10 | 1023 & t.charCodeAt(++f)), n[h >> 2] |= (240 | s >> 18) << y[3 & h++], n[h >> 2] |= (128 | s >> 12 & 63) << y[3 & h++], n[h >> 2] |= (128 | s >> 6 & 63) << y[3 & h++], n[h >> 2] |= (128 | 63 & s) << y[3 & h++]);}this.lastByteIndex = h, this.bytes += h - this.start, h >= 64 ? (this.start = h - 64, this.hash(), this.hashed = !0) : this.start = h;}return this.bytes > 4294967295 && (this.hBytes += this.bytes / 4294967296 << 0, this.bytes = this.bytes % 4294967296), this;}}, t.prototype.finalize = function () {if (!this.finalized) {this.finalized = !0;var t = this.blocks,r = this.lastByteIndex;t[r >> 2] |= u[3 & r], r >= 56 && (this.hashed || this.hash(), t[0] = t[16], t[16] = t[1] = t[2] = t[3] = t[4] = t[5] = t[6] = t[7] = t[8] = t[9] = t[10] = t[11] = t[12] = t[13] = t[14] = t[15] = 0), t[14] = this.bytes << 3, t[15] = this.hBytes << 3 | this.bytes >>> 29, this.hash();}}, t.prototype.hash = function () {var t,r,e,i,s,h,f = this.blocks;this.first ? r = ((r = ((t = ((t = f[0] - 680876937) << 7 | t >>> 25) - 271733879 << 0) ^ (e = ((e = (-271733879 ^ (i = ((i = (-1732584194 ^ 2004318071 & t) + f[1] - 117830708) << 12 | i >>> 20) + t << 0) & (-271733879 ^ t)) + f[2] - 1126478375) << 17 | e >>> 15) + i << 0) & (i ^ t)) + f[3] - 1316259209) << 22 | r >>> 10) + e << 0 : (t = this.h0, r = this.h1, e = this.h2, r = ((r += ((t = ((t += ((i = this.h3) ^ r & (e ^ i)) + f[0] - 680876936) << 7 | t >>> 25) + r << 0) ^ (e = ((e += (r ^ (i = ((i += (e ^ t & (r ^ e)) + f[1] - 389564586) << 12 | i >>> 20) + t << 0) & (t ^ r)) + f[2] + 606105819) << 17 | e >>> 15) + i << 0) & (i ^ t)) + f[3] - 1044525330) << 22 | r >>> 10) + e << 0), r = ((r += ((t = ((t += (i ^ r & (e ^ i)) + f[4] - 176418897) << 7 | t >>> 25) + r << 0) ^ (e = ((e += (r ^ (i = ((i += (e ^ t & (r ^ e)) + f[5] + 1200080426) << 12 | i >>> 20) + t << 0) & (t ^ r)) + f[6] - 1473231341) << 17 | e >>> 15) + i << 0) & (i ^ t)) + f[7] - 45705983) << 22 | r >>> 10) + e << 0, r = ((r += ((t = ((t += (i ^ r & (e ^ i)) + f[8] + 1770035416) << 7 | t >>> 25) + r << 0) ^ (e = ((e += (r ^ (i = ((i += (e ^ t & (r ^ e)) + f[9] - 1958414417) << 12 | i >>> 20) + t << 0) & (t ^ r)) + f[10] - 42063) << 17 | e >>> 15) + i << 0) & (i ^ t)) + f[11] - 1990404162) << 22 | r >>> 10) + e << 0, r = ((r += ((t = ((t += (i ^ r & (e ^ i)) + f[12] + 1804603682) << 7 | t >>> 25) + r << 0) ^ (e = ((e += (r ^ (i = ((i += (e ^ t & (r ^ e)) + f[13] - 40341101) << 12 | i >>> 20) + t << 0) & (t ^ r)) + f[14] - 1502002290) << 17 | e >>> 15) + i << 0) & (i ^ t)) + f[15] + 1236535329) << 22 | r >>> 10) + e << 0, r = ((r += ((i = ((i += (r ^ e & ((t = ((t += (e ^ i & (r ^ e)) + f[1] - 165796510) << 5 | t >>> 27) + r << 0) ^ r)) + f[6] - 1069501632) << 9 | i >>> 23) + t << 0) ^ t & ((e = ((e += (t ^ r & (i ^ t)) + f[11] + 643717713) << 14 | e >>> 18) + i << 0) ^ i)) + f[0] - 373897302) << 20 | r >>> 12) + e << 0, r = ((r += ((i = ((i += (r ^ e & ((t = ((t += (e ^ i & (r ^ e)) + f[5] - 701558691) << 5 | t >>> 27) + r << 0) ^ r)) + f[10] + 38016083) << 9 | i >>> 23) + t << 0) ^ t & ((e = ((e += (t ^ r & (i ^ t)) + f[15] - 660478335) << 14 | e >>> 18) + i << 0) ^ i)) + f[4] - 405537848) << 20 | r >>> 12) + e << 0, r = ((r += ((i = ((i += (r ^ e & ((t = ((t += (e ^ i & (r ^ e)) + f[9] + 568446438) << 5 | t >>> 27) + r << 0) ^ r)) + f[14] - 1019803690) << 9 | i >>> 23) + t << 0) ^ t & ((e = ((e += (t ^ r & (i ^ t)) + f[3] - 187363961) << 14 | e >>> 18) + i << 0) ^ i)) + f[8] + 1163531501) << 20 | r >>> 12) + e << 0, r = ((r += ((i = ((i += (r ^ e & ((t = ((t += (e ^ i & (r ^ e)) + f[13] - 1444681467) << 5 | t >>> 27) + r << 0) ^ r)) + f[2] - 51403784) << 9 | i >>> 23) + t << 0) ^ t & ((e = ((e += (t ^ r & (i ^ t)) + f[7] + 1735328473) << 14 | e >>> 18) + i << 0) ^ i)) + f[12] - 1926607734) << 20 | r >>> 12) + e << 0, r = ((r += ((h = (i = ((i += ((s = r ^ e) ^ (t = ((t += (s ^ i) + f[5] - 378558) << 4 | t >>> 28) + r << 0)) + f[8] - 2022574463) << 11 | i >>> 21) + t << 0) ^ t) ^ (e = ((e += (h ^ r) + f[11] + 1839030562) << 16 | e >>> 16) + i << 0)) + f[14] - 35309556) << 23 | r >>> 9) + e << 0, r = ((r += ((h = (i = ((i += ((s = r ^ e) ^ (t = ((t += (s ^ i) + f[1] - 1530992060) << 4 | t >>> 28) + r << 0)) + f[4] + 1272893353) << 11 | i >>> 21) + t << 0) ^ t) ^ (e = ((e += (h ^ r) + f[7] - 155497632) << 16 | e >>> 16) + i << 0)) + f[10] - 1094730640) << 23 | r >>> 9) + e << 0, r = ((r += ((h = (i = ((i += ((s = r ^ e) ^ (t = ((t += (s ^ i) + f[13] + 681279174) << 4 | t >>> 28) + r << 0)) + f[0] - 358537222) << 11 | i >>> 21) + t << 0) ^ t) ^ (e = ((e += (h ^ r) + f[3] - 722521979) << 16 | e >>> 16) + i << 0)) + f[6] + 76029189) << 23 | r >>> 9) + e << 0, r = ((r += ((h = (i = ((i += ((s = r ^ e) ^ (t = ((t += (s ^ i) + f[9] - 640364487) << 4 | t >>> 28) + r << 0)) + f[12] - 421815835) << 11 | i >>> 21) + t << 0) ^ t) ^ (e = ((e += (h ^ r) + f[15] + 530742520) << 16 | e >>> 16) + i << 0)) + f[2] - 995338651) << 23 | r >>> 9) + e << 0, r = ((r += ((i = ((i += (r ^ ((t = ((t += (e ^ (r | ~i)) + f[0] - 198630844) << 6 | t >>> 26) + r << 0) | ~e)) + f[7] + 1126891415) << 10 | i >>> 22) + t << 0) ^ ((e = ((e += (t ^ (i | ~r)) + f[14] - 1416354905) << 15 | e >>> 17) + i << 0) | ~t)) + f[5] - 57434055) << 21 | r >>> 11) + e << 0, r = ((r += ((i = ((i += (r ^ ((t = ((t += (e ^ (r | ~i)) + f[12] + 1700485571) << 6 | t >>> 26) + r << 0) | ~e)) + f[3] - 1894986606) << 10 | i >>> 22) + t << 0) ^ ((e = ((e += (t ^ (i | ~r)) + f[10] - 1051523) << 15 | e >>> 17) + i << 0) | ~t)) + f[1] - 2054922799) << 21 | r >>> 11) + e << 0, r = ((r += ((i = ((i += (r ^ ((t = ((t += (e ^ (r | ~i)) + f[8] + 1873313359) << 6 | t >>> 26) + r << 0) | ~e)) + f[15] - 30611744) << 10 | i >>> 22) + t << 0) ^ ((e = ((e += (t ^ (i | ~r)) + f[6] - 1560198380) << 15 | e >>> 17) + i << 0) | ~t)) + f[13] + 1309151649) << 21 | r >>> 11) + e << 0, r = ((r += ((i = ((i += (r ^ ((t = ((t += (e ^ (r | ~i)) + f[4] - 145523070) << 6 | t >>> 26) + r << 0) | ~e)) + f[11] - 1120210379) << 10 | i >>> 22) + t << 0) ^ ((e = ((e += (t ^ (i | ~r)) + f[2] + 718787259) << 15 | e >>> 17) + i << 0) | ~t)) + f[9] - 343485551) << 21 | r >>> 11) + e << 0, this.first ? (this.h0 = t + 1732584193 << 0, this.h1 = r - 271733879 << 0, this.h2 = e - 1732584194 << 0, this.h3 = i + 271733878 << 0, this.first = !1) : (this.h0 = this.h0 + t << 0, this.h1 = this.h1 + r << 0, this.h2 = this.h2 + e << 0, this.h3 = this.h3 + i << 0);}, t.prototype.hex = function () {this.finalize();var t = this.h0,r = this.h1,e = this.h2,i = this.h3;return n[t >> 4 & 15] + n[15 & t] + n[t >> 12 & 15] + n[t >> 8 & 15] + n[t >> 20 & 15] + n[t >> 16 & 15] + n[t >> 28 & 15] + n[t >> 24 & 15] + n[r >> 4 & 15] + n[15 & r] + n[r >> 12 & 15] + n[r >> 8 & 15] + n[r >> 20 & 15] + n[r >> 16 & 15] + n[r >> 28 & 15] + n[r >> 24 & 15] + n[e >> 4 & 15] + n[15 & e] + n[e >> 12 & 15] + n[e >> 8 & 15] + n[e >> 20 & 15] + n[e >> 16 & 15] + n[e >> 28 & 15] + n[e >> 24 & 15] + n[i >> 4 & 15] + n[15 & i] + n[i >> 12 & 15] + n[i >> 8 & 15] + n[i >> 20 & 15] + n[i >> 16 & 15] + n[i >> 28 & 15] + n[i >> 24 & 15];}, t.prototype.toString = t.prototype.hex, t.prototype.digest = function () {this.finalize();var t = this.h0,r = this.h1,e = this.h2,i = this.h3;return [255 & t, t >> 8 & 255, t >> 16 & 255, t >> 24 & 255, 255 & r, r >> 8 & 255, r >> 16 & 255, r >> 24 & 255, 255 & e, e >> 8 & 255, e >> 16 & 255, e >> 24 & 255, 255 & i, i >> 8 & 255, i >> 16 & 255, i >> 24 & 255];}, t.prototype.array = t.prototype.digest, t.prototype.arrayBuffer = function () {this.finalize();var t = new ArrayBuffer(16),r = new Uint32Array(t);return r[0] = this.h0, r[1] = this.h1, r[2] = this.h2, r[3] = this.h3, t;}, t.prototype.buffer = t.prototype.arrayBuffer, t.prototype.base64 = function () {for (var t, r, e, i = "", s = this.array(), h = 0; h < 15;) {t = s[h++], r = s[h++], e = s[h++], i += p[t >>> 2] + p[63 & (t << 4 | r >>> 4)] + p[63 & (r << 2 | e >>> 6)] + p[63 & e];}return t = s[h], i += p[t >>> 2] + p[t << 4 & 63] + "==";};var _ = v();f ? module.exports = _ : (i.md5 = _, o && !(__WEBPACK_AMD_DEFINE_RESULT__ = (function () {return _;}).call(exports, __webpack_require__, exports, module),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)));}();
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../../QMDownload/SoftMgr/HBuilderX/plugins/uniapp-cli/node_modules/node-libs-browser/mock/process.js */ 52), __webpack_require__(/*! ./../../../../../../QMDownload/SoftMgr/HBuilderX/plugins/uniapp-cli/node_modules/webpack/buildin/global.js */ 3)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/node-libs-browser/mock/process.js */ 52), __webpack_require__(/*! (webpack)/buildin/global.js */ 3)))
 
 /***/ }),
 
@@ -19691,9 +18542,9 @@ module.exports = __webpack_amd_options__;
 /***/ }),
 
 /***/ 73:
-/*!***********************************************************************!*\
-  !*** C:/Users/Administrator/Documents/HBuilderProjects/shop/store.js ***!
-  \***********************************************************************/
+/*!********************************************!*\
+  !*** D:/HBuilderProjects/rushifu/store.js ***!
+  \********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -19705,6 +18556,11 @@ _vue.default.use(_vuex.default);var _default =
 
 new _vuex.default.Store({
   state: {
+    youhuiquanPage: 1,
+    youhuiquanPageSize: 10, //优惠券列表
+    // 
+    allshopPage: 1, //所有商品列表
+    allshopPageSize: 10,
     page: 1, //商品列表
     pageSize: 10,
     ddPage: 1, //订单列表
@@ -19721,9 +18577,20 @@ new _vuex.default.Store({
     txjlPage: 1, //提现历史记录列表
     txjlPageSize: 15,
     shoucangPage: 1, //收藏列表
-    shoucangPageSize: 10 },
+    shoucangPageSize: 10,
+    pinglunPage: 1, //商品评论列表
+    pinglunPageSize: 10,
+    sousuopage: 1, //搜索商品列表
+    sousuopageSize: 10 },
 
   mutations: {
+    youhuiquanPage: function youhuiquanPage(state, str) {
+      state.youhuiquanPage = str;
+    },
+    // 
+    allshopPage: function allshopPage(state, str) {
+      state.allshopPage = str;
+    },
     page: function page(state, str) {
       state.page = str;
     },
@@ -19750,6 +18617,12 @@ new _vuex.default.Store({
     },
     shoucangPage: function shoucangPage(state, str) {
       state.shoucangPage = str;
+    },
+    pinglunPage: function pinglunPage(state, str) {
+      state.pinglunPage = str;
+    },
+    sousuopage: function sousuopage(state, str) {
+      state.sousuopage = str;
     } },
 
   actions: {} });exports.default = _default;

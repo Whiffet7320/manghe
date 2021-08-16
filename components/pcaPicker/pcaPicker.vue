@@ -66,8 +66,10 @@
 			},
 			// 确认
 			confirm(e){
-			  let current=this.pcaArr[this.pcaIndex[0]].name+''+this.pcaArr[this.pcaIndex[0]].children[this.pcaIndex[1]].name+''+this.pcaArr[this.pcaIndex[0]].children[this.pcaIndex[1]].children[this.pcaIndex[2]].name;
-				this.$emit('confirm',current)
+			  // let current=this.pcaArr[this.pcaIndex[0]].name+''+this.pcaArr[this.pcaIndex[0]].children[this.pcaIndex[1]].name+''+this.pcaArr[this.pcaIndex[0]].children[this.pcaIndex[1]].children[this.pcaIndex[2]].name;
+				// this.$emit('confirm',current)
+			let currentArr = [this.pcaArr[this.pcaIndex[0]].name,this.pcaArr[this.pcaIndex[0]].children[this.pcaIndex[1]].name,this.pcaArr[this.pcaIndex[0]].children[this.pcaIndex[1]].children[this.pcaIndex[2]].name]
+			this.$emit('confirm',currentArr)
 			  this.hide();
 			}
 		}

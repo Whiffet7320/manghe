@@ -41,7 +41,8 @@
   -webkit-box-pack: justify;
   -webkit-justify-content: space-between;
           justify-content: space-between;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   padding: 0 30rpx 0 30rpx;
   border-bottom: 1px solid #f0f0f0;
 }

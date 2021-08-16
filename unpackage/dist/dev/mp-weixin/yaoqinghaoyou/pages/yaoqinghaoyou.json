@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "邀请好友",
-  "enablePullDownRefresh": false,
-  "usingComponents": {
-    "u-popup": "/node-modules/uview-ui/components/u-popup/u-popup"
-  }
-}

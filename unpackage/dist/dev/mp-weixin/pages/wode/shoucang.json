@@ -1,8 +1,0 @@
-{
-  "navigationBarTitleText": "我的收藏",
-  "enablePullDownRefresh": false,
-  "usingComponents": {
-    "u-toast": "/node-modules/uview-ui/components/u-toast/u-toast",
-    "u-loadmore": "/node-modules/uview-ui/components/u-loadmore/u-loadmore"
-  }
-}

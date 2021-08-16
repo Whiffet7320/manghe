@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "微信授权",
-  "enablePullDownRefresh": false,
-  "usingComponents": {
-    "u-toast": "/node-modules/uview-ui/components/u-toast/u-toast"
-  }
-}

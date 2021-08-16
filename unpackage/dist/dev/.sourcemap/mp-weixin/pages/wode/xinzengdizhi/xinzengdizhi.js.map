@@ -1,0 +1,1 @@
+{"version":3,"sources":["uni-app:///main.js"],"names":["createPage","Page"],"mappings":";;;;;;;;;;kDAAA;AACA;AACA,sO;AACAA,UAAU,CAACC,qBAAD,CAAV,C","file":"pages/wode/xinzengdizhi/xinzengdizhi.js","sourcesContent":["import 'uni-pages';\nimport Vue from 'vue'\nimport Page from './pages/wode/xinzengdizhi/xinzengdizhi.vue'\ncreatePage(Page)"],"sourceRoot":""}

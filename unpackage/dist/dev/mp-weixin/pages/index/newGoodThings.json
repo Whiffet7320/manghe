@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "好物上新",
-  "enablePullDownRefresh": false,
-  "usingComponents": {
-    "u-loadmore": "/node-modules/uview-ui/components/u-loadmore/u-loadmore"
-  }
-}

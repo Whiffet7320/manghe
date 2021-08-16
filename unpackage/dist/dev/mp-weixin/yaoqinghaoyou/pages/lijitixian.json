@@ -1,9 +1,0 @@
-{
-  "navigationBarTitleText": "提现",
-  "enablePullDownRefresh": false,
-  "usingComponents": {
-    "u-radio-group": "/node-modules/uview-ui/components/u-radio-group/u-radio-group",
-    "u-radio": "/node-modules/uview-ui/components/u-radio/u-radio",
-    "u-input": "/node-modules/uview-ui/components/u-input/u-input"
-  }
-}

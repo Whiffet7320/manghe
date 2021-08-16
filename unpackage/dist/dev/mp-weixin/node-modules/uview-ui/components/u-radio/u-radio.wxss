@@ -56,7 +56,8 @@
   -webkit-box-pack: center;
   -webkit-justify-content: center;
           justify-content: center;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   width: 42rpx;
   height: 42rpx;
   color: transparent;

@@ -1,95 +1,138 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/miandan/miandan",
-    "pages/index/newGoodThings",
-    "pages/freeCharge/freeCharge",
-    "pages/nanzhuanzhuanqu/nanzhuanzhuanqu",
-    "pages/shangpinxiangqin/shangpinxiangqin",
-    "pages/shangpinxiangqin/tijiaodingdan",
-    "pages/shangpinxiangqin/chanpinpingjia",
+    "pages/fenlei/fenlei",
     "pages/gouwuche/gouwuche",
-    "pages/miandanjilu/miandanjilu",
-    "pages/wode/wode",
-    "pages/wode/xinshouzhinan",
-    "pages/wode/shoucang",
-    "pages/wode/lijitixian",
-    "pages/wode/lishijilu",
-    "pages/jiaoyijilu/jiaoyijilu",
-    "pages/yongjinxiangqin/yongjinxiangqin",
-    "pages/wode/lianxikefu"
+    "pages/wode/wode"
   ],
   "subPackages": [
     {
-      "root": "yaoqinghaoyou",
+      "root": "pages/index/sousuo",
       "pages": [
-        "pages/lijitixian",
-        "pages/yaoqinghaoyou",
-        "pages/yaoqinerweima"
+        "sousuo",
+        "sousuoshangping"
       ]
     },
     {
-      "root": "wodeQuanbudingdan",
+      "root": "pages/index/shangpinxiangqin",
       "pages": [
-        "pages/quanbudingdan"
+        "shangpinxiangqin"
       ]
     },
     {
-      "root": "shenqinshouhou",
+      "root": "pages/index/shouhuoxinxi",
       "pages": [
-        "pages/shenqinshouhou",
-        "pages/tijiaoshenqing",
-        "pages/pingjia"
+        "shouhuoxinxi",
+        "xinjian"
       ]
     },
     {
-      "root": "weixinshouquan",
+      "root": "pages/index/zhuanpan",
       "pages": [
-        "pages/weixinshouquan"
+        "zhuanpan"
       ]
     },
     {
-      "root": "shouhuoxinxi",
+      "root": "pages/index/rushangcheng",
       "pages": [
-        "pages/shouhuoxinxi",
-        "pages/xinjian"
+        "rushangcheng"
+      ]
+    },
+    {
+      "root": "pages/index/fabuxuqiu",
+      "pages": [
+        "fabuxuqiu",
+        "xiadan",
+        "baojiaShifuxinxi"
+      ]
+    },
+    {
+      "root": "pages/wode/weixinshouquan",
+      "pages": [
+        "weixinshouquan"
+      ]
+    },
+    {
+      "root": "pages/wode/shouhuodizhi",
+      "pages": [
+        "shouhuodizhi",
+        "xinzengdizhi"
+      ]
+    },
+    {
+      "root": "pages/wode/youhuiquan",
+      "pages": [
+        "youhuiquan"
+      ]
+    },
+    {
+      "root": "pages/wode/qianbao",
+      "pages": [
+        "qianbao",
+        "tixian"
+      ]
+    },
+    {
+      "root": "pages/wode/jifen",
+      "pages": [
+        "jifen"
+      ]
+    },
+    {
+      "root": "pages/wode/anquanzhongxin",
+      "pages": [
+        "anquanzhongxin",
+        "anquanbaozhang",
+        "jinjilianxiren"
+      ]
+    },
+    {
+      "root": "pages/wode/yijianfankui",
+      "pages": [
+        "yijianfankui"
+      ]
+    },
+    {
+      "root": "pages/wode/shezhi",
+      "pages": [
+        "shezhi"
       ]
     }
   ],
   "window": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "uni-app",
-    "navigationBarBackgroundColor": "#F8F8F8",
-    "backgroundColor": "#F8F8F8"
+    "navigationBarBackgroundColor": "#ffffff",
+    "backgroundColor": "#282828"
   },
   "tabBar": {
-    "color": "#909399",
-    "selectedColor": "#ebbfcc",
+    "color": "#C7C7C7",
+    "selectedColor": "#000000",
     "backgroundColor": "#FFFFFF",
     "borderStyle": "black",
     "list": [
       {
         "pagePath": "pages/index/index",
-        "iconPath": "static/shouye.png",
-        "selectedIconPath": "static/shouye-active.png",
+        "iconPath": "static/image/zu8.png",
+        "selectedIconPath": "static/image/zu8active.png",
         "text": "首页"
       },
       {
-        "pagePath": "pages/freeCharge/freeCharge",
-        "iconPath": "static/miandan.png",
-        "selectedIconPath": "static/miandan-active.png",
-        "text": "免单"
+        "pagePath": "pages/fenlei/fenlei",
+        "iconPath": "static/image/zu11.png",
+        "selectedIconPath": "static/image/zu15active.png",
+        "text": "分类"
       },
       {
         "pagePath": "pages/gouwuche/gouwuche",
-        "iconPath": "static/组27.png",
-        "selectedIconPath": "static/组242.png",
-        "text": "购物车"
+        "iconPath": "static/image/lujin74.png",
+        "selectedIconPath": "static/image/zu245.png",
+        "text": "订单"
       },
       {
         "pagePath": "pages/wode/wode",
-        "iconPath": "static/组243.png",
-        "selectedIconPath": "static/组245.png",
+        "iconPath": "static/image/zu10.png",
+        "selectedIconPath": "static/image/zu10active.png",
         "text": "我的"
       }
     ]

@@ -1,8 +1,0 @@
-{
-  "navigationBarTitleText": "评价",
-  "enablePullDownRefresh": false,
-  "usingComponents": {
-    "u-toast": "/node-modules/uview-ui/components/u-toast/u-toast",
-    "u-input": "/node-modules/uview-ui/components/u-input/u-input"
-  }
-}

@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "抽奖大转盘",
+  "enablePullDownRefresh": false,
+  "navigationBarBackgroundColor": "#C91919",
+  "navigationBarTextStyle": "white",
+  "usingComponents": {
+    "lucky-wheel": "/node-modules/uni-luck-draw/lucky-wheel"
+  }
+}

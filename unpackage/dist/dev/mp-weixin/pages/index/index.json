@@ -1,9 +1,9 @@
 {
-  "navigationBarTitleText": "商城APP",
+  "navigationBarTitleText": "首页",
   "usingComponents": {
-    "u-toast": "/node-modules/uview-ui/components/u-toast/u-toast",
+    "u-picker": "/node-modules/uview-ui/components/u-picker/u-picker",
+    "u-icon": "/node-modules/uview-ui/components/u-icon/u-icon",
     "u-input": "/node-modules/uview-ui/components/u-input/u-input",
-    "u-swiper": "/node-modules/uview-ui/components/u-swiper/u-swiper",
-    "u-icon": "/node-modules/uview-ui/components/u-icon/u-icon"
+    "u-swiper": "/node-modules/uview-ui/components/u-swiper/u-swiper"
   }
 }

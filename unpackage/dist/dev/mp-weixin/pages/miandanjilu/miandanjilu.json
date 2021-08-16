@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "免单记录",
-  "enablePullDownRefresh": false,
-  "usingComponents": {
-    "u-loadmore": "/node-modules/uview-ui/components/u-loadmore/u-loadmore"
-  }
-}

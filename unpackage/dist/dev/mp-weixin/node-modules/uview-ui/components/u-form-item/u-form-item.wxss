@@ -37,7 +37,8 @@
   padding: 20rpx 0;
   font-size: 28rpx;
   color: #303133;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   line-height: 70rpx;
   -webkit-flex-direction: column;
           flex-direction: column;

@@ -1,0 +1,1 @@
+{"version":3,"sources":["uni-app:///main.js"],"names":["createPage","Page"],"mappings":";;;;;;;;;;kDAAA;AACA;AACA,qP;AACAA,UAAU,CAACC,0BAAD,CAAV,C","file":"pages/wode/wodeQuanbudingdan/wodeQuanbudingdan.js","sourcesContent":["import 'uni-pages';\nimport Vue from 'vue'\nimport Page from './pages/wode/wodeQuanbudingdan/wodeQuanbudingdan.vue'\ncreatePage(Page)"],"sourceRoot":""}

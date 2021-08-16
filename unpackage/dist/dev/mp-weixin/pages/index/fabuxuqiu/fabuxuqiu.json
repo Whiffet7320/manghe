@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "发布需求",
+  "enablePullDownRefresh": false,
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+    "u-icon": "/node-modules/uview-ui/components/u-icon/u-icon",
+    "u-radio-group": "/node-modules/uview-ui/components/u-radio-group/u-radio-group",
+    "u-radio": "/node-modules/uview-ui/components/u-radio/u-radio",
+    "u-picker": "/node-modules/uview-ui/components/u-picker/u-picker"
+  }
+}
