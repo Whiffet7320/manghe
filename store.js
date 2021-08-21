@@ -5,6 +5,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
 	state: {
+		fl:null,
 		youhuiquanPage:1,
 		youhuiquanPageSize: 10,//优惠券列表
 		// 
@@ -33,6 +34,9 @@ export default new Vuex.Store({
 		sousuopageSize: 10,
 	},
 	mutations: {
+		fl(state, str) {
+			state.fl = str;
+		},
 		youhuiquanPage(state, str) {
 			state.youhuiquanPage = str;
 		},

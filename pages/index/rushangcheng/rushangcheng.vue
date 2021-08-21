@@ -1,5 +1,6 @@
 <template>
 	<view class="index">
+		<u-mask :show="maskshow" z-index='1' @click="onMask"></u-mask>
 		<view class="nav1">
 			<view @click="fenleiShow" class="txt1">全部分类</view>
 			<view @click="changeJiage" class="txt2">价格</view>
@@ -33,6 +34,7 @@
 	export default {
 		data() {
 			return {
+				maskshow: false,
 				height: '',
 				isShow: false,
 				jiageStatus: 0,
@@ -40,7 +42,12 @@
 			}
 		},
 		methods: {
+			onMask() {
+				this.maskshow = false;
+				this.isShow = false;
+			},
 			fenleiShow() {
+				this.maskshow = true;
 				this.isShow = !this.isShow;
 				this.getCurrentSwiperHeight()
 				console.log(this.height)
@@ -83,9 +90,14 @@
 	}
 </style>
 <style scoped lang="scss">
-	.index {}
+	.index {
+		position: relative;
+	}
 
 	.nav1 {
+		position: fixed;
+		z-index: 3;
+		top: 0rpx;
 		width: 750rpx;
 		height: 76rpx;
 		background: #FFFFFF;
@@ -127,6 +139,9 @@
 	}
 
 	.nav1-1 {
+		z-index: 3;
+		position: fixed;
+		top: -26rpx;
 		background: #FFFFFF;
 		transition: all 1s;
 		position: absolute;
@@ -157,7 +172,7 @@
 	}
 
 	.nav2 {
-		margin-top: 20rpx;
+		margin-top:102rpx;
 		padding: 0 24rpx;
 		display: flex;
 		flex-wrap: wrap;

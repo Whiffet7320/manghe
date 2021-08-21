@@ -3,9 +3,28 @@
     "pages/index/index",
     "pages/fenlei/fenlei",
     "pages/gouwuche/gouwuche",
+    "pages/dingdan/dingdan",
     "pages/wode/wode"
   ],
   "subPackages": [
+    {
+      "root": "pages/dingdan/xuanzeshifu",
+      "pages": [
+        "xuanzeshifu"
+      ]
+    },
+    {
+      "root": "pages/dingdan/pingjia",
+      "pages": [
+        "pingjia"
+      ]
+    },
+    {
+      "root": "pages/dingdan/chakanxiangqin",
+      "pages": [
+        "chakanxiangqin"
+      ]
+    },
     {
       "root": "pages/index/sousuo",
       "pages": [
@@ -39,11 +58,20 @@
       ]
     },
     {
+      "root": "pages/index/dingdantijiao",
+      "pages": [
+        "dingdantijiao",
+        "shangchengTijiaodingdan",
+        "xuanzeyouhuiquan"
+      ]
+    },
+    {
       "root": "pages/index/fabuxuqiu",
       "pages": [
         "fabuxuqiu",
         "xiadan",
-        "baojiaShifuxinxi"
+        "baojiaShifuxinxi",
+        "shifuxiangqin"
       ]
     },
     {
@@ -106,33 +134,39 @@
     "backgroundColor": "#282828"
   },
   "tabBar": {
-    "color": "#C7C7C7",
-    "selectedColor": "#000000",
+    "color": "#000000",
+    "selectedColor": "#4988FD",
     "backgroundColor": "#FFFFFF",
     "borderStyle": "black",
     "list": [
       {
         "pagePath": "pages/index/index",
-        "iconPath": "static/image/zu8.png",
-        "selectedIconPath": "static/image/zu8active.png",
+        "iconPath": "static/img/nav-sy.png",
+        "selectedIconPath": "static/img/nav-sy-active.png",
         "text": "首页"
       },
       {
         "pagePath": "pages/fenlei/fenlei",
-        "iconPath": "static/image/zu11.png",
-        "selectedIconPath": "static/image/zu15active.png",
+        "iconPath": "static/img/nav-fl.png",
+        "selectedIconPath": "static/img/nav-fl-active.png",
         "text": "分类"
       },
       {
         "pagePath": "pages/gouwuche/gouwuche",
-        "iconPath": "static/image/lujin74.png",
-        "selectedIconPath": "static/image/zu245.png",
+        "iconPath": "static/img/nav-gwc.png",
+        "selectedIconPath": "static/img/nav-gwc-active.png",
+        "text": "购物车"
+      },
+      {
+        "pagePath": "pages/dingdan/dingdan",
+        "iconPath": "static/img/nav-dd.png",
+        "selectedIconPath": "static/img/nav-dd-active.png",
         "text": "订单"
       },
       {
         "pagePath": "pages/wode/wode",
-        "iconPath": "static/image/zu10.png",
-        "selectedIconPath": "static/image/zu10active.png",
+        "iconPath": "static/img/nav-wd.png",
+        "selectedIconPath": "static/img/nav-wd-active.png",
         "text": "我的"
       }
     ]

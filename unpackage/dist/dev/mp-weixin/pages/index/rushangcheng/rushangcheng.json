@@ -3,5 +3,7 @@
   "enablePullDownRefresh": false,
   "navigationBarBackgroundColor": "#5694FF",
   "navigationBarTextStyle": "white",
-  "usingComponents": {}
+  "usingComponents": {
+    "u-mask": "/node-modules/uview-ui/components/u-mask/u-mask"
+  }
 }

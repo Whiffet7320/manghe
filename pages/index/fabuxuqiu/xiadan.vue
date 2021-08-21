@@ -82,7 +82,7 @@
 			  return `${(minutes < 10 ? '0' : '')}${minutes}"${(seconds < 10 ? '0' : '')}${seconds}`;
 			},
 			delVoice(){
-				that.voicePath = '';
+				this.voicePath = '';
 				this.voiceTime = '00"00"00';
 			},
 			startRecord() {

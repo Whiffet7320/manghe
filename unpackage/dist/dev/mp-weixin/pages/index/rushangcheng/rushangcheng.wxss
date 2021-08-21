@@ -54,7 +54,13 @@ page {
 /* 垂直间距 */
 /* 透明度 */
 /* 文章场景相关 */
+.index.data-v-d7728cae {
+  position: relative;
+}
 .nav1.data-v-d7728cae {
+  position: fixed;
+  z-index: 3;
+  top: 0rpx;
   width: 750rpx;
   height: 76rpx;
   background: #FFFFFF;
@@ -95,6 +101,9 @@ page {
   color: #000000;
 }
 .nav1-1.data-v-d7728cae {
+  z-index: 3;
+  position: fixed;
+  top: -26rpx;
   background: #FFFFFF;
   -webkit-transition: all 1s;
   transition: all 1s;
@@ -122,7 +131,7 @@ page {
   color: #FFFFFF;
 }
 .nav2.data-v-d7728cae {
-  margin-top: 20rpx;
+  margin-top: 102rpx;
   padding: 0 24rpx;
   display: -webkit-box;
   display: -webkit-flex;

@@ -34,15 +34,15 @@
 					}" class="txt2-1">用户150****7056<text class="color">【桌椅安装】</text>下单成功</view>
 			</view>
 			<view class="tit3">
-				<view class="item">
+				<view @click="toRemenfuwu" class="item">
 					<image class="pic" src="../../static/img/zu33.png" mode=""></image>
 					<view class="txt">热门服务</view>
 				</view>
-				<view class="item">
+				<view @click="toJiajuanzhuang" class="item">
 					<image class="pic" src="../../static/img/zu34.png" mode=""></image>
 					<view class="txt">家具安装</view>
 				</view>
-				<view class="item">
+				<view @click="toJiadiananzhuang" class="item">
 					<image class="pic" src="../../static/img/zu35.png" mode=""></image>
 					<view class="txt">家电安装</view>
 				</view>
@@ -197,7 +197,14 @@
 				animationPlayState: 'paused', // 动画的开始和结束执行
 			}
 		},
+		created() {
+			this.getData()
+		},
 		methods: {
+			async getData(){
+				const res = await this.$api.cities()
+				console.log(res)
+			},
 			changeCity() {
 				this.nav1Show = true;
 			},
@@ -210,6 +217,24 @@
 				uni.navigateTo({
 					url:'/pages/index/rushangcheng/rushangcheng'
 				})
+			},
+			toRemenfuwu(){
+				this.$store.commit('fl',1)
+				uni.switchTab({
+				    url: '/pages/fenlei/fenlei'
+				});
+			},
+			toJiajuanzhuang(){
+				this.$store.commit('fl',2)
+				uni.switchTab({
+				    url: '/pages/fenlei/fenlei'
+				});
+			},
+			toJiadiananzhuang(){
+				this.$store.commit('fl',3)
+				uni.switchTab({
+				    url: '/pages/fenlei/fenlei'
+				});
 			},
 		}
 	}

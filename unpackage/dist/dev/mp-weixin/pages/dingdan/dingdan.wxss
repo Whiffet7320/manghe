@@ -1,0 +1,441 @@
+@charset "UTF-8";
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+page {
+  background: #F0F0F0;
+}
+
+@charset "UTF-8";
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+.index.data-v-308dcaa4 {
+  position: relative;
+}
+.pop.data-v-308dcaa4 {
+  height: 100%;
+  width: 100%;
+  padding: 0 42rpx;
+  position: relative;
+}
+.pop .pop-tit.data-v-308dcaa4 {
+  text-align: center;
+  margin-bottom: 40rpx;
+  margin-top: 20rpx;
+  font-size: 36rpx;
+  font-family: Segoe UI;
+  font-weight: 400;
+  line-height: 48rpx;
+  color: #000000;
+}
+.pop.data-v-308dcaa4 .u-radio {
+  margin-bottom: 6rpx;
+}
+.pop.data-v-308dcaa4 .u-radio .u-radio__label {
+  margin-left: 30rpx;
+  color: #000000;
+}
+.pop .pop-btn.data-v-308dcaa4 {
+  position: absolute;
+  bottom: 64rpx;
+  left: 128rpx;
+  width: 304rpx;
+  height: 76rpx;
+  background: #1677FF;
+  border-radius: 48rpx;
+  text-align: center;
+  line-height: 76rpx;
+  font-size: 40rpx;
+  font-family: Microsoft YaHei;
+  font-weight: 400;
+  color: #FFFFFF;
+}
+.txtt1.data-v-308dcaa4 {
+  margin-top: 34rpx;
+  text-align: center;
+  font-size: 128rpx;
+  font-family: SimHei;
+  font-weight: 400;
+  line-height: 172rpx;
+  color: #4988FD;
+}
+.txtt2.data-v-308dcaa4 {
+  text-align: center;
+  font-size: 20rpx;
+  font-family: Segoe UI;
+  font-weight: 400;
+  line-height: 36rpx;
+  color: #999999;
+}
+.nav1.data-v-308dcaa4 {
+  position: fixed;
+  top: 0rpx;
+  z-index: 2;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+          justify-content: space-between;
+  width: 750rpx;
+  height: 84rpx;
+  background: #FFFFFF;
+  opacity: 1;
+  padding: 0 216rpx;
+}
+.nav1 .tit1.data-v-308dcaa4 {
+  font-size: 28rpx;
+  font-family: Segoe UI;
+  font-weight: 400;
+  line-height: 38rpx;
+  color: #000000;
+}
+.nav1 .tit1.active.data-v-308dcaa4 {
+  font-size: 32rpx;
+  font-family: Segoe UI;
+  font-weight: 400;
+  line-height: 42rpx;
+  color: #4988FD;
+}
+.nav2.data-v-308dcaa4 {
+  position: fixed;
+  top: 80rpx;
+  z-index: 2;
+  width: 750rpx;
+  height: 164rpx;
+  background: #FFFFFF;
+  padding-top: 20rpx;
+}
+.nav2 .btn.data-v-308dcaa4 {
+  display: inline-block;
+  width: 136rpx;
+  height: 44rpx;
+  background: #F0F0F0;
+  border-radius: 30rpx;
+  font-size: 24rpx;
+  font-family: Segoe UI;
+  font-weight: 400;
+  line-height: 44rpx;
+  text-align: center;
+  color: #707070;
+  margin-bottom: 20rpx;
+  margin-left: 22rpx;
+}
+.nav2 .btn.active.data-v-308dcaa4 {
+  background: #4988FD;
+  color: #FFFFFF;
+}
+.items.data-v-308dcaa4 {
+  padding-top: 90rpx;
+}
+.items .item.data-v-308dcaa4 {
+  margin-top: 20rpx;
+  padding: 26rpx 22rpx 0 22rpx;
+  background: #FFFFFF;
+}
+.items .item .tit11.data-v-308dcaa4 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+          justify-content: space-between;
+}
+.items .item .tit1.data-v-308dcaa4 {
+  font-size: 32rpx;
+  font-family: Segoe UI;
+  font-weight: 400;
+  line-height: 42rpx;
+  color: #000000;
+}
+.items .item .tit1-1.data-v-308dcaa4 {
+  font-size: 24rpx;
+  font-family: Segoe UI;
+  font-weight: 400;
+  color: #FF6F00;
+}
+.items .item .tit1-2.data-v-308dcaa4 {
+  font-size: 24rpx;
+  font-family: Segoe UI;
+  font-weight: 400;
+  color: #D7373F;
+}
+.items .item .tit1-3.data-v-308dcaa4 {
+  font-size: 24rpx;
+  font-family: Segoe UI;
+}
+.items .item .titt.data-v-308dcaa4 {
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+          align-items: center;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+          justify-content: space-between;
+}
+.items .item .tit2.data-v-308dcaa4 {
+  margin-top: 20rpx;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+          align-items: center;
+}
+.items .item .tit2 .txt1.data-v-308dcaa4 {
+  font-size: 20rpx;
+  font-family: Segoe UI;
+  font-weight: 400;
+  line-height: 28rpx;
+  color: #999999;
+}
+.items .item .tit2 .txt1 .black.data-v-308dcaa4 {
+  color: #000000;
+}
+.items .item .tit2 .shu.data-v-308dcaa4 {
+  height: 16rpx;
+  border: 2rpx solid #E6E6E6;
+  margin: 0 10rpx 0 20rpx;
+}
+.items .item .tit2 .txt2.data-v-308dcaa4 {
+  font-size: 24rpx;
+  font-family: Segoe UI;
+  font-weight: 400;
+  line-height: 32rpx;
+  color: #4988FD;
+}
+.items .item .tit3.data-v-308dcaa4 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+          justify-content: space-between;
+  margin-top: 24rpx;
+}
+.items .item .tit3 .txt3-1.data-v-308dcaa4 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+          align-items: center;
+}
+.items .item .tit3 .txt3-1 .txt33.data-v-308dcaa4 {
+  margin-left: 20rpx;
+}
+.items .item .tit3 .txt3-1 .txt33 .txt3-1-1.data-v-308dcaa4 {
+  font-size: 24rpx;
+  font-family: Segoe UI;
+  font-weight: 400;
+  line-height: 32rpx;
+  color: #D7373F;
+}
+.items .item .tit3 .txt3-1 .txt33 .txt3-1-2.data-v-308dcaa4 {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  font-family: Segoe UI;
+  font-weight: 400;
+  line-height: 32rpx;
+  color: #4988FD;
+}
+.items .item .tit3 .picc.data-v-308dcaa4 {
+  width: 50rpx;
+  height: 50rpx;
+}
+.items .item .tit3 .pic1.data-v-308dcaa4 {
+  width: 76rpx;
+  height: 76rpx;
+  background: #FFFFFF;
+  border-radius: 50%;
+}
+.items .item .tit3 .txt1.data-v-308dcaa4 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+          align-items: center;
+}
+.items .item .tit3 .txt1 .txt1-1.data-v-308dcaa4 {
+  font-size: 24rpx;
+  font-family: Segoe UI;
+  font-weight: 400;
+  line-height: 32rpx;
+  color: #000000;
+  margin-right: 16rpx;
+}
+.items .item .tit4.data-v-308dcaa4 {
+  margin-top: 6rpx;
+  font-size: 24rpx;
+  font-family: Segoe UI;
+  font-weight: 400;
+  line-height: 32rpx;
+  color: #4988FD;
+}
+.items .item .heng.data-v-308dcaa4 {
+  margin-top: 16rpx;
+  width: 750rpx;
+  border: 2rpx solid #E6E6E6;
+  -webkit-transform: translateX(-22rpx);
+          transform: translateX(-22rpx);
+}
+.items .item .tit5.data-v-308dcaa4 {
+  position: relative;
+  height: 114rpx;
+  width: 750rpx;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+          align-items: center;
+}
+.items .item .tit5 .img.data-v-308dcaa4 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+          align-items: center;
+}
+.items .item .tit5 .img .pic1.data-v-308dcaa4 {
+  width: 76rpx;
+  height: 76rpx;
+  background: #FFFFFF;
+  border-radius: 50%;
+}
+.items .item .tit5 .img .tit111.data-v-308dcaa4 {
+  margin-left: 20rpx;
+}
+.items .item .tit5 .img .tit111 .txt11-1.data-v-308dcaa4 {
+  font-size: 24rpx;
+  font-family: Segoe UI;
+  font-weight: 400;
+  line-height: 32rpx;
+  color: #000000;
+}
+.items .item .tit5 .img .tit111 .txt11-2.data-v-308dcaa4 {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  font-family: Segoe UI;
+  font-weight: 400;
+  line-height: 32rpx;
+  color: #4988FD;
+}
+.items .item .tit5 .txt4.data-v-308dcaa4 {
+  font-size: 24rpx;
+  font-family: Segoe UI;
+  font-weight: 400;
+  color: #707070;
+  margin-right: 44rpx;
+}
+.items .item .tit5 .txt1.txt1-3.data-v-308dcaa4 {
+  margin-left: 228rpx;
+}
+.items .item .tit5 .txt1.txt1-1.data-v-308dcaa4 {
+  margin-left: 104rpx;
+  margin-right: 42rpx;
+}
+.items .item .tit5 .txt1.txt1-2.data-v-308dcaa4 {
+  margin-left: 296rpx;
+  margin-right: 42rpx;
+}
+.items .item .tit5 .txt1.data-v-308dcaa4 {
+  margin-left: 370rpx;
+  margin-right: 62rpx;
+  font-size: 24rpx;
+  font-family: Segoe UI;
+  font-weight: 400;
+  color: #707070;
+}
+.items .item .tit5 .txt2.data-v-308dcaa4 {
+  width: 176rpx;
+  height: 56rpx;
+  background: #4988FD;
+  border-radius: 28rpx;
+  font-size: 24rpx;
+  font-family: Segoe UI;
+  text-align: center;
+  font-weight: 400;
+  line-height: 56rpx;
+  color: #FFFFFF;
+}
+.items .item .tit5 .txt2.active.data-v-308dcaa4 {
+  background: #cccccc;
+}
+.items .item .tit5 .txt3.data-v-308dcaa4 {
+  position: absolute;
+  font-size: 32rpx;
+  font-family: Segoe UI;
+  font-weight: 400;
+  line-height: 42rpx;
+  color: #D7373F;
+}
+.items .item .tit5 .txt5.data-v-308dcaa4 {
+  position: absolute;
+}
+.items .item .tit5 .txt5 .txt5-1.data-v-308dcaa4 {
+  font-size: 20rpx;
+  font-family: Segoe UI;
+  font-weight: 400;
+  line-height: 28rpx;
+  color: #FF6F00;
+}
+

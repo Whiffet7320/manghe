@@ -95,7 +95,11 @@
 				<view class="nav2">去下单</view>
 			</template>
 			<template v-if="pageStatus == 2">
-				<view @click="toFabu" class="page2-nav1">去报价</view>
+				<view class="nav1">
+					<image class="pic1" src="/static/img/zu5.png" mode=""></image>
+					<view class="txt1">客服</view>
+				</view>
+				<view @click="toFabu" class="nav2">去报价</view>
 			</template>
 		</view>
 	</view>

@@ -41,6 +41,54 @@
           "pathName": "pages/index/fabuxuqiu/baojiaShifuxinxi",
           "query": "",
           "scene": null
+        },
+        {
+          "name": "pages/index/fabuxuqiu/shifuxiangqin",
+          "pathName": "pages/index/fabuxuqiu/shifuxiangqin",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/index/dingdantijiao/dingdantijiao",
+          "pathName": "pages/index/dingdantijiao/dingdantijiao",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/dingdan/dingdan",
+          "pathName": "pages/dingdan/dingdan",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/index/fabuxuqiu/baojiaShifuxinxi",
+          "pathName": "pages/index/fabuxuqiu/baojiaShifuxinxi",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/index/rushangcheng/rushangcheng",
+          "pathName": "pages/index/rushangcheng/rushangcheng",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/dingdan/xuanzeshifu/xuanzeshifu",
+          "pathName": "pages/dingdan/xuanzeshifu/xuanzeshifu",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/gouwuche/gouwuche",
+          "pathName": "pages/gouwuche/gouwuche",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/index/dingdantijiao/shangchengTijiaodingdan",
+          "pathName": "pages/index/dingdantijiao/shangchengTijiaodingdan",
+          "query": "",
+          "scene": null
         }
       ]
     }

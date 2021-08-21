@@ -98,10 +98,10 @@ var components
 try {
   components = {
     uIcon: function() {
-      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-icon/u-icon */ "node-modules/uview-ui/components/u-icon/u-icon").then(__webpack_require__.bind(null, /*! uview-ui/components/u-icon/u-icon.vue */ 325))
+      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-icon/u-icon */ "node-modules/uview-ui/components/u-icon/u-icon").then(__webpack_require__.bind(null, /*! uview-ui/components/u-icon/u-icon.vue */ 407))
     },
     uInput: function() {
-      return Promise.all(/*! import() | node-modules/uview-ui/components/u-input/u-input */[__webpack_require__.e("common/vendor"), __webpack_require__.e("node-modules/uview-ui/components/u-input/u-input")]).then(__webpack_require__.bind(null, /*! uview-ui/components/u-input/u-input.vue */ 332))
+      return Promise.all(/*! import() | node-modules/uview-ui/components/u-input/u-input */[__webpack_require__.e("common/vendor"), __webpack_require__.e("node-modules/uview-ui/components/u-input/u-input")]).then(__webpack_require__.bind(null, /*! uview-ui/components/u-input/u-input.vue */ 414))
     }
   }
 } catch (e) {
@@ -158,63 +158,69 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _regenerator = _interopRequireDefault(__webpack_require__(/*! ./node_modules/@babel/runtime/regenerator */ 19));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {try {var info = gen[key](arg);var value = info.value;} catch (error) {reject(error);return;}if (info.done) {resolve(value);} else {Promise.resolve(value).then(_next, _throw);}}function _asyncToGenerator(fn) {return function () {var self = this,args = arguments;return new Promise(function (resolve, reject) {var gen = fn.apply(self, args);function _next(value) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);}function _throw(err) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);}_next(undefined);});};} //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-var _default =
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _regenerator = _interopRequireDefault(__webpack_require__(/*! ./node_modules/@babel/runtime/regenerator */ 19));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var _vuex = __webpack_require__(/*! vuex */ 74);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {try {var info = gen[key](arg);var value = info.value;} catch (error) {reject(error);return;}if (info.done) {resolve(value);} else {Promise.resolve(value).then(_next, _throw);}}function _asyncToGenerator(fn) {return function () {var self = this,args = arguments;return new Promise(function (resolve, reject) {var gen = fn.apply(self, args);function _next(value) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);}function _throw(err) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);}_next(undefined);});};}function ownKeys(object, enumerableOnly) {var keys = Object.keys(object);if (Object.getOwnPropertySymbols) {var symbols = Object.getOwnPropertySymbols(object);if (enumerableOnly) symbols = symbols.filter(function (sym) {return Object.getOwnPropertyDescriptor(object, sym).enumerable;});keys.push.apply(keys, symbols);}return keys;}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};if (i % 2) {ownKeys(Object(source), true).forEach(function (key) {_defineProperty(target, key, source[key]);});} else if (Object.getOwnPropertyDescriptors) {Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));} else {ownKeys(Object(source)).forEach(function (key) {Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));});}}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}var _default =
+
+
 {
+  computed: _objectSpread({},
+  (0, _vuex.mapState)(["fl"])),
+
   data: function data() {
     return {
       searchVal: '',
@@ -392,37 +398,50 @@ var _default =
 
 
   },
+  onShow: function onShow() {
+    console.log(this.fl);
+    if (this.fl == 1) {
+      this.current = 0;
+    } else if (this.fl == 2) {
+      this.current = 1;
+    }
+    this.getData();
+  },
   methods: {
+    getData: function getData() {var _this = this;return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {var res;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:_context.next = 2;return (
+                  _this.$api.categories());case 2:res = _context.sent;
+                console.log(res);case 4:case "end":return _context.stop();}}}, _callee);}))();
+    },
     getImg: function getImg() {
       return Math.floor(Math.random() * 35);
     },
     // 点击左边的栏目切换
-    swichMenu: function swichMenu(index) {var _this = this;return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:if (!(
-                index == _this.current)) {_context.next = 2;break;}return _context.abrupt("return");case 2:
-                _this.current = index;
+    swichMenu: function swichMenu(index) {var _this2 = this;return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee2() {return _regenerator.default.wrap(function _callee2$(_context2) {while (1) {switch (_context2.prev = _context2.next) {case 0:if (!(
+                index == _this2.current)) {_context2.next = 2;break;}return _context2.abrupt("return");case 2:
+                _this2.current = index;
                 // 如果为0，意味着尚未初始化
-                if (!(_this.menuHeight == 0 || _this.menuItemHeight == 0)) {_context.next = 8;break;}_context.next = 6;return (
-                  _this.getElRect('menu-scroll-view', 'menuHeight'));case 6:_context.next = 8;return (
-                  _this.getElRect('u-tab-item', 'menuItemHeight'));case 8:
+                if (!(_this2.menuHeight == 0 || _this2.menuItemHeight == 0)) {_context2.next = 8;break;}_context2.next = 6;return (
+                  _this2.getElRect('menu-scroll-view', 'menuHeight'));case 6:_context2.next = 8;return (
+                  _this2.getElRect('u-tab-item', 'menuItemHeight'));case 8:
 
                 // 将菜单菜单活动item垂直居中
-                _this.scrollTop = index * _this.menuItemHeight + _this.menuItemHeight / 2 - _this.menuHeight / 2;case 9:case "end":return _context.stop();}}}, _callee);}))();
+                _this2.scrollTop = index * _this2.menuItemHeight + _this2.menuItemHeight / 2 - _this2.menuHeight / 2;case 9:case "end":return _context2.stop();}}}, _callee2);}))();
     },
     // 获取一个目标元素的高度
-    getElRect: function getElRect(elClass, dataVal) {var _this2 = this;
+    getElRect: function getElRect(elClass, dataVal) {var _this3 = this;
       new Promise(function (resolve, reject) {
-        var query = uni.createSelectorQuery().in(_this2);
+        var query = uni.createSelectorQuery().in(_this3);
         query.select('.' + elClass).fields({
           size: true },
         function (res) {
           // 如果节点尚未生成，res值为null，循环调用执行
           if (!res) {
             setTimeout(function () {
-              _this2.getElRect(elClass);
+              _this3.getElRect(elClass);
             }, 10);
             return;
           }
-          _this2[dataVal] = res.height;
+          _this3[dataVal] = res.height;
         }).exec();
       });
     } } };exports.default = _default;

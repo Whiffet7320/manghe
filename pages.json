@@ -18,8 +18,15 @@
 		{
 			"path": "pages/gouwuche/gouwuche",
 			"style": {
-				"navigationStyle": "custom",
-				// "navigationBarTitleText": "购物车",
+				"navigationBarTitleText": "购物车",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/dingdan/dingdan",
+			"style": {
+				// "navigationStyle": "custom",
+				"navigationBarTitleText": "订单",
 				"enablePullDownRefresh": false
 			}
 
@@ -33,6 +40,39 @@
 		}
 	],
 	"subPackages": [{
+			"root": "pages/dingdan/xuanzeshifu",
+			"pages": [{
+				"path": "xuanzeshifu",
+				"style": {
+					// "navigationStyle": "custom",
+					"navigationBarTitleText": "选择师傅",
+					"enablePullDownRefresh": false
+				}
+			}]
+		},
+		{
+			"root": "pages/dingdan/pingjia",
+			"pages": [{
+				"path": "pingjia",
+				"style": {
+					// "navigationStyle": "custom",
+					"navigationBarTitleText": "评价",
+					"enablePullDownRefresh": false
+				}
+			}]
+		},
+		{
+			"root": "pages/dingdan/chakanxiangqin",
+			"pages": [{
+				"path": "chakanxiangqin",
+				"style": {
+					// "navigationStyle": "custom",
+					"navigationBarTitleText": "查看详情",
+					"enablePullDownRefresh": false
+				}
+			}]
+		},
+		{
 			"root": "pages/index/sousuo",
 			"pages": [{
 				"path": "sousuo",
@@ -103,6 +143,30 @@
 					"navigationBarTextStyle": "white"
 				}
 			}]
+		}, {
+			"root": "pages/index/dingdantijiao",
+			"pages": [{
+				"path": "dingdantijiao",
+				"style": {
+					// "navigationStyle": "custom",
+					"navigationBarTitleText": "订单支付",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "shangchengTijiaodingdan",
+				"style": {
+					// "navigationStyle": "custom",
+					"navigationBarTitleText": "订单支付",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "xuanzeyouhuiquan",
+				"style": {
+					// "navigationStyle": "custom",
+					"navigationBarTitleText": "优惠券",
+					"enablePullDownRefresh": false
+				}
+			}]
 		},
 		{
 			"root": "pages/index/fabuxuqiu",
@@ -114,7 +178,7 @@
 					"enablePullDownRefresh": false,
 					"navigationBarTextStyle": "black"
 				}
-			},{
+			}, {
 				"path": "xiadan",
 				"style": {
 					// "navigationStyle": "custom",
@@ -122,11 +186,19 @@
 					"enablePullDownRefresh": false,
 					"navigationBarTextStyle": "black"
 				}
-			},{
+			}, {
 				"path": "baojiaShifuxinxi",
 				"style": {
 					// "navigationStyle": "custom",
 					"navigationBarTitleText": "正在报价",
+					"enablePullDownRefresh": false,
+					"navigationBarTextStyle": "black"
+				}
+			}, {
+				"path": "shifuxiangqin",
+				"style": {
+					// "navigationStyle": "custom",
+					"navigationBarTitleText": "师傅详情",
 					"enablePullDownRefresh": false,
 					"navigationBarTextStyle": "black"
 				}
@@ -249,29 +321,34 @@
 		"backgroundColor": "#282828"
 	},
 	"tabBar": {
-		"color": "#C7C7C7",
-		"selectedColor": "#000000",
+		"color": "#000000",
+		"selectedColor": "#4988FD",
 		"backgroundColor": "#FFFFFF",
 		"borderStyle": "black",
 		"list": [{
 			"pagePath": "pages/index/index",
-			"iconPath": "static/image/zu8.png",
-			"selectedIconPath": "static/image/zu8active.png",
+			"iconPath": "static/img/nav-sy.png",
+			"selectedIconPath": "static/img/nav-sy-active.png",
 			"text": "首页"
 		}, {
 			"pagePath": "pages/fenlei/fenlei",
-			"iconPath": "static/image/zu11.png",
-			"selectedIconPath": "static/image/zu15active.png",
+			"iconPath": "static/img/nav-fl.png",
+			"selectedIconPath": "static/img/nav-fl-active.png",
 			"text": "分类"
 		}, {
 			"pagePath": "pages/gouwuche/gouwuche",
-			"iconPath": "static/image/lujin74.png",
-			"selectedIconPath": "static/image/zu245.png",
+			"iconPath": "static/img/nav-gwc.png",
+			"selectedIconPath": "static/img/nav-gwc-active.png",
+			"text": "购物车"
+		}, {
+			"pagePath": "pages/dingdan/dingdan",
+			"iconPath": "static/img/nav-dd.png",
+			"selectedIconPath": "static/img/nav-dd-active.png",
 			"text": "订单"
 		}, {
 			"pagePath": "pages/wode/wode",
-			"iconPath": "static/image/zu10.png",
-			"selectedIconPath": "static/image/zu10active.png",
+			"iconPath": "static/img/nav-wd.png",
+			"selectedIconPath": "static/img/nav-wd-active.png",
 			"text": "我的"
 		}]
 	}

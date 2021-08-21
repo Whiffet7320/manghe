@@ -54,7 +54,13 @@
 </template>
 
 <script>
+	import {
+		mapState
+	} from "vuex";
 	export default {
+		computed: {
+			...mapState(["fl"])
+		},
 		data() {
 			return {
 				searchVal: '',
@@ -71,7 +77,7 @@
 				menuItemHeight: 0, // 左边菜单item的高度
 				tabbar: [{
 						"name": "热门推荐",
-						'myStatus':1,
+						'myStatus': 1,
 						"foods": [{
 								"name": "A床体安装",
 								"key": "A床体安装",
@@ -101,7 +107,7 @@
 					},
 					{
 						"name": "美食",
-						'myStatus':1,
+						'myStatus': 1,
 						"foods": [{
 								"name": "火锅",
 								"key": "火锅",
@@ -190,7 +196,7 @@
 					},
 					{
 						"name": "日常保洁",
-						'myStatus':2,
+						'myStatus': 2,
 						"foods": [{
 								"name": "A床体安装",
 								"key": "A床体安装",
@@ -214,7 +220,7 @@
 								"key": "床体安装",
 								"icon": "../../static/img/dengzi.png",
 								"cat": 10
-							},{
+							}, {
 								"name": "床体安装",
 								"key": "床体安装",
 								"icon": "../../static/img/dengzi.png",
@@ -232,7 +238,20 @@
 				]
 			}
 		},
+		onShow() {
+			console.log(this.fl)
+			if(this.fl == 1){
+				this.current = 0;
+			}else if(this.fl == 2){
+				this.current = 1;
+			}
+			this.getData()
+		},
 		methods: {
+			async getData() {
+				const res = await this.$api.categories()
+				console.log(res)
+			},
 			getImg() {
 				return Math.floor(Math.random() * 35);
 			},
@@ -390,7 +409,8 @@
 		margin-bottom: 42rpx;
 		margin-left: 14rpx;
 	}
-	.item-title2{
+
+	.item-title2 {
 		padding-top: 26rpx;
 		font-size: 26rpx;
 		font-weight: bold;
@@ -418,34 +438,40 @@
 		// margin-top: 20rpx;
 		margin-bottom: 42rpx;
 	}
-	.thumb-box2{
+
+	.thumb-box2 {
 		width: 100%;
 		display: flex;
 		margin-bottom: 22rpx;
+
 		.item-menu-image2 {
 			width: 184rpx;
 			height: 184rpx;
 		}
-		.box-right{
+
+		.box-right {
 			display: flex;
 			flex-direction: column;
 			margin-left: 12rpx;
 			justify-content: space-between;
-			.txt1{
+
+			.txt1 {
 				font-size: 28rpx;
 				font-family: Segoe UI;
 				font-weight: 400;
 				line-height: 38rpx;
 				color: #000000;
 			}
-			.txt2{
+
+			.txt2 {
 				font-size: 20rpx;
 				font-family: Segoe UI;
 				font-weight: 400;
 				line-height: 28rpx;
 				color: #666666;
 			}
-			.txt3{
+
+			.txt3 {
 				font-size: 28rpx;
 				font-family: Segoe UI;
 				font-weight: 400;

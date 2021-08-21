@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "选择师傅",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "u-icon": "/node-modules/uview-ui/components/u-icon/u-icon"
+  }
+}

@@ -2,6 +2,10 @@
 	<view class="index">
 		<view class="nav1">PICC承保，人生财产，双重保障，下单无忧</view>
 		<view @click="toShouhuodizhi" class="nav2">
+			<view class="tit3">
+				<view class="txt3-1">默认</view>
+				<view class="txt3-2">浙江省温州市瓯海区娄桥街道</view>
+			</view>
 			<view class="tit1">
 				<view class="tit1-1">
 					<image class="pic1" src="/static/img/zu1.png" mode=""></image>
@@ -36,11 +40,11 @@
 			</view>
 		</view>
 		<view class="nav5">
-			<u-radio-group active-color='#24BC29' size=28 v-model="myRad" @change="radioGroupChange">
-				<u-radio label-size=20 name="rad1">
+			<u-checkbox-group active-color='#24BC29' size=28 @change="radioGroupChange">
+				<u-checkbox label-size=20 name="rad1" v-model="myRad">
 					我已阅读并同意 <text class="blue">《万师傅服务协议》《隐私政策》</text>
-				</u-radio>
-			</u-radio-group>
+				</u-checkbox>
+			</u-checkbox-group>
 		</view>
 		<view @click="toBaojia" class="nav6">发布需求</view>
 		<u-picker @confirm='onTime' :params="timeParams" v-model="timeShow" mode="time"></u-picker>
@@ -70,7 +74,7 @@
 				})
 			},
 			radioGroupChange() {
-
+				console.log(this.myRad)
 			},
 			changTime() {
 				this.timeShow = true;
@@ -109,11 +113,35 @@
 	}
 
 	.nav2 {
-		height: 126rpx;
+		height: 154rpx;
 		background: #FFFFFF;
 		padding: 20rpx 20rpx 0rpx 20rpx;
 		border-bottom: 2rpx solid #E6E6E6;
-
+		.tit3{
+			display: flex;
+			align-items: center;
+			margin-bottom: 10rpx;
+			.txt3-1{
+				width: 60rpx;
+				height: 28rpx;
+				background: #4988FD;
+				border-radius: 14rpx;
+				font-size: 20rpx;
+				font-family: Segoe UI;
+				font-weight: 400;
+				line-height: 28rpx;
+				text-align: center;
+				color: #FFFFFF;
+			}
+			.txt3-2{
+				font-size: 20rpx;
+				font-family: Segoe UI;
+				font-weight: 400;
+				line-height: 28rpx;
+				color: #707070;
+				margin-left: 26rpx;
+			}
+		}
 		.tit1 {
 			height: 34rpx;
 			display: flex;
@@ -126,6 +154,7 @@
 				margin-left: 28rpx;
 
 				.pic1 {
+					transform: translateX(-10rpx);
 					width: 26rpx;
 					height: 34rpx;
 					margin-right: 32rpx;

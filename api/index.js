@@ -66,8 +66,8 @@ myGet.interceptors.request.use(config => {
 		config.headers = {
 			'Accept':'application/json',
 			// 'token': sessionStorage.token,
-			// 'Access-Control-Allow-Origin': '*',
-			// "access-control-allow-credentials": "true"
+			'Access-Control-Allow-Origin': '*',
+			"access-control-allow-credentials": "true"
 		}
 		config.headers.token = uni.getStorageSync('token');
 	}
@@ -174,6 +174,16 @@ export default {
 			data: {
 				...obj
 			},
+		})
+	},
+	categories() {
+		return myGet({
+			url: urls.categories,
+		})
+	},
+	cities() {
+		return myGet({
+			url: urls.cities,
 		})
 	},
 }
