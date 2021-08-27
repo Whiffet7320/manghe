@@ -98,13 +98,13 @@ var components
 try {
   components = {
     uRate: function() {
-      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-rate/u-rate */ "node-modules/uview-ui/components/u-rate/u-rate").then(__webpack_require__.bind(null, /*! uview-ui/components/u-rate/u-rate.vue */ 492))
+      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-rate/u-rate */ "node-modules/uview-ui/components/u-rate/u-rate").then(__webpack_require__.bind(null, /*! uview-ui/components/u-rate/u-rate.vue */ 499))
     },
     uInput: function() {
-      return Promise.all(/*! import() | node-modules/uview-ui/components/u-input/u-input */[__webpack_require__.e("common/vendor"), __webpack_require__.e("node-modules/uview-ui/components/u-input/u-input")]).then(__webpack_require__.bind(null, /*! uview-ui/components/u-input/u-input.vue */ 414))
+      return Promise.all(/*! import() | node-modules/uview-ui/components/u-input/u-input */[__webpack_require__.e("common/vendor"), __webpack_require__.e("node-modules/uview-ui/components/u-input/u-input")]).then(__webpack_require__.bind(null, /*! uview-ui/components/u-input/u-input.vue */ 421))
     },
     uIcon: function() {
-      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-icon/u-icon */ "node-modules/uview-ui/components/u-icon/u-icon").then(__webpack_require__.bind(null, /*! uview-ui/components/u-icon/u-icon.vue */ 407))
+      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-icon/u-icon */ "node-modules/uview-ui/components/u-icon/u-icon").then(__webpack_require__.bind(null, /*! uview-ui/components/u-icon/u-icon.vue */ 414))
     }
   }
 } catch (e) {

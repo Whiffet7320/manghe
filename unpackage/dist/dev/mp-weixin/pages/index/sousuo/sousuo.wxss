@@ -50,8 +50,7 @@
   opacity: 1;
   background: #ffffff;
   border-radius: 24rpx;
-  -webkit-box-shadow: 0rpx 0rpx 2rpx 0rpx rgba(0, 0, 0, 0.16);
-          box-shadow: 0rpx 0rpx 2rpx 0rpx rgba(0, 0, 0, 0.16);
+  box-shadow: 0rpx 0rpx 2rpx 0rpx rgba(0, 0, 0, 0.16);
   font-size: 20rpx;
   font-family: PingFang SC, PingFang SC-Regular;
   font-weight: 400;

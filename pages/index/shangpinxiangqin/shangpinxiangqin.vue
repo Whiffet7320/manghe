@@ -1,12 +1,12 @@
 <template>
 	<view class="index">
-		<image class="pic1" src="/static/img/zhuozizhuozi.png" mode=""></image>
+		<image class="pic1" :src="shopObj.main_img" mode=""></image>
 		<view class="container">
-			<template v-if="pageStatus == 1">
-				<view class="tit1">LINNMON利蒙/OMON利蒙/OLOV奥乐福该服务将采用报价</view>
-				<view class="tit2">沙发，棕色，200x40厘米</view>
+			<template v-if="shopObj.type == 2">
+				<view class="tit1">{{shopObj.name}}</view>
+				<view class="tit2">{{shopObj.sub_title}}</view>
 				<view class="tit3">
-					<view class="txt1">￥<text class="big">366.00</text></view>
+					<view class="txt1">￥<text class="big">{{shopObj.price}}</text></view>
 					<view class="txt2">已售出<text class="blue">31230</text>件</view>
 				</view>
 				<view class="tit4">商品描述</view>
@@ -14,14 +14,14 @@
 					该服务该服务将采用报价模式：在您发布订单后，多个师傅将给 出服报价，您需要选择其中一位师傅。支付师傅的报价金额。
 				</view>
 			</template>
-			<template v-if="pageStatus == 2">
+			<template v-if="shopObj.type == 1">
 				<view class="page2-nav1">
 					<view class="page2-left">报价</view>
 					<view class="page2-right">
-						<view class="tit1">LINNMON利蒙/OMON利蒙/OLOV奥乐福该服务将采用报价</view>
-						<view class="tit2">沙发，棕色，200x40厘米</view>
+						<view class="tit1">{{shopObj.name}}</view>
+						<view class="tit2">{{shopObj.sub_title}}</view>
 						<view class="tit3">
-							<view class="txt2">已服务<text class="blue">31230</text>件</view>
+							<view class="txt2">已服务<text class="blue">{{serve_count}}</text>件</view>
 						</view>
 					</view>
 				</view>
@@ -48,12 +48,29 @@
 					<view class="txt5 txt">验收评价</view>
 				</view>
 			</template>
+			<template v-if="shopObj.type == 0">
+				<view class="tit1">{{shopObj.name}}</view>
+				<view class="tit2">{{shopObj.sub_title}}</view>
+				<view class="tit3">
+					<view class="txt1">￥<text class="big">{{shopObj.price}}</text></view>
+					<view class="txt2">已服务<text class="blue">{{serve_count}}</text>件</view>
+				</view>
+				<view class="page2-nav2">
+					<view class="tit1-1">服务保障</view>
+					<view class="tit1-2">未服务全额退款/30分钟内愉悦/准时上门服务</view>
+				</view>
+				<view class="tit4">服务描述</view>
+				<view class="tit5">
+					该服务该服务将采用报价模式：在您发布订单后，多个师傅将给 出服报价，您需要选择其中一位师傅。支付师傅的报价金额。
+				</view>
+			</template>
+
 			<view class="heng"></view>
 			<view class="tit6">
 				<view class="txt1 active">详情</view>
 				<view @click="scrollPingjia" class="txt1">评价</view>
 			</view>
-			<image src="/static/img/zhuozizhuozi.png" mode=""></image>
+			<image :src="shopObj.detail_img" class="piccc" mode=""></image>
 			<view class="tit7">
 				<view class="txt1">用户评价</view>
 				<view class="txt2">查看全部<u-icon name="arrow-right" color="#707070" size="28"></u-icon>
@@ -109,7 +126,8 @@
 	export default {
 		data() {
 			return {
-				pageStatus: 2,
+				optionId: '',
+				pageStatus: 0,
 				pingjiaCount: 5,
 				pingjiaFenshu: 4,
 				imgList: [
@@ -118,6 +136,9 @@
 					'https://img0.baidu.com/it/u=3278254877,1490168144&fm=26&fmt=auto&gp=0.jpg',
 				],
 				pingjiaBtnsTop: 0,
+				comment: [], //评论列表
+				serve_count: 0, //服务次数
+				shopObj: {},
 			}
 		},
 		onShow() {
@@ -125,7 +146,18 @@
 				this.pingjiaBtnsTop = res.top - 50;
 			})
 		},
+		onLoad(option) {
+			this.optionId = option.id;
+			this.getData()
+		},
 		methods: {
+			async getData() {
+				const res = await this.$api.items(this.optionId)
+				console.log(res)
+				this.comment = res.data.comment;
+				this.serve_count = res.data.serve_count;
+				this.shopObj = res.data.item;
+			},
 			// 浏览评论图片
 			seeImg(i) {
 				uni.previewImage({
@@ -139,9 +171,9 @@
 					scrollTop: this.pingjiaBtnsTop
 				})
 			},
-			toFabu(){
+			toFabu() {
 				uni.navigateTo({
-					url:"/pages/index/fabuxuqiu/xiadan"
+					url: "/pages/index/fabuxuqiu/xiadan"
 				})
 			},
 		},
@@ -181,6 +213,9 @@
 	}
 </style>
 <style scoped lang="scss">
+	.piccc{
+		width: 100%;
+	}
 	.index {
 		position: relative;
 	}
@@ -599,7 +634,8 @@
 			text-align: center;
 			color: #FFFFFF;
 		}
-		.page2-nav1{
+
+		.page2-nav1 {
 			margin-left: 18rpx;
 			width: 642rpx;
 			height: 96rpx;

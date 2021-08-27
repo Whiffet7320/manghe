@@ -98,10 +98,10 @@ var components
 try {
   components = {
     uIcon: function() {
-      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-icon/u-icon */ "node-modules/uview-ui/components/u-icon/u-icon").then(__webpack_require__.bind(null, /*! uview-ui/components/u-icon/u-icon.vue */ 407))
+      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-icon/u-icon */ "node-modules/uview-ui/components/u-icon/u-icon").then(__webpack_require__.bind(null, /*! uview-ui/components/u-icon/u-icon.vue */ 414))
     },
     uInput: function() {
-      return Promise.all(/*! import() | node-modules/uview-ui/components/u-input/u-input */[__webpack_require__.e("common/vendor"), __webpack_require__.e("node-modules/uview-ui/components/u-input/u-input")]).then(__webpack_require__.bind(null, /*! uview-ui/components/u-input/u-input.vue */ 414))
+      return Promise.all(/*! import() | node-modules/uview-ui/components/u-input/u-input */[__webpack_require__.e("common/vendor"), __webpack_require__.e("node-modules/uview-ui/components/u-input/u-input")]).then(__webpack_require__.bind(null, /*! uview-ui/components/u-input/u-input.vue */ 421))
     }
   }
 } catch (e) {
@@ -235,167 +235,7 @@ var _vuex = __webpack_require__(/*! vuex */ 74);function _interopRequireDefault(
       current: 0, // 预设当前项的值
       menuHeight: 0, // 左边菜单的高度
       menuItemHeight: 0, // 左边菜单item的高度
-      tabbar: [{
-        "name": "热门推荐",
-        'myStatus': 1,
-        "foods": [{
-          "name": "A床体安装",
-          "key": "A床体安装",
-          "icon": "../../static/img/dengzi.png",
-          "cat": 10 },
-
-        {
-          "name": "床体安装",
-          "key": "床体安装",
-          "icon": "../../static/img/dengzi.png",
-          "cat": 10 },
-
-        {
-          "name": "床体安装",
-          "key": "床体安装",
-          "icon": "../../static/img/dengzi.png",
-          "cat": 10 },
-
-        {
-          "name": "床体安装",
-          "key": "床体安装",
-          "icon": "../../static/img/dengzi.png",
-          "cat": 10 }] },
-
-
-
-
-      {
-        "name": "美食",
-        'myStatus': 1,
-        "foods": [{
-          "name": "火锅",
-          "key": "火锅",
-          "icon": "https://cdn.uviewui.com/uview/common/classify/2/1.jpg",
-          "cat": 6 },
-
-        {
-          "name": "糕点饼干",
-          "key": "糕点饼干",
-          "icon": "https://cdn.uviewui.com/uview/common/classify/2/2.jpg",
-          "cat": 6 },
-
-        {
-          "name": "坚果果干",
-          "key": "坚果果干",
-          "icon": "https://cdn.uviewui.com/uview/common/classify/2/3.jpg",
-          "cat": 6 },
-
-        {
-          "name": "酒类",
-          "key": "酒类",
-          "icon": "https://cdn.uviewui.com/uview/common/classify/2/4.jpg",
-          "cat": 6 },
-
-        {
-          "name": "辣条",
-          "key": "辣条",
-          "icon": "https://cdn.uviewui.com/uview/common/classify/2/5.jpg",
-          "cat": 6 },
-
-        {
-          "name": "大礼包",
-          "key": "大礼包",
-          "icon": "https://cdn.uviewui.com/uview/common/classify/2/6.jpg",
-          "cat": 6 },
-
-        {
-          "name": "精品茗茶",
-          "key": "茶",
-          "icon": "https://cdn.uviewui.com/uview/common/classify/2/7.jpg",
-          "cat": 6 },
-
-        {
-          "name": "休闲食品",
-          "key": "休闲食品",
-          "icon": "https://cdn.uviewui.com/uview/common/classify/2/8.jpg",
-          "cat": 6 },
-
-        {
-          "name": "糖果巧克力",
-          "key": "糖果巧克力",
-          "icon": "https://cdn.uviewui.com/uview/common/classify/2/9.jpg",
-          "cat": 6 },
-
-        {
-          "name": "方便速食",
-          "key": "方便速食",
-          "icon": "https://cdn.uviewui.com/uview/common/classify/2/10.jpg",
-          "cat": 6 },
-
-        {
-          "name": "营养代餐",
-          "key": "营养代餐",
-          "icon": "https://cdn.uviewui.com/uview/common/classify/2/11.jpg",
-          "cat": 6 },
-
-        {
-          "name": "粮油副食",
-          "key": "粮油",
-          "icon": "https://cdn.uviewui.com/uview/common/classify/2/12.jpg",
-          "cat": 6 },
-
-        {
-          "name": "生鲜水果",
-          "key": "水果",
-          "icon": "https://cdn.uviewui.com/uview/common/classify/2/13.jpg",
-          "cat": 6 },
-
-        {
-          "name": "饮品",
-          "key": "饮品",
-          "icon": "https://cdn.uviewui.com/uview/common/classify/2/14.jpg",
-          "cat": 6 }] },
-
-
-
-      {
-        "name": "日常保洁",
-        'myStatus': 2,
-        "foods": [{
-          "name": "A床体安装",
-          "key": "A床体安装",
-          "icon": "../../static/img/dengzi.png",
-          "cat": 10 },
-
-        {
-          "name": "床体安装",
-          "key": "床体安装",
-          "icon": "../../static/img/dengzi.png",
-          "cat": 10 },
-
-        {
-          "name": "床体安装",
-          "key": "床体安装",
-          "icon": "../../static/img/dengzi.png",
-          "cat": 10 },
-
-        {
-          "name": "床体安装",
-          "key": "床体安装",
-          "icon": "../../static/img/dengzi.png",
-          "cat": 10 },
-        {
-          "name": "床体安装",
-          "key": "床体安装",
-          "icon": "../../static/img/dengzi.png",
-          "cat": 10 },
-
-        {
-          "name": "床体安装",
-          "key": "床体安装",
-          "icon": "../../static/img/dengzi.png",
-          "cat": 10 }] }] };
-
-
-
-
-
+      tabbar: [] };
 
   },
   onShow: function onShow() {
@@ -410,7 +250,16 @@ var _vuex = __webpack_require__(/*! vuex */ 74);function _interopRequireDefault(
   methods: {
     getData: function getData() {var _this = this;return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {var res;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:_context.next = 2;return (
                   _this.$api.categories());case 2:res = _context.sent;
-                console.log(res);case 4:case "end":return _context.stop();}}}, _callee);}))();
+                console.log(res);
+                _this.tabbar = res.data;
+                _this.tabbar.forEach(function (ele) {
+                  ele.myStatus = 1;
+                });case 6:case "end":return _context.stop();}}}, _callee);}))();
+    },
+    toXiangqin: function toXiangqin(item) {
+      uni.navigateTo({
+        url: "/pages/index/shangpinxiangqin/shangpinxiangqin?id=".concat(item.id) });
+
     },
     getImg: function getImg() {
       return Math.floor(Math.random() * 35);

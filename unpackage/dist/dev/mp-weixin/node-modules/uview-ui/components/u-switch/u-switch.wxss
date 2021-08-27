@@ -27,8 +27,7 @@
 .u-switch.data-v-4a8c9de7 {
   position: relative;
   display: inline-block;
-  -webkit-box-sizing: initial;
-          box-sizing: initial;
+  box-sizing: initial;
   width: 2em;
   height: 1em;
   background-color: #fff;
@@ -61,8 +60,7 @@
   z-index: 1;
   background-color: #fff;
   background-color: #fff;
-  -webkit-box-shadow: 0 3px 1px 0 rgba(0, 0, 0, 0.05), 0 2px 2px 0 rgba(0, 0, 0, 0.1), 0 3px 3px 0 rgba(0, 0, 0, 0.05);
-          box-shadow: 0 3px 1px 0 rgba(0, 0, 0, 0.05), 0 2px 2px 0 rgba(0, 0, 0, 0.1), 0 3px 3px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 3px 1px 0 rgba(0, 0, 0, 0.05), 0 2px 2px 0 rgba(0, 0, 0, 0.1), 0 3px 3px 0 rgba(0, 0, 0, 0.05);
   box-shadow: 0 3px 1px 0 rgba(0, 0, 0, 0.05), 0 2px 2px 0 rgba(0, 0, 0, 0.1), 0 3px 3px 0 rgba(0, 0, 0, 0.05);
   -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.3, 1.05, 0.4, 1.05);
   transition: -webkit-transform 0.3s cubic-bezier(0.3, 1.05, 0.4, 1.05);

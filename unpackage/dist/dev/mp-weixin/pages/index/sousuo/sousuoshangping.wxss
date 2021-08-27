@@ -29,8 +29,7 @@ page.data-v-60d5c71e {
 }
 .box1.data-v-60d5c71e {
   background: #ffffff;
-  -webkit-box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.1);
-          box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.1);
 }
 .box1 .tit1.data-v-60d5c71e {
   margin: 44rpx 0 30rpx 34rpx;

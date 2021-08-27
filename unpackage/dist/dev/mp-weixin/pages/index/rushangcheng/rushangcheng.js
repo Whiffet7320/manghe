@@ -98,7 +98,7 @@ var components
 try {
   components = {
     uMask: function() {
-      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-mask/u-mask */ "node-modules/uview-ui/components/u-mask/u-mask").then(__webpack_require__.bind(null, /*! uview-ui/components/u-mask/u-mask.vue */ 471))
+      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-mask/u-mask */ "node-modules/uview-ui/components/u-mask/u-mask").then(__webpack_require__.bind(null, /*! uview-ui/components/u-mask/u-mask.vue */ 478))
     }
   }
 } catch (e) {

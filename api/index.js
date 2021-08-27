@@ -186,4 +186,14 @@ export default {
 			url: urls.cities,
 		})
 	},
+	home() {
+		return myGet({
+			url: urls.home,
+		})
+	},
+	items(id) {
+		return myGet({
+			url: `${urls.items}/${id}`,
+		})
+	},
 }

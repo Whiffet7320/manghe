@@ -111,8 +111,7 @@ page {
 .u-tab-item.data-v-02bdc6a6 {
   height: 110rpx;
   background: #f6f6f6;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
   display: -webkit-box;
   display: -webkit-flex;
   display: flex;

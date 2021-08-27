@@ -54,6 +54,9 @@ page {
 /* 垂直间距 */
 /* 透明度 */
 /* 文章场景相关 */
+.piccc.data-v-6d432469 {
+  width: 100%;
+}
 .index.data-v-6d432469 {
   position: relative;
 }

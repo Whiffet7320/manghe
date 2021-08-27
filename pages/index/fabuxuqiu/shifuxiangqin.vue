@@ -20,8 +20,8 @@
 				bar-height="6" bar-width="64" active-color="#4988FD" ref="uTabs" :list="list" :current="current"
 				@change="tabsChange" :is-scroll="false" swiperWidth="750"></u-tabs-swiper>
 			<swiper :style="[{height: height + 'px'}]" :current="swiperCurrent">
-				<swiper-item @touchmove.stop class="swiper-item" v-for="(item, index) in list" :key="index">
-					<scroll-view scroll-y='true'>
+				<swiper-item @touchmove.stop  class="swiper-item" v-for="(item, index) in list" :key="index">
+					<scroll-view  scroll-y='true' style="height:43vh">
 						<view class="items">
 							<!-- {{item.name}} -->
 							<!-- 服务承诺 -->
@@ -115,7 +115,7 @@
 <script>
 	export default {
 		onShow() {
-			this.tabsChange(1)
+			this.tabsChange(0)
 		},
 		data() {
 			return {
@@ -127,7 +127,7 @@
 					name: '认证信息'
 				}],
 				// 因为内部的滑动机制限制，请将tabs组件和swiper组件的current用不同变量赋值
-				current: null, // tabs组件的current值，表示当前活动的tab选项
+				current: 0, // tabs组件的current值，表示当前活动的tab选项
 				swiperCurrent: 0, // swiper组件的current值，表示当前那个swiper-item是活动的
 			}
 		},

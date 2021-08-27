@@ -21,8 +21,8 @@
 								<text>{{item.name}}</text>
 							</view>
 							<view class="item-container">
-								<view class="thumb-box" v-for="(item1, index1) in item.foods" :key="index1">
-									<image class="item-menu-image" :src="item1.icon" mode=""></image>
+								<view class="thumb-box" @click="toXiangqin(item1)" v-for="item1 in item.items" :key="item1.id">
+									<image class="item-menu-image" :src="item1.main_img" mode=""></image>
 									<!-- <image class="item-menu-image" src="../../static/img/dengzi.png" mode=""></image> -->
 									<view class="item-menu-name">{{item1.name}}</view>
 								</view>
@@ -35,8 +35,8 @@
 								<text>{{item.name}}</text>
 							</view>
 							<view class="item-container">
-								<view class="thumb-box2" v-for="(item1, index1) in item.foods" :key="index1">
-									<image class="item-menu-image2" :src="item1.icon" mode=""></image>
+								<view class="thumb-box2" v-for="item1 in item.items" :key="item1.id">
+									<image class="item-menu-image2" :src="item1.main_img" mode=""></image>
 									<!-- <image class="item-menu-image" src="../../static/img/dengzi.png" mode=""></image> -->
 									<view class="box-right">
 										<view class="txt1">{{item1.name}}</view>
@@ -75,167 +75,7 @@
 				current: 0, // 预设当前项的值
 				menuHeight: 0, // 左边菜单的高度
 				menuItemHeight: 0, // 左边菜单item的高度
-				tabbar: [{
-						"name": "热门推荐",
-						'myStatus': 1,
-						"foods": [{
-								"name": "A床体安装",
-								"key": "A床体安装",
-								"icon": "../../static/img/dengzi.png",
-								"cat": 10
-							},
-							{
-								"name": "床体安装",
-								"key": "床体安装",
-								"icon": "../../static/img/dengzi.png",
-								"cat": 10
-							},
-							{
-								"name": "床体安装",
-								"key": "床体安装",
-								"icon": "../../static/img/dengzi.png",
-								"cat": 10
-							},
-							{
-								"name": "床体安装",
-								"key": "床体安装",
-								"icon": "../../static/img/dengzi.png",
-								"cat": 10
-							},
-
-						]
-					},
-					{
-						"name": "美食",
-						'myStatus': 1,
-						"foods": [{
-								"name": "火锅",
-								"key": "火锅",
-								"icon": "https://cdn.uviewui.com/uview/common/classify/2/1.jpg",
-								"cat": 6
-							},
-							{
-								"name": "糕点饼干",
-								"key": "糕点饼干",
-								"icon": "https://cdn.uviewui.com/uview/common/classify/2/2.jpg",
-								"cat": 6
-							},
-							{
-								"name": "坚果果干",
-								"key": "坚果果干",
-								"icon": "https://cdn.uviewui.com/uview/common/classify/2/3.jpg",
-								"cat": 6
-							},
-							{
-								"name": "酒类",
-								"key": "酒类",
-								"icon": "https://cdn.uviewui.com/uview/common/classify/2/4.jpg",
-								"cat": 6
-							},
-							{
-								"name": "辣条",
-								"key": "辣条",
-								"icon": "https://cdn.uviewui.com/uview/common/classify/2/5.jpg",
-								"cat": 6
-							},
-							{
-								"name": "大礼包",
-								"key": "大礼包",
-								"icon": "https://cdn.uviewui.com/uview/common/classify/2/6.jpg",
-								"cat": 6
-							},
-							{
-								"name": "精品茗茶",
-								"key": "茶",
-								"icon": "https://cdn.uviewui.com/uview/common/classify/2/7.jpg",
-								"cat": 6
-							},
-							{
-								"name": "休闲食品",
-								"key": "休闲食品",
-								"icon": "https://cdn.uviewui.com/uview/common/classify/2/8.jpg",
-								"cat": 6
-							},
-							{
-								"name": "糖果巧克力",
-								"key": "糖果巧克力",
-								"icon": "https://cdn.uviewui.com/uview/common/classify/2/9.jpg",
-								"cat": 6
-							},
-							{
-								"name": "方便速食",
-								"key": "方便速食",
-								"icon": "https://cdn.uviewui.com/uview/common/classify/2/10.jpg",
-								"cat": 6
-							},
-							{
-								"name": "营养代餐",
-								"key": "营养代餐",
-								"icon": "https://cdn.uviewui.com/uview/common/classify/2/11.jpg",
-								"cat": 6
-							},
-							{
-								"name": "粮油副食",
-								"key": "粮油",
-								"icon": "https://cdn.uviewui.com/uview/common/classify/2/12.jpg",
-								"cat": 6
-							},
-							{
-								"name": "生鲜水果",
-								"key": "水果",
-								"icon": "https://cdn.uviewui.com/uview/common/classify/2/13.jpg",
-								"cat": 6
-							},
-							{
-								"name": "饮品",
-								"key": "饮品",
-								"icon": "https://cdn.uviewui.com/uview/common/classify/2/14.jpg",
-								"cat": 6
-							}
-						]
-					},
-					{
-						"name": "日常保洁",
-						'myStatus': 2,
-						"foods": [{
-								"name": "A床体安装",
-								"key": "A床体安装",
-								"icon": "../../static/img/dengzi.png",
-								"cat": 10
-							},
-							{
-								"name": "床体安装",
-								"key": "床体安装",
-								"icon": "../../static/img/dengzi.png",
-								"cat": 10
-							},
-							{
-								"name": "床体安装",
-								"key": "床体安装",
-								"icon": "../../static/img/dengzi.png",
-								"cat": 10
-							},
-							{
-								"name": "床体安装",
-								"key": "床体安装",
-								"icon": "../../static/img/dengzi.png",
-								"cat": 10
-							}, {
-								"name": "床体安装",
-								"key": "床体安装",
-								"icon": "../../static/img/dengzi.png",
-								"cat": 10
-							},
-							{
-								"name": "床体安装",
-								"key": "床体安装",
-								"icon": "../../static/img/dengzi.png",
-								"cat": 10
-							},
-
-						]
-					},
-				]
+				tabbar: [],
 			}
 		},
 		onShow() {
@@ -251,6 +91,15 @@
 			async getData() {
 				const res = await this.$api.categories()
 				console.log(res)
+				this.tabbar = res.data;
+				this.tabbar.forEach(ele=>{
+					ele.myStatus = 1
+				})
+			},
+			toXiangqin(item){
+				uni.navigateTo({
+					url:`/pages/index/shangpinxiangqin/shangpinxiangqin?id=${item.id}`
+				})
 			},
 			getImg() {
 				return Math.floor(Math.random() * 35);

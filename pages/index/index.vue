@@ -1,6 +1,6 @@
 <template>
 	<view class="index">
-		<u-picker v-model="nav1Show" mode="time"></u-picker>
+		<u-select v-model="nav1Show" mode="mutil-column-auto" @confirm='changeCity2' :list="cityList"></u-select>
 		<view class="nav1">
 			<view @click="changeCity" class="txt1">温州市</view>
 			<u-icon name="arrow-down" color="#000000" size="20"></u-icon>
@@ -9,19 +9,19 @@
 			<u-input class='search' v-model="keyword" type="text" placeholder="搜索您需要的服务" />
 		</view>
 		<!-- 轮播 -->
-		<u-swiper height='542' :list="bannerList"></u-swiper>
+		<u-swiper height='542' :list="bannerTop"></u-swiper>
 		<view class="nav2">
 			<view class="tit1">
 				<view class="txt1-1">
-					<view class="txt1-1-1">18万+</view>
+					<view class="txt1-1-1">{{craftsman_count}}+</view>
 					<view class="txt1-1-2">专业入驻师傅</view>
 				</view>
 				<view class="txt1-1">
-					<view class="txt1-1-1">18万+</view>
+					<view class="txt1-1-1">{{order_count}}+</view>
 					<view class="txt1-1-2">累计服务订单</view>
 				</view>
 				<view class="txt1-1">
-					<view class="txt1-1-1">99%</view>
+					<view class="txt1-1-1">{{good_reputation}}%</view>
 					<view class="txt1-1-2">服务好评率</view>
 				</view>
 			</view>
@@ -72,17 +72,17 @@
 			<view class="tit4">
 				<view class="kk1">
 					<view class="box1">
-						<view class="box1-1">先领券再下单</view>
-						<image class="pic" src="../../static/image/mcz12.png" mode=""></image>
+						<view class="box1-1">{{banner1[0].tag}}</view>
+						<image class="pic" :src="banner1[0].image" mode=""></image>
 					</view>
 					<view class="kk2">
 						<view class="box2">
-							<view class="box2-1">空调续命季</view>
-							<image class="pic" src="../../static/image/mcz12.png" mode=""></image>
+							<view class="box2-1">{{banner1[1].tag}}</view>
+							<image class="pic" :src="banner1[1].image" mode=""></image>
 						</view>
 						<view class="box3">
-							<view class="box3-1">组合特惠</view>
-							<image class="pic" src="../../static/image/mcz12.png" mode=""></image>
+							<view class="box3-1">{{banner1[2].tag}}</view>
+							<image class="pic" :src="banner1[2].image" mode=""></image>
 						</view>
 					</view>
 				</view>
@@ -90,14 +90,14 @@
 			<view class="tit5">
 				<!-- 横向 -->
 				<scroll-view class="scroll-view" scroll-x style="width: 100%;white-space:nowrap;">
-					<image @click="toXiangqin(item.id)" v-for="item in 6" class="pic1"
-						src="../../static/image/mcz12.png" mode="">
+					<image @click="toXiangqin(item.id)" v-for="item in banner2" :key='item.id' class="pic1"
+						:src="item.image" mode="">
 					</image>
 				</scroll-view>
 			</view>
 			<view class="tit6">
 				<view class="box1">
-					<image class="pic" src="../../static/image/mcz12.png" mode=""></image>
+					<image class="pic" :src="homeList1.bg_img" mode=""></image>
 					<view class="txt1">
 						<image class="pic2" src="../../static/img/zu41.png" mode=""></image>
 						<view class="txt1-1">热门好服务</view>
@@ -107,16 +107,16 @@
 				</view>
 				<view class="box2">
 					<view class="items">
-						<view class="item" v-for="item in 6">
-							<image class="pic" src="../../static/img/213951li4p44khrhgyx44z.png" mode=""></image>
-							<view class="txt">床体安装</view>
+						<view class="item" @click="toXiangqin(item)" v-for="item in homeList1.items" :key='item.id'>
+							<image class="pic" :src="item.main_img" mode=""></image>
+							<view class="txt">{{item.name}}</view>
 						</view>
 					</view>
 				</view>
 			</view>
 			<view class="tit6">
 				<view class="box1">
-					<image class="pic" src="../../static/image/mcz12.png" mode=""></image>
+					<image class="pic" :src="homeList2.bg_img" mode=""></image>
 					<view class="txt1">
 						<image class="pic2" src="../../static/img/zu40.png" mode=""></image>
 						<view class="txt1-1">维修手艺好</view>
@@ -126,16 +126,16 @@
 				</view>
 				<view class="box2">
 					<view class="items">
-						<view class="item" v-for="item in 6">
-							<image class="pic" src="../../static/img/213951li4p44khrhgyx44z.png" mode=""></image>
-							<view class="txt">床体安装</view>
+						<view class="item" @click="toXiangqin(item)" v-for="item in homeList2.items" :key='item.id'>
+							<image class="pic" :src="item.main_img" mode=""></image>
+							<view class="txt">{{item.name}}</view>
 						</view>
 					</view>
 				</view>
 			</view>
 			<view class="tit6">
 				<view class="box1">
-					<image class="pic" src="../../static/image/mcz12.png" mode=""></image>
+					<image class="pic" :src="homeList3.bg_img" mode=""></image>
 					<view class="txt1">
 						<image class="pic2" src="../../static/img/zu39.png" mode=""></image>
 						<view class="txt1-1">省心一口价</view>
@@ -145,21 +145,21 @@
 				</view>
 				<view class="box2">
 					<view class="items">
-						<view class="item" v-for="item in 6">
-							<image class="pic" src="../../static/img/213951li4p44khrhgyx44z.png" mode=""></image>
-							<view class="txt">床体安装</view>
+						<view class="item" @click="toXiangqin(item)" v-for="item in homeList3.items" :key='item.id'>
+							<image class="pic" :src="item.main_img" mode=""></image>
+							<view class="txt">{{item.name}}</view>
 						</view>
 					</view>
 				</view>
 			</view>
 			<view class="tit7">
 				<view class="tit7-1">
-					<image class="pic1" src="../../static/img/01a72d578376ae0000018c1b3705a1.png" mode=""></image>
-					<view class="tit7-1-1"><text class="txt">空调加氟多少钱？别被骗了还不知道</text></view>
+					<image class="pic1" :src="articlesFirst.img" mode=""></image>
+					<view class="tit7-1-1"><text class="txt">{{articlesFirst.name}}</text></view>
 				</view>
-				<view v-for="item in 4" class="item">
-					<view class="txt1">你家洗过热水器吗？我不建议你 洗！</view>
-					<image class="pic1" src="../../static/img/20110309231034811.png" mode=""></image>
+				<view v-for="item in articles" :key='item.id' class="item">
+					<view class="txt1">{{item.name}}</view>
+					<image class="pic1" :src="item.img" mode=""></image>
 				</view>
 			</view>
 
@@ -172,21 +172,20 @@
 	export default {
 		data() {
 			return {
+				cityList: [], //城市列表
 				nav1Show: false,
 				keyword: '',
-				bannerList: [{
-						image: 'https://cdn.uviewui.com/uview/swiper/1.jpg',
-						title: '昨夜星辰昨夜风，画楼西畔桂堂东'
-					},
-					{
-						image: 'https://cdn.uviewui.com/uview/swiper/2.jpg',
-						title: '身无彩凤双飞翼，心有灵犀一点通'
-					},
-					{
-						image: 'https://cdn.uviewui.com/uview/swiper/3.jpg',
-						title: '谁念西风独自凉，萧萧黄叶闭疏窗，沉思往事立残阳'
-					}
-				],
+				bannerTop: [],
+				banner1:[],
+				banner2:[],
+				homeList1:{},
+				homeList2:{},
+				homeList3:{},
+				articles:[],
+				articlesFirst:{},
+				craftsman_count:0,
+				order_count:0,
+				good_reputation:0,
 				tzlist: [
 					'寒雨连江夜入吴',
 					'平明送客楚山孤',
@@ -201,39 +200,87 @@
 			this.getData()
 		},
 		methods: {
-			async getData(){
+			async getData() {
+				const res2 = await this.$api.home()
+				console.log(res2);
+				this.craftsman_count = res2.data.craftsman_count;
+				this.order_count = res2.data.order_count;
+				this.good_reputation = res2.data.good_reputation;
+				this.bannerTop = res2.data.banner_top;
+				this.banner1 = res2.data.banner_1.slice(0,3);
+				this.banner2 = res2.data.banner_2;
+				this.homeList1 = res2.data.homeList_1;
+				this.homeList1.items = this.homeList1.items.slice(0,6);
+				this.homeList2 = res2.data.homeList_2;
+				this.homeList2.items = this.homeList2.items.slice(0,6);
+				this.homeList3 = res2.data.homeList_3;
+				this.homeList3.items = this.homeList3.items.slice(0,6);
+				this.articles = res2.data.articles.slice(1);
+				this.articlesFirst = res2.data.articles.slice(0,1)[0];
 				const res = await this.$api.cities()
 				console.log(res)
+				this.cityList = res.data;
+				let keymap = {
+					name: "label",
+					id: 'value'
+				}
+				this.cityList.forEach(ele => {
+					Object.keys(ele).map(keys => {
+						let newKey = keymap[keys]
+						if (newKey) {
+							ele[newKey] = ele[keys]
+							delete ele[keys]
+						}
+						if(ele.children && ele.children.length>0){
+							ele.children.forEach(item=>{
+								let newKey2 = keymap[keys]
+								if (newKey2) {
+									item[newKey2] = item[keys]
+									delete item[keys]
+								}
+							})
+						}
+					})
+				})
+				console.log(this.cityList)
+			},
+			toXiangqin(item){
+				uni.navigateTo({
+					url:`/pages/index/shangpinxiangqin/shangpinxiangqin?id=${item.id}`
+				})
 			},
 			changeCity() {
 				this.nav1Show = true;
 			},
-			toZhuanpan(){
+			changeCity2(e) {
+				console.log(e)
+			},
+			toZhuanpan() {
 				uni.navigateTo({
-					url:'/pages/index/zhuanpan/zhuanpan'
+					url: '/pages/index/zhuanpan/zhuanpan'
 				})
 			},
-			toRushangcheng(){
+			toRushangcheng() {
 				uni.navigateTo({
-					url:'/pages/index/rushangcheng/rushangcheng'
+					url: '/pages/index/rushangcheng/rushangcheng'
 				})
 			},
-			toRemenfuwu(){
-				this.$store.commit('fl',1)
+			toRemenfuwu() {
+				this.$store.commit('fl', 1)
 				uni.switchTab({
-				    url: '/pages/fenlei/fenlei'
+					url: '/pages/fenlei/fenlei'
 				});
 			},
-			toJiajuanzhuang(){
-				this.$store.commit('fl',2)
+			toJiajuanzhuang() {
+				this.$store.commit('fl', 2)
 				uni.switchTab({
-				    url: '/pages/fenlei/fenlei'
+					url: '/pages/fenlei/fenlei'
 				});
 			},
-			toJiadiananzhuang(){
-				this.$store.commit('fl',3)
+			toJiadiananzhuang() {
+				this.$store.commit('fl', 3)
 				uni.switchTab({
-				    url: '/pages/fenlei/fenlei'
+					url: '/pages/fenlei/fenlei'
 				});
 			},
 		}
@@ -632,6 +679,7 @@
 					height: 50rpx;
 					padding: 0 48rpx;
 					background: rgba($color: #000000, $alpha: 0.2);
+
 					.txt {
 						font-size: 24rpx;
 						font-family: Segoe UI;
@@ -643,12 +691,14 @@
 					}
 				}
 			}
-			.item{
+
+			.item {
 				height: 156rpx;
 				display: flex;
 				justify-content: space-between;
 				padding: 20rpx 36rpx 14rpx 24rpx;
-				.txt1{
+
+				.txt1 {
 					width: 336rpx;
 					height: 64rpx;
 					font-size: 24rpx;
@@ -658,13 +708,14 @@
 					color: #000000;
 					opacity: 1;
 				}
-				.pic1{
+
+				.pic1 {
 					width: 186rpx;
 					height: 116rpx;
 					opacity: 1;
 				}
 			}
-		
+
 		}
 	}
 </style>

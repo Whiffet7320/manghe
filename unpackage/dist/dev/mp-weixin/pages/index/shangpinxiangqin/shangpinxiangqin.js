@@ -98,10 +98,10 @@ var components
 try {
   components = {
     uIcon: function() {
-      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-icon/u-icon */ "node-modules/uview-ui/components/u-icon/u-icon").then(__webpack_require__.bind(null, /*! uview-ui/components/u-icon/u-icon.vue */ 407))
+      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-icon/u-icon */ "node-modules/uview-ui/components/u-icon/u-icon").then(__webpack_require__.bind(null, /*! uview-ui/components/u-icon/u-icon.vue */ 414))
     },
     uRate: function() {
-      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-rate/u-rate */ "node-modules/uview-ui/components/u-rate/u-rate").then(__webpack_require__.bind(null, /*! uview-ui/components/u-rate/u-rate.vue */ 492))
+      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-rate/u-rate */ "node-modules/uview-ui/components/u-rate/u-rate").then(__webpack_require__.bind(null, /*! uview-ui/components/u-rate/u-rate.vue */ 499))
     }
   }
 } catch (e) {
@@ -265,11 +265,29 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 var _default =
 {
   data: function data() {
     return {
-      pageStatus: 2,
+      optionId: '',
+      pageStatus: 0,
       pingjiaCount: 5,
       pingjiaFenshu: 4,
       imgList: [
@@ -277,7 +295,10 @@ var _default =
       'https://img1.baidu.com/it/u=334528594,4172277976&fm=26&fmt=auto&gp=0.jpg',
       'https://img0.baidu.com/it/u=3278254877,1490168144&fm=26&fmt=auto&gp=0.jpg'],
 
-      pingjiaBtnsTop: 0 };
+      pingjiaBtnsTop: 0,
+      comment: [], //评论列表
+      serve_count: 0, //服务次数
+      shopObj: {} };
 
   },
   onShow: function onShow() {var _this = this;
@@ -285,7 +306,18 @@ var _default =
       _this.pingjiaBtnsTop = res.top - 50;
     });
   },
+  onLoad: function onLoad(option) {
+    this.optionId = option.id;
+    this.getData();
+  },
   methods: {
+    getData: function getData() {var _this2 = this;return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {var res;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:_context.next = 2;return (
+                  _this2.$api.items(_this2.optionId));case 2:res = _context.sent;
+                console.log(res);
+                _this2.comment = res.data.comment;
+                _this2.serve_count = res.data.serve_count;
+                _this2.shopObj = res.data.item;case 7:case "end":return _context.stop();}}}, _callee);}))();
+    },
     // 浏览评论图片
     seeImg: function seeImg(i) {
       uni.previewImage({
@@ -306,30 +338,30 @@ var _default =
     } },
 
   //用户点击右上角分享转发
-  onShareAppMessage: function () {var _onShareAppMessage = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {var res, title;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:_context.next = 2;return (
-                this.$api.userShare({
-                  way: 2,
-                  product_id: this.product_id }));case 2:res = _context.sent;
-
-              console.log(res);
-
-              title = '分销商城app'; //data，return 数据title
-              return _context.abrupt("return", {
-                title: title || '',
-                path: "/pages/index/shangpinxiangqin/shangpinxiangqin?scene=0_".concat(res.data.p_user_id) });case 6:case "end":return _context.stop();}}}, _callee, this);}));function onShareAppMessage() {return _onShareAppMessage.apply(this, arguments);}return onShareAppMessage;}(),
-
-
-  //用户点击右上角分享朋友圈
-  onShareTimeline: function () {var _onShareTimeline = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee2() {var res, title;return _regenerator.default.wrap(function _callee2$(_context2) {while (1) {switch (_context2.prev = _context2.next) {case 0:_context2.next = 2;return (
+  onShareAppMessage: function () {var _onShareAppMessage = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee2() {var res, title;return _regenerator.default.wrap(function _callee2$(_context2) {while (1) {switch (_context2.prev = _context2.next) {case 0:_context2.next = 2;return (
                 this.$api.userShare({
                   way: 2,
                   product_id: this.product_id }));case 2:res = _context2.sent;
 
               console.log(res);
+
               title = '分销商城app'; //data，return 数据title
               return _context2.abrupt("return", {
                 title: title || '',
-                path: "/pages/index/shangpinxiangqin/shangpinxiangqin?scene=0_".concat(res.data.p_user_id) });case 6:case "end":return _context2.stop();}}}, _callee2, this);}));function onShareTimeline() {return _onShareTimeline.apply(this, arguments);}return onShareTimeline;}() };exports.default = _default;
+                path: "/pages/index/shangpinxiangqin/shangpinxiangqin?scene=0_".concat(res.data.p_user_id) });case 6:case "end":return _context2.stop();}}}, _callee2, this);}));function onShareAppMessage() {return _onShareAppMessage.apply(this, arguments);}return onShareAppMessage;}(),
+
+
+  //用户点击右上角分享朋友圈
+  onShareTimeline: function () {var _onShareTimeline = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee3() {var res, title;return _regenerator.default.wrap(function _callee3$(_context3) {while (1) {switch (_context3.prev = _context3.next) {case 0:_context3.next = 2;return (
+                this.$api.userShare({
+                  way: 2,
+                  product_id: this.product_id }));case 2:res = _context3.sent;
+
+              console.log(res);
+              title = '分销商城app'; //data，return 数据title
+              return _context3.abrupt("return", {
+                title: title || '',
+                path: "/pages/index/shangpinxiangqin/shangpinxiangqin?scene=0_".concat(res.data.p_user_id) });case 6:case "end":return _context3.stop();}}}, _callee3, this);}));function onShareTimeline() {return _onShareTimeline.apply(this, arguments);}return onShareTimeline;}() };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ }),

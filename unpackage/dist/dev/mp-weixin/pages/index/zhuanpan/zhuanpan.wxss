@@ -26,7 +26,6 @@
 /* 文章场景相关 */
 page {
   width: 750rpx;
-  background: -webkit-gradient(linear, left top, left bottom, from(#C91919), to(#D5183F));
   background: -webkit-linear-gradient(top, #C91919 0%, #D5183F 100%);
   background: linear-gradient(180deg, #C91919 0%, #D5183F 100%);
 }
@@ -67,7 +66,6 @@ page {
   right: 20rpx;
   width: 146rpx;
   height: 56rpx;
-  background: -webkit-gradient(linear, left top, left bottom, from(#FFA939), to(#FFD3A0));
   background: -webkit-linear-gradient(top, #FFA939 0%, #FFD3A0 100%);
   background: linear-gradient(180deg, #FFA939 0%, #FFD3A0 100%);
   border-radius: 28rpx;
@@ -93,7 +91,6 @@ page {
   width: 456rpx;
   height: 96rpx;
   border: 6rpx solid #FFA836;
-  background: -webkit-gradient(linear, left top, left bottom, from(#FF9B17), to(#FFCC00));
   background: -webkit-linear-gradient(top, #FF9B17 0%, #FFCC00 100%);
   background: linear-gradient(180deg, #FF9B17 0%, #FFCC00 100%);
   border-radius: 48rpx;
@@ -111,7 +108,6 @@ page {
   padding: 0 30rpx;
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
-  background: -webkit-gradient(linear, left bottom, left top, from(#FFA836), to(#FFD5A5));
   background: -webkit-linear-gradient(bottom, #FFA836 0%, #FFD5A5 100%);
   background: linear-gradient(360deg, #FFA836 0%, #FFD5A5 100%);
 }

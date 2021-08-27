@@ -46,8 +46,7 @@
   opacity: 1;
   background: #ffffff;
   border-radius: 18rpx;
-  -webkit-box-shadow: 0rpx 2rpx 4rpx 0rpx rgba(0, 0, 0, 0.16);
-          box-shadow: 0rpx 2rpx 4rpx 0rpx rgba(0, 0, 0, 0.16);
+  box-shadow: 0rpx 2rpx 4rpx 0rpx rgba(0, 0, 0, 0.16);
 }
 .index .container .navitem .pic1.data-v-371a9597 {
   width: 22rpx;

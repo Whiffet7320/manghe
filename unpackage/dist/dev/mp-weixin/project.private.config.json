@@ -89,6 +89,24 @@
           "pathName": "pages/index/dingdantijiao/shangchengTijiaodingdan",
           "query": "",
           "scene": null
+        },
+        {
+          "name": "pages/index/fabuxuqiu/shifuxiangqin",
+          "pathName": "pages/index/fabuxuqiu/shifuxiangqin",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/fenlei/fenlei",
+          "pathName": "pages/fenlei/fenlei",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/index/shangpinxiangqin/shangpinxiangqin",
+          "pathName": "pages/index/shangpinxiangqin/shangpinxiangqin",
+          "query": "id=1",
+          "scene": null
         }
       ]
     }

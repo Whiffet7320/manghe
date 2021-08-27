@@ -97,17 +97,17 @@ __webpack_require__.r(__webpack_exports__);
 var components
 try {
   components = {
-    uPicker: function() {
-      return Promise.all(/*! import() | node-modules/uview-ui/components/u-picker/u-picker */[__webpack_require__.e("common/vendor"), __webpack_require__.e("node-modules/uview-ui/components/u-picker/u-picker")]).then(__webpack_require__.bind(null, /*! uview-ui/components/u-picker/u-picker.vue */ 397))
+    uSelect: function() {
+      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-select/u-select */ "node-modules/uview-ui/components/u-select/u-select").then(__webpack_require__.bind(null, /*! uview-ui/components/u-select/u-select.vue */ 407))
     },
     uIcon: function() {
-      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-icon/u-icon */ "node-modules/uview-ui/components/u-icon/u-icon").then(__webpack_require__.bind(null, /*! uview-ui/components/u-icon/u-icon.vue */ 407))
+      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-icon/u-icon */ "node-modules/uview-ui/components/u-icon/u-icon").then(__webpack_require__.bind(null, /*! uview-ui/components/u-icon/u-icon.vue */ 414))
     },
     uInput: function() {
-      return Promise.all(/*! import() | node-modules/uview-ui/components/u-input/u-input */[__webpack_require__.e("common/vendor"), __webpack_require__.e("node-modules/uview-ui/components/u-input/u-input")]).then(__webpack_require__.bind(null, /*! uview-ui/components/u-input/u-input.vue */ 414))
+      return Promise.all(/*! import() | node-modules/uview-ui/components/u-input/u-input */[__webpack_require__.e("common/vendor"), __webpack_require__.e("node-modules/uview-ui/components/u-input/u-input")]).then(__webpack_require__.bind(null, /*! uview-ui/components/u-input/u-input.vue */ 421))
     },
     uSwiper: function() {
-      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-swiper/u-swiper */ "node-modules/uview-ui/components/u-swiper/u-swiper").then(__webpack_require__.bind(null, /*! uview-ui/components/u-swiper/u-swiper.vue */ 422))
+      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-swiper/u-swiper */ "node-modules/uview-ui/components/u-swiper/u-swiper").then(__webpack_require__.bind(null, /*! uview-ui/components/u-swiper/u-swiper.vue */ 429))
     }
   }
 } catch (e) {
@@ -338,21 +338,20 @@ var _default =
 {
   data: function data() {
     return {
+      cityList: [], //城市列表
       nav1Show: false,
       keyword: '',
-      bannerList: [{
-        image: 'https://cdn.uviewui.com/uview/swiper/1.jpg',
-        title: '昨夜星辰昨夜风，画楼西畔桂堂东' },
-
-      {
-        image: 'https://cdn.uviewui.com/uview/swiper/2.jpg',
-        title: '身无彩凤双飞翼，心有灵犀一点通' },
-
-      {
-        image: 'https://cdn.uviewui.com/uview/swiper/3.jpg',
-        title: '谁念西风独自凉，萧萧黄叶闭疏窗，沉思往事立残阳' }],
-
-
+      bannerTop: [],
+      banner1: [],
+      banner2: [],
+      homeList1: {},
+      homeList2: {},
+      homeList3: {},
+      articles: [],
+      articlesFirst: {},
+      craftsman_count: 0,
+      order_count: 0,
+      good_reputation: 0,
       tzlist: [
       '寒雨连江夜入吴',
       '平明送客楚山孤',
@@ -367,12 +366,60 @@ var _default =
     this.getData();
   },
   methods: {
-    getData: function getData() {var _this = this;return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {var res;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:_context.next = 2;return (
-                  _this.$api.cities());case 2:res = _context.sent;
-                console.log(res);case 4:case "end":return _context.stop();}}}, _callee);}))();
+    getData: function getData() {var _this = this;return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {var res2, res, keymap;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:_context.next = 2;return (
+                  _this.$api.home());case 2:res2 = _context.sent;
+                console.log(res2);
+                _this.craftsman_count = res2.data.craftsman_count;
+                _this.order_count = res2.data.order_count;
+                _this.good_reputation = res2.data.good_reputation;
+                _this.bannerTop = res2.data.banner_top;
+                _this.banner1 = res2.data.banner_1.slice(0, 3);
+                _this.banner2 = res2.data.banner_2;
+                _this.homeList1 = res2.data.homeList_1;
+                _this.homeList1.items = _this.homeList1.items.slice(0, 6);
+                _this.homeList2 = res2.data.homeList_2;
+                _this.homeList2.items = _this.homeList2.items.slice(0, 6);
+                _this.homeList3 = res2.data.homeList_3;
+                _this.homeList3.items = _this.homeList3.items.slice(0, 6);
+                _this.articles = res2.data.articles.slice(1);
+                _this.articlesFirst = res2.data.articles.slice(0, 1)[0];_context.next = 20;return (
+                  _this.$api.cities());case 20:res = _context.sent;
+                console.log(res);
+                _this.cityList = res.data;
+                keymap = {
+                  name: "label",
+                  id: 'value' };
+
+                _this.cityList.forEach(function (ele) {
+                  Object.keys(ele).map(function (keys) {
+                    var newKey = keymap[keys];
+                    if (newKey) {
+                      ele[newKey] = ele[keys];
+                      delete ele[keys];
+                    }
+                    if (ele.children && ele.children.length > 0) {
+                      ele.children.forEach(function (item) {
+                        var newKey2 = keymap[keys];
+                        if (newKey2) {
+                          item[newKey2] = item[keys];
+                          delete item[keys];
+                        }
+                      });
+                    }
+                  });
+                });
+                console.log(_this.cityList);case 26:case "end":return _context.stop();}}}, _callee);}))();
+    },
+    toXiangqin: function toXiangqin(item) {
+      uni.navigateTo({
+        url: "/pages/index/shangpinxiangqin/shangpinxiangqin?id=".concat(item.id) });
+
     },
     changeCity: function changeCity() {
       this.nav1Show = true;
+    },
+    changeCity2: function changeCity2(e) {
+      console.log(e);
     },
     toZhuanpan: function toZhuanpan() {
       uni.navigateTo({
