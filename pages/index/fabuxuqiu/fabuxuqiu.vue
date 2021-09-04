@@ -1,19 +1,21 @@
 <template>
 	<view class="index">
+		<u-toast ref="uToast" />
 		<view class="nav1">PICC承保，人生财产，双重保障，下单无忧</view>
 		<view @click="toShouhuodizhi" class="nav2">
 			<view class="tit3">
-				<view class="txt3-1">默认</view>
-				<view class="txt3-2">浙江省温州市瓯海区娄桥街道</view>
+				<view v-if="address.is_default" class="txt3-1">默认</view>
+				<view v-else class="txt3-1 mor"></view>
+				<view class="txt3-2">{{address.address}}</view>
 			</view>
 			<view class="tit1">
 				<view class="tit1-1">
 					<image class="pic1" src="/static/img/zu1.png" mode=""></image>
-					<view class="txt1">将军华府3栋asdasd 2单元</view>
+					<view class="txt1">{{address.sub_address}} {{address.detail_address}}</view>
 				</view>
 				<u-icon name="arrow-right" color="#707070" size="28"></u-icon>
 			</view>
-			<view class="tit2">李先生13365463322</view>
+			<view class="tit2">{{address.name}} {{address.phone}}</view>
 		</view>
 		<view class="nav3">
 			<view class="tit3-1">
@@ -21,22 +23,23 @@
 				<view class="txt1">期待上门时间</view>
 			</view>
 			<view class="tit3-2">
-				<view v-if="time == ''" @click="changTime" class="txt1">请选择</view>
-				<view v-else @click="changTime" class="txt1">{{time}}</view>
+				<view v-if="startTime == ''" @click="changTime" class="txt1">请选择</view>
+				<view v-else @click="changTime" class="txt1">{{showTimeVal}}</view>
 			</view>
 		</view>
 		<view class="nav4">
 			<view class="tit1">
-				<view class="txt1">沙发安装</view>
-				<image class="pic1" src="/static/img/20110309231034811.png" mode=""></image>
+				<view class="txt1">{{option.bgName}}</view>
+				<image class="pic1" :src="option.bgImg" mode=""></image>
 			</view>
-			<view class="tit2">
+			<!-- <view class="tit2">
 				<view class="txt1">物品类型（必填）</view>
 				<view class="txt2">皮沙发1个</view>
-			</view>
+			</view> -->
 			<view class="tit3 tit2">
 				<view class="txt1">需求说明</view>
-				<view class="txt2">请填写尺寸、体积、重量等信息</view>
+				<view v-if="option.intro == ''" class="txt2">请填写尺寸、体积、重量等信息</view>
+				<view v-else class="txt2">{{option.intro}}</view>
 			</view>
 		</view>
 		<view class="nav5">
@@ -47,14 +50,24 @@
 			</u-checkbox-group>
 		</view>
 		<view @click="toBaojia" class="nav6">发布需求</view>
-		<u-picker @confirm='onTime' :params="timeParams" v-model="timeShow" mode="time"></u-picker>
+		<!-- <u-picker @confirm='onTime' :params="timeParams" v-model="timeShow" mode="time"></u-picker> -->
+		<u-picker @confirm='confirmTime' mode="multiSelector" v-model="timeShow" :default-selector='[0, 1]'
+			:range="multiSelector"></u-picker>
 	</view>
 </template>
 
 <script>
+	import {
+		mapState
+	} from "vuex";
 	export default {
+		computed: {
+			...mapState(["nowAddress"]),
+		},
 		data() {
 			return {
+				option: null,
+				address: {},
 				timeShow: false,
 				timeParams: {
 					year: true,
@@ -63,15 +76,134 @@
 					hour: true,
 					minute: true,
 				},
-				time: '',
 				myRad: '',
+				multiSelector: [
+					[],
+					[]
+				],
+				day1: '',
+				day2: '',
+				day3: '',
+				serviceStartTime: '',
+				serviceEndTime: '',
+				serviceTimeInterval: '',
+				startTime: '',
+				endTime: '',
+				showTimeVal: "",
 			}
 		},
+		onShow() {
+			console.log(this.nowAddress)
+			this.getData()
+			this.multiSelector = [
+				[],
+				[]
+			]
+			this.day1 = this.getDay(0);
+			this.day2 = this.getDay(1);
+			this.day3 = this.getDay(2);
+			this.multiSelector[0].push(`${this.getDay(0)}(今天)`)
+			this.multiSelector[0].push(`${this.getDay(1)}(明天)`)
+			this.multiSelector[0].push(`${this.getDay(2)}(后天)`)
+		},
+		onLoad(option) {
+			console.log(option)
+			option.images = JSON.parse(option.images);
+			if (option.images[option.images.length - 1] == '') {
+				option.images.pop();
+			}
+			this.option = option;
+			console.log(this.option)
+		},
 		methods: {
-			toBaojia(){
-				uni.navigateTo({
-					url:'/pages/index/fabuxuqiu/baojiaShifuxinxi'
+			async getData() {
+				if (this.nowAddress) {
+					this.address = this.nowAddress
+				} else {
+					const res = await this.$api.address();
+					console.log(res)
+					this.address = res.data.filter(ele => {
+						return ele.is_default;
+					})[0]
+				}
+				const res2 = await this.$api.config();
+				console.log(res2)
+				res2.data.forEach(ele => {
+					if (ele.key == "serviceStartTime") {
+						this.serviceStartTime = Number(ele.value);
+					} else if (ele.key == "serviceEndTime") {
+						this.serviceEndTime = Number(ele.value);
+					} else if (ele.key == "serviceTimeInterval") {
+						this.serviceTimeInterval = Number(ele.value);
+					}
 				})
+				for (let i = this.serviceStartTime; i < this.serviceEndTime; i = i + 2) {
+					console.log(`${i}:00-${i+2}:00`)
+					this.multiSelector[1].push(`${i}:00-${i+2}:00`)
+				}
+				console.log(this.address)
+			},
+			confirmTime(e) {
+				this.startTime =
+					`${this.multiSelector[0][e[0]].substring(0, this.multiSelector[0][e[0]].length - 4)} ${this.multiSelector[1][e[1]].substring(0,5)}:00`;
+				this.endTime =
+					`${this.multiSelector[0][e[0]].substring(0, this.multiSelector[0][e[0]].length - 4)} ${this.multiSelector[1][e[1]].substring(6,this.multiSelector[1][e[1]].length)}:00`;
+				this.showTimeVal = `${this.multiSelector[0][e[0]]} ${this.multiSelector[1][e[1]]}`
+				console.log(this.startTime, this.endTime);
+			},
+			getDay(day) {
+				var today = new Date();
+				var targetday_milliseconds = today.getTime() + 1000 * 60 * 60 * 24 * day;
+				today.setTime(targetday_milliseconds); //注意，这行是关键代码
+				var tYear = today.getFullYear();
+				var tMonth = today.getMonth();
+				var tDate = today.getDate();
+				tMonth = this.doHandleMonth(tMonth + 1);
+				tDate = this.doHandleMonth(tDate);
+				return tYear + "-" + tMonth + "-" + tDate;
+			},
+			doHandleMonth(month) {
+				var m = month;
+				if (month.toString().length == 1) {
+					m = "0" + month;
+				}
+				return m;
+			},
+			async toBaojia() {
+				if (this.showTimeVal == '') {
+					this.$refs.uToast.show({
+						title: '请选择上门时间',
+						type: 'warning',
+					})
+				} else {
+					const myObj = {
+						...this.option
+					}
+					delete myObj.bgImg;
+					delete myObj.bgName;
+					const res = await this.$api.demandQuotes({
+						...myObj,
+						expect_start_date: this.startTime,
+						expect_end_date: this.endTime,
+						address: this.address
+					})
+					console.log(res)
+					if (res.code == 200) {
+						this.$refs.uToast.show({
+							title: '发布成功',
+							type: 'success',
+							url: '/pages/index/fabuxuqiu/baojiaShifuxinxi',
+							params: {
+								id: res.data.id
+							}
+						})
+					} else {
+						this.$refs.uToast.show({
+							title: res.msg,
+							type: 'warning',
+						})
+					}
+				}
 			},
 			radioGroupChange() {
 				console.log(this.myRad)
@@ -85,7 +217,7 @@
 			},
 			toShouhuodizhi() {
 				uni.navigateTo({
-					url: '/pages/wode/shouhuodizhi/shouhuodizhi'
+					url: '/pages/wode/shouhuodizhi/shouhuodizhi?page=fabuxuqiu'
 				})
 			},
 		}
@@ -117,11 +249,13 @@
 		background: #FFFFFF;
 		padding: 20rpx 20rpx 0rpx 20rpx;
 		border-bottom: 2rpx solid #E6E6E6;
-		.tit3{
+
+		.tit3 {
 			display: flex;
 			align-items: center;
 			margin-bottom: 10rpx;
-			.txt3-1{
+
+			.txt3-1 {
 				width: 60rpx;
 				height: 28rpx;
 				background: #4988FD;
@@ -133,7 +267,14 @@
 				text-align: center;
 				color: #FFFFFF;
 			}
-			.txt3-2{
+
+			.txt3-1.mor {
+				width: 60rpx;
+				height: 28rpx;
+				background: #ffffff;
+			}
+
+			.txt3-2 {
 				font-size: 20rpx;
 				font-family: Segoe UI;
 				font-weight: 400;
@@ -142,6 +283,7 @@
 				margin-left: 26rpx;
 			}
 		}
+
 		.tit1 {
 			height: 34rpx;
 			display: flex;
@@ -267,6 +409,7 @@
 			}
 
 			.txt2 {
+				width: 400rpx;
 				font-size: 24rpx;
 				font-family: Segoe UI;
 				font-weight: 400;
@@ -290,11 +433,13 @@
 		font-weight: 400;
 		line-height: 28rpx;
 		color: #A1A1A1;
-		.blue{
+
+		.blue {
 			color: #4988FD;
 		}
 	}
-	.nav6{
+
+	.nav6 {
 		margin-top: 44rpx;
 		margin-left: 54rpx;
 		width: 642rpx;

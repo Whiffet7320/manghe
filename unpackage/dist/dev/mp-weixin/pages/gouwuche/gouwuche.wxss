@@ -211,7 +211,11 @@ page {
   color: #FFFFFF;
   text-align: center;
 }
-.footer.del.data-v-854143b4 {
+.del.data-v-854143b4 {
+  position: fixed;
+  bottom: 0;
+  width: 750rpx;
+  height: 120rpx;
   background: #D7373F;
   font-size: 48rpx;
   font-family: Segoe UI;

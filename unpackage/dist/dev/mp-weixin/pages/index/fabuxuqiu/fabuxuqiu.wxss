@@ -92,6 +92,11 @@ page {
   text-align: center;
   color: #FFFFFF;
 }
+.nav2 .tit3 .txt3-1.mor.data-v-e5ccb2a2 {
+  width: 60rpx;
+  height: 28rpx;
+  background: #ffffff;
+}
 .nav2 .tit3 .txt3-2.data-v-e5ccb2a2 {
   font-size: 20rpx;
   font-family: Segoe UI;
@@ -239,6 +244,7 @@ page {
   color: #999999;
 }
 .nav4 .tit2 .txt2.data-v-e5ccb2a2 {
+  width: 400rpx;
   font-size: 24rpx;
   font-family: Segoe UI;
   font-weight: 400;

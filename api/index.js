@@ -18,6 +18,11 @@ let myDelete = axios.create({
 	method: 'delete',
 	// timeout: 1000,
 })
+let myPut = axios.create({
+	baseURL: urls.baseUrl,
+	method: 'put',
+	// timeout: 1000,
+})
 axios.defaults.adapter = function(config) { //自己定义个适配器，用来适配uniapp的语法
 	return new Promise((resolve, reject) => {
 		var settle = require('axios/lib/core/settle');
@@ -44,11 +49,28 @@ axios.defaults.adapter = function(config) { //自己定义个适配器，用来�
 		})
 	})
 }
-
+myPut.interceptors.request.use(config => {
+	if (uni.getStorageSync('token')) {
+		config.headers = {
+			'Accept': 'application/json',
+			'Authorization': `Bearer ${uni.getStorageSync('token')}`
+			// 'token':  uni.getStorageSync('token'),
+			// 'Access-Control-Allow-Origin': '*',
+			// "access-control-allow-credentials": "true"
+		}
+		// config.headers.token = uni.getStorageSync('token');
+	}
+	console.log(config)
+	return config;
+}, error => {
+	console.log(error);
+	return Promise.reject();
+})
 myPost.interceptors.request.use(config => {
 	if (uni.getStorageSync('token')) {
 		config.headers = {
-			'Accept':'application/json',
+			'Accept': 'application/json',
+			'Authorization': `Bearer ${uni.getStorageSync('token')}`
 			// 'token':  uni.getStorageSync('token'),
 			// 'Access-Control-Allow-Origin': '*',
 			// "access-control-allow-credentials": "true"
@@ -64,8 +86,9 @@ myPost.interceptors.request.use(config => {
 myGet.interceptors.request.use(config => {
 	if (uni.getStorageSync('token')) {
 		config.headers = {
-			'Accept':'application/json',
+			'Accept': 'application/json',
 			// 'token': sessionStorage.token,
+			'Authorization': `Bearer ${uni.getStorageSync('token')}`,
 			'Access-Control-Allow-Origin': '*',
 			"access-control-allow-credentials": "true"
 		}
@@ -76,10 +99,68 @@ myGet.interceptors.request.use(config => {
 	console.log(error);
 	return Promise.reject();
 })
+myPut.interceptors.response.use(response => {
+	// console.log(response)
+	if (response.status === 200) {
+		if (response.data.code == 401) {
+			uni.navigateTo({
+				url: '/pages/wode/weixinshouquan/weixinshouquan'
+			})
+		} else {
+			return response.data
+		}
+	}
+	// if (response.status === 200 && response.data.code == '200') {
+	//     vue.$message({
+	//         message: response.data.msg,
+	//         type: "success",
+	//     });
+	//     return response.data;
+	// }
+	else {
+		vue.$message.error(response.data.info);
+		Promise.reject();
+	}
+}, error => {
+	//错误跳转
+	console.log(error)
+	if (error.response.status === 500) {
+		console.log(vue)
+		if (error.response.data.info != '参数错误') {
+			vue.$message.error(error.response.data.info);
+		}
+	} else if (error.response.status === 401) {
+		sessionStorage.setItem("isLogin", false);
+		console.log(sessionStorage.getItem("isLogin"));
+		// router.push({ path: "/" })
+		// router.go(0)
+		return Promise.reject();
+	} else if (error.response.status === 404) {
+		vue.$alert('页面不存在', '404错误', {
+			confirmButtonText: '确定',
+		});
+		return Promise.reject();
+	} else if (error.response.status === 402) {
+		vue.$alert('请求次数限制', '402错误', {
+			confirmButtonText: '确定',
+		});
+		return Promise.reject();
+	} else {
+		if (error.response.data.info != '参数错误') {
+			vue.$message.error(error.response.data.info);
+		}
+	}
+})
 myPost.interceptors.response.use(response => {
 	// console.log(response)
 	if (response.status === 200) {
-		return response.data
+		if (response.data.code == 401) {
+			uni.navigateTo({
+				url: '/pages/wode/weixinshouquan/weixinshouquan'
+			})
+		} else {
+			return response.data
+		}
 	}
 	// if (response.status === 200 && response.data.code == '200') {
 	//     vue.$message({
@@ -124,7 +205,13 @@ myPost.interceptors.response.use(response => {
 })
 myGet.interceptors.response.use(response => {
 	if (response.status === 200) {
-		return response.data
+		if (response.data.code == 401) {
+			uni.navigateTo({
+				url: '/pages/wode/weixinshouquan/weixinshouquan'
+			})
+		} else {
+			return response.data
+		}
 	}
 	// if (response.status === 200 && response.data.code == '200') {
 	//     vue.$message({
@@ -194,6 +281,84 @@ export default {
 	items(id) {
 		return myGet({
 			url: `${urls.items}/${id}`,
+		})
+	},
+	uploadToken() {
+		return myGet({
+			url: urls.uploadToken,
+		})
+	},
+	demandQuotes(obj) {
+		return myPost({
+			url: urls.demandQuotes,
+			data:{
+				...obj
+			}
+		})
+	},
+	address() {
+		return myGet({
+			url: urls.address,
+		})
+	},
+	addressAdd(obj) {
+		return myPost({
+			url: urls.addressAdd,
+			data: {
+				...obj
+			},
+		})
+	},
+	addressEdit(obj) {
+		return myPut({
+			url: `${urls.addressEdit}/${obj.id}`,
+			data: {
+				...obj
+			},
+		})
+	},
+	addressXq(id) {
+		return myGet({
+			url: `${urls.addressXq}/${id}`,
+		})
+	},
+	config() {
+		return myGet({
+			url: urls.config,
+		})
+	},
+	userInfo(obj) {
+		return myPut({
+			url: urls.userInfo,
+			data: {
+				...obj
+			},
+		})
+	},
+	getDemandQuotes(id) {
+		return myGet({
+			url: `${urls.getDemandQuotes}/${id}`,
+		})
+	},
+	getDemandQuotesList(obj) {
+		return myGet({
+			url: urls.getDemandQuotesList,
+			params:{
+				...obj
+			}
+		})
+	},
+	getDemandQuotesListXq(id) {
+		return myGet({
+			url: `${urls.getDemandQuotesListXq}/${id}`
+		})
+	},
+	selectDemandQuotes(obj) {
+		return myPut({
+			url: `${urls.selectDemandQuotes}/${obj.id}/select`,
+			data:{
+				quote_id:obj.quote_id
+			}
 		})
 	},
 }

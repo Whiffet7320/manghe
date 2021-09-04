@@ -3,10 +3,16 @@
 		<image class="pic1" src="../../../static/img/1229310763000_mthumb.png" mode=""></image>
 		<view class="nav1">
 			<view class="tit1">HI ~ 请登录</view>
-			<view @click="login" class="btn">
+			<button v-if="btnShow" open-type="getPhoneNumber" @getphonenumber="getPhoneNumber" class="btn">
+				<!-- <button open-type="getPhoneNumber" bindgetphonenumber="getPhoneNumber"></button> -->
+				<u-icon name="weixin-fill" color="#ffffff" size="40"></u-icon>
+				<view class="txt1">手机号授权</view>
+			</button>
+			<view v-else @click="login" class="btn">
 				<u-icon name="weixin-fill" color="#ffffff" size="40"></u-icon>
 				<view class="txt1">微信授权登录</view>
 			</view>
+			<view id="btt" @click="login"></view>
 		</view>
 		<!-- 		<button @click="login" class="btn">
 			点击授权
@@ -19,9 +25,12 @@
 	export default {
 		data() {
 			return {
+				btnShow:true,
 				code: null,
 				recommend_userid: null,
 				goods_id: null,
+				iv:'',
+				phoneData:'',
 			}
 		},
 		onLoad(option) {
@@ -30,10 +39,21 @@
 			this.recommend_userid = option.recommend_userid
 		},
 		methods: {
+			getPhoneNumber(e) {
+				console.log(e.detail.iv)
+				console.log(e.detail.encryptedData);
+				this.iv = e.detail.iv;
+				this.phoneData = e.detail.encryptedData
+				this.btnShow = false;
+			},
 			login() {
+				console.log(1)
 				const that = this;
 				uni.getUserProfile({
 					desc: '登录',
+					fail:function(infoRes){
+						console.log(infoRes)
+					},
 					success: function(infoRes) {
 						console.log(infoRes)
 						uni.login({
@@ -44,10 +64,12 @@
 									const res = await that.$api.loginWechat({
 										code: code,
 										user_info: infoRes.userInfo,
+										iv:that.iv,
+										phoneData:that.phoneData
 									})
 									console.log(res, '授权')
 									if (res.code == 200) {
-										uni.setStorageSync('myUser',res.data.user)
+										uni.setStorageSync('myUser', res.data.user)
 										uni.setStorage({
 											key: 'token',
 											data: res.data.token_info.access_token,

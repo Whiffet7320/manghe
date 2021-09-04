@@ -1,8 +1,0 @@
-{
-  "navigationBarTitleText": "收货信息",
-  "enablePullDownRefresh": false,
-  "usingComponents": {
-    "u-icon": "/node-modules/uview-ui/components/u-icon/u-icon",
-    "u-toast": "/node-modules/uview-ui/components/u-toast/u-toast"
-  }
-}

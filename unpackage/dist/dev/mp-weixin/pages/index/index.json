@@ -1,6 +1,7 @@
 {
   "navigationBarTitleText": "首页",
   "usingComponents": {
+    "u-modal": "/node-modules/uview-ui/components/u-modal/u-modal",
     "u-select": "/node-modules/uview-ui/components/u-select/u-select",
     "u-icon": "/node-modules/uview-ui/components/u-icon/u-icon",
     "u-input": "/node-modules/uview-ui/components/u-input/u-input",

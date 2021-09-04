@@ -439,8 +439,18 @@ page {
           justify-content: space-between;
   padding: 0 36rpx;
 }
+.footer .nav3.nav1.data-v-6d432469 {
+  position: absolute;
+  left: 112rpx;
+}
+.footer .nav3.nav1 .pic1.data-v-6d432469 {
+  width: 72rpx;
+  height: 72rpx;
+  -webkit-transform: translateY(6rpx);
+          transform: translateY(6rpx);
+}
 .footer .nav1.data-v-6d432469 {
-  width: 52rpx;
+  width: 72rpx;
   display: -webkit-box;
   display: -webkit-flex;
   display: flex;
@@ -453,8 +463,8 @@ page {
           align-items: center;
 }
 .footer .nav1 .pic1.data-v-6d432469 {
-  width: 52rpx;
-  height: 52rpx;
+  width: 72rpx;
+  height: 72rpx;
 }
 .footer .nav1 .txt1.data-v-6d432469 {
   margin-top: 10rpx;

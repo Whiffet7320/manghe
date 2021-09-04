@@ -5,37 +5,23 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
 	state: {
+		nowAddress:null,
 		fl:null,
 		youhuiquanPage:1,
 		youhuiquanPageSize: 10,//优惠券列表
+		dingdanPage:1,
+		dingdanPageSize: 10,//优惠券列表
 		// 
-		allshopPage: 1, //所有商品列表
-		allshopPageSize: 10,
-		page: 1, //商品列表
-		pageSize: 10,
-		ddPage: 1, //订单列表
-		ddPageSize: 10,
-		mdPage: 1, //免单列表
-		mdPageSize: 10,
-		mdgmShow: false, //购物车的免单是否显示
-		yqhyPage: 1, //邀请好友列表
-		yqhyPageSize: 10,
-		yjPage: 1, //佣金列表
-		yjPageSize: 10,
-		yyjlPage: 1, //交易记录列表
-		yyjlPageSize: 10,
-		txjlPage: 1, //提现历史记录列表
-		txjlPageSize: 15,
-		shoucangPage: 1, //收藏列表
-		shoucangPageSize: 10,
-		pinglunPage: 1, //商品评论列表
-		pinglunPageSize: 10,
-		sousuopage: 1, //搜索商品列表
-		sousuopageSize: 10,
 	},
 	mutations: {
+		dingdanPage(state, str) {
+			state.dingdanPage = str;
+		},
+		nowAddress(state, str) {
+			state.nowAddress = str;
+		},
 		fl(state, str) {
-			state.fl = str;
+			state.youhuiquanPage = str;
 		},
 		youhuiquanPage(state, str) {
 			state.youhuiquanPage = str;

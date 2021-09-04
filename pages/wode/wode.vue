@@ -8,7 +8,7 @@
 				<image class="pic1" v-else :src="user.user_info.avatar" mode=""></image>
 				<view class="tit1-1" v-if="user">
 					<view class="txt1">{{user.user_info.nick_name}}</view>
-					<view class="txt2">133****1212</view>
+					<view class="txt2">{{user.phone}}</view>
 				</view>
 				<view class="tit1-2" @click="toLogin" v-else>请先登录</view>
 			</view>

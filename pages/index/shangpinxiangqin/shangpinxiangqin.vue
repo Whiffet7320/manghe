@@ -104,19 +104,30 @@
 		</view>
 		<!-- 底部 -->
 		<view class="footer">
-			<template v-if="pageStatus == 1">
+			<template v-if="shopObj.type == 0">
 				<view class="nav1">
 					<image class="pic1" src="/static/img/zu5.png" mode=""></image>
 					<view class="txt1">客服</view>
 				</view>
 				<view class="nav2">去下单</view>
 			</template>
-			<template v-if="pageStatus == 2">
+			<template v-if="shopObj.type == 1">
 				<view class="nav1">
 					<image class="pic1" src="/static/img/zu5.png" mode=""></image>
 					<view class="txt1">客服</view>
 				</view>
 				<view @click="toFabu" class="nav2">去报价</view>
+			</template>
+			<template v-if="shopObj.type == 2">
+				<view class="nav1">
+					<image class="pic1" src="/static/img/zu106.png" mode=""></image>
+					<view class="txt1">客服</view>
+				</view>
+				<view class="nav3 nav1">
+					<image class="pic1" src="/static/img/zu118.png" mode=""></image>
+					<view class="txt1">购物车</view>
+				</view>
+				<view @click="toFabu" class="nav2">去下单</view>
 			</template>
 		</view>
 	</view>
@@ -127,7 +138,7 @@
 		data() {
 			return {
 				optionId: '',
-				pageStatus: 0,
+				pageStatus: 2,
 				pingjiaCount: 5,
 				pingjiaFenshu: 4,
 				imgList: [
@@ -172,9 +183,14 @@
 				})
 			},
 			toFabu() {
-				uni.navigateTo({
-					url: "/pages/index/fabuxuqiu/xiadan"
-				})
+				// uni.navigateTo({
+				// 	url: `/pages/index/fabuxuqiu/xiadan?item_id=${this.optionId}&bgImg=${this.shopObj.main_img}&bgName=${this.shopObj.name}`
+				// })
+				this.$u.route('/pages/index/fabuxuqiu/xiadan', {
+					item_id: this.optionId,
+					bgName:this.shopObj.name,
+					bgImg:this.shopObj.main_img,
+				});
 			},
 		},
 		//用户点击右上角分享转发
@@ -599,16 +615,24 @@
 		align-items: center;
 		justify-content: space-between;
 		padding: 0 36rpx;
-
+		.nav3.nav1{
+			position: absolute;
+			left: 112rpx;
+			.pic1{
+				width: 72rpx;
+				height: 72rpx;
+				transform: translateY(6rpx);
+			}
+		}
 		.nav1 {
-			width: 52rpx;
+			width: 72rpx;
 			display: flex;
 			flex-direction: column;
 			align-items: center;
 
 			.pic1 {
-				width: 52rpx;
-				height: 52rpx;
+				width: 72rpx;
+				height: 72rpx;
 			}
 
 			.txt1 {

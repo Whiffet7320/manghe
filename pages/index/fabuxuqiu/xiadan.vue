@@ -11,7 +11,7 @@
 			</view>
 		</view>
 		<view class="nav2">
-			<view class="tit1">物品类型（选填）</view>
+			<view class="tit1">需求说明（选填）</view>
 			<view class="tit2">
 				<u-input maxlength='150' v-model="textarea1"
 					placeholder='请填写尺寸、体积、重量等信息，方便师傅带齐工具，并为您 准确提供准确报价（您上传的照片非常重要哦~）' type="textarea" border
@@ -40,26 +40,32 @@
 <script>
 	const recorderManager = uni.getRecorderManager();
 	const innerAudioContext = uni.createInnerAudioContext();
-	
 	innerAudioContext.autoplay = true;
 	export default {
 		data() {
 			return {
+				item_id:'',
 				imgArr: [''],
 				textarea1: '',
 				imgArrNum: 0,
 				textarea1Length: 0,
 				voicePath: '',
-				audioStatus:'playing',
-				voiceTime:'00"00"00',
+				audioStatus: 'playing',
+				voiceTime: '00"00"00',
+				bgImg:'',
+				bgName:'',
 			}
 		},
-		onLoad() {
+		onLoad(option) {
+			console.log(option)
 			let that = this;
-			recorderManager.onStop(function(res) {
+			this.item_id = option.item_id;
+			this.bgImg = option.bgImg;
+			this.bgName = option.bgName;
+			recorderManager.onStop(async function(res) {
 				console.log(res)
-				console.log('recorder stop' + JSON.stringify(res));
-				that.voicePath = res.tempFilePath;
+				// await that.$OSSUpload('voice',res.tempFilePath)
+				that.voicePath = await that.$OSSUpload('voice',res.tempFilePath)
 				console.log(that.millisToMinutesAndSeconds(res.duration))
 				that.voiceTime = `00"${that.millisToMinutesAndSeconds(res.duration)}`;
 			});
@@ -70,18 +76,26 @@
 			},
 		},
 		methods: {
-			onSubmit(){
-				console.log(this.imgArr,this.textarea1,this.voicePath)
-				uni.navigateTo({
-					url:'/pages/index/fabuxuqiu/fabuxuqiu'
-				})
+			onSubmit() {
+				// console.log(this.imgArr, this.textarea1, this.voicePath,this.item_id)
+				// uni.navigateTo({
+				// 	url: `/pages/index/fabuxuqiu/fabuxuqiu`
+				// })
+				this.$u.route('/pages/index/fabuxuqiu/fabuxuqiu', {
+					item_id: this.item_id,
+					intro:this.textarea1,
+					images:JSON.stringify(this.imgArr),
+					voice_msg:this.voicePath,
+					bgImg:this.bgImg,
+					bgName:this.bgName,
+				});
 			},
 			millisToMinutesAndSeconds(millis) {
-			  var minutes = Math.floor(millis / 60000);
-			  var seconds = ((millis % 60000) / 1000).toFixed(0);
-			  return `${(minutes < 10 ? '0' : '')}${minutes}"${(seconds < 10 ? '0' : '')}${seconds}`;
+				var minutes = Math.floor(millis / 60000);
+				var seconds = ((millis % 60000) / 1000).toFixed(0);
+				return `${(minutes < 10 ? '0' : '')}${minutes}"${(seconds < 10 ? '0' : '')}${seconds}`;
 			},
-			delVoice(){
+			delVoice() {
 				this.voicePath = '';
 				this.voiceTime = '00"00"00';
 			},
@@ -101,31 +115,17 @@
 					innerAudioContext.play();
 				}
 			},
-			chooseImg(i) {
-				const that = this;
-				uni.chooseImage({
-					count: 1,
-					success: function(res) {
-						const img = JSON.stringify(res.tempFilePaths[0])
-						const newImg = img.substring(1, img.length - 1);
-						that.$set(that.imgArr, i, newImg)
-						if (!that.imgArr[i + 1] && that.imgArr.length != 6) {
-							that.$set(that.imgArr, i + 1, '');
-							that.imgArrNum = that.imgArr.length - 1;
-						} else {
-							that.imgArrNum = 6;
-						}
-						uni.getFileSystemManager().readFile({
-							filePath: newImg, //选择图片返回的相对路径
-							encoding: "base64", //这个是很重要的
-							success: async res => { //成功的回调
-								//返回base64格式
-								// console.log(res.data)
-							}
-						})
-					}
-				});
+			async chooseImg(i) {
+				var img = await this.$OSSUpload('img')
+				this.$set(this.imgArr, i, img)
+				if (!this.imgArr[i + 1] && this.imgArr.length != 6) {
+					this.$set(this.imgArr, i + 1, '');
+					this.imgArrNum = this.imgArr.length - 1;
+				} else {
+					this.imgArrNum = 6;
+				}
 			},
+
 		}
 	}
 </script>
@@ -185,6 +185,7 @@
 				}
 			}
 		}
+
 	}
 
 	.nav2 {
@@ -216,21 +217,24 @@
 			}
 		}
 	}
-	.nav3{
+
+	.nav3 {
 		margin-top: 20rpx;
 		width: 750rpx;
 		height: 116rpx;
 		background: #FFFFFF;
 		display: flex;
 		align-items: center;
-		.tit1{
+
+		.tit1 {
 			margin-left: 50rpx;
 			width: 20rpx;
 			height: 20rpx;
 			background: #D7373F;
 			border-radius: 50%;
 		}
-		.tit2{
+
+		.tit2 {
 			margin-right: 72rpx;
 			margin-left: 26rpx;
 			font-size: 32rpx;
@@ -239,7 +243,8 @@
 			line-height: 42rpx;
 			color: #000000;
 		}
-		.tit3{
+
+		.tit3 {
 			font-size: 24rpx;
 			font-family: Segoe UI;
 			font-weight: 400;
@@ -247,7 +252,8 @@
 			color: #000000;
 			margin-left: 72rpx;
 		}
-		.tit4{
+
+		.tit4 {
 			margin-left: 72rpx;
 			display: flex;
 			align-items: center;
@@ -256,11 +262,13 @@
 			height: 56rpx;
 			background: #4988FD;
 			border-radius: 28rpx;
-			.pic1{
+
+			.pic1 {
 				width: 20rpx;
 				height: 20rpx;
 			}
-			.txt1{
+
+			.txt1 {
 				font-size: 24rpx;
 				font-family: Segoe UI;
 				font-weight: 400;
@@ -268,11 +276,13 @@
 				margin-left: 8rpx;
 			}
 		}
-		.tit5{
+
+		.tit5 {
 			background: #D7373F;
 		}
 	}
-	.nav4{
+
+	.nav4 {
 		margin: 192rpx 54rpx 0 54rpx;
 		width: 642rpx;
 		height: 96rpx;
@@ -285,5 +295,4 @@
 		text-align: center;
 		color: #FFFFFF;
 	}
-
 </style>

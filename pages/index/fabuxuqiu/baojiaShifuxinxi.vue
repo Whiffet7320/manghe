@@ -2,7 +2,7 @@
 	<view class="index">
 		<view class="tit1">多个师傅正在为您报价</view>
 		<view class="tit2">
-			距报价截止还剩：<text class="yellow">1天23小时55分钟</text>
+			距报价截止还剩：<text class="yellow">{{timecha}}</text>
 		</view>
 		<view class="tit3">
 			<u-tabs-swiper bg-color="#F2F3F5" height='80' font-size="28" gutter="40" inactive-color="#707070"
@@ -106,16 +106,17 @@
 								<view class="tit1-1">需求很急？试试联系周边师傅来报价</view>
 								<view class="box1-1">
 									<view class="tit11">
-										<view class="txt11">沙发安装</view>
-										<image class="pic11" src="/static/img/20110309231034811.png" mode=""></image>
+										<view class="txt11">{{obj.item.name}}</view>
+										<image class="pic11" :src="obj.images[0]" mode=""></image>
 									</view>
-									<view class="tit22">
+									<!-- <view class="tit22">
 										<view class="txt11">物品类型（必填）</view>
 										<view class="txt22">皮沙发1个</view>
-									</view>
+									</view> -->
 									<view class="tit33">
 										<view class="txt11">需求说明</view>
-										<view class="txt22">请填写尺寸、体积、dsa 重量等信息</view>
+										<view v-if="obj.intro" class="txt22">{{obj.intro}}</view>
+										<view v-else class="txt22">请填写尺寸、体积、重量等信息</view>
 									</view>
 								</view>
 								<view class="box1-2">
@@ -132,22 +133,22 @@
 									</view>
 									<view class="tit33">
 										<view class="txt1">下单时间</view>
-										<view class="txt2">2021-07-22 14:39</view>
+										<view class="txt2">{{obj.created_at}}</view>
 									</view>
 									<view class="tit33">
 										<view class="txt1">期望上门时间</view>
-										<view class="txt2">2021-07-26 20:00-22:00</view>
+										<view class="txt2">{{qwTime}}</view>
 									</view>
 									<view class="tit44">
 										<view class="tit1">服务地址</view>
 										<view class="tit2">
-											<view class="txt1">浙江省温州市瓯海区</view>
-											<view class="txt1">兴海路将军华府3栋2单元</view>
+											<view class="txt1">{{obj.address.address}}</view>
+											<view class="txt1">{{obj.address.sub_address}}{{obj.address.detail_address}}</view>
 										</view>
 									</view>
 									<view class="tit33">
 										<view class="txt1">服务地址</view>
-										<view class="txt2">李先生 1336456321</view>
+										<view class="txt2">{{obj.address.name}} {{obj.address.phone}}</view>
 									</view>
 								</view>
 							</template>
@@ -169,11 +170,20 @@
 
 <script>
 	export default {
+		onLoad(option) {
+			console.log(option.id)
+			this.id = option.id;
+		},
 		onShow() {
 			this.tabsChange(0)
+			this.getData();
 		},
 		data() {
 			return {
+				id :'',
+				qwTime:'',
+				obj:{},
+				timecha:'',
 				shifuStatus: 2,
 				//
 				swiperCurrentIndex: 0,
@@ -189,6 +199,16 @@
 			}
 		},
 		methods: {
+			async getData(){
+				console.log(this.$api.getDemandQuotes)
+				const res = await this.$api.getDemandQuotes(this.id);
+				console.log(res)
+				this.obj = res.data;
+				this.qwTime = `${this.obj.expect_start_date.slice(0, 10)} ${this.obj.expect_start_date.slice(11, 16)}-${this.obj.expect_end_date.slice(11, 16)}`
+				console.log(this.qwTime)
+				var myData = new Date().getTime()
+				this.timecha = this.DateDifference(myData, this.obj.expiration)
+			},
 			quxiaoDingdan() {
 				uni.navigateTo({
 					url: '/pages/index/shangpinxiangqin/shangpinxiangqin'
@@ -208,6 +228,20 @@
 				uni.navigateTo({
 					url:'/pages/index/fabuxuqiu/shifuxiangqin'
 				})
+			},
+			DateDifference(faultDate, completeTime) {
+				var stime = faultDate;
+				var etime = new Date(completeTime).getTime();
+				var usedTime = etime - stime; //两个时间戳相差的毫秒数
+				var days = Math.floor(usedTime / (24 * 3600 * 1000));
+				//计算出小时数
+				var leave1 = usedTime % (24 * 3600 * 1000); //计算天数后剩余的毫秒数
+				var hours = Math.floor(leave1 / (3600 * 1000));
+				//计算相差分钟数
+				var leave2 = leave1 % (3600 * 1000); //计算小时数后剩余的毫秒数
+				var minutes = Math.floor(leave2 / (60 * 1000));
+				var time = days + "天" + hours + "时" + minutes + "分";
+				return time;
 			},
 		}
 	}
@@ -785,6 +819,8 @@
 				}
 			}
 		}
+	
+	
 	}
 
 	.footer {

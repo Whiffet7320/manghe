@@ -107,6 +107,36 @@
           "pathName": "pages/index/shangpinxiangqin/shangpinxiangqin",
           "query": "id=1",
           "scene": null
+        },
+        {
+          "name": "pages/index/fabuxuqiu/fabuxuqiu",
+          "pathName": "pages/index/fabuxuqiu/fabuxuqiu",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/wode/shouhuodizhi/shouhuodizhi",
+          "pathName": "pages/wode/shouhuodizhi/shouhuodizhi",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/index/fabuxuqiu/xiadan",
+          "pathName": "pages/index/fabuxuqiu/xiadan",
+          "query": "item_id=1",
+          "scene": null
+        },
+        {
+          "name": "pages/wode/weixinshouquan/weixinshouquan",
+          "pathName": "pages/wode/weixinshouquan/weixinshouquan",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/dingdan/dingdan",
+          "pathName": "pages/dingdan/dingdan",
+          "query": "",
+          "scene": null
         }
       ]
     }

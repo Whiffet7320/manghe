@@ -43,7 +43,7 @@
 		<view v-if="chooseTop2" class="nav2">
 			<view @click="cTop2Btn1('全部订单')" :class="{'btn':true,'active':top2Value=='全部订单'}">全部订单</view>
 			<!-- <view @click="cTop2Btn1('发布订单')" :class="{'btn':true,'active':top2Value=='发布订单'}">发布订单</view> -->
-			<!-- <view @click="cTop2Btn1('服务中')" :class="{'btn':true,'active':top2Value=='服务中'}">服务中</view> -->
+			<view @click="cTop2Btn1('未选择师傅')" :class="{'btn':true,'active':top2Value=='未选择师傅'}">未选择师傅</view>
 			<view @click="cTop2Btn1('等待付款')" :class="{'btn':true,'active':top2Value=='等待付款'}">等待付款</view>
 			<view @click="cTop2Btn1('等待上门')" :class="{'btn':true,'active':top2Value=='等待上门'}">等待上门</view>
 			<view @click="cTop2Btn1('正在服务')" :class="{'btn':true,'active':top2Value=='正在服务'}">正在服务</view>
@@ -250,9 +250,9 @@
 			</view>
 		</view>
 		<view v-if="current == 1" class="items">
-			<view class="item">
+			<view class="item" v-for="item in list" :key='item.id'>
 				<!-- 交易关闭 -->
-				<template>
+<!-- 				<template>
 					<view class="tit11">
 						<view class="tit1">交易关闭</view>
 						<view @click="toXiangqin(2)" class="tit1-3">查看详情</view>
@@ -287,7 +287,7 @@
 						<view class="txt1">删除订单</view>
 						<view class="txt2">重新发布</view>
 					</view>
-				</template>
+				</template> -->
 				<!-- 发布订单 -->
 				<!-- <template>
 					<view class="tit11">
@@ -326,11 +326,11 @@
 						<view class="txt2">重新发布</view>
 					</view>
 				</template> -->
-				<!-- 等待付款 -->
-				<template>
+				<!-- 未选择师傅 -->
+				<template v-if="item.status == 0">
 					<view class="tit11">
-						<view class="tit1">等待付款</view>
-						<view @click="toXiangqin(2)" class="tit1-3">查看详情</view>
+						<view class="tit1">未选择师傅</view>
+						<view @click="toXiangqin(2,item.id)" class="tit1-3">查看详情</view>
 					</view>
 					<view class="tit2">
 						<view class="txt1">
@@ -346,18 +346,60 @@
 					</view>
 					<view class="tit2">
 						<view class="txt1">
-							下单时间：<text class="black">2021-07-22 14:39</text>
+							下单时间：<text class="black">{{item.created_at}}</text>
 						</view>
 					</view>
 					<view class="tit3">
-						<image class="pic1" src="/static/img/1229310763000_mthumb.png" mode=""></image>
-						<view class="txt1" @click="toxuanzeshifu">
-							<view v-if="!ischooseShifu" class="txt1-1">1位师傅已报价</view>
-							<view v-else class="txt1-1">师傅已接单</view>
-							<u-icon name="arrow-right" color="#707070" size="20"></u-icon>
+						<image class="pic1" mode=""></image>
+						<view class="txt1">
+							<!-- <view v-if="!ischooseShifu" class="txt1-1">1位师傅已报价</view>
+							<view v-else class="txt1-1">师傅已接单</view> -->
+							<view v-if="item.quotes_count == 0" class="txt1-1">暂无师傅报价</view>
+							<view v-else  @click="toxuanzeshifu(item.id)" class="txt1-1">{{item.quotes_count}}位师傅已报价</view>
+							<u-icon v-if="item.quotes_count != 0" @click="toxuanzeshifu(item.id)" name="arrow-right" color="#707070" size="20"></u-icon>
 						</view>
 					</view>
 					<!-- <view class="tit4">￥200.00</view> -->
+					<view class="heng"></view>
+					<view class="tit5">
+						<view v-if="!ischooseShifu" class="txt3">倒计时：23:59:59</view>
+						<view class="txt1" @click="quxiaoDD('2')">取消订单</view>
+						<view @click="toPay" :class="{'txt2':true,'active':!ischooseShifu}">去支付</view>
+					</view>
+				</template>
+				<!-- 等待付款 -->
+				<template v-if="item.status == 1">
+					<view class="tit11">
+						<view class="tit1">等待付款</view>
+						<view @click="toXiangqin(2,item.id)" class="tit1-3">查看详情</view>
+					</view>
+					<view class="tit2">
+						<view class="txt1">
+							订单编号：<text class="black">2C07222052609</text>
+						</view>
+						<view class="shu"></view>
+						<view @click="fuzhi" class="txt2">复制</view>
+					</view>
+					<view class="tit2">
+						<view class="txt1">
+							服务类目：<text class="black">沙发安装</text>
+						</view>
+					</view>
+					<view class="tit2">
+						<view class="txt1">
+							下单时间：<text class="black">{{item.created_at}}</text>
+						</view>
+					</view>
+					<view class="tit3">
+						<image v-if="item.selected_quote.user_info.avatar" class="pic1" :src="item.selected_quote.user_info.avatar" mode=""></image>
+						<image v-else class="pic1" src="/static/img/1229310763000_mthumb.png" mode=""></image>
+						<view class="txt1" @click="toxuanzeshifu(item.id)">
+							<!-- <view v-if="!ischooseShifu" class="txt1-1">1位师傅已报价</view> -->
+							<!-- <view v-else class="txt1-1">师傅已接单</view>
+							<u-icon name="arrow-right" color="#707070" size="20"></u-icon> -->
+						</view>
+					</view>
+					<view class="tit4">￥{{item.selected_quote.price}}</view>
 					<view class="heng"></view>
 					<view class="tit5">
 						<view v-if="!ischooseShifu" class="txt3">倒计时：23:59:59</view>
@@ -401,7 +443,7 @@
 					</view>
 				</template> -->
 				<!-- 等待上门 -->
-				<template>
+				<template v-if="item.status == 2">
 					<view class="tit11">
 						<view class="tit1">等待上门</view>
 						<view class="tit1-3">查看详情</view>
@@ -444,7 +486,7 @@
 					</view>
 				</template>
 				<!-- 正在服务 -->
-				<template>
+				<template v-if="item.status == 3">
 					<view class="tit11">
 						<view class="tit1">正在服务</view>
 						<view class="tit1-3">查看详情</view>
@@ -482,7 +524,7 @@
 					</view>
 				</template>
 				<!-- 已完成 -->
-				<template>
+				<template v-if="item.status == 4">
 					<view class="tit11">
 						<view class="tit1">已完成</view>
 						<view class="tit1-3">查看详情</view>
@@ -524,9 +566,25 @@
 </template>
 
 <script>
+	import {
+		mapState
+	} from "vuex";
 	export default {
+		computed: {
+			...mapState(["dingdanPage", "dingdanPageSize"]),
+		},
+		watch: {
+			dingdanPage: function(page) {
+				console.log('ddpage')
+				this.$store.commit("dingdanPage", page);
+				if (this.dingdanPage != 1) {
+					this.getData();
+				}
+			},
+		},
 		data() {
 			return {
+				list:[],
 				quxiaoStatus:'1',
 				quxxiaoDDRal:'',
 				quxiaoDDshow: false,
@@ -538,9 +596,46 @@
 				top1Value: '',
 				top2Value: '',
 				current: 0,
+				// 加载
+				status: 'loadmore',
+				iconType: 'flower',
+				loadText: {
+					loadmore: '上拉加载更多',
+					loading: '正在加载...',
+					nomore: '没有了更多了'
+				},
 			}
 		},
+		async onShow() {
+			this.list = [];
+			this.getData()
+			this.$store.commit("dingdanPage", 1);
+		},
+		onReachBottom() {
+			this.$store.commit("dingdanPage", this.dingdanPage + 1);
+		},
 		methods: {
+			async getData(){
+				this.status = 'loading';
+				if (this.clock) {
+					this.list = [];
+					this.clock = false;
+				}
+				setTimeout(async () => {
+					const res = await this.$api.getDemandQuotesList({
+						page: this.dingdanPage,
+						limit: this.dingdanPageSize,
+					})
+					console.log(res)
+					if (res.data.data.length == 0) {
+						this.status = 'nomore'
+					} else {
+						this.status = 'loadmore';
+						console.log(this.list)
+						this.list = this.list.concat(res.data.data)
+					}
+				}, 200)
+			},
 			toPay() {
 				if (!this.ischooseShifu) {
 					this.$refs.uToast.show({
@@ -564,14 +659,14 @@
 			radioGroupChange(){
 				console.log(this.quxxiaoDDRal)
 			},
-			toXiangqin(val) {
+			toXiangqin(val,id) {
 				uni.navigateTo({
-					url: `/pages/dingdan/chakanxiangqin/chakanxiangqin?status=${val}`
+					url: `/pages/dingdan/chakanxiangqin/chakanxiangqin?status=${val}&id=${id}`
 				})
 			},
-			toxuanzeshifu() {
+			toxuanzeshifu(id) {
 				uni.navigateTo({
-					url: '/pages/dingdan/xuanzeshifu/xuanzeshifu'
+					url: `/pages/dingdan/xuanzeshifu/xuanzeshifu?id=${id}`
 				})
 			},
 			chooesTop(val) {

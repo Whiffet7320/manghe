@@ -1,8 +1,9 @@
 <template>
 	<view class="index">
+		<u-modal v-model="modelshow" @confirm='qieHuan' show-cancel-button :content="modelContent"></u-modal>
 		<u-select v-model="nav1Show" mode="mutil-column-auto" @confirm='changeCity2' :list="cityList"></u-select>
 		<view class="nav1">
-			<view @click="changeCity" class="txt1">温州市</view>
+			<view @click="changeCity" class="txt1">{{myCity}}</view>
 			<u-icon name="arrow-down" color="#000000" size="20"></u-icon>
 			<view class="shu"></view>
 			<u-icon name="search" color="#999999" size="26"></u-icon>
@@ -172,20 +173,22 @@
 	export default {
 		data() {
 			return {
+				modelshow:false,
+				modelContent:'',
 				cityList: [], //城市列表
 				nav1Show: false,
 				keyword: '',
 				bannerTop: [],
-				banner1:[],
-				banner2:[],
-				homeList1:{},
-				homeList2:{},
-				homeList3:{},
-				articles:[],
-				articlesFirst:{},
-				craftsman_count:0,
-				order_count:0,
-				good_reputation:0,
+				banner1: [],
+				banner2: [],
+				homeList1: {},
+				homeList2: {},
+				homeList3: {},
+				articles: [],
+				articlesFirst: {},
+				craftsman_count: 0,
+				order_count: 0,
+				good_reputation: 0,
 				tzlist: [
 					'寒雨连江夜入吴',
 					'平明送客楚山孤',
@@ -194,10 +197,19 @@
 				],
 				animationDuration: '10s', // 动画执行时间
 				animationPlayState: 'paused', // 动画的开始和结束执行
+				addressObj: null,
+				province: '',
+				city: '',
+				myCity:'选择城市',
+				area_id: '',
+				isqieHuan:false,
 			}
 		},
-		created() {
-			this.getData()
+		onLoad() {
+			this.getAddress()
+			setTimeout(() => {
+				this.getData()
+			}, 300)
 		},
 		methods: {
 			async getData() {
@@ -207,18 +219,24 @@
 				this.order_count = res2.data.order_count;
 				this.good_reputation = res2.data.good_reputation;
 				this.bannerTop = res2.data.banner_top;
-				this.banner1 = res2.data.banner_1.slice(0,3);
+				this.banner1 = res2.data.banner_1.slice(0, 3);
 				this.banner2 = res2.data.banner_2;
 				this.homeList1 = res2.data.homeList_1;
-				this.homeList1.items = this.homeList1.items.slice(0,6);
+				this.homeList1.items = this.homeList1.items.slice(0, 6);
 				this.homeList2 = res2.data.homeList_2;
-				this.homeList2.items = this.homeList2.items.slice(0,6);
+				this.homeList2.items = this.homeList2.items.slice(0, 6);
 				this.homeList3 = res2.data.homeList_3;
-				this.homeList3.items = this.homeList3.items.slice(0,6);
+				this.homeList3.items = this.homeList3.items.slice(0, 6);
 				this.articles = res2.data.articles.slice(1);
-				this.articlesFirst = res2.data.articles.slice(0,1)[0];
+				this.articlesFirst = res2.data.articles.slice(0, 1)[0];
 				const res = await this.$api.cities()
-				console.log(res)
+				const myAddress = res.data.filter(ele => {
+					return ele.name == this.province
+				})
+				const myCity = myAddress[0].children.filter(ele => {
+					return ele.name == this.city
+				})
+				this.area_id = myCity[0].id;
 				this.cityList = res.data;
 				let keymap = {
 					name: "label",
@@ -231,8 +249,8 @@
 							ele[newKey] = ele[keys]
 							delete ele[keys]
 						}
-						if(ele.children && ele.children.length>0){
-							ele.children.forEach(item=>{
+						if (ele.children && ele.children.length > 0) {
+							ele.children.forEach(item => {
 								let newKey2 = keymap[keys]
 								if (newKey2) {
 									item[newKey2] = item[keys]
@@ -242,11 +260,52 @@
 						}
 					})
 				})
-				console.log(this.cityList)
+				console.log(this.area_id)
+				if(this.isqieHuan){
+					this.myCity = this.city;
+					this.setUser();
+				}
 			},
-			toXiangqin(item){
+			async setUser() {
+				await this.$api.userInfo({
+					area_id: this.area_id
+				})
+			},
+			getAddress() {
+				const that = this;
+				uni.getLocation({
+					success(res) {
+						console.log(res, 'res')
+						let params = {
+							key: '52ad0cb98f8b948f42ab9293c027877e',
+							// location: `${120.63768},${28.00708}`
+							location: `${res.longitude},${res.latitude}`
+						}
+						uni.request({
+							url: 'https://restapi.amap.com/v3/geocode/regeo',
+							data: params,
+							success(ress) {
+								// console.log(ress.data.regeocode.addressComponent)
+								that.addressObj = ress.data.regeocode.addressComponent;
+								that.province = that.addressObj.province;
+								that.city = that.addressObj.city;
+								that.modelContent = `您当前定位在${that.city},是否切换城市`
+								if(that.city != that.myCity){
+									that.modelshow = true;
+								}
+							}
+						})
+					}
+				})
+			},
+			async qieHuan(){
+				this.isqieHuan = true;
+				this.myCity = this.city;
+				this.setUser();
+			},
+			toXiangqin(item) {
 				uni.navigateTo({
-					url:`/pages/index/shangpinxiangqin/shangpinxiangqin?id=${item.id}`
+					url: `/pages/index/shangpinxiangqin/shangpinxiangqin?id=${item.id}`
 				})
 			},
 			changeCity() {
@@ -254,6 +313,9 @@
 			},
 			changeCity2(e) {
 				console.log(e)
+				this.area_id = e[1].value;
+				this.myCity = e[1].label;
+				this.setUser();
 			},
 			toZhuanpan() {
 				uni.navigateTo({

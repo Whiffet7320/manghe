@@ -3,22 +3,24 @@
 		<view class="shifu-item" v-if="status == 2">
 			<view class="sf-tit1">
 				<view class="sf-txt1">
-					<view class="sf-txt1-1">07-22 11:11</view>
+					<view class="sf-txt1-1">{{obj.created_at}}</view>
 					<view class="sf-txt1-2">支付金额</view>
 				</view>
-				<view class="sf-txt2">￥<text class="big">260.00</text></view>
+				<view class="sf-txt2">￥<text class="big">{{obj.selected_quote.price}}</text></view>
 			</view>
 			<view @click="toShifuxiangqin" class="sf-tit3">
-				<image class="pic1" src="/static/img/1229310763000_mthumb.png" mode=""></image>
+				<image v-if="obj.selected_quote.user_info.avatar" class="pic1" :src="obj.selected_quote.user_info.avatar" mode=""></image>
+				<image v-else class="pic1" src="/static/img/1229310763000_mthumb.png" mode=""></image>
 				<view class="sf-right">
 					<view class="sf-txt1">
-						<view class="txt1-1">程师傅</view>
+						<view class="txt1-1">{{obj.selected_quote.user_info.nick_name}}</view>
 						<u-icon name="arrow-right" color="#707070" size="24"></u-icon>
 					</view>
 					<view class="sf-txt2">
-						<view class="txt2-1">服务40次</view>
+						<view class="txt2-1">服务{{obj.selected_quote.craftsman_info.service_count}}次</view>
 						<view class="shu"></view>
-						<view class="txt2-1">好评率100%</view>
+						<view v-if="obj.selected_quote.craftsman_info.good_rep" class="txt2-1">好评率{{obj.selected_quote.craftsman_info.good_rep}}%</view>
+						<view v-else class="txt2-1">暂无</view>
 					</view>
 				</view>
 				<image class="pic2" src="/static/img/zu61.png" mode=""></image>
@@ -41,22 +43,22 @@
 		<view :class="{'box1-1':true,'myheight':status == 1}">
 			<view v-if="status == 1" class="sf-tit1">
 				<view class="sf-txt1">
-					<view class="sf-txt1-1">07-22 11:11</view>
+					<view class="sf-txt1-1">{{obj.created_at}}</view>
 					<view class="sf-txt1-2">支付金额</view>
 				</view>
-				<view class="sf-txt2">￥<text class="big">260.00</text></view>
+				<view class="sf-txt2">￥<text class="big">{{obj.selected_quote.price}}</text></view>
 			</view>
 			<view class="tit11">
-				<view class="txt11">沙发安装</view>
-				<image class="pic11" src="/static/img/20110309231034811.png" mode=""></image>
+				<view class="txt11">{{obj.item.name}}</view>
+				<image class="pic11" :src="obj.images[0]" mode=""></image>
 			</view>
-			<view class="tit22">
+<!-- 			<view class="tit22">
 				<view class="txt11">物品类型（必填）</view>
 				<view class="txt22">皮沙发1个</view>
-			</view>
+			</view> -->
 			<view class="tit33">
 				<view class="txt11">需求说明</view>
-				<view class="txt22">请填写尺寸、体积、dsa 重量等信息</view>
+				<view class="txt22">{{obj.intro}}</view>
 			</view>
 		</view>
 		<view class="box1-2">
@@ -73,22 +75,22 @@
 			</view>
 			<view class="tit33">
 				<view class="txt1">下单时间</view>
-				<view class="txt2">2021-07-22 14:39</view>
+				<view class="txt2">{{obj.created_at}}</view>
 			</view>
 			<view class="tit33">
 				<view class="txt1">期望上门时间</view>
-				<view class="txt2">2021-07-26 20:00-22:00</view>
+				<view class="txt2">{{qwTime}}</view>
 			</view>
 			<view class="tit44">
 				<view class="tit1">服务地址</view>
 				<view class="tit2">
-					<view class="txt1">浙江省温州市瓯海区</view>
-					<view class="txt1">兴海路将军华府3栋2单元</view>
+					<view class="txt1">{{obj.address.address}}</view>
+					<view class="txt1">{{obj.address.sub_address}}{{obj.address.detail_address}}</view>
 				</view>
 			</view>
 			<view class="tit33">
-				<view class="txt1">服务地址</view>
-				<view class="txt2">李先生 1336456321</view>
+				<view class="txt1">服务客户</view>
+				<view class="txt2">{{obj.address.name}} {{obj.address.phone}}</view>
 			</view>
 		</view>
 	</view>
@@ -99,13 +101,26 @@
 		data() {
 			return {
 				status:null,
+				id:'',
+				obj:null,
+				qwTime:'',
 			}
 		},
 		onLoad(option){
 			console.log(option)
 			this.status = option.status;
+			this.id = option.id;
+		},
+		onShow() {
+			this.getData()
 		},
 		methods: {
+			async getData(){
+				const res = await this.$api.getDemandQuotesListXq(this.id);
+				console.log(res)
+				this.obj = res.data;
+				this.qwTime = `${this.obj.expect_start_date.slice(0, 10)} ${this.obj.expect_start_date.slice(11, 16)}-${this.obj.expect_end_date.slice(11, 16)}`
+			},
 			toShifuxiangqin() {
 				uni.navigateTo({
 					url: '/pages/index/fabuxuqiu/shifuxiangqin'

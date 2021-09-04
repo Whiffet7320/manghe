@@ -35,7 +35,7 @@
 			<view class="tit1">总计 ￥<text class="big">{{AllShopPrice}}</text></view>
 			<view class="tit2">结算({{checkNum}})</view>
 		</view>
-		<view v-else @click="onDelShop" class="footer del">删除</view>
+		<view v-else @click="onDelShop" class="del">删除</view>
 	</view>
 </template>
 
@@ -264,7 +264,11 @@
 			text-align: center;
 		}
 	}
-	.footer.del{
+	.del{
+		position: fixed;
+		bottom: 0;
+		width: 750rpx;
+		height: 120rpx;
 		background: #D7373F;
 		font-size: 48rpx;
 		font-family: Segoe UI;

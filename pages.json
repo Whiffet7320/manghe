@@ -103,23 +103,6 @@
 			}]
 		},
 		{
-			"root": "pages/index/shouhuoxinxi",
-			"pages": [{
-				"path": "shouhuoxinxi",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "收货信息",
-					"enablePullDownRefresh": false
-				}
-			}, {
-				"path": "xinjian",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "新建地址",
-					"enablePullDownRefresh": false
-				}
-			}]
-		}, {
 			"root": "pages/index/zhuanpan",
 			"pages": [{
 				"path": "zhuanpan",
