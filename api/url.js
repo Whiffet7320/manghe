@@ -19,4 +19,16 @@ export default {
 	getDemandQuotesList:'/api/demand-quotes',//用户服务订单列表
 	getDemandQuotesListXq:'/api/demand-quotes',//用户需要报价单详情
 	selectDemandQuotes:'/api/demand-quotes',//选择师傅
+	demandQuotesIdPreOrder:'/api/demand-quotes',//预订单
+	order:'/api/order',//创建订单
+	coupons:'/api/coupons',//优惠券列表
+	pay:'/api/pay',//付款
+	user:'/api/user',//账户信息
+	moneyRecord:'/api/money-record',//金钱记录
+	demandQuotesIidCancel:'/api/demand-quotes',//取消订单
+	orderIdComment:'/api/order',//添加评论
+	orderIdCommentXq:'/api/order',//评论详情
+	feedbacksTypes:'/api/feedbacks-types',//反馈类型
+	feedbacks:'/api/feedbacks',//新增反馈
+	itemsItemIdComments:'/api/items',//商品评论列表
 }

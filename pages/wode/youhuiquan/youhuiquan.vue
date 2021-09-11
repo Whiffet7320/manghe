@@ -12,20 +12,20 @@
 							<!-- {{item.name}} -->
 							<!-- 未使用 -->
 							<template v-if="swiperCurrent == 0">
-								<view class="item" v-for="item in 3">
-									<image class="pic1" src="../../../static/img/zu22.png" mode=""></image>
+								<view class="item" v-for="item in dataList" :key='item.id'>
+									<image class="pic1" src="/static/img/zu22.png" mode=""></image>
 									<view class="txt1">现金券</view>
 									<view class="txt2">
-										<view class="txt2-1">￥<text class="big">20</text></view>
-										<view class="txt2-2">满280元可用</view>
+										<view class="txt2-1">￥<text class="big">{{item.discount}}</text></view>
+										<view class="txt2-2">满{{item.limit}}元可用</view>
 									</view>
-									<view class="txt3">20元通用券</view>
-									<view class="txt4">2021.07.06-2021.08.06</view>
+									<view class="txt3">{{item.discount}}元通用券</view>
+									<view class="txt4">{{item.created_at}}-{{item.expiration_time}}</view>
 									<view class="txt5">全站通用</view>
 									<view class="txt6">可转赠</view>
 									<view class="xuxian"></view>
 									<view class="txt7">
-										<image class="pic1" src="../../../static/img/zhuanfa.png" mode=""></image>
+										<image class="pic1" src="/static/img/zhuanfa.png" mode=""></image>
 										<view class="txt7-1">转赠好友</view>
 									</view>
 									<view class="shixian"></view>
@@ -34,20 +34,20 @@
 							</template>
 							<!-- 已使用 -->
 							<template v-if="swiperCurrent == 1">
-								<view class="item" v-for="item in 8">
-									<image class="pic1" src="../../../static/img/zu24.png" mode=""></image>
+								<view class="item" v-for="item in dataList" :key='item.id'>
+									<image class="pic1" src="/static/img/zu24.png" mode=""></image>
 									<view class="txt1">现金券</view>
 									<view class="txt2">
-										<view class="txt2-1">￥<text class="big">20</text></view>
-										<view class="txt2-2">满280元可用</view>
+										<view class="txt2-1">￥<text class="big">{{item.discount}}</text></view>
+										<view class="txt2-2">满{{item.limit}}元可用</view>
 									</view>
-									<view class="txt3">20元通用券</view>
-									<view class="txt4">2021.07.06-2021.08.06</view>
+									<view class="txt3">{{item.discount}}元通用券</view>
+									<view class="txt4">{{item.created_at}}-{{item.expiration_time}}</view>
 									<view class="txt5">全站通用</view>
 									<view class="txt6">已使用</view>
 									<view class="xuxian"></view>
 									<view class="txt7">
-										<image class="pic1" src="../../../static/img/zhuanfa.png" mode=""></image>
+										<image class="pic1" src="/static/img/zhuanfa.png" mode=""></image>
 										<view class="txt7-1">转赠好友</view>
 									</view>
 									<view class="shixian"></view>
@@ -56,20 +56,20 @@
 							</template>
 							<!-- 已过期 -->
 							<template v-if="swiperCurrent == 2">
-								<view class="item" v-for="item in 4">
-									<image class="pic1" src="../../../static/img/zu24.png" mode=""></image>
+								<view class="item" v-for="item in dataList" :key='item.id'>
+									<image class="pic1" src="/static/img/zu24.png" mode=""></image>
 									<view class="txt1">现金券</view>
 									<view class="txt2">
-										<view class="txt2-1">￥<text class="big">20</text></view>
-										<view class="txt2-2">满280元可用</view>
+										<view class="txt2-1">￥<text class="big">{{item.discount}}</text></view>
+										<view class="txt2-2">满{{item.limit}}元可用</view>
 									</view>
-									<view class="txt3">20元通用券</view>
-									<view class="txt4">2021.07.06-2021.08.06</view>
+									<view class="txt3">{{item.discount}}元通用券</view>
+									<view class="txt4">{{item.created_at}}-{{item.expiration_time}}</view>
 									<view class="txt5">全站通用</view>
 									<view class="txt6">已过期</view>
 									<view class="xuxian"></view>
 									<view class="txt7">
-										<image class="pic1" src="../../../static/img/zhuanfa.png" mode=""></image>
+										<image class="pic1" src="/static/img/zhuanfa.png" mode=""></image>
 										<view class="txt7-1">转赠好友</view>
 									</view>
 									<view class="shixian"></view>
@@ -99,20 +99,19 @@
 			youhuiquanPage: function(page) {
 				console.log('ddpage')
 				this.$store.commit("youhuiquanPage", page);
-				// if (this.youhuiquanPage != 1) {
-				// 	this.getData();
-				// }
+				if (this.youhuiquanPage != 1) {
+					this.getData();
+				}
 			},
 		},
-		// onLoad(option) {
-		// 	this.orders_status = option.orders_status
-		// 	this.current = +option.orders_status + 1;
-		// 	console.log(this.current)
-		// },
 		data() {
 			return {
 				swiperCurrentIndex: 0,
 				height: 0,
+				// type:0,
+				dataList:[],
+				// dataList2:[],
+				// dataList3:[],
 				list: [{
 					name: '未使用(0)'
 				}, {
@@ -136,6 +135,7 @@
 		onShow() {
 			this.tabsChange(this.current)
 			this.$store.commit("youhuiquanPage", 1);
+			// this.getData();
 		},
 		mounted() {
 			this.getCurrentSwiperHeight('.items')
@@ -144,6 +144,31 @@
 		// 	this.$store.commit("youhuiquanPage", this.youhuiquanPage + 1);
 		// },
 		methods:{
+			async getData(){
+				this.status = 'loading';
+				setTimeout(async () => {
+					const res = await this.$api.coupons({
+						page: this.youhuiquanPage,
+						limit: this.youhuiquanPageSize,
+						type: this.current,
+					})
+					console.log(res)
+					this.total = res.data.total;
+					if (res.data.data.length == 0) {
+						this.status = 'nomore'
+					} else {
+						this.status = 'loadmore';
+						this.dataList = this.dataList.concat(res.data.data)
+						// if(this.current == 0){
+						// 	this.dataList1 = this.dataList1.concat(res.data.data)
+						// }else if(this.current == 1){
+						// 	this.dataList2 = this.dataList2.concat(res.data.data)
+						// }else if(this.current == 2){
+						// 	this.dataList3 = this.dataList3.concat(res.data.data)
+						// }
+					}
+				}, 200)
+			},
 			lower() {
 				this.$store.commit("youhuiquanPage", this.youhuiquanPage + 1);
 			},
@@ -153,15 +178,17 @@
 				this.swiperCurrent = index;
 				this.current = index;
 				this.swiperCurrentIndex = index;
+				this.dataList = [];
+				this.$store.commit("youhuiquanPage", 1);
+				this.getData();
 				setTimeout(()=>{
 					this.getCurrentSwiperHeight('.items')
-				},500)
+				},800)
 			},
 			getCurrentSwiperHeight(element) {
 				let query = uni.createSelectorQuery().in(this);
 				query.selectAll(element).boundingClientRect();
 				query.exec((res) => {
-					console.log(res, 'res', this.swiperCurrentIndex)
 					this.height = 50 + res[0][this.swiperCurrentIndex].height;
 				})
 			},
@@ -217,14 +244,13 @@
 				.txt2-1 {
 					height: 88rpx;
 					font-size: 22rpx;
-					font-family: Microsoft Himalaya;
 					font-weight: 400;
 					// line-height: 144rpx;
 					color: #FFFFFF;
 					opacity: 1;
 
 					.big {
-						font-size: 120rpx;
+						font-size: 64rpx;
 					}
 				}
 
@@ -250,10 +276,9 @@
 			}
 			.txt4{
 				position: absolute;
-				top: 66rpx;
+				top: 56rpx;
 				left: 250rpx;
-				font-size: 28rpx;
-				font-family: Microsoft Himalaya;
+				font-size: 18rpx;
 				font-weight: 400;
 				line-height: 34rpx;
 				color: #707070;
@@ -264,7 +289,6 @@
 				top: 96rpx;
 				left: 250rpx;
 				font-size: 22rpx;
-				font-family: Microsoft Himalaya;
 				font-weight: 400;
 				line-height: 26rpx;
 				color: #707070;
@@ -273,7 +297,7 @@
 			.txt6{
 				transform: rotate(45deg);
 				position: absolute;
-				top: 16rpx;
+				top: 18rpx;
 				right: 6rpx;
 				font-size: 20rpx;
 				font-family: Segoe UI;

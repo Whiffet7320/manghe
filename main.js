@@ -14,8 +14,8 @@ Vue.use(uView);
 
 // 阿里云上传oss图片
 function ossUpload(val, tempFilePath = '') {
+	const that = this;
 	return new Promise(async (resolve, reject) => {
-		const that = this;
 		const date = new Date();
 		date.setHours(date.getHours() + 1);
 		const policyText = {
@@ -25,6 +25,7 @@ function ossUpload(val, tempFilePath = '') {
 				["content-length-range", 0, 1024 * 1024 * 1024],
 			],
 		};
+		
 		let tiemr = new Date();
 		let address = tiemr.getFullYear() + '' + (tiemr.getMonth() + 1) + '' + tiemr
 			.getDate();
@@ -32,12 +33,14 @@ function ossUpload(val, tempFilePath = '') {
 		const res1 = await that.$api.uploadToken();
 		const signature = crypto.enc.Base64.stringify(crypto.HmacSHA1(
 			policy, res1.data.accessKeySecret));
+			signature
 		if (val == 'img') {
 			// 上传图片
 			uni.chooseImage({
 				count: 1,
 				success: async function(res) {
 					var imageSrc = res.tempFilePaths[0];
+					console.log(imageSrc)
 					let str = res.tempFilePaths[0].substr(res.tempFilePaths[0].lastIndexOf(
 						'.'));
 					let nameStr = address + tiemr.getTime() + str;

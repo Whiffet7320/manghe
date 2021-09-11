@@ -1,5 +1,7 @@
 {
   "navigationBarTitleText": "优惠券",
   "enablePullDownRefresh": false,
-  "usingComponents": {}
+  "usingComponents": {
+    "u-toast": "/node-modules/uview-ui/components/u-toast/u-toast"
+  }
 }

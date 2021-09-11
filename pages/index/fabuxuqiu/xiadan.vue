@@ -117,6 +117,7 @@
 			},
 			async chooseImg(i) {
 				var img = await this.$OSSUpload('img')
+				console.log(img)
 				this.$set(this.imgArr, i, img)
 				if (!this.imgArr[i + 1] && this.imgArr.length != 6) {
 					this.$set(this.imgArr, i + 1, '');

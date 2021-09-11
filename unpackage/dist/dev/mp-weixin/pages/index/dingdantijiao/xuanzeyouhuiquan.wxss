@@ -54,6 +54,11 @@ page {
 /* 垂直间距 */
 /* 透明度 */
 /* 文章场景相关 */
+.noYhq.data-v-3a4c65da {
+  font-size: 30rpx;
+  text-align: center;
+  padding-top: 20rpx;
+}
 .nav1.data-v-3a4c65da {
   margin-top: 22rpx;
   margin-bottom: 120rpx;

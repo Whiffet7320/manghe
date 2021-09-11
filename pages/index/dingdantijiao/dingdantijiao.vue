@@ -1,34 +1,39 @@
 <template>
 	<view class="index">
+		<u-toast ref="uToast" />
 		<view class="nav1">
-			<image class="pic1" src="/static/img/1229310763000_mthumb.png" mode=""></image>
+			<image class="pic1" :src="obj.selected_quote.user_info.avatar" mode=""></image>
 			<view class="tit1">
-				<view class="txt1">叶师傅</view>
+				<view class="txt1">{{obj.selected_quote.user_info.nick_name}}</view>
 				<view class="txt2">
-					<view class="txt2-1">服务40次</view>
+					<view class="txt2-1">服务{{obj.selected_quote.craftsman_info.service_count}}次</view>
 					<view class="shu"></view>
-					<view class="txt2-1">好评率100%</view>
+					<view v-if="obj.selected_quote.craftsman_info.good_rep" class="txt2-1">
+						好评率{{obj.selected_quote.craftsman_info.good_rep}}%</view>
+					<view v-else class="txt2-1">暂无</view>
 				</view>
 			</view>
 		</view>
 		<view class="nav2">
 			<view class="tit1">
-				<view class="txt1">床体安装</view>
-				<image class="pic1" src="/static/img/1229310763000_mthumb.png" mode=""></image>
+				<view class="txt1">{{obj.item.name}}</view>
+				<image class="pic1" :src="obj.images[0]" mode=""></image>
 			</view>
 			<view class="tit2">
 				<view class="txt1">师傅报价</view>
-				<view class="txt2">￥260</view>
+				<view class="txt2">￥{{obj.selected_quote.price}}</view>
 			</view>
 		</view>
 		<view class="nav3" @click="toxuanzeyouhuiquan">
 			<view class="left">
 				<image class="pic1" src="/static/img/zu87.png" mode=""></image>
 				<view class="txt1">优惠券</view>
-				<view class="txt2">已选1张现金券</view>
+				<view v-if="option.discount" class="txt2">已选1张现金券</view>
+				<view v-else class="txt2">您还未选优惠券</view>
 			</view>
 			<view class="right">
-				<view class="txt1">-15.00</view>
+				<view v-if="option.discount" class="txt1">-{{option.discount}}</view>
+				<!-- <view v-else class="txt1">-15.00</view> -->
 				<u-icon name="arrow-right" color="#707070" size="20"></u-icon>
 			</view>
 		</view>
@@ -54,13 +59,15 @@
 				<view v-else class="tit3"></view>
 			</view>
 		</view>
+	
 		<view class="footer">
 			<view class="right">
 				<view class="tit1">
-					￥245.00<text class="small">（优惠券抵扣15元）</text>
+					￥{{Number(obj.selected_quote.price)-yhqPrice}}<text v-if="option.discount"
+						class="small">（优惠券抵扣{{option.discount}}元）</text>
 				</view>
 			</view>
-			<view class="left">去支付</view>
+			<view @click="pay" class="left">去支付</view>
 		</view>
 	</view>
 </template>
@@ -69,16 +76,60 @@
 	export default {
 		data() {
 			return {
-				isMyRadio: 'wx'
+				isMyRadio: 'wx',
+				id: '',
+				obj: null,
+				option: null,
+				yhqPrice: 0,
 			}
 		},
+		onLoad(option) {
+			console.log(option)
+			this.id = option.id;
+			this.option = option;
+			this.getData();
+			if (option.discount) {
+				this.yhqPrice = Number(option.discount);
+			}
+		},
+		// otherFun(object) {
+		// 	console.log(object)
+		// },
 		methods: {
+			async pay() {
+				const res = await this.$api.order({
+					demand_quote_id: this.id,
+					pay_type: this.isMyRadio == 'wx' ? 1 : 0,
+					coupon_id:this.option.coupon_id
+				})
+				console.log(res)
+				if (res.code == 200) {
+					this.$refs.uToast.show({
+						title: '支付成功',
+						type: 'success',
+						back: true,
+					})
+				} else {
+					this.$refs.uToast.show({
+						title: res.msg,
+						type: 'warning',
+					})
+				}
+			},
+			async getData() {
+				const res = await this.$api.demandQuotesIdPreOrder(this.id);
+				console.log(res)
+				this.obj = res.data;
+				const res2 = await this.$api.coupons();
+				console.log(res2)
+
+			},
 			changeMyRadio(val) {
 				this.isMyRadio = val;
 			},
 			toxuanzeyouhuiquan() {
 				uni.navigateTo({
-					url: '/pages/index/dingdantijiao/xuanzeyouhuiquan'
+					url: `/pages/index/dingdantijiao/xuanzeyouhuiquan?id=${this.id}&price=${this.obj.selected_quote.price}`
 				})
 			},
 		}
@@ -374,6 +425,7 @@
 				line-height: 32rpx;
 				color: #FF6F00;
 				font-weight: 600;
+
 				.small {
 					font-weight: 400;
 					font-size: 24rpx;
@@ -394,4 +446,5 @@
 			text-align: center;
 		}
 	}
+
 </style>

@@ -1,20 +1,38 @@
 <template>
 	<view class="index">
-		<view class="nav1">
-			<image class="pic1" src="/static/img/1229310763000_mthumb.png" mode=""></image>
-			<view class="tit1">李师傅</view>
+		<view class="nav1" v-if="obj">
+			<image class="pic1" :src="obj.selected_quote.user_info.avatar" mode=""></image>
+			<view class="tit1">{{obj.selected_quote.user_info.nick_name}}</view>
 			<view class="tit2">
 				<view class="box1">
-					<view class="txt1">0<text class="small">次</text></view>
+					<view class="txt1">{{obj.selected_quote.craftsman_info.service_count}}<text class="small">次</text></view>
 					<view class="txt2">已服务</view>
 				</view>
 				<view class="shu"></view>
 				<view class="box1">
-					<view class="txt1">100<text class="small">%</text></view>
+					<view v-if="obj.selected_quote.craftsman_info.good_rep" class="txt1">{{obj.selected_quote.craftsman_info.good_rep}}<text class="small">%</text></view>
+					<view v-else class="txt1">暂无</view>
 					<view class="txt2">好评率</view>
 				</view>
 			</view>
 		</view>
+		<view class="nav1" v-else-if="item">
+			<image class="pic1" :src="item.user_info.avatar" mode=""></image>
+			<view class="tit1">{{item.user_info.nick_name}}</view>
+			<view class="tit2">
+				<view class="box1">
+					<view class="txt1">{{item.craftsman_info.service_count}}<text class="small">次</text></view>
+					<view class="txt2">已服务</view>
+				</view>
+				<view class="shu"></view>
+				<view class="box1">
+					<view v-if="item.craftsman_info.good_rep" class="txt1">{{item.craftsman_info.good_rep}}<text class="small">%</text></view>
+					<view v-else class="txt1">暂无</view>
+					<view class="txt2">好评率</view>
+				</view>
+			</view>
+		</view>
+		<!--  -->
 		<view class="nav2">
 			<u-tabs-swiper bg-color="#F2F3F5" height='80' font-size="28" gutter="40" inactive-color="#707070"
 				bar-height="6" bar-width="64" active-color="#4988FD" ref="uTabs" :list="list" :current="current"
@@ -74,7 +92,7 @@
 										<view class="tit3">师傅按照预约时间，准时上门服务</view>
 									</view>
 								</view>
-								<view @click="chooseShifu" class="btn">选择师傅</view>
+								<!-- <view @click="chooseShifu" class="btn">选择师傅</view> -->
 							</template>
 							<!-- 认证信息 -->
 							<template v-if="swiperCurrent == 1">
@@ -100,7 +118,7 @@
 										<view class="txt1">已认证</view>
 									</view>
 								</view>
-								<view @click="chooseShifu" class="btn btn2">选择师傅</view>
+								<!-- <view @click="chooseShifu" class="btn btn2">选择师傅</view> -->
 							</template>
 						</view>
 					</scroll-view>
@@ -117,8 +135,19 @@
 		onShow() {
 			this.tabsChange(0)
 		},
+		onLoad(option) {
+			if(option.item2){
+				this.item = JSON.parse(option.item2)
+			}else{
+				this.obj = JSON.parse(option.item)
+			}
+			console.log(this.item,this.obj)
+		},
 		data() {
 			return {
+				obj:null,
+				item:null,
+				// 
 				swiperCurrentIndex: 0,
 				height: 0,
 				list: [{

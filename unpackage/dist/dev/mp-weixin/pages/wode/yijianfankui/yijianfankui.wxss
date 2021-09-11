@@ -163,10 +163,17 @@ page {
   color: #FFFFFF;
 }
 .items .item .nav11.data-v-a343589c {
-  padding: 0rpx 20rpx 0 20rpx;
+  margin-bottom: 20rpx;
+  padding: 0rpx 20rpx 10rpx 20rpx;
   width: 750rpx;
-  height: 328rpx;
+  height: 380rpx;
   background: #FFFFFF;
+}
+.items .item .nav11 .pic.data-v-a343589c {
+  margin-top: 10rpx;
+  margin-right: 10rpx;
+  width: 100rpx;
+  height: 100rpx;
 }
 .items .item .nav11 .tit1.data-v-a343589c {
   padding-top: 38rpx;
@@ -183,7 +190,7 @@ page {
 .items .item .nav11 .tit2.data-v-a343589c {
   border-top: 2rpx solid #E6E6E6;
   padding-top: 30rpx;
-  margin-top: 30rpx;
+  margin-top: 10rpx;
   display: -webkit-box;
   display: -webkit-flex;
   display: flex;

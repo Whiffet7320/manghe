@@ -35,7 +35,8 @@
     {
       "root": "pages/index/shangpinxiangqin",
       "pages": [
-        "shangpinxiangqin"
+        "shangpinxiangqin",
+        "pingjialiebiao"
       ]
     },
     {

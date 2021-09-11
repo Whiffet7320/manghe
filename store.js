@@ -10,10 +10,20 @@ export default new Vuex.Store({
 		youhuiquanPage:1,
 		youhuiquanPageSize: 10,//优惠券列表
 		dingdanPage:1,
-		dingdanPageSize: 10,//优惠券列表
+		dingdanPageSize: 10,//订单列表
+		jinqianjiluPage:1,
+		jinqianjiluPageSize: 10,//金钱记录列表
+		pinglunliebiaoPage:1,
+		pinglunliebiaoPageSize: 10,//评论列表
 		// 
 	},
 	mutations: {
+		pinglunliebiaoPage(state, str) {
+			state.pinglunliebiaoPage = str;
+		},
+		jinqianjiluPage(state, str) {
+			state.jinqianjiluPage = str;
+		},
 		dingdanPage(state, str) {
 			state.dingdanPage = str;
 		},

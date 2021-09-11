@@ -25,7 +25,7 @@
 /* 透明度 */
 /* 文章场景相关 */
 page {
-  background: #EBEBEB;
+  background: #FFFFFF;
 }
 
 @charset "UTF-8";
@@ -54,14 +54,30 @@ page {
 /* 垂直间距 */
 /* 透明度 */
 /* 文章场景相关 */
-.data-v-16a5500a .u-load-more-wrap {
-  height: 80rpx !important;
-}
-.nav1.data-v-16a5500a {
-  height: 436rpx;
-  width: 750rpx;
-  background: #4988FD;
+.pingjiaItem .item.data-v-3d29a4d9 {
+  margin-left: 42rpx;
+  margin-bottom: 20rpx;
+  width: 668rpx;
+  height: 298rpx;
+  background: #F5F5F5;
   opacity: 1;
+  border-radius: 6rpx;
+  padding: 30rpx 44rpx;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+          justify-content: space-between;
+}
+.pingjiaItem .item .pic1-1.data-v-3d29a4d9 {
+  width: 80rpx;
+  height: 80rpx;
+  background: #FFFFFF;
+  border-radius: 50%;
+}
+.pingjiaItem .item .left.data-v-3d29a4d9 {
+  width: 465rpx;
   display: -webkit-box;
   display: -webkit-flex;
   display: flex;
@@ -69,122 +85,50 @@ page {
   -webkit-box-direction: normal;
   -webkit-flex-direction: column;
           flex-direction: column;
+}
+.pingjiaItem .item .left .tit1.data-v-3d29a4d9 {
+  margin-top: 0;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+          justify-content: space-between;
   -webkit-box-align: center;
   -webkit-align-items: center;
           align-items: center;
 }
-.nav1 .pic1.data-v-16a5500a {
-  margin-top: 20rpx;
-  width: 144rpx;
-  height: 144rpx;
-  background: #FFFFFF;
-  border-radius: 50%;
-  opacity: 1;
-}
-.nav1 .tit1.data-v-16a5500a {
-  margin-top: 32rpx;
-  font-size: 24rpx;
-  font-family: Segoe UI;
-  font-weight: 400;
-  line-height: 32rpx;
-  color: #FFFFFF;
-  opacity: 1;
-}
-.nav1 .tit2.data-v-16a5500a {
-  margin-top: 10rpx;
-  width: 204rpx;
-  font-size: 24rpx;
-  font-family: SimHei;
-  font-weight: 400;
-  color: #FFFFFF;
-  opacity: 1;
-}
-.nav1 .tit2 .big.data-v-16a5500a {
-  font-size: 72rpx;
-}
-.nav1 .tit3.data-v-16a5500a {
-  margin-top: 20rpx;
-  width: 176rpx;
-  height: 56rpx;
-  background: #FFFFFF;
-  opacity: 1;
-  border-radius: 28rpx;
+.pingjiaItem .item .left .tit1 .tit1-1 .txt1.data-v-3d29a4d9 {
   font-size: 28rpx;
   font-family: Microsoft YaHei;
-  font-weight: 400;
-  line-height: 56rpx;
-  color: #4988FD;
-  text-align: center;
-}
-.nav2.data-v-16a5500a {
-  margin: 20rpx 20rpx 0 20rpx;
-  width: 710rpx;
-  background: #FFFFFF;
-  opacity: 1;
-  border-radius: 16rpx;
-  padding: 0 26rpx;
-}
-.nav2 .tit1.data-v-16a5500a {
-  height: 78rpx;
-  line-height: 78rpx;
-  font-size: 32rpx;
-  font-family: Microsoft YaHei;
-  font-weight: 400;
+  font-weight: 300;
+  line-height: 38rpx;
   color: #000000;
-  opacity: 1;
 }
-.nav2 .items .item.data-v-16a5500a {
-  border-top: 1px solid #E6E6E6;
-}
-.nav2 .items .item .txt1.data-v-16a5500a {
-  margin-top: 16rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
-}
-.nav2 .items .item .txt1 .txt1-1.data-v-16a5500a {
-  font-size: 24rpx;
-  font-family: Microsoft YaHei;
-  font-weight: 400;
-  line-height: 32rpx;
-  color: #000000;
-  opacity: 1;
-}
-.nav2 .items .item .txt1 .txt1-2.data-v-16a5500a {
+.pingjiaItem .item .left .tit1 .tit1-1 .txt2.data-v-3d29a4d9 {
   font-size: 20rpx;
   font-family: Microsoft YaHei;
-  font-weight: 400;
+  font-weight: 300;
   line-height: 28rpx;
-  color: #707070;
-  opacity: 1;
+  color: #000000;
 }
-.nav2 .items .item .txt2.data-v-16a5500a {
-  margin-top: 18rpx;
-  margin-bottom: 24rpx;
+.pingjiaItem .item .left .tit2.data-v-3d29a4d9 {
+  margin-top: 14rpx;
+  font-size: 28rpx;
+  font-family: Microsoft YaHei;
+  font-weight: 300;
+  line-height: 38rpx;
+  color: #000000;
+}
+.pingjiaItem .item .left .imgs.data-v-3d29a4d9 {
+  margin-top: 24rpx;
   display: -webkit-box;
   display: -webkit-flex;
   display: flex;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
 }
-.nav2 .items .item .txt2 .txt2-1.data-v-16a5500a {
-  font-size: 24rpx;
-  font-family: Microsoft YaHei;
-  font-weight: 400;
-  line-height: 32rpx;
-  color: #707070;
-  opacity: 1;
-}
-.nav2 .items .item .txt2 .txt2-2.data-v-16a5500a {
-  font-size: 24rpx;
-  font-family: Microsoft YaHei;
-  font-weight: 400;
-  line-height: 32rpx;
-  color: #FF0000;
-  opacity: 1;
+.pingjiaItem .item .left .imgs .img-pic.data-v-3d29a4d9 {
+  width: 96rpx;
+  height: 96rpx;
+  margin-right: 10rpx;
 }
 

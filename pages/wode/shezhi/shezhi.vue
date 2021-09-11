@@ -1,5 +1,6 @@
 <template>
 	<view class="index">
+		<u-toast ref="uToast" />
 		<u-modal @confirm='outLogin' :show-cancel-button='true' :mask-close-able='true' v-model="clockShow" :content="clockContent"></u-modal>
 		<view class="nav1">
 			<view class="item">
@@ -51,7 +52,22 @@
 		},
 		methods:{
 			outLogin(){
+				const that = this;
 				console.log('outlogin')
+				uni.setStorageSync('myUser', '')
+				uni.setStorageSync('token', '')
+				uni.setStorage({
+					key: 'token',
+					data: '',
+					success() {
+						that.$refs.uToast
+							.show({
+								title: '已退出登录',
+								type: 'success',
+								back: true,
+							})
+					}
+				})
 			},
 		}
 	}

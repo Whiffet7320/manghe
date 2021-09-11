@@ -1,6 +1,6 @@
 <template>
 	<view class="index">
-		<view class="shifu-item" v-if="status == 2">
+		<view class="shifu-item" v-if="status == 2 && obj.selected_quote">
 			<view class="sf-tit1">
 				<view class="sf-txt1">
 					<view class="sf-txt1-1">{{obj.created_at}}</view>
@@ -8,10 +8,10 @@
 				</view>
 				<view class="sf-txt2">￥<text class="big">{{obj.selected_quote.price}}</text></view>
 			</view>
-			<view @click="toShifuxiangqin" class="sf-tit3">
-				<image v-if="obj.selected_quote.user_info.avatar" class="pic1" :src="obj.selected_quote.user_info.avatar" mode=""></image>
+			<view class="sf-tit3">
+				<image @click="toShifuxiangqin(obj)" v-if="obj.selected_quote.user_info.avatar" class="pic1" :src="obj.selected_quote.user_info.avatar" mode=""></image>
 				<image v-else class="pic1" src="/static/img/1229310763000_mthumb.png" mode=""></image>
-				<view class="sf-right">
+				<view @click="toShifuxiangqin(obj)" class="sf-right">
 					<view class="sf-txt1">
 						<view class="txt1-1">{{obj.selected_quote.user_info.nick_name}}</view>
 						<u-icon name="arrow-right" color="#707070" size="24"></u-icon>
@@ -23,7 +23,7 @@
 						<view v-else class="txt2-1">暂无</view>
 					</view>
 				</view>
-				<image class="pic2" src="/static/img/zu61.png" mode=""></image>
+				<image @click="callPhone(obj)" class="pic2" src="/static/img/zu61.png" mode=""></image>
 			</view>
 			<view class="sf-tit4">
 				<view class="item-2-1">
@@ -58,7 +58,8 @@
 			</view> -->
 			<view class="tit33">
 				<view class="txt11">需求说明</view>
-				<view class="txt22">{{obj.intro}}</view>
+				<view v-if="obj.intro" class="txt22">{{obj.intro}}</view>
+				<view v-else class="txt22">暂无</view>
 			</view>
 		</view>
 		<view class="box1-2">
@@ -69,7 +70,7 @@
 					<view class="txt2">
 						<view class="txt2-1">2C07222052609</view>
 						<view class="shu"></view>
-						<view class="txt2-2">复制</view>
+						<view @click="fuzhi(obj.order_num)" class="txt2-2">复制</view>
 					</view>
 				</view>
 			</view>
@@ -121,9 +122,20 @@
 				this.obj = res.data;
 				this.qwTime = `${this.obj.expect_start_date.slice(0, 10)} ${this.obj.expect_start_date.slice(11, 16)}-${this.obj.expect_end_date.slice(11, 16)}`
 			},
-			toShifuxiangqin() {
+			fuzhi(e) {
+				uni.setClipboardData({
+					data: e,
+				});
+			},
+			callPhone(item) {
+				uni.makePhoneCall({
+				    phoneNumber: item.selected_quote.user.phone
+				});
+			},
+			toShifuxiangqin(item) {
+				console.log(JSON.stringify(item))
 				uni.navigateTo({
-					url: '/pages/index/fabuxuqiu/shifuxiangqin'
+					url: `/pages/index/fabuxuqiu/shifuxiangqin?item=${JSON.stringify(item)}`
 				})
 			},
 		}
@@ -139,9 +151,9 @@
 	.index {}
 
 	.shifu-item {
-		margin: 36rpx 20rpx 20rpx 20rpx;
+		margin: 36rpx 20rpx 20rpx 28rpx;
 		padding: 0 30rpx 0 36rpx;
-		width: 710rpx;
+		width: 692rpx;
 		height: 334rpx;
 		background: #FFFFFF;
 		border-radius: 16rpx;
@@ -343,6 +355,13 @@
 		height: 410rpx;
 	}
 	.box1-1 {
+		margin-top: 20rpx;
+		margin-left: 28rpx;
+		padding: 0 40rpx;
+		width: 692rpx;
+		height: 334rpx;
+		background: #FFFFFF;
+		border-radius: 16rpx;
 		.sf-tit1 {
 			display: flex;
 			align-items: center;
@@ -384,13 +403,6 @@
 			}
 		}
 		
-		margin-top: 20rpx;
-		margin-left: 28rpx;
-		padding: 0 40rpx;
-		width: 692rpx;
-		height: 334rpx;
-		background: #FFFFFF;
-		border-radius: 16rpx;
 	
 		.tit11 {
 			padding-top: 16rpx;
@@ -450,6 +462,7 @@
 			}
 	
 			.txt22 {
+				text-align: right;
 				width: 340rpx;
 				font-size: 24rpx;
 				font-family: Segoe UI;

@@ -1,5 +1,6 @@
 <template>
 	<view class="index">
+		<u-toast ref="uToast" />
 		<u-tabs-swiper bg-color="#ffffff" height='116' font-size="32" gutter="40" inactive-color="#000000"
 			bar-height="10" bar-width="84" active-color="#4988FD" ref="uTabs" :list="list" :current="current"
 			@change="tabsChange" :is-scroll="false" swiperWidth="750"></u-tabs-swiper>
@@ -14,12 +15,9 @@
 								<view class="nav1">
 									<view class="tit1"><text class="red">*</text>反馈问题类型</view>
 									<view class="btns">
-										<view @tap="changeRad(1)" :class="{'btn':true,'active':myRad == 1}">服务类目不合理
+										<view v-for="(item,index) in radioArr" @tap="changeRad(index+1)"
+											:class="{'btn':true,'active':myRad == index+1}">{{item}}
 										</view>
-										<view @tap="changeRad(2)" :class="{'btn':true,'active':myRad == 2}">体验问题</view>
-										<view @tap="changeRad(3)" :class="{'btn':true,'active':myRad == 3}">其他</view>
-										<view @tap="changeRad(4)" :class="{'btn':true,'active':myRad == 4}">功能异常</view>
-										<view @tap="changeRad(5)" :class="{'btn':true,'active':myRad == 5}">新功能建议</view>
 									</view>
 									<view class="tit2">
 										<u-input border height='200' v-model="textareaVal" type="textarea" />
@@ -44,19 +42,20 @@
 									<u-field :border-bottom='false' v-model="mobile" label="联系方式" placeholder="请填写手机号">
 									</u-field>
 								</view>
-								<view class="footerBtn">提交反馈</view>
+								<view @click="onSubmit" class="footerBtn">提交反馈</view>
 							</view>
 						</template>
 						<!-- 我的反馈 -->
 						<template v-if="swiperCurrent == 1">
-							<view class="item">
+							<view class="item" v-for="item in fkyjList" :key='item.id'>
 								<view class="nav11">
 									<view class="tit1">
-										反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈反馈
+										{{item.content}}
 									</view>
+									<image @click="seeImg(item.images,index)" class="pic" v-for="(ele,index) in item.images" :src="ele" mode=""></image>
 									<view class="tit2">
-										<view class="txt1">其他</view>
-										<view class="txt1">2021-07-21 15：02：06</view>
+										<view class="txt1">{{item.type_desc}}</view>
+										<view class="txt1">{{item.created_at}}</view>
 									</view>
 									<view class="tit3">
 										<view class="txt">平台暂未回复</view>
@@ -69,17 +68,20 @@
 
 			</swiper-item>
 		</swiper>
-	
+
 	</view>
 </template>
 
 <script>
 	export default {
 		onShow() {
-			this.tabsChange(0)
+			this.tabsChange(this.current);
+			this.getData();
 		},
 		data() {
 			return {
+				fkyjList: [],
+				radioArr: [],
 				textareaVal: '',
 				myRad: '',
 				img1: '',
@@ -96,41 +98,70 @@
 					name: '我的反馈'
 				}],
 				// 因为内部的滑动机制限制，请将tabs组件和swiper组件的current用不同变量赋值
-				current: null, // tabs组件的current值，表示当前活动的tab选项
+				current: 0, // tabs组件的current值，表示当前活动的tab选项
 				swiperCurrent: 0, // swiper组件的current值，表示当前那个swiper-item是活动的
 			}
 		},
 		methods: {
+			async getData() {
+				const res = await this.$api.feedbacksTypes();
+				console.log(res.data)
+				this.radioArr = res.data;
+				const res2 = await this.$api.feedbacks();
+				console.log(res2.data)
+				this.fkyjList = res2.data;
+			},
+			seeImg(images,i) {
+				uni.previewImage({
+					urls: images,
+					current: i,
+				});
+			},
+			async onSubmit() {
+				// console.log(this.myRad - 1,this.mobile,[this.img1,this.img2,this.img3],this.textareaVal)
+				var images = [this.img1, this.img2, this.img3];
+				images.forEach(ele=>{
+					if(!ele){
+						images.pop()
+					}
+				})
+				const res = await this.$api.addFeedbacks({
+					type: this.myRad - 1,
+					content: this.textareaVal,
+					images: images,
+					phone: this.mobile,
+				})
+				console.log(res.data)
+				if (res.code == 200) {
+					this.$refs.uToast.show({
+						title: '评论成功',
+						callback: () => {
+							this.getData()
+							this.tabsChange(1);
+						}
+					})
+				} else {
+					this.$refs.uToast.show({
+						title: res.msg,
+						type: 'warning',
+					})
+				}
+			},
 			changeRad(i) {
 				this.myRad = i;
 			},
-			chooseImg(i) {
-				const that = this;
-				uni.chooseImage({
-					count: 1,
-					success: function(res) {
-						const img = JSON.stringify(res.tempFilePaths[0])
-						const newImg = img.substring(1, img.length - 1);
-						if (i == 1) {
-							that.img1 = newImg;
-							that.imgNum = 2;
-						} else if (i == 2) {
-							that.img2 = newImg;
-							that.imgNum = 3;
-						} else if (i == 3) {
-							that.img3 = newImg;
-						}
-						// console.log(that.img1,that.img2,that.img3)
-						uni.getFileSystemManager().readFile({
-							filePath: newImg, //选择图片返回的相对路径
-							encoding: "base64", //这个是很重要的
-							success: async res => { //成功的回调
-								//返回base64格式
-								// console.log(res.data)
-							}
-						})
-					}
-				});
+			async chooseImg(i) {
+				var img = await this.$OSSUpload('img');
+				console.log(img)
+				if (i == 1) {
+					this.img1 = img;
+					this.imgNum = 2;
+				} else if (i == 2) {
+					this.img2 = img;
+					this.imgNum = 3;
+				} else if (i == 3) {
+					this.img3 = img;
+				}
 			},
 			// tabs通知swiper切换
 			tabsChange(index) {
@@ -272,11 +303,17 @@
 			}
 
 			.nav11 {
-				padding: 0rpx 20rpx 0 20rpx;
+				margin-bottom: 20rpx;
+				padding: 0rpx 20rpx 10rpx 20rpx;
 				width: 750rpx;
-				height: 328rpx;
+				height: 380rpx;
 				background: #FFFFFF;
-
+				.pic{
+					margin-top: 10rpx;
+					margin-right: 10rpx;
+					width: 100rpx;
+					height: 100rpx;
+				}
 				.tit1 {
 					// padding: 38rpx 0 32rpx 0;
 					padding-top: 38rpx;
@@ -294,7 +331,7 @@
 				.tit2 {
 					border-top: 2rpx solid #E6E6E6;
 					padding-top: 30rpx;
-					margin-top: 30rpx;
+					margin-top: 10rpx;
 					display: flex;
 					justify-content: space-between;
 

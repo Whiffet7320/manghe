@@ -100,6 +100,13 @@
 					"navigationBarTitleText": "商品详情",
 					"enablePullDownRefresh": false
 				}
+			},{
+				"path": "pingjialiebiao",
+				"style": {
+					// "navigationStyle": "custom",
+					"navigationBarTitleText": "全部评价",
+					"enablePullDownRefresh": false
+				}
 			}]
 		},
 		{

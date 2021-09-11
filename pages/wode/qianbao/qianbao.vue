@@ -3,34 +3,96 @@
 		<view class="nav1">
 			<image class="pic1" src="../../../static/img/1229310763000_mthumb.png" mode=""></image>
 			<view class="tit1">我的余额</view>
-			<view class="tit2">￥<text class="big">99.00</text></view>
+			<view class="tit2">￥<text class="big">{{money}}</text></view>
 			<view @click="toTixian" class="tit3">发起提现</view>
 		</view>
-		<view class="nav2">
-			<view class="tit1">收益明细</view>
-			<view class="items">
-				<view class="item" v-for="item in 6">
-					<view class="txt1">
-						<view class="txt1-1">订单收益</view>
-						<view class="txt1-2">2021.07.08 12:45:56</view>
+		<!-- <view class="nav2"> -->
+			<scroll-view @scrolltolower="lower" scroll-y='true' style="height: 62vh;">		
+			<view class="nav2">
+				<view class="tit1">收益明细</view>
+				<view class="items">
+					<view class="item" v-for="item in list" :key='item.id'>
+						<view class="txt1">
+							<view class="txt1-1">订单收益</view>
+							<view class="txt1-2">{{item.created_at}}</view>
+						</view>
+						<view class="txt2">
+							<view class="txt2-1">订单:31264564313313</view>
+							<view class="txt2-2">+{{item.value}}</view>
+						</view>
 					</view>
-					<view class="txt2">
-						<view class="txt2-1">订单:31264564313313</view>
-						<view class="txt2-2">+180</view>
-					</view>
+					<u-loadmore :status="status" :icon-type="iconType" :load-text="loadText" />
 				</view>
-			</view>
-		</view>
+						</view>
+			</scroll-view>
+<!-- 		</view> -->
 	</view>
 </template>
 
 <script>
+	import {
+		mapState
+	} from "vuex";
 	export default {
+		computed: {
+			...mapState(["jinqianjiluPage", "jinqianjiluPageSize"]),
+		},
+		watch: {
+			jinqianjiluPage: function(page) {
+				console.log('ddpage')
+				this.$store.commit("jinqianjiluPage", page);
+				if (this.jinqianjiluPage != 1) {
+					this.getData();
+				}
+			},
+		},
+		data() {
+			return {
+				money: 0,
+				list: [],
+				// 加载
+				status: 'loadmore',
+				iconType: 'flower',
+				loadText: {
+					loadmore: '上拉加载更多',
+					loading: '正在加载...',
+					nomore: '没有了更多了'
+				}
+			}
+		},
+		onLoad(option) {
+			this.money = option.money;
+		},
+		onShow() {
+			this.$store.commit("jinqianjiluPage", 1);
+			this.getData();
+		},
 		methods: {
+			async getData() {
+				this.status = 'loading';
+				setTimeout(async () => {
+					const res = await this.$api.moneyRecord({
+						page: this.jinqianjiluPage,
+						limit: this.jinqianjiluPageSize,
+					})
+					console.log(res)
+					if (res.data.data.length == 0) {
+						this.status = 'nomore'
+					} else {
+						this.status = 'loadmore';
+						console.log(this.list)
+						this.list = this.list.concat(res.data.data)
+					}
+				}, 200)
+				console.log(this.list)
+			},
 			toTixian() {
 				uni.navigateTo({
 					url: '/pages/wode/qianbao/tixian'
 				})
+			},
+			lower() {
+				this.$store.commit("jinqianjiluPage", this.jinqianjiluPage + 1);
 			},
 		}
 	}
@@ -43,6 +105,9 @@
 </style>
 <style scoped lang="scss">
 	.index {}
+	/deep/ .u-load-more-wrap{
+		height: 80rpx !important;
+	}
 
 	.nav1 {
 		height: 436rpx;
@@ -105,7 +170,7 @@
 	.nav2 {
 		margin: 20rpx 20rpx 0 20rpx;
 		width: 710rpx;
-		height: 754rpx;
+		// height: 60vh;
 		background: #FFFFFF;
 		opacity: 1;
 		border-radius: 16rpx;
@@ -123,8 +188,8 @@
 		}
 
 		.items {
-			height: 677rpx;
-			overflow-y: scroll;
+			// height: 52vh;
+			// overflow-y: scroll;
 
 			.item {
 				border-top: 1px solid #E6E6E6;

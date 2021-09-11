@@ -73,34 +73,35 @@
 			<image :src="shopObj.detail_img" class="piccc" mode=""></image>
 			<view class="tit7">
 				<view class="txt1">用户评价</view>
-				<view class="txt2">查看全部<u-icon name="arrow-right" color="#707070" size="28"></u-icon>
+				<view @click="toPingjia" class="txt2">查看全部<u-icon name="arrow-right" color="#707070" size="28"></u-icon>
 				</view>
 			</view>
-			<view class="pingjiaBtns">
+			<!-- <view class="pingjiaBtns">
 				<view class="btn" v-for="item in 3">服务态度很好（9999）</view>
-			</view>
+			</view> -->
 			<view class="pingjiaItem">
-				<view class="item" v-for="item in 6">
-					<image class="pic1-1" src="/static/img/1229310763000_mthumb.png" mode=""></image>
+				<view class="item" v-for="item in comment">
+					<image class="pic1-1" :src="item.user_info.avatar" mode=""></image>
 					<view class="left">
 						<view class="tit1">
 							<view class="tit1-1">
-								<view class="txt1">137*******</view>
-								<view class="txt2">2021-07-18 12:12:42</view>
+								<view class="txt1">{{item.user_info.nick_name}}</view>
+								<view class="txt2">{{item.comment[0].created_at}}</view>
 							</view>
 							<view class="tit1-2">
-								<u-rate active-color="#1677FF" size='20' gutter="6" :count="pingjiaCount"
-									v-model="pingjiaFenshu"></u-rate>
+								<u-rate disabled active-color="#1677FF" size='20' gutter="6" :count="pingjiaCount"
+									v-model="item.comment[0].rate"></u-rate>
 							</view>
 						</view>
-						<view class="tit2">感谢师傅，做的十分精致耐心！</view>
+						<view class="tit2">{{item.comment[0].content}}</view>
 						<view class="imgs">
-							<image v-for="(item,i) in imgList" :key='i' @click="seeImg(i)" class="img-pic" :src="item"
+							<image v-for="(ele,i) in item.comment[0].images" :key='i' @click="seeImg(item.comment[0].images,i)" class="img-pic" :src="ele"
 								mode=""></image>
 						</view>
 					</view>
 				</view>
 			</view>
+		
 		</view>
 		<!-- 底部 -->
 		<view class="footer">
@@ -166,13 +167,25 @@
 				const res = await this.$api.items(this.optionId)
 				console.log(res)
 				this.comment = res.data.comment;
+				this.comment.forEach(ele=>{
+					ele.comment[0].images.forEach(ele2=>{
+						if(!ele2){
+							ele.comment[0].images.pop()
+						}
+					})
+				})
 				this.serve_count = res.data.serve_count;
 				this.shopObj = res.data.item;
 			},
+			toPingjia(){
+				uni.navigateTo({
+					url:`/pages/index/shangpinxiangqin/pingjialiebiao?id=${this.optionId}`
+				})
+			},
 			// 浏览评论图片
-			seeImg(i) {
+			seeImg(images,i) {
 				uni.previewImage({
-					urls: this.imgList,
+					urls: images,
 					current: i
 				})
 			},

@@ -192,10 +192,8 @@
 						this.$refs.uToast.show({
 							title: '发布成功',
 							type: 'success',
-							url: '/pages/index/fabuxuqiu/baojiaShifuxinxi',
-							params: {
-								id: res.data.id
-							}
+							url:'/pages/dingdan/dingdan',
+							isTab:true,
 						})
 					} else {
 						this.$refs.uToast.show({
@@ -415,6 +413,7 @@
 				font-weight: 400;
 				line-height: 32rpx;
 				color: #000000;
+				text-align: right;
 			}
 		}
 

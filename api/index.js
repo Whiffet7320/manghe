@@ -361,4 +361,93 @@ export default {
 			}
 		})
 	},
+	demandQuotesIdPreOrder(id) {
+		return myGet({
+			url: `${urls.demandQuotesIdPreOrder}/${id}/pre-order`
+		})
+	},
+	order(obj) {
+		return myPost({
+			url: urls.order,
+			data: {
+				...obj
+			},
+		})
+	},
+	coupons(obj) {
+		return myGet({
+			url: urls.coupons,
+			params:{
+				...obj
+			}
+		})
+	},
+	pay(obj) {
+		return myPost({
+			url: urls.pay,
+			data: {
+				...obj
+			},
+		})
+	},
+	user() {
+		return myGet({
+			url: urls.user
+		})
+	},
+	moneyRecord(obj) {
+		return myGet({
+			url: urls.moneyRecord,
+			params:{
+				...obj
+			}
+		})
+	},
+	demandQuotesIidCancel(obj) {
+		return myPost({
+			url: `${urls.demandQuotesIidCancel}/${obj.id}/cancel`,
+			data:{
+				...obj
+			}
+		})
+	},
+	orderIdComment(obj,id) {
+		return myPost({
+			url: `${urls.orderIdComment}/${id}/comment`,
+			data:{
+				...obj
+			}
+		})
+	},
+	orderIdCommentXq(id) {
+		return myGet({
+			url: `${urls.orderIdCommentXq}/${id}/comment`
+		})
+	},
+	feedbacksTypes() {
+		return myGet({
+			url: urls.feedbacksTypes
+		})
+	},
+	addFeedbacks(obj) {
+		return myPost({
+			url: urls.feedbacks,
+			data:{
+				...obj
+			}
+		})
+	},
+	feedbacks() {
+		return myGet({
+			url: urls.feedbacks
+		})
+	},
+	itemsItemIdComments(obj,id) {
+		return myGet({
+			url: `${urls.itemsItemIdComments}/${id}/comments`,
+			params:{
+				...obj
+			}
+		})
+	},
 }

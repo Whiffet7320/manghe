@@ -100,13 +100,12 @@ page {
 .items .item .txt2 .txt2-1.data-v-861e519c {
   height: 88rpx;
   font-size: 22rpx;
-  font-family: Microsoft Himalaya;
   font-weight: 400;
   color: #FFFFFF;
   opacity: 1;
 }
 .items .item .txt2 .txt2-1 .big.data-v-861e519c {
-  font-size: 120rpx;
+  font-size: 64rpx;
 }
 .items .item .txt2 .txt2-2.data-v-861e519c {
   font-size: 20rpx;
@@ -129,10 +128,9 @@ page {
 }
 .items .item .txt4.data-v-861e519c {
   position: absolute;
-  top: 66rpx;
+  top: 56rpx;
   left: 250rpx;
-  font-size: 28rpx;
-  font-family: Microsoft Himalaya;
+  font-size: 18rpx;
   font-weight: 400;
   line-height: 34rpx;
   color: #707070;
@@ -143,7 +141,6 @@ page {
   top: 96rpx;
   left: 250rpx;
   font-size: 22rpx;
-  font-family: Microsoft Himalaya;
   font-weight: 400;
   line-height: 26rpx;
   color: #707070;
@@ -153,7 +150,7 @@ page {
   -webkit-transform: rotate(45deg);
           transform: rotate(45deg);
   position: absolute;
-  top: 16rpx;
+  top: 18rpx;
   right: 6rpx;
   font-size: 20rpx;
   font-family: Segoe UI;

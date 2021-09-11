@@ -250,6 +250,7 @@ page {
   font-weight: 400;
   line-height: 32rpx;
   color: #000000;
+  text-align: right;
 }
 .nav4 .tit3.data-v-e5ccb2a2 {
   margin-top: 22rpx;

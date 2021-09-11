@@ -17,13 +17,15 @@
 				<view class="sf-tit2">
 					<view class="sf-tit2-1">
 						<view class="sf-txt1">可用券</view>
-						<view class="sf-txt2">-15</view>
+						<view v-if="item.maxYhqNum > 0" class="sf-txt2">-{{item.maxYhqNum}}</view>
+						<view v-else class="sf-txt2">暂无</view>
 					</view>
 				</view>
-				<view @click="toShifuxiangqin" class="sf-tit3">
-					<image v-if="item.user_info.avatar" class="pic1" :src="item.user_info.avatar" mode=""></image>
+				<view class="sf-tit3">
+					<image @click="toShifuxiangqin(item)" v-if="item.user_info.avatar" class="pic1"
+						:src="item.user_info.avatar" mode=""></image>
 					<image v-else class="pic1" src="/static/img/1229310763000_mthumb.png" mode=""></image>
-					<view class="sf-right">
+					<view @click="toShifuxiangqin(item)" class="sf-right">
 						<view class="sf-txt1">
 							<view class="txt1-1">{{item.user_info.nick_name}}</view>
 							<u-icon name="arrow-right" color="#707070" size="24"></u-icon>
@@ -79,13 +81,39 @@
 				const res = await this.$api.getDemandQuotesListXq(this.id);
 				console.log(res);
 				this.list = res.data.quotes;
-			},
-			callPhone() {
+				const res2 = await this.$api.coupons({
+					type: 0,
+					limit: 100,
+					page: 1
+				})
+				let filterCouponsList = [];
+				this.list.forEach(ele => {
+					var filterCoupons = res2.data.data.filter(ele2 => {
+						return Number(ele.price) >= ele2.limit
+					})
+					filterCouponsList.push(filterCoupons)
+				})
+				console.log(filterCouponsList);
+				filterCouponsList.forEach(ele3 => {
+					const maxYhqNum = Math.max.apply(Math, ele3.map(function(ele) {
+						return ele.discount
+					}))
+					this.list.forEach(ele => {
+						this.$set(ele,'maxYhqNum',maxYhqNum)
+					})
+				})
+				console.log(this.list);
 
 			},
-			toShifuxiangqin() {
+			callPhone(item) {
+				console.log(item.user.phone)
+				uni.makePhoneCall({
+					phoneNumber: item.user.phone
+				});
+			},
+			toShifuxiangqin(item) {
 				uni.navigateTo({
-					url: '/pages/index/fabuxuqiu/shifuxiangqin'
+					url: `/pages/index/fabuxuqiu/shifuxiangqin?item2=${JSON.stringify(item)}`
 				})
 			},
 			async xuanzeshifu(id) {

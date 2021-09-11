@@ -55,9 +55,9 @@ page {
 /* 透明度 */
 /* 文章场景相关 */
 .shifu-item.data-v-d6d5152c {
-  margin: 36rpx 20rpx 20rpx 20rpx;
+  margin: 36rpx 20rpx 20rpx 28rpx;
   padding: 0 30rpx 0 36rpx;
-  width: 710rpx;
+  width: 692rpx;
   height: 334rpx;
   background: #FFFFFF;
   border-radius: 16rpx;
@@ -391,6 +391,7 @@ page {
   color: #999999;
 }
 .box1-1 .tit33 .txt22.data-v-d6d5152c {
+  text-align: right;
   width: 340rpx;
   font-size: 24rpx;
   font-family: Segoe UI;

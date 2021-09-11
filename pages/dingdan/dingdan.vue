@@ -5,13 +5,13 @@
 			<view class="pop">
 				<view class="pop-tit">取消订单原因</view>
 				<u-radio-group wrap font-size='32' v-model="quxxiaoDDRal" @change="radioGroupChange">
-					<u-radio name="1">我不想买了</u-radio>
-					<u-radio name="2">地址填写错误</u-radio>
-					<u-radio name="3">信息填写错误</u-radio>
-					<u-radio name="4">红包忘了用</u-radio>
-					<u-radio name="5">有更优惠的平台</u-radio>
-					<u-radio v-if="quxiaoStatus == 2" name="6">师傅服务态度差</u-radio>
-					<u-radio v-if="quxiaoStatus == 2" name="7">师傅不专业</u-radio>
+					<u-radio name="我不想买了">我不想买了</u-radio>
+					<u-radio name="地址填写错误">地址填写错误</u-radio>
+					<u-radio name="信息填写错误">信息填写错误</u-radio>
+					<u-radio name="红包忘了用">红包忘了用</u-radio>
+					<u-radio name="有更优惠的平台">有更优惠的平台</u-radio>
+					<u-radio v-if="quxiaoStatus == 2" name="师傅服务态度差">师傅服务态度差</u-radio>
+					<u-radio v-if="quxiaoStatus == 2" name="师傅不专业">师傅不专业</u-radio>
 					<u-radio name="8">其他原因</u-radio>
 				</u-radio-group>
 				<view @click="quxiaoDDSubmit" class="pop-btn">确定</view>
@@ -19,7 +19,7 @@
 		</u-popup>
 		<u-mask :show="maskshow" z-index='1' @click="onMask"></u-mask>
 		<u-popup v-model="popupShow" width="650rpx" height="336rpx" mode="center" border-radius="16">
-			<view class="txtt1">789654</view>
+			<view class="txtt1">{{orderItemcode}}</view>
 			<view class="txtt2">请勿提前将服务码</view>
 			<view class="txtt2">提前告知师傅以免造成损失</view>
 		</u-popup>
@@ -60,7 +60,7 @@
 					<view class="titt">
 						<view class="tit2">
 							<view class="txt1">
-								订单编号：<text class="black">2C07222052609</text>
+								订单编号：<text class="black">{{item.order_num}}</text>
 							</view>
 							<view class="shu"></view>
 							<view @click="fuzhi" class="txt2">复制</view>
@@ -70,7 +70,7 @@
 
 					<view class="tit2">
 						<view class="txt1">
-							服务类目：<text class="black">沙发安装</text>
+							服务类目：<text class="black">{{item.item_name}}</text>
 						</view>
 					</view>
 					<view class="tit2">
@@ -92,7 +92,7 @@
 					<view class="titt">
 						<view class="tit2">
 							<view class="txt1">
-								订单编号：<text class="black">2C07222052609</text>
+								订单编号：<text class="black">{{item.order_num}}</text>
 							</view>
 							<view class="shu"></view>
 							<view @click="fuzhi" class="txt2">复制</view>
@@ -101,7 +101,7 @@
 					</view>
 					<view class="tit2">
 						<view class="txt1">
-							服务类目：<text class="black">沙发安装</text>
+							服务类目：<text class="black">{{item.item_name}}</text>
 						</view>
 					</view>
 					<view class="tit2">
@@ -126,7 +126,7 @@
 					<view class="titt">
 						<view class="tit2">
 							<view class="txt1">
-								快递单号：<text class="black">2C07222052609</text>
+								快递单号：<text class="black">{{item.order_num}}</text>
 							</view>
 							<view class="shu"></view>
 							<view @click="fuzhi" class="txt2">复制</view>
@@ -135,7 +135,7 @@
 					</view>
 					<view class="tit2">
 						<view class="txt1">
-							服务类目：<text class="black">沙发安装</text>
+							服务类目：<text class="black">{{item.item_name}}</text>
 						</view>
 					</view>
 					<view class="tit2">
@@ -158,14 +158,14 @@
 
 					<view class="tit2">
 						<view class="txt1">
-							订单编号：<text class="black">2C07222052609</text>
+							订单编号：<text class="black">{{item.order_num}}</text>
 						</view>
 						<view class="shu"></view>
 						<view @click="fuzhi" class="txt2">复制</view>
 					</view>
 					<view class="tit2">
 						<view class="txt1">
-							服务类目：<text class="black">沙发安装</text>
+							服务类目：<text class="black">{{item.item_name}}</text>
 						</view>
 					</view>
 					<view class="tit2">
@@ -189,14 +189,14 @@
 
 					<view class="tit2">
 						<view class="txt1">
-							订单编号：<text class="black">2C07222052609</text>
+							订单编号：<text class="black">{{item.order_num}}</text>
 						</view>
 						<view class="shu"></view>
 						<view @click="fuzhi" class="txt2">复制</view>
 					</view>
 					<view class="tit2">
 						<view class="txt1">
-							服务类目：<text class="black">沙发安装</text>
+							服务类目：<text class="black">{{item.item_name}}</text>
 						</view>
 					</view>
 					<view class="tit2">
@@ -215,7 +215,7 @@
 					<view class="titt">
 						<view class="tit2">
 							<view class="txt1">
-								订单编号：<text class="black">2C07222052609</text>
+								订单编号：<text class="black">{{item.order_num}}</text>
 							</view>
 							<view class="shu"></view>
 							<view @click="fuzhi" class="txt2">复制</view>
@@ -224,7 +224,7 @@
 					</view>
 					<view class="tit2">
 						<view class="txt1">
-							服务类目：<text class="black">沙发安装</text>
+							服务类目：<text class="black">{{item.item_name}}</text>
 						</view>
 					</view>
 					<view class="tit2">
@@ -251,43 +251,31 @@
 		</view>
 		<view v-if="current == 1" class="items">
 			<view class="item" v-for="item in list" :key='item.id'>
-				<!-- 交易关闭 -->
-<!-- 				<template>
+				<!-- 订单已取消 -->
+				<template v-if="item.status == -1">
 					<view class="tit11">
-						<view class="tit1">交易关闭</view>
-						<view @click="toXiangqin(2)" class="tit1-3">查看详情</view>
+						<view class="tit1">订单已取消</view>
+						<view @click="toXiangqin(2,item.id)" class="tit1-3">查看详情</view>
 					</view>
 					<view class="tit2">
 						<view class="txt1">
-							订单编号：<text class="black">2C07222052609</text>
+							订单编号：<text class="black">{{item.order_num}}</text>
 						</view>
 						<view class="shu"></view>
-						<view @click="fuzhi" class="txt2">复制</view>
+						<view @click="fuzhi(item.order_num)" class="txt2">复制</view>
 					</view>
 					<view class="tit2">
 						<view class="txt1">
-							服务类目：<text class="black">沙发安装</text>
+							服务类目：<text class="black">{{item.item_name}}</text>
 						</view>
 					</view>
 					<view class="tit2">
-						<view class="txt1">
-							下单时间：<text class="black">2021-07-22 14:39</text>
+						<view class="txt1 yxq">
+							下单时间：<text class="black">{{item.created_at}}</text>
 						</view>
 					</view>
-					<view class="tit3">
-						<image class="pic1" src="/static/img/1229310763000_mthumb.png" mode=""></image>
-						<view class="txt1" @click="toxuanzeshifu">
-							<view class="txt1-1">1位师傅已报价</view>
-							<u-icon name="arrow-right" color="#707070" size="20"></u-icon>
-						</view>
-					</view>
-					<view class="tit4">￥200.00</view>
 					<view class="heng"></view>
-					<view class="tit5">
-						<view class="txt1">删除订单</view>
-						<view class="txt2">重新发布</view>
-					</view>
-				</template> -->
+				</template>
 				<!-- 发布订单 -->
 				<!-- <template>
 					<view class="tit11">
@@ -296,14 +284,14 @@
 					</view>
 					<view class="tit2">
 						<view class="txt1">
-							订单编号：<text class="black">2C07222052609</text>
+							订单编号：<text class="black">{{item.order_num}}</text>
 						</view>
 						<view class="shu"></view>
 						<view @click="fuzhi" class="txt2">复制</view>
 					</view>
 					<view class="tit2">
 						<view class="txt1">
-							服务类目：<text class="black">沙发安装</text>
+							服务类目：<text class="black">{{item.item_name}}</text>
 						</view>
 					</view>
 					<view class="tit2">
@@ -327,21 +315,21 @@
 					</view>
 				</template> -->
 				<!-- 未选择师傅 -->
-				<template v-if="item.status == 0">
+				<template v-if="item.status == 0 && !item.order">
 					<view class="tit11">
 						<view class="tit1">未选择师傅</view>
 						<view @click="toXiangqin(2,item.id)" class="tit1-3">查看详情</view>
 					</view>
 					<view class="tit2">
 						<view class="txt1">
-							订单编号：<text class="black">2C07222052609</text>
+							订单编号：<text class="black">{{item.order_num}}</text>
 						</view>
 						<view class="shu"></view>
-						<view @click="fuzhi" class="txt2">复制</view>
+						<view @click="fuzhi(item.order_num)" class="txt2">复制</view>
 					</view>
 					<view class="tit2">
 						<view class="txt1">
-							服务类目：<text class="black">沙发安装</text>
+							服务类目：<text class="black">{{item.item_name}}</text>
 						</view>
 					</view>
 					<view class="tit2">
@@ -355,34 +343,37 @@
 							<!-- <view v-if="!ischooseShifu" class="txt1-1">1位师傅已报价</view>
 							<view v-else class="txt1-1">师傅已接单</view> -->
 							<view v-if="item.quotes_count == 0" class="txt1-1">暂无师傅报价</view>
-							<view v-else  @click="toxuanzeshifu(item.id)" class="txt1-1">{{item.quotes_count}}位师傅已报价</view>
-							<u-icon v-if="item.quotes_count != 0" @click="toxuanzeshifu(item.id)" name="arrow-right" color="#707070" size="20"></u-icon>
+							<view v-else @click="toxuanzeshifu(item.id)" class="txt1-1">{{item.quotes_count}}位师傅已报价
+							</view>
+							<u-icon v-if="item.quotes_count != 0" @click="toxuanzeshifu(item.id)" name="arrow-right"
+								color="#707070" size="20"></u-icon>
 						</view>
 					</view>
 					<!-- <view class="tit4">￥200.00</view> -->
 					<view class="heng"></view>
 					<view class="tit5">
 						<view v-if="!ischooseShifu" class="txt3">倒计时：23:59:59</view>
-						<view class="txt1" @click="quxiaoDD('2')">取消订单</view>
-						<view @click="toPay" :class="{'txt2':true,'active':!ischooseShifu}">去支付</view>
+						<view class="txt1" @click="quxiaoDD('2',item)">取消订单</view>
+						<view @click="toxuanzeshifu(item.id,item.quotes_count)"
+							:class="{'txt2':true,'active':!ischooseShifu}">选择师傅</view>
 					</view>
 				</template>
 				<!-- 等待付款 -->
-				<template v-if="item.status == 1">
+				<template v-if="item.status == 1 && !item.order || item.order.status == 0">
 					<view class="tit11">
 						<view class="tit1">等待付款</view>
 						<view @click="toXiangqin(2,item.id)" class="tit1-3">查看详情</view>
 					</view>
 					<view class="tit2">
 						<view class="txt1">
-							订单编号：<text class="black">2C07222052609</text>
+							订单编号：<text class="black">{{item.order_num}}</text>
 						</view>
 						<view class="shu"></view>
-						<view @click="fuzhi" class="txt2">复制</view>
+						<view @click="fuzhi(item.order_num)" class="txt2">复制</view>
 					</view>
 					<view class="tit2">
 						<view class="txt1">
-							服务类目：<text class="black">沙发安装</text>
+							服务类目：<text class="black">{{item.item_name}}</text>
 						</view>
 					</view>
 					<view class="tit2">
@@ -391,7 +382,8 @@
 						</view>
 					</view>
 					<view class="tit3">
-						<image v-if="item.selected_quote.user_info.avatar" class="pic1" :src="item.selected_quote.user_info.avatar" mode=""></image>
+						<image v-if="item.selected_quote.user_info.avatar" class="pic1"
+							:src="item.selected_quote.user_info.avatar" mode=""></image>
 						<image v-else class="pic1" src="/static/img/1229310763000_mthumb.png" mode=""></image>
 						<view class="txt1" @click="toxuanzeshifu(item.id)">
 							<!-- <view v-if="!ischooseShifu" class="txt1-1">1位师傅已报价</view> -->
@@ -403,8 +395,8 @@
 					<view class="heng"></view>
 					<view class="tit5">
 						<view v-if="!ischooseShifu" class="txt3">倒计时：23:59:59</view>
-						<view class="txt1" @click="quxiaoDD('2')">取消订单</view>
-						<view @click="toPay" :class="{'txt2':true,'active':!ischooseShifu}">去支付</view>
+						<view class="txt1" @click="quxiaoDD('2',item)">取消订单</view>
+						<view @click="toPay(item)" :class="{'txt2':true,'active':!ischooseShifu}">去支付</view>
 					</view>
 				</template>
 				<!-- 确认收货 -->
@@ -417,14 +409,14 @@
 
 					<view class="tit2">
 						<view class="txt1">
-							订单编号：<text class="black">2C07222052609</text>
+							订单编号：<text class="black">{{item.order_num}}</text>
 						</view>
 						<view class="shu"></view>
 						<view @click="fuzhi" class="txt2">复制</view>
 					</view>
 					<view class="tit2">
 						<view class="txt1">
-							服务类目：<text class="black">沙发安装</text>
+							服务类目：<text class="black">{{item.item_name}}</text>
 						</view>
 					</view>
 					<view class="tit2">
@@ -443,37 +435,39 @@
 					</view>
 				</template> -->
 				<!-- 等待上门 -->
-				<template v-if="item.status == 2">
+				<template v-if="item.order.status == 1">
 					<view class="tit11">
 						<view class="tit1">等待上门</view>
-						<view class="tit1-3">查看详情</view>
+						<view @click="toXiangqin(2,item.id)" class="tit1-3">查看详情</view>
 					</view>
 					<view class="tit2">
 						<view class="txt1">
-							订单编号：<text class="black">2C07222052609</text>
+							订单编号：<text class="black">{{item.order_num}}</text>
 						</view>
 						<view class="shu"></view>
-						<view @click="fuzhi" class="txt2">复制</view>
+						<view @click="fuzhi(item.order_num)" class="txt2">复制</view>
 					</view>
 					<view class="tit2">
 						<view class="txt1">
-							服务类目：<text class="black">沙发安装</text>
+							服务类目：<text class="black">{{item.item_name}}</text>
 						</view>
 					</view>
 					<view class="tit2">
 						<view class="txt1">
-							服务时间：<text class="black">2021-07-22 14:39</text>
+							服务时间：<text class="black">{{item.expect_start_date}}</text>
 						</view>
 					</view>
 					<view class="tit3">
 						<view class="txt3-1">
-							<image class="pic1" src="/static/img/1229310763000_mthumb.png" mode=""></image>
+							<image class="pic1" v-if="item.selected_quote.user_info.avatar" :src="item.selected_quote.user_info.avatar" mode=""></image>
+							<image class="pic1" v-else src="/static/img/1229310763000_mthumb.png" mode=""></image>
 							<view class="txt33">
-								<view class="txt3-1-1">请尽快与李师傅协商具体上门信息</view>
-								<view class="txt3-1-2">￥200.00</view>
+								<view class="txt3-1-1">请尽快与{{item.selected_quote.user_info.nick_name}}师傅协商具体上门信息</view>
+								<view class="txt3-1-2">￥{{item.order.actual_price}}</view>
 							</view>
 						</view>
-						<image class="picc" src="/static/img/zu61.png" mode=""></image>
+						<image @click="callPhone(item.selected_quote.user.phone)" class="picc"
+							src="/static/img/zu61.png" mode=""></image>
 					</view>
 					<view class="heng"></view>
 					<view class="tit5">
@@ -481,87 +475,125 @@
 							<view class="txt5-1">请勿提前将服务码</view>
 							<view class="txt5-1">提前告知师傅以免造成损失</view>
 						</view>
-						<view class="txt1">删除订单</view>
-						<view @click="popupShow = true" class="txt2">服务码</view>
+						<!-- <view class="txt1">删</view> -->
+						<view @click="clickfwm(item.order.code)" class="fwm txt2">服务码</view>
 					</view>
 				</template>
 				<!-- 正在服务 -->
-				<template v-if="item.status == 3">
+				<template v-if="item.order.status == 3">
 					<view class="tit11">
 						<view class="tit1">正在服务</view>
-						<view class="tit1-3">查看详情</view>
+						<view @click="toXiangqin(2,item.id)" class="tit1-3">查看详情</view>
 					</view>
 					<view class="tit2">
 						<view class="txt1">
-							订单编号：<text class="black">2C07222052609</text>
+							订单编号：<text class="black">{{item.order_num}}</text>
 						</view>
 						<view class="shu"></view>
-						<view @click="fuzhi" class="txt2">复制</view>
+						<view @click="fuzhi(item.order_num)" class="txt2">复制</view>
 					</view>
 					<view class="tit2">
 						<view class="txt1">
-							服务类目：<text class="black">沙发安装</text>
+							服务类目：<text class="black">{{item.item_name}}</text>
 						</view>
 					</view>
 					<view class="tit2">
 						<view class="txt1">
-							服务时间：<text class="black">2021-07-22 14:39</text>
+							服务时间：<text class="black">{{item.expect_start_date}}</text>
 						</view>
 					</view>
 
 					<view class="heng"></view>
 					<view class="tit5">
 						<view class="img">
-							<image class="pic1" src="/static/img/1229310763000_mthumb.png" mode=""></image>
+							<image class="pic1" v-if="item.selected_quote.user_info.avatar" :src="item.selected_quote.user_info.avatar" mode=""></image>
+							<image class="pic1" v-else src="/static/img/1229310763000_mthumb.png" mode=""></image>
 							<view class="tit111">
-								<view class="txt11-1">李师傅</view>
-								<view class="txt11-2">￥200.00</view>
+								<view class="txt11-1">{{item.selected_quote.user_info.nick_name}}师傅</view>
+								<view class="txt11-2">￥{{item.order.actual_price}}</view>
 							</view>
 						</view>
 						<!-- <view class="txt1 txt1-2">删除订单</view> -->
-						<view class="txt1 txt1-3">售后</view>
-						<view class="txt2">完成服务</view>
+						<!-- <view class="txt1 zzfw txt1-3">售后</view> -->
+						<view class="txt2 zzfw">售后</view>
 					</view>
 				</template>
 				<!-- 已完成 -->
-				<template v-if="item.status == 4">
+				<template v-if="item.order.status == 4">
 					<view class="tit11">
 						<view class="tit1">已完成</view>
-						<view class="tit1-3">查看详情</view>
+						<view @click="toXiangqin(2,item.id)" class="tit1-3">查看详情</view>
 					</view>
 					<view class="tit2">
 						<view class="txt1">
-							订单编号：<text class="black">2C07222052609</text>
+							订单编号：<text class="black">{{item.order_num}}</text>
 						</view>
 						<view class="shu"></view>
-						<view @click="fuzhi" class="txt2">复制</view>
+						<view @click="fuzhi(item.order_num)" class="txt2">复制</view>
 					</view>
 					<view class="tit2">
 						<view class="txt1">
-							服务类目：<text class="black">沙发安装</text>
+							服务类目：<text class="black">{{item.item_name}}</text>
 						</view>
 					</view>
 					<view class="tit2">
 						<view class="txt1">
-							服务时间：<text class="black">2021-07-22 14:39</text>
+							服务时间：<text class="black">{{item.expect_start_date}}</text>
 						</view>
 					</view>
 
 					<view class="heng"></view>
 					<view class="tit5">
 						<view class="img">
-							<image class="pic1" src="/static/img/1229310763000_mthumb.png" mode=""></image>
+							<image class="pic1" v-if="item.selected_quote.user_info.avatar" :src="item.selected_quote.user_info.avatar" mode=""></image>
+							<image class="pic1" v-else src="/static/img/1229310763000_mthumb.png" mode=""></image>
 							<view class="tit111">
-								<view class="txt11-1">李师傅</view>
-								<view class="txt11-2">￥200.00</view>
+								<view class="txt11-1">{{item.selected_quote.user_info.nick_name}}师傅</view>
+								<view class="txt11-2">￥{{item.order.actual_price}}</view>
 							</view>
 						</view>
 						<!-- <view class="txt1 txt1-2">删除订单</view> -->
-						<view @click="toPingjia" style="margin-left: 335rpx;" class="txt2">去评价</view>
+						<view v-if="(item.order.comments_count == 0)" @click="toPingjia(item.order.id,item.selected_quote.user_info.nick_name,item.selected_quote.user_info.avatar)" class="txt2 ywc">去评价</view>
+						<view v-if="(item.order.comments_count == 1)" @click="seePingjia(item.order.id)" class="txt2 ywc">查看评价</view>
 					</view>
 				</template>
 			</view>
+			<u-loadmore :status="status" :icon-type="iconType" :load-text="loadText" />
 		</view>
+		<!-- 直接购买 -->
+		<u-popup class='zjgmShow' z-index="9" v-model="zjgmShow" mode="bottom" border-radius="34">
+			<view class="zjgmShow2">
+				<view class="item" @click="changeMyRadio('wx')">
+					<view class="tit1">
+						<u-icon name="weixin-circle-fill" color="#41B035" size="24"></u-icon>
+						<view class="txt1">微信支付</view>
+					</view>
+					<view v-if="isMyRadio == 'wx'" class="tit2">
+						<view class="tit2-1"></view>
+					</view>
+					<view v-else class="tit3"></view>
+				</view>
+				<view class="item" @click="changeMyRadio('yue')">
+					<view class="tit1">
+						<u-icon name="rmb-circle-fill" color="#FF6F00" size="24"></u-icon>
+						<view class="txt1">余额支付</view>
+					</view>
+					<view v-if="isMyRadio == 'yue'" class="tit2">
+						<view class="tit2-1"></view>
+					</view>
+					<view v-else class="tit3"></view>
+				</view>
+				<view class="footer">
+					<view class="right">
+						<view class="tit1">
+							￥{{Number(itemPrice)}}
+						</view>
+					</view>
+					<view @click="pay" class="left">支付</view>
+				</view>
+			</view>
+
+		</u-popup>
 	</view>
 </template>
 
@@ -584,9 +616,15 @@
 		},
 		data() {
 			return {
-				list:[],
-				quxiaoStatus:'1',
-				quxxiaoDDRal:'',
+				qxDDitem: null,
+				orderItemcode: '', //服务码
+				itemId: null,
+				itemPrice: 0,
+				isMyRadio: 'wx',
+				zjgmShow: false,
+				list: [],
+				quxiaoStatus: '1',
+				quxxiaoDDRal: '',
 				quxiaoDDshow: false,
 				ischooseShifu: true,
 				popupShow: false,
@@ -607,6 +645,8 @@
 			}
 		},
 		async onShow() {
+			this.top1Value = '';
+			this.top2Value = '';
 			this.list = [];
 			this.getData()
 			this.$store.commit("dingdanPage", 1);
@@ -615,7 +655,7 @@
 			this.$store.commit("dingdanPage", this.dingdanPage + 1);
 		},
 		methods: {
-			async getData(){
+			async getData() {
 				this.status = 'loading';
 				if (this.clock) {
 					this.list = [];
@@ -635,39 +675,114 @@
 						this.list = this.list.concat(res.data.data)
 					}
 				}, 200)
+				console.log(this.list)
 			},
-			toPay() {
-				if (!this.ischooseShifu) {
+			callPhone(phone) {
+				uni.makePhoneCall({
+					phoneNumber: phone
+				});
+			},
+			changeMyRadio(val) {
+				this.isMyRadio = val;
+			},
+			clickfwm(code) {
+				console.log(code)
+				this.popupShow = true;
+				this.orderItemcode = code;
+			},
+			async pay() {
+				const res = await this.$api.pay({
+					order_id: this.itemId,
+					pay_type: this.isMyRadio == 'wx' ? 1 : 0,
+				})
+				console.log(res)
+				if (res.code == 200) {
 					this.$refs.uToast.show({
-						title: '请先选择师傅',
+						title: '支付成功',
+						type: 'success',
+					})
+					this.zjgmShow = false;
+					this.list = [];
+					this.$store.commit("dingdanPage", 1);
+					this.getData()
+				} else {
+					this.$refs.uToast.show({
+						title: res.msg,
 						type: 'warning',
 					})
 				}
 			},
-			toPingjia(){
+			toPay(item) {
+				if (item.order) {
+					this.itemPrice = item.order.actual_price;
+					this.zjgmShow = true;
+					this.itemId = item.order.id
+				} else {
+					if (!this.ischooseShifu) {
+						this.$refs.uToast.show({
+							title: '请先选择师傅',
+							type: 'warning',
+						})
+					} else {
+						uni.navigateTo({
+							url: `/pages/index/dingdantijiao/dingdantijiao?id=${item.id}`,
+						})
+					}
+				}
+
+			},
+			toPingjia(id,name,img) {
 				uni.navigateTo({
-					url:'/pages/dingdan/pingjia/pingjia'
+					url: `/pages/dingdan/pingjia/pingjia?id=${id}&name=${name}&img=${img}`
 				})
 			},
-			quxiaoDD(i){
+			seePingjia(id){
+				uni.navigateTo({
+					url: `/pages/dingdan/pingjia/pingjia?id=${id}`
+				})
+			},
+			quxiaoDD(i, item) {
 				this.quxiaoStatus = i;
 				this.quxiaoDDshow = true;
+				this.qxDDitem = item;
 			},
-			quxiaoDDSubmit(){
-				this.quxiaoDDshow = false;
+			async quxiaoDDSubmit() {
+				const res = await this.$api.demandQuotesIidCancel({
+					id: this.qxDDitem.id,
+					cancel_reason: this.quxxiaoDDRal
+				});
+				if (res.code == 200) {
+					this.$refs.uToast.show({
+						title: '取消订单成功',
+						type: 'success',
+						callback: () => {
+							this.list = [];
+							this.$store.commit("dingdanPage", 1);
+							this.getData()
+							this.quxiaoDDshow = false;
+						},
+					})
+				}
 			},
-			radioGroupChange(){
+			radioGroupChange() {
 				console.log(this.quxxiaoDDRal)
 			},
-			toXiangqin(val,id) {
+			toXiangqin(val, id) {
 				uni.navigateTo({
 					url: `/pages/dingdan/chakanxiangqin/chakanxiangqin?status=${val}&id=${id}`
 				})
 			},
-			toxuanzeshifu(id) {
-				uni.navigateTo({
-					url: `/pages/dingdan/xuanzeshifu/xuanzeshifu?id=${id}`
-				})
+			toxuanzeshifu(id, val = 1) {
+				if (val == 0) {
+					this.$refs.uToast.show({
+						title: '暂未有师傅接单',
+						type: 'warning',
+					})
+				} else {
+					uni.navigateTo({
+						url: `/pages/dingdan/xuanzeshifu/xuanzeshifu?id=${id}`
+					})
+				}
 			},
 			chooesTop(val) {
 				this.maskshow = true;
@@ -704,9 +819,9 @@
 			closeTop2() {
 				this.top2Value = '';
 			},
-			fuzhi() {
+			fuzhi(e) {
 				uni.setClipboardData({
-					data: 'hello',
+					data: e,
 				});
 			},
 		}
@@ -722,12 +837,18 @@
 	.index {
 		position: relative;
 	}
-	.pop{
+
+	/deep/ .u-load-more-wrap {
+		height: 80rpx !important;
+	}
+
+	.pop {
 		height: 100%;
 		width: 100%;
 		padding: 0 42rpx;
 		position: relative;
-		.pop-tit{
+
+		.pop-tit {
 			text-align: center;
 			margin-bottom: 40rpx;
 			margin-top: 20rpx;
@@ -737,14 +858,17 @@
 			line-height: 48rpx;
 			color: #000000;
 		}
-		/deep/ .u-radio{
+
+		/deep/ .u-radio {
 			margin-bottom: 6rpx;
-			.u-radio__label{
+
+			.u-radio__label {
 				margin-left: 30rpx;
 				color: #000000;
 			}
 		}
-		.pop-btn{
+
+		.pop-btn {
 			position: absolute;
 			bottom: 64rpx;
 			left: 128rpx;
@@ -752,7 +876,7 @@
 			height: 76rpx;
 			background: #1677FF;
 			border-radius: 48rpx;
-			text-align:  center;
+			text-align: center;
 			line-height: 76rpx;
 			font-size: 40rpx;
 			font-family: Microsoft YaHei;
@@ -760,6 +884,7 @@
 			color: #FFFFFF;
 		}
 	}
+
 	.txtt1 {
 		margin-top: 34rpx;
 		text-align: center;
@@ -906,10 +1031,13 @@
 					font-weight: 400;
 					line-height: 28rpx;
 					color: #999999;
-
+					
 					.black {
 						color: #000000;
 					}
+				}
+				.txt1.yxq{
+					margin-bottom: 10rpx;
 				}
 
 				.shu {
@@ -1008,7 +1136,20 @@
 				width: 750rpx;
 				display: flex;
 				align-items: center;
-
+				// 正在服务
+				.zzfw.txt2{
+					position: absolute;
+					top: 50%;
+					transform: translateY(-50%);
+					right: 44rpx;
+				}
+				// 已完成
+				.ywc.txt2{
+					position: absolute;
+					top: 50%;
+					transform: translateY(-50%);
+					right: 44rpx;
+				}
 				.img {
 					display: flex;
 					align-items: center;
@@ -1073,6 +1214,10 @@
 					color: #707070;
 				}
 
+				.fwm.txt2 {
+					margin-left: 528rpx;
+				}
+
 				.txt2 {
 					width: 176rpx;
 					height: 56rpx;
@@ -1085,7 +1230,9 @@
 					line-height: 56rpx;
 					color: #FFFFFF;
 				}
-
+				.txt2.cxfb{
+					margin-left: 528rpx;
+				}
 				.txt2.active {
 					background: #cccccc;
 				}
@@ -1112,5 +1259,97 @@
 				}
 			}
 		}
+	}
+
+	.zjgmShow2 {
+		margin-top: 20rpx;
+		background: #FFFFFF;
+
+		.item {
+			padding: 0 24rpx 0 44rpx;
+			height: 66rpx;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+
+			.tit1 {
+				height: 66rpx;
+				display: flex;
+				align-items: center;
+
+				.txt1 {
+					margin-left: 18rpx;
+					font-size: 24rpx;
+					font-family: Segoe UI;
+					font-weight: 400;
+					line-height: 32rpx;
+					color: #000000;
+				}
+			}
+
+			.tit2 {
+				width: 22rpx;
+				height: 22rpx;
+				border: 2rpx solid #4988FD;
+				border-radius: 50%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+
+				.tit2-1 {
+					width: 14rpx;
+					height: 14rpx;
+					background: #4988FD;
+					border-radius: 50%;
+				}
+			}
+
+			.tit3 {
+				width: 22rpx;
+				height: 22rpx;
+				border: 2rpx solid #707070;
+				border-radius: 50%;
+			}
+		}
+
+		.footer {
+			width: 750rpx;
+			height: 104rpx;
+			background: #FFFFFF;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+
+			.right {
+				.tit1 {
+					margin-left: 38rpx;
+					font-size: 48rpx;
+					font-family: Microsoft YaHei;
+					font-weight: 400;
+					line-height: 32rpx;
+					color: #FF6F00;
+					font-weight: 600;
+
+					.small {
+						font-weight: 400;
+						font-size: 24rpx;
+					}
+				}
+			}
+
+			.left {
+				width: 236rpx;
+				height: 104rpx;
+				background: #4988FD;
+				border-radius: 24rpx 0px 0px 0px;
+				font-size: 48rpx;
+				font-family: Segoe UI;
+				font-weight: 400;
+				line-height: 104rpx;
+				color: #FFFFFF;
+				text-align: center;
+			}
+		}
+
 	}
 </style>

@@ -13,129 +13,39 @@
     "miniprogram": {
       "list": [
         {
-          "name": "pages/shangpinxiangqin/shangpinxiangqin",
-          "pathName": "pages/shangpinxiangqin/shangpinxiangqin",
-          "query": "id=19&scene=17_6",
-          "scene": null
-        },
-        {
-          "name": "pages/index/shangpinxiangqin/shangpinxiangqin",
-          "pathName": "pages/index/shangpinxiangqin/shangpinxiangqin",
-          "query": "scene=2_ohQ5k671SEahXSZY0VDHRA==",
-          "scene": null
-        },
-        {
           "name": "pages/index/index",
           "pathName": "pages/index/index",
           "query": "scene=2_ohQ5k671SEahXSZY0VDHRA==",
           "scene": null
         },
         {
-          "name": "pages/index/fabuxuqiu/xiadan",
-          "pathName": "pages/index/fabuxuqiu/xiadan",
-          "query": "",
-          "scene": null
-        },
-        {
-          "name": "pages/index/fabuxuqiu/baojiaShifuxinxi",
-          "pathName": "pages/index/fabuxuqiu/baojiaShifuxinxi",
-          "query": "",
-          "scene": null
-        },
-        {
-          "name": "pages/index/fabuxuqiu/shifuxiangqin",
-          "pathName": "pages/index/fabuxuqiu/shifuxiangqin",
-          "query": "",
-          "scene": null
-        },
-        {
-          "name": "pages/index/dingdantijiao/dingdantijiao",
-          "pathName": "pages/index/dingdantijiao/dingdantijiao",
-          "query": "",
-          "scene": null
-        },
-        {
           "name": "pages/dingdan/dingdan",
           "pathName": "pages/dingdan/dingdan",
-          "query": "",
-          "scene": null
-        },
-        {
-          "name": "pages/index/fabuxuqiu/baojiaShifuxinxi",
-          "pathName": "pages/index/fabuxuqiu/baojiaShifuxinxi",
-          "query": "",
-          "scene": null
-        },
-        {
-          "name": "pages/index/rushangcheng/rushangcheng",
-          "pathName": "pages/index/rushangcheng/rushangcheng",
           "query": "",
           "scene": null
         },
         {
           "name": "pages/dingdan/xuanzeshifu/xuanzeshifu",
           "pathName": "pages/dingdan/xuanzeshifu/xuanzeshifu",
-          "query": "",
+          "query": "id=7",
           "scene": null
         },
         {
-          "name": "pages/gouwuche/gouwuche",
-          "pathName": "pages/gouwuche/gouwuche",
-          "query": "",
+          "name": "pages/index/fabuxuqiu/xiadan",
+          "pathName": "pages/index/fabuxuqiu/xiadan",
+          "query": "item_id=2&bgName=molestias&bgImg=https%3A%2F%2Fvia.placeholder.com%2F300x300.png%2F00aaaa",
           "scene": null
         },
         {
-          "name": "pages/index/dingdantijiao/shangchengTijiaodingdan",
-          "pathName": "pages/index/dingdantijiao/shangchengTijiaodingdan",
-          "query": "",
-          "scene": null
-        },
-        {
-          "name": "pages/index/fabuxuqiu/shifuxiangqin",
-          "pathName": "pages/index/fabuxuqiu/shifuxiangqin",
-          "query": "",
-          "scene": null
-        },
-        {
-          "name": "pages/fenlei/fenlei",
-          "pathName": "pages/fenlei/fenlei",
+          "name": "pages/wode/yijianfankui/yijianfankui",
+          "pathName": "pages/wode/yijianfankui/yijianfankui",
           "query": "",
           "scene": null
         },
         {
           "name": "pages/index/shangpinxiangqin/shangpinxiangqin",
           "pathName": "pages/index/shangpinxiangqin/shangpinxiangqin",
-          "query": "id=1",
-          "scene": null
-        },
-        {
-          "name": "pages/index/fabuxuqiu/fabuxuqiu",
-          "pathName": "pages/index/fabuxuqiu/fabuxuqiu",
-          "query": "",
-          "scene": null
-        },
-        {
-          "name": "pages/wode/shouhuodizhi/shouhuodizhi",
-          "pathName": "pages/wode/shouhuodizhi/shouhuodizhi",
-          "query": "",
-          "scene": null
-        },
-        {
-          "name": "pages/index/fabuxuqiu/xiadan",
-          "pathName": "pages/index/fabuxuqiu/xiadan",
-          "query": "item_id=1",
-          "scene": null
-        },
-        {
-          "name": "pages/wode/weixinshouquan/weixinshouquan",
-          "pathName": "pages/wode/weixinshouquan/weixinshouquan",
-          "query": "",
-          "scene": null
-        },
-        {
-          "name": "pages/dingdan/dingdan",
-          "pathName": "pages/dingdan/dingdan",
-          "query": "",
+          "query": "id=8",
           "scene": null
         }
       ]

@@ -1,16 +1,20 @@
 <template>
 	<view class="index">
+		<u-toast ref="uToast" />
+		<view v-if="noYhq" class="noYhq">
+			您还未拥有优惠券哦~
+		</view>
 		<view class="nav1">
-			<view @click="chooseYouhuiquan(i)" class="item" :key='i' v-for="(item,i) in 3">
+			<view @click="chooseYouhuiquan(i,item)" class="item" :key='item.id' v-for="(item,i) in List">
 				<image v-if="youhuiquanIndex == i" class="picc" src="/static/img/zu90.png" mode=""></image>
 				<image class="pic1" src="/static/img/zu22.png" mode=""></image>
 				<view class="txt1">现金券</view>
 				<view class="txt2">
-					<view class="txt2-1">￥<text class="big">20</text></view>
-					<view class="txt2-2">满280元可用</view>
+					<view class="txt2-1">￥<text class="big">{{item.discount}}</text></view>
+					<view class="txt2-2">满{{item.limit}}元可用</view>
 				</view>
-				<view class="txt3">20元通用券</view>
-				<view class="txt4">2021.07.06-2021.08.06</view>
+				<view class="txt3">{{item.discount}}元通用券</view>
+				<view class="txt4">{{item.created_at}}-{{item.expiration_time}}</view>
 				<view class="txt5">全站通用</view>
 				<view class="txt6">可转赠</view>
 				<view class="xuxian"></view>
@@ -31,25 +35,74 @@
 		onLoad(option) {
 			// 如果是商城订单status就等于shangping
 			this.status = option.status;
+			this.id = option.id;
+			this.price = option.price
 		},
 		data() {
 			return {
 				youhuiquanIndex: -1,
 				status: null,
+				List: [],
+				yhqObj: null,
+				id: '',
+				price: '',
+				noYhq:false,
 			}
 		},
+		onShow() {
+			this.getData()
+		},
 		methods: {
-			chooseYouhuiquan(i) {
+			async getData() {
+				const res = await this.$api.coupons();
+				this.List = res.data.data;
+				console.log(res.data.total)
+				if(res.data.total == 0){
+					this.noYhq = true;
+				}
+			},
+			chooseYouhuiquan(i, item) {
 				this.youhuiquanIndex = i
+				this.yhqObj = item;
 			},
 			goBack() {
 				if (this.status == 'shangping') {
-					uni.navigateBack();
-				} else {
-					uni.navigateTo({
-						url: '/pages/index/dingdantijiao/dingdantijiao'
+					// let pages = getCurrentPages();
+					// let prevPage = pages[pages.length - 2];
+					// prevPage.$vm.otherFun(this.yhqObj);
+					// uni.navigateBack()
+					this.$refs.uToast.show({
+						title: '已选择优惠券',
+						type: 'success',
+						duration: 600,
+						params: {
+							...this.yhqObj
+						},
+						back: true,
 					})
+				} else {
+					if (Number(this.price) <= Number(this.yhqObj.limit)) {
+						this.$refs.uToast.show({
+							title: '未达优惠券满减金额',
+							type: 'warning',
+							duration: 1000,
+						})
+					} else {
+						this.$refs.uToast.show({
+							title: '已选择优惠券',
+							type: 'success',
+							url: '/pages/index/dingdantijiao/dingdantijiao',
+							duration: 600,
+							params: {
+								...this.yhqObj,
+								coupon_id: this.yhqObj.id,
+								id: this.id,
+							},
+						})
+					}
+
 				}
+				s
 			},
 		}
 	}
@@ -61,6 +114,11 @@
 	}
 </style>
 <style scoped lang="scss">
+	.noYhq{
+		font-size: 30rpx;
+		text-align: center;
+		padding-top: 20rpx;
+	}
 	.nav1 {
 		margin-top: 22rpx;
 		margin-bottom: 120rpx;

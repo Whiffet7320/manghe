@@ -4,7 +4,7 @@
 		<u-action-sheet @click="kefuClick" :list="kefuList" v-model="kefuShow"></u-action-sheet>
 		<view class="nav1">
 			<view class="tit1">
-				<image class="pic1" v-if='!user' src="../../static/img/1229310763000_mthumb.png" mode=""></image>
+				<image class="pic1" v-if='!user' src="/static/img/1229310763000_mthumb.png" mode=""></image>
 				<image class="pic1" v-else :src="user.user_info.avatar" mode=""></image>
 				<view class="tit1-1" v-if="user">
 					<view class="txt1">{{user.user_info.nick_name}}</view>
@@ -15,26 +15,26 @@
 		</view>
 		<view class="nav2">
 			<view @click="toyouhuiquan" class="item1">
-				<image class="pic1" src="../../static/img/yhq.png" mode=""></image>
+				<image class="pic1" src="/static/img/yhq.png" mode=""></image>
 				<view class="txt1">优惠券</view>
 			</view>
 			<view class="shu"></view>
 			<view @click="toshouhuodizhi" class="item1">
-				<image class="pic2" src="../../static/img/zu1.png" mode=""></image>
+				<image class="pic2" src="/static/img/zu1.png" mode=""></image>
 				<view class="txt1">我的地址</view>
 			</view>
 		</view>
 		<view class="nav3">
 			<view class="item" @click="toQianbao">
-				<image class="pic1" src="../../static/img/qb.png" mode=""></image>
+				<image class="pic1" src="/static/img/qb.png" mode=""></image>
 				<view class="txt">
 					<view class="txt1">钱包</view>
-					<view class="txt2">99.99</view>
+					<view class="txt2">{{money}}</view>
 				</view>
 				<u-icon name="arrow-right" color="#989898" size="28"></u-icon>
 			</view>
 			<view class="item" @click="toJifen">
-				<image class="pic2" src="../../static/img/jf.png" mode=""></image>
+				<image class="pic2" src="/static/img/jf.png" mode=""></image>
 				<view class="txt">
 					<view class="txt1">我的积分</view>
 					<view class="txt2">99.99</view>
@@ -42,7 +42,7 @@
 				<u-icon name="arrow-right" color="#989898" size="28"></u-icon>
 			</view>
 			<view class="item" @click="toAnquanzhongxin">
-				<image class="pic3" src="../../static/img/zu4.png" mode=""></image>
+				<image class="pic3" src="/static/img/zu4.png" mode=""></image>
 				<view class="txt">
 					<view class="txt1">安全中心</view>
 					<view class="txt2"></view>
@@ -50,7 +50,7 @@
 				<u-icon name="arrow-right" color="#989898" size="28"></u-icon>
 			</view>
 			<view class="item" @click="toYijianfankui">
-				<image class="pic4" src="../../static/img/zu7.png" mode=""></image>
+				<image class="pic4" src="/static/img/zu7.png" mode=""></image>
 				<view class="txt">
 					<view class="txt1">意见反馈</view>
 					<view class="txt2"></view>
@@ -58,7 +58,7 @@
 				<u-icon name="arrow-right" color="#989898" size="28"></u-icon>
 			</view>
 			<view class="item" @click="lianxikefu">
-				<image class="pic4" src="../../static/img/zu5.png" mode=""></image>
+				<image class="pic4" src="/static/img/zu5.png" mode=""></image>
 				<view class="txt">
 					<view class="txt1">联系客服</view>
 					<view class="txt2"></view>
@@ -66,7 +66,7 @@
 				<u-icon name="arrow-right" color="#989898" size="28"></u-icon>
 			</view>
 			<view class="item" @click="toShezhi">
-				<image class="pic4" src="../../static/img/sz.png" mode=""></image>
+				<image class="pic4" src="/static/img/sz.png" mode=""></image>
 				<view class="txt">
 					<view class="txt1">设置</view>
 					<view class="txt2"></view>
@@ -76,7 +76,7 @@
 		</view>
 		<view class="nav4">
 			<view class="item">
-				<image class="pic1" src="../../static/img/weixiu.png" mode=""></image>
+				<image class="pic1" src="/static/img/weixiu.png" mode=""></image>
 				<view class="txt">
 					<view class="txt1">我是师傅</view>
 					<view class="txt2">查看入驻信息</view>
@@ -93,6 +93,7 @@
 		data() {
 			return {
 				user: null,
+				money:0,
 				kefuList: [{
 					text: '电话客服',
 				}, {
@@ -104,10 +105,17 @@
 		onShow(){
 			if(uni.getStorageSync('myUser')){
 				this.user = uni.getStorageSync('myUser');
+				console.log(11111)
 			}
-			console.log(this.user,1111)
+			console.log(this.user,1111,uni.getStorageSync('myUser'))
+			this.getData()
 		},
 		methods: {
+			async getData(){
+				const res = await this.$api.user()
+				console.log(res)
+				this.money = res.data.money;
+			},
 			toLogin() {
 				uni.navigateTo({
 					url: '/pages/wode/weixinshouquan/weixinshouquan'
@@ -125,7 +133,7 @@
 			},
 			toQianbao() {
 				uni.navigateTo({
-					url: '/pages/wode/qianbao/qianbao'
+					url: `/pages/wode/qianbao/qianbao?money=${this.money}`
 				})
 			},
 			toJifen() {
