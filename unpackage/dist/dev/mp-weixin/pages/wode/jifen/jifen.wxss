@@ -89,7 +89,6 @@ page {
 }
 .nav1 .tit2.data-v-bee75f58 {
   margin-top: 10rpx;
-  width: 204rpx;
   font-size: 24rpx;
   font-family: SimHei;
   font-weight: 400;

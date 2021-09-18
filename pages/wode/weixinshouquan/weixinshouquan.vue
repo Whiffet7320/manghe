@@ -65,7 +65,8 @@
 										code: code,
 										user_info: infoRes.userInfo,
 										iv:that.iv,
-										phoneData:that.phoneData
+										phoneData:that.phoneData,
+										invite_user_id:that.recommend_userid
 									})
 									console.log(res, '授权')
 									if (res.code == 200) {

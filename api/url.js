@@ -31,4 +31,12 @@ export default {
 	feedbacksTypes:'/api/feedbacks-types',//反馈类型
 	feedbacks:'/api/feedbacks',//新增反馈
 	itemsItemIdComments:'/api/items',//商品评论列表
+	withdraw:'/api/withdraw',//申请提现
+	scoreRecords:'/api/score-records',//积分明细
+	scoreToMoney:'/api/score/to-money',//积分兑余额
+	turntableItems:'/api/turntable-items',//大转盘item
+	turntableTurn:'/api/turntable/turn',//大转盘结果
+	awards:'/api/awards',//奖品列表
+	itemsList:'/api/items',//商品列表
+	goodsOrder:'/api/goods-order',//生成商品订单
 }

@@ -120,6 +120,13 @@
 					"navigationBarBackgroundColor": "#C91919",
 					"navigationBarTextStyle": "white"
 				}
+			},{
+				"path": "wodejiangping",
+				"style": {
+					// "navigationStyle": "custom",
+					"navigationBarTitleText": "我的奖品",
+					"enablePullDownRefresh": false
+				}
 			}]
 		}, {
 			"root": "pages/index/rushangcheng",
@@ -245,6 +252,13 @@
 				"style": {
 					// "navigationStyle": "custom",
 					"navigationBarTitleText": "我的钱包",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "tixianjilu",
+				"style": {
+					// "navigationStyle": "custom",
+					"navigationBarTitleText": "提现记录",
 					"enablePullDownRefresh": false
 				}
 			}]

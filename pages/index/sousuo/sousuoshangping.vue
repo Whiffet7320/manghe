@@ -122,6 +122,9 @@
 	page {
 		background: #f7f7f7;
 	}
+	/deep/ .u-load-more-wrap{
+		height: 80rpx !important;
+	}
 
 	.index {}
 

@@ -1,5 +1,29 @@
 <template>
 	<view class="index">
+		<u-mask :zoom='false' :show="maskShow" @click="maskShow = false">
+			<!-- <image class="maskPic" src="/static/img/zu13.png" mode=""></image> -->
+			<template>
+				<view class="mask">
+					<image class="maskPic2" src="/static/img/zu129.png" mode=""></image>
+					<view class="mask-tit1">新人注册好礼</view>
+					<view class="mask-items">
+						<view class="item" v-for="item in 3">
+							<image class="item-pic" src="/static/img/zu221.png" mode=""></image>
+							<view class="left">
+								<view class="txt1">￥<text class="big">5</text></view>
+								<view class="txt2">满280元可用</view>
+							</view>
+							<view class="right">
+								<view class="txt3">5元通用券</view>
+								<view class="txt4">2021.07.06-2021.08.06</view>
+							</view>
+						</view>
+					</view>
+					<view class="mask-btn">立即注册</view>
+				</view>
+
+			</template>
+		</u-mask>
 		<u-modal v-model="modelshow" @confirm='qieHuan' show-cancel-button :content="modelContent"></u-modal>
 		<u-select v-model="nav1Show" mode="mutil-column-auto" @confirm='changeCity2' :list="cityList"></u-select>
 		<view class="nav1">
@@ -28,7 +52,7 @@
 			</view>
 			<view class="tit2">
 				<!-- <u-notice-bar mode="vertical" type="primary" :list="tzlist"></u-notice-bar> -->
-				<image class="pic2-1" src="../../static/img/laba.png" mode=""></image>
+				<image class="pic2-1" src="/static/img/laba.png" mode=""></image>
 				<view :style="{
 						animationDuration: animationDuration,
 						animationPlayState: animationPlayState,
@@ -36,37 +60,37 @@
 			</view>
 			<view class="tit3">
 				<view @click="toRemenfuwu" class="item">
-					<image class="pic" src="../../static/img/zu33.png" mode=""></image>
+					<image class="pic" src="/static/img/zu33.png" mode=""></image>
 					<view class="txt">热门服务</view>
 				</view>
 				<view @click="toJiajuanzhuang" class="item">
-					<image class="pic" src="../../static/img/zu34.png" mode=""></image>
+					<image class="pic" src="/static/img/zu34.png" mode=""></image>
 					<view class="txt">家具安装</view>
 				</view>
 				<view @click="toJiadiananzhuang" class="item">
-					<image class="pic" src="../../static/img/zu35.png" mode=""></image>
+					<image class="pic" src="/static/img/zu35.png" mode=""></image>
 					<view class="txt">家电安装</view>
 				</view>
 				<view @click="toRushangcheng" class="item">
-					<image class="pic" src="../../static/img/zu51.png" mode=""></image>
+					<image class="pic" src="/static/img/zu51.png" mode=""></image>
 					<view class="txt">如商城</view>
 				</view>
 			</view>
 			<view class="tit3 two">
 				<view class="item">
-					<image class="pic" src="../../static/img/zu36.png" mode=""></image>
+					<image class="pic" src="/static/img/zu36.png" mode=""></image>
 					<view class="txt">其他安装</view>
 				</view>
 				<view class="item">
-					<image class="pic" src="../../static/img/zu37.png" mode=""></image>
+					<image class="pic" src="/static/img/zu37.png" mode=""></image>
 					<view class="txt">日常保洁</view>
 				</view>
 				<view @click="toZhuanpan" class="item">
-					<image class="pic" src="../../static/img/zu54.png" mode=""></image>
+					<image class="pic" src="/static/img/zu54.png" mode=""></image>
 					<view class="txt">抽奖转盘</view>
 				</view>
 				<view class="item">
-					<image class="pic" src="../../static/img/zu38.png" mode=""></image>
+					<image class="pic" src="/static/img/zu38.png" mode=""></image>
 					<view class="txt">全部服务</view>
 				</view>
 			</view>
@@ -100,7 +124,7 @@
 				<view class="box1">
 					<image class="pic" :src="homeList1.bg_img" mode=""></image>
 					<view class="txt1">
-						<image class="pic2" src="../../static/img/zu41.png" mode=""></image>
+						<image class="pic2" src="/static/img/zu41.png" mode=""></image>
 						<view class="txt1-1">热门好服务</view>
 						<u-icon name="arrow-right" color="#000000" size="20"></u-icon>
 					</view>
@@ -119,7 +143,7 @@
 				<view class="box1">
 					<image class="pic" :src="homeList2.bg_img" mode=""></image>
 					<view class="txt1">
-						<image class="pic2" src="../../static/img/zu40.png" mode=""></image>
+						<image class="pic2" src="/static/img/zu40.png" mode=""></image>
 						<view class="txt1-1">维修手艺好</view>
 						<u-icon name="arrow-right" color="#000000" size="20"></u-icon>
 					</view>
@@ -138,7 +162,7 @@
 				<view class="box1">
 					<image class="pic" :src="homeList3.bg_img" mode=""></image>
 					<view class="txt1">
-						<image class="pic2" src="../../static/img/zu39.png" mode=""></image>
+						<image class="pic2" src="/static/img/zu39.png" mode=""></image>
 						<view class="txt1-1">省心一口价</view>
 						<u-icon name="arrow-right" color="#000000" size="20"></u-icon>
 					</view>
@@ -173,8 +197,9 @@
 	export default {
 		data() {
 			return {
-				modelshow:false,
-				modelContent:'',
+				maskShow: false,
+				modelshow: false,
+				modelContent: '',
 				cityList: [], //城市列表
 				nav1Show: false,
 				keyword: '',
@@ -200,12 +225,42 @@
 				addressObj: null,
 				province: '',
 				city: '',
-				myCity:'选择城市',
+				myCity: '选择城市',
 				area_id: '',
-				isqieHuan:false,
+				isqieHuan: false,
 			}
 		},
-		onLoad() {
+		// 用户点击右上角分享转发
+		onShareAppMessage: async function() {
+			var title = '分销商城app'; //data，return 数据title
+			return {
+				title: title || '',
+				path: `/pages/index/index?scene=0_${uni.getStorageSync('user_id')}`,
+			}
+		},
+		//用户点击右上角分享朋友圈
+		onShareTimeline: async function() {
+			var title = '分销商城app'; //data，return 数据title
+			return {
+				title: title || '',
+				path: `/pages/index/index?scene=0_${uni.getStorageSync('user_id')}`,
+			}
+		},
+		onLoad(option) {
+			console.log(option.scene)
+			if (option.scene) {
+				const arr = option.scene.split('_')
+				uni.setStorageSync('scene', arr[1])
+				this.product_id = arr[0];
+				uni.setStorageSync('myUserId', arr[1])
+				if (!uni.getStorageSync('token')) {
+					uni.navigateTo({
+						url: `/pages/wode/weixinshouquan/weixinshouquan?recommend_userid=${uni.getStorageSync('myUserId')}`
+					})
+				}
+			} else {
+				uni.setStorageSync('scene', 0)
+			}
 			this.getAddress()
 			setTimeout(() => {
 				this.getData()
@@ -261,7 +316,7 @@
 					})
 				})
 				console.log(this.area_id)
-				if(this.isqieHuan){
+				if (this.isqieHuan) {
 					this.myCity = this.city;
 					this.setUser();
 				}
@@ -290,7 +345,7 @@
 								that.province = that.addressObj.province;
 								that.city = that.addressObj.city;
 								that.modelContent = `您当前定位在${that.city},是否切换城市`
-								if(that.city != that.myCity){
+								if (that.city != that.myCity) {
 									that.modelshow = true;
 								}
 							}
@@ -298,7 +353,7 @@
 					}
 				})
 			},
-			async qieHuan(){
+			async qieHuan() {
 				this.isqieHuan = true;
 				this.myCity = this.city;
 				this.setUser();
@@ -359,6 +414,132 @@
 	.index {
 		position: relative;
 	}
+
+	.mask {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		width: 604rpx;
+		height: 762rpx;
+
+		.maskPic2 {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+		}
+
+		.mask-tit1 {
+			position: absolute;
+			top: 46rpx;
+			left: 50%;
+			transform: translateX(-50%);
+			font-size: 38rpx;
+			font-weight: bold;
+			color: #2C88E5;
+		}
+
+		.mask-items {
+			position: absolute;
+			top: 120rpx;
+			left: 50%;
+			transform: translateX(-50%);
+
+			.item {
+				position: relative;
+				width: 536rpx;
+				height: 136rpx;
+				margin-bottom: 20rpx;
+
+				.item-pic {
+					position: absolute;
+					top: 0;
+					left: 0;
+					width: 100%;
+					height: 100%;
+				}
+
+				.left {
+					height: 100%;
+					position: absolute;
+					justify-content: center;
+					width: 200rpx;
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+
+					.txt1 {
+						font-size: 20rpx;
+						line-height: 28rpx;
+						color: #FFFFFF;
+
+						.big {
+							font-size: 60rpx;
+						}
+					}
+
+					.txt2 {
+						margin-top: 6rpx;
+						font-size: 20rpx;
+						font-weight: 400;
+						color: #FFFFFF;
+					}
+				}
+
+				.right {
+					width: 336rpx;
+					height: 100%;
+					position: absolute;
+					left: 200rpx;
+					display: flex;
+					flex-direction: column;
+					justify-content: center;
+					padding-left: 60rpx;
+
+					.txt3 {
+						font-size: 28rpx;
+						font-weight: 400;
+						line-height: 38rpx;
+						color: #000000;
+					}
+
+					.txt4 {
+						font-size: 16rpx;
+						font-weight: 400;
+						line-height: 34rpx;
+						color: #707070;
+					}
+				}
+			}
+		}
+		.mask-btn{
+			position: absolute;
+			bottom: 32rpx;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 324rpx;
+			height: 96rpx;
+			background: #FFFFFF;
+			border-radius: 48rpx;
+			text-align: center;
+			font-size: 36rpx;
+			font-weight: 400;
+			line-height: 96rpx;
+			color: #2C88E5;
+		}
+	}
+
+	.maskPic {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		width: 400rpx;
+		height: 400rpx;
+	}
+
 
 	.nav1 {
 		position: absolute;

@@ -3,51 +3,113 @@
 		<u-mask :show="maskshow" z-index='1' @click="onMask"></u-mask>
 		<view class="nav1">
 			<view @click="fenleiShow" class="txt1">全部分类</view>
-			<view @click="changeJiage" class="txt2">价格</view>
+			<!-- <view @click="changeJiage" class="txt2">价格</view>
 			<image v-if="jiageStatus == 0" class="pic1" src="/static/img/zu68.png" mode=""></image>
 			<image v-else class="pic1" src="/static/img/zu69.png" mode=""></image>
-			<view class="txt3">推荐</view>
+			<view class="txt3">推荐</view> -->
 		</view>
 		<view v-if="isShow" :style="{'height':height}" class="nav1-1">
 			<view class="btns">
-				<view @click="changeBtnRadio(item,i)" :class="{'btn':true,'active':i == nowItem}" v-for="(item,i) in 6"
-					:key='i'>沙发</view>
+				<view @click="changeBtnRadio(item,0)" :class="{'btn':true,'active':nowItem == 0}">全部</view>
+				<view @click="changeBtnRadio(item,i+1)" :class="{'btn':true,'active':i == nowItem-1}"
+					v-for="(item,i) in fenleiList" :key=item.id>{{item.name}}</view>
 			</view>
 		</view>
 		<!--  -->
 		<view class="nav2">
-			<view @click="toXiangqin" class="item" v-for="item in 7">
-				<image class="pic1" src="/static/img/20110309231034811.png" mode=""></image>
-				<view class="txt1">SK-II神仙水75ml精华护 肤品套装化妆品神仙水75ml精华护 肤品套装化妆品礼盒五</view>
+			<view @click="toXiangqin(item.id)" class="item" v-for="item in list" :key='item.id'>
+				<image class="pic1" :src="item.main_img" mode=""></image>
+				<view class="txt1">{{item.name}}</view>
 				<view class="txt2">
 					<view class="txt2-1">
-						￥<text class="big">480.00</text>
+						￥<text class="big">{{item.price}}</text>
 					</view>
 					<view class="txt2-2">销售量4399</view>
 				</view>
 			</view>
+			
 		</view>
+		<u-loadmore :status="status" :icon-type="iconType" :load-text="loadText" />
 	</view>
 </template>
 
 <script>
+	import {
+		mapState
+	} from "vuex";
 	export default {
+		computed: {
+			...mapState(["shopPage", "shopPageSize"]),
+		},
+		watch: {
+			shopPage: function(page) {
+				console.log('ddpage')
+				this.$store.commit("shopPage", page);
+				if (this.shopPage != 1) {
+					this.getData();
+				}
+			},
+		},
 		data() {
 			return {
 				maskshow: false,
 				height: '',
 				isShow: false,
 				jiageStatus: 0,
-				nowItem: '',
+				nowItem: 0,
+				fenleiList: [],
+				list:[],
+				category_id:'',
+				// 加载
+				status: 'loadmore',
+				iconType: 'flower',
+				loadText: {
+					loadmore: '上拉加载更多',
+					loading: '正在加载...',
+					nomore: '没有了更多了'
+				}
 			}
 		},
+		onReachBottom() {
+			this.$store.commit("shopPage", this.shopPage + 1);
+		},
+		onShow() {
+			this.list = [];
+			this.$store.commit("shopPage", 1);
+			this.getData();
+		},
 		methods: {
+			async getData() {
+				const res = await this.$api.categories({
+					type: 1
+				})
+				console.log(res.data);
+				this.fenleiList = res.data;
+				this.status = 'loading';
+				setTimeout(async () => {
+					const res = await this.$api.itemsList({
+						page: this.shopPage,
+						limit: this.shopPageSize,
+						is_service:0,
+						category_id:this.category_id,
+					})
+					console.log(res)
+					if (res.data.data.length == 0) {
+						this.status = 'nomore'
+					} else {
+						this.status = 'loadmore';
+						console.log(this.list)
+						this.list = this.list.concat(res.data.data)
+					}
+				}, 200)
+				console.log(this.list)
+			},
 			onMask() {
 				this.maskshow = false;
 				this.isShow = false;
 			},
 			fenleiShow() {
-				this.maskshow = true;
+				this.maskshow = !this.maskshow;
 				this.isShow = !this.isShow;
 				this.getCurrentSwiperHeight()
 				console.log(this.height)
@@ -61,11 +123,21 @@
 			},
 			changeBtnRadio(item, i) {
 				console.log(item, i)
+				if(i == 0){
+					this.category_id = ''
+				}else{
+					this.category_id = item.id;
+				}
 				this.nowItem = i;
+				this.maskshow = false;
+				this.isShow = false;
+				this.list = [];
+				this.$store.commit("shopPage", 1);
+				this.getData();
 			},
-			toXiangqin(){
+			toXiangqin(id) {
 				uni.navigateTo({
-					url:'/pages/index/shangpinxiangqin/shangpinxiangqin'
+					url: `/pages/index/shangpinxiangqin/shangpinxiangqin?id=${id}`
 				})
 			},
 			getCurrentSwiperHeight(element) {
@@ -93,6 +165,9 @@
 	.index {
 		position: relative;
 	}
+	/deep/ .u-load-more-wrap{
+		height: 80rpx !important;
+	}
 
 	.nav1 {
 		position: fixed;
@@ -106,7 +181,6 @@
 
 		.txt1 {
 			font-size: 28rpx;
-			font-family: Segoe UI;
 			font-weight: 400;
 			line-height: 76rpx;
 			margin-left: 22rpx;
@@ -116,7 +190,6 @@
 		.txt2 {
 			margin-left: 86rpx;
 			font-size: 28rpx;
-			font-family: Segoe UI;
 			font-weight: 400;
 			line-height: 76rpx;
 			color: #000000;
@@ -131,7 +204,6 @@
 		.txt3 {
 			margin-left: 20rpx;
 			font-size: 28rpx;
-			font-family: Segoe UI;
 			font-weight: 400;
 			line-height: 76rpx;
 			color: #000000;
@@ -158,7 +230,6 @@
 				background: #F0F0F0;
 				border-radius: 30rpx;
 				font-size: 24rpx;
-				font-family: Segoe UI;
 				font-weight: 400;
 				line-height: 32rpx;
 				color: #000000;
@@ -172,7 +243,7 @@
 	}
 
 	.nav2 {
-		margin-top:102rpx;
+		margin-top: 102rpx;
 		padding: 0 24rpx;
 		display: flex;
 		flex-wrap: wrap;
@@ -229,8 +300,7 @@
 					transform: translateY(-14rpx);
 					width: 120rpx;
 					height: 32rpx;
-					font-size: 24rpx;
-					font-family: SimHei;
+					font-size: 20rpx;
 					font-weight: 400;
 					line-height: 32rpx;
 					color: #989898;

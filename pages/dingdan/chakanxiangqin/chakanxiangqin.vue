@@ -68,7 +68,7 @@
 				<view class="tit22-1">
 					<view class="txt1">订单编号</view>
 					<view class="txt2">
-						<view class="txt2-1">2C07222052609</view>
+						<view class="txt2-1">{{obj.order_num}}</view>
 						<view class="shu"></view>
 						<view @click="fuzhi(obj.order_num)" class="txt2-2">复制</view>
 					</view>

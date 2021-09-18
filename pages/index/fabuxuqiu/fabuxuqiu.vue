@@ -17,7 +17,7 @@
 			</view>
 			<view class="tit2">{{address.name}} {{address.phone}}</view>
 		</view>
-		<view class="nav3">
+		<view class="nav3" v-if="option.type !=2">
 			<view class="tit3-1">
 				<image class="pic1" src="/static/img/zu351.png" mode=""></image>
 				<view class="txt1">期待上门时间</view>
@@ -27,7 +27,7 @@
 				<view v-else @click="changTime" class="txt1">{{showTimeVal}}</view>
 			</view>
 		</view>
-		<view class="nav4">
+		<view class="nav4" v-if="option.type !=2">
 			<view class="tit1">
 				<view class="txt1">{{option.bgName}}</view>
 				<image class="pic1" :src="option.bgImg" mode=""></image>
@@ -42,14 +42,16 @@
 				<view v-else class="txt2">{{option.intro}}</view>
 			</view>
 		</view>
-		<view class="nav5">
+		<view v-if="option.type !=2" class="nav5">
 			<u-checkbox-group active-color='#24BC29' size=28 @change="radioGroupChange">
 				<u-checkbox label-size=20 name="rad1" v-model="myRad">
 					我已阅读并同意 <text class="blue">《万师傅服务协议》《隐私政策》</text>
 				</u-checkbox>
 			</u-checkbox-group>
 		</view>
-		<view @click="toBaojia" class="nav6">发布需求</view>
+		<view v-if="option.type ==2" style="transform: translateY(0rpx);" @click="toDingdantijiao" class="nav6">立即下单
+		</view>
+		<view v-else @click="toBaojia" class="nav6">发布需求</view>
 		<!-- <u-picker @confirm='onTime' :params="timeParams" v-model="timeShow" mode="time"></u-picker> -->
 		<u-picker @confirm='confirmTime' mode="multiSelector" v-model="timeShow" :default-selector='[0, 1]'
 			:range="multiSelector"></u-picker>
@@ -108,10 +110,13 @@
 		},
 		onLoad(option) {
 			console.log(option)
-			option.images = JSON.parse(option.images);
-			if (option.images[option.images.length - 1] == '') {
-				option.images.pop();
+			if (option.images) {
+				option.images = JSON.parse(option.images);
+				if (option.images[option.images.length - 1] == '') {
+					option.images.pop();
+				}
 			}
+
 			this.option = option;
 			console.log(this.option)
 		},
@@ -169,6 +174,24 @@
 				}
 				return m;
 			},
+			toDingdantijiao() {
+				if (!this.address) {
+					this.$refs.uToast.show({
+						title: '请先选择地址',
+						type: 'warning',
+					})
+				} else {
+					this.$u.route('/pages/index/dingdantijiao/dingdantijiao', {
+						id: this.option.id,
+						type: 2,
+						address: JSON.stringify(this.address),
+					});
+					// uni.navigateTo({
+					// 	url: `/pages/index/dingdantijiao/dingdantijiao?id=${this.option.id}&type=2&address=${JSON.stringify(this.address)}`
+					// })
+				}
+
+			},
 			async toBaojia() {
 				if (this.showTimeVal == '') {
 					this.$refs.uToast.show({
@@ -192,8 +215,8 @@
 						this.$refs.uToast.show({
 							title: '发布成功',
 							type: 'success',
-							url:'/pages/dingdan/dingdan',
-							isTab:true,
+							url: '/pages/dingdan/dingdan',
+							isTab: true,
 						})
 					} else {
 						this.$refs.uToast.show({

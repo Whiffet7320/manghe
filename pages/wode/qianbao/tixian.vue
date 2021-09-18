@@ -1,48 +1,54 @@
 <template>
 	<view class="index">
+		<u-toast ref="uToast" />
 		<view class="form">
 			<u-form :label-style='labStyle' :model="form" ref="uForm">
 				<u-form-item label="持卡人">
 					<u-input v-model="form.name" />
 				</u-form-item>
 				<u-form-item label="银行名称">
-					<u-input v-model="form.bankName" />
+					<u-input v-model="form.bank_name" />
 				</u-form-item>
 				<u-form-item label="银行卡号">
-					<u-input v-model="form.kahao" />
+					<u-input v-model="form.card_num" />
 				</u-form-item>
 				<u-form-item label="开户行名称">
-					<u-input v-model="form.khhmc" />
+					<u-input v-model="form.open_card_name" />
 				</u-form-item>
 				<u-form-item label="开户行地址">
-					<u-input v-model="form.address" />
+					<u-input v-model="form.open_card_address" />
 				</u-form-item>
 			</u-form>
 		</view>
 		<view class="nav1">
 			<view class="tit1">
 				<view class="txt1">￥</view>
-				<u-input height='108' v-model="value" :type="type" :border="border" />
+				<u-input height='108' v-model="form.money" type="text" />
 			</view>
 			<view class="tit2">
-				<view class="txt1">可用余额￥3122.00</view>
-				<view class="txt2">全部提现</view>
+				<view class="txt1">可用余额￥{{numMoney}}</view>
+				<view @click="qbTixian" class="txt2">全部提现</view>
 			</view>
 		</view>
-		<view class="btn">确认提现</view>
+		<view @click="onSubmit" class="btn">确认提现</view>
 	</view>
 </template>
 
 <script>
 	export default {
+		onLoad(option) {
+			this.numMoney = option.money;
+		},
 		data() {
 			return {
+				numMoney:'',
 				form: {
 					name: '',
-					bankName: '',
-					kahao: '',
-					khhmc:'',
-					address:'',
+					bank_name: '',
+					card_num: '',
+					open_card_name:'',
+					open_card_address:'',
+					money:'',
 				},
 				labStyle:{
 					marginLeft:'46rpx',
@@ -51,6 +57,29 @@
 				},
 			}
 		},
+		methods:{
+			async onSubmit(){
+				const res = await this.$api.withdraw({
+					...this.form
+				})
+				console.log(res)
+				if (res.code == 200) {
+					this.$refs.uToast.show({
+						title: '已提交申请',
+						type: 'success',
+						back:true,
+					})
+				} else {
+					this.$refs.uToast.show({
+						title: res.msg,
+						type: 'warning',
+					})
+				}
+			},
+			qbTixian(){
+				this.form.money = this.numMoney;
+			},
+		}
 	}
 </script>
 

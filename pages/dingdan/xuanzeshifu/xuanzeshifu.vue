@@ -99,7 +99,7 @@
 						return ele.discount
 					}))
 					this.list.forEach(ele => {
-						this.$set(ele,'maxYhqNum',maxYhqNum)
+						this.$set(ele, 'maxYhqNum', maxYhqNum)
 					})
 				})
 				console.log(this.list);
@@ -126,8 +126,9 @@
 					this.$refs.uToast.show({
 						title: '选择成功',
 						type: 'success',
-						url: '/pages/dingdan/dingdan',
-						isTab: true,
+						back: true,
+						// url: '/pages/dingdan/dingdan',
+						// isTab: true,
 					})
 				}
 			},

@@ -1,19 +1,21 @@
 <template>
 	<view class="index">
-		<view class="btn1">我的奖品</view>
+		<u-modal v-model="modalShow" :content="modalContent"></u-modal>
+		<view @click="toWodejiangping" class="btn1">我的奖品</view>
 		<view class="zhuanpan">
 			<image @click="startCallBack" class="pic" src="/static/img/zu20.png" mode=""></image>
 			<view @click="startCallBack" class="txt1">抽奖</view>
-			<view @click="startCallBack" class="txt2">还有8次</view>
+			<view @click="startCallBack" class="txt2">还有{{timeNum}}次</view>
 			<LuckyWheel ref="luckyWheel" width="600rpx" height="600rpx" :blocks="blocks" :prizes="prizes"
 				:buttons="buttons" :defaultStyle="defaultStyle" @start="startCallBack" @end="endCallBack" />
 		</view>
-		<view class="btn2">邀请好友额外抽奖</view>
+		<button open-type="share" class="btn2">邀请好友额外抽奖</button>
+		<!-- <view @click="yaoqing" class="btn2">邀请好友额外抽奖</view> -->
 		<view class="nav1">
-			<view class="item" v-for="item in 4">
-				<view class="txt1">一等奖</view>
-				<image class="pic1" src="/static/img/zu13.png" mode=""></image>
-				<view class="txt2">HUAWEI</view>
+			<view class="item" v-for="(item,i) in jiangpingList">
+				<view class="txt1">{{i+1 == 1?'一':i+1==2?'二':i+1==3?'三':'四'}}等奖</view>
+				<image class="pic1" :src="item.image" mode=""></image>
+				<view class="txt2">{{item.name}}</view>
 			</view>
 		</view>
 		<view class="nav2">
@@ -32,6 +34,12 @@
 		},
 		data() {
 			return {
+				modalShow: false,
+				modalContent: '',
+				resultIndex: '',
+				timeNum: 0,
+				jiangpingList: [],
+				resultId: '',
 				blocks: [{
 						padding: '10rpx',
 						background: '#F18E54'
@@ -41,100 +49,10 @@
 						background: '#C91919'
 					}
 				],
-				prizes: [{
-						title: '1元红包',
-						background: '#FFA836',
-						fonts: [{
-							text: '1元红包',
-							top: '18%',
-							fontSize:'30rpx'
-						}],
-						imgs: [{
-							src: '/static/img/hongbao.png',
-							width: '109rpx',
-							height: '109rpx',
-							top: '70rpx',
-						}]
-					},
-					{
-						title: '100元红包',
-						background: '#FFF7CF',
-						fonts: [{
-							text: '100元红包',
-							top: '18%',
-							fontSize:'30rpx'
-						}],
-						imgs: [{
-							src: '/static/img/hongbao.png',
-							width: '109rpx',
-							height: '109rpx',
-							top: '70rpx',
-						}]
-					},
-					{
-						title: '0.5元红包',
-						background: '#FFA836',
-						fonts: [{
-							text: '0.5元红包',
-							top: '18%',
-							fontSize:'30rpx'
-						}],
-						imgs: [{
-							src: '/static/img/hongbao.png',
-							width: '109rpx',
-							height: '109rpx',
-							top: '70rpx',
-						}]
-					},
-					{
-						title: '2元红包',
-						background: '#FFF7CF',
-						fonts: [{
-							text: '2元红包',
-							top: '18%',
-							fontSize:'30rpx'
-						}],
-						imgs: [{
-							src: '/static/img/hongbao.png',
-							width: '109rpx',
-							height: '109rpx',
-							top: '70rpx',
-						}]
-					},
-					{
-						title: '10元红包',
-						background: '#FFA836',
-						fonts: [{
-							text: '10元红包',
-							top: '18%',
-							fontSize:'30rpx'
-						}],
-						imgs: [{
-							src: '/static/img/hongbao.png',
-							width: '109rpx',
-							height: '109rpx',
-							top: '70rpx',
-						}]
-					},
-					{
-						title: '50元红包',
-						background: '#FFF7CF',
-						fonts: [{
-							text: '50元红包',
-							top: '18%',
-							fontSize:'30rpx'
-						}],
-						imgs: [{
-							src: '/static/img/hongbao.png',
-							width: '109rpx',
-							height: '109rpx',
-							top: '70rpx',
-						}]
-					},
-				],
+				prizes: [],
 				buttons: [{
 						radius: '4rpx',
-						background: '#FFD792'
+						background: '#FFD792',
 					},
 					// { radius: '41rpx', background: '#f6c66f', pointer: true },
 					{
@@ -153,24 +71,84 @@
 				},
 			}
 		},
+		onShow() {
+			this.getData()
+		},
+		// 用户点击右上角分享转发
+		onShareAppMessage: async function() {
+			var title = '分销商城app'; //data，return 数据title
+			return {
+				title: title || '',
+				path: `/pages/index/index?scene=0_${uni.getStorageSync('user_id')}`,
+			}
+		},
+		//用户点击右上角分享朋友圈
+		onShareTimeline:async function() {
+			var title = '分销商城app'; //data，return 数据title
+			return {
+				title: title || '',
+				path: `/pages/index/index?scene=0_${uni.getStorageSync('user_id')}`,
+			}
+		},
 		methods: {
+			async getData() {
+				const res = await this.$api.turntableItems()
+				console.log(res)
+				this.jiangpingList = res.data.slice(0, 4)
+				this.prizes = res.data;
+				this.prizes.forEach((ele, i) => {
+					ele.title = ele.name;
+					ele.background = (i % 2 == 0) ? '#FFA836' : '#FFF7CF';
+					ele.fonts = [{
+						text: ele.name,
+						top: '15%',
+						fontSize: '26rpx'
+					}];
+					ele.imgs = [{
+						src: ele.image,
+						width: '100rpx',
+						height: '100rpx',
+						top: '70rpx',
+					}]
+				});
+			},
 			// 点击抽奖按钮触发回调
-			startCallBack() {
+			async startCallBack() {
 				// 先开始旋转
+				const res2 = await this.$api.turntableTurn();
+				this.resultId = res2.data.result_id;
 				this.$refs.luckyWheel.play()
-				// 使用定时器来模拟请求接口
 				setTimeout(() => {
 					// 3s后得到中奖索引
-					let index = Math.random() * 6 >> 0
+					let resultIndex;
+					this.prizes.forEach((ele, i) => {
+						if (ele.id == this.resultId) {
+							this.resultIndex = i
+						}
+					})
+					console.log(this.resultIndex)
 					// 缓慢停止游戏
-					this.$refs.luckyWheel.stop(index)
-				}, 3000)
+					this.$refs.luckyWheel.stop(this.resultIndex)
+				}, 2000)
 			},
 			// 抽奖结束触发回调
 			endCallBack(prize) {
 				// 奖品详情
-				console.log(prize)
-			}
+				console.log(this.resultIndex, 'cyy')
+				if (this.resultIndex+1 == this.prizes.length) {
+					this.modalContent = '很遗憾，您这次没有抽中奖品！'
+				} else {
+					this.modalContent =
+						`恭喜您抽中${this.resultIndex+1 == 1?'一':this.resultIndex+1==2?'二':this.resultIndex+1==3?'三':'四'}等奖！奖品:${prize.name}!`
+				}
+				this.modalShow = true;
+
+			},
+			toWodejiangping() {
+				uni.navigateTo({
+					url: '/pages/index/zhuanpan/wodejiangping'
+				})
+			},
 		}
 	}
 </script>
@@ -183,10 +161,11 @@
 	}
 </style>
 <style scoped lang="scss">
-	.index{
+	.index {
 		position: relative;
 	}
-	.btn1{
+
+	.btn1 {
 		cursor: pointer;
 		position: absolute;
 		top: 20rpx;
@@ -202,7 +181,8 @@
 		color: #C91919;
 		text-align: center;
 	}
-	.btn2{
+
+	.btn2 {
 		position: absolute;
 		top: 680rpx;
 		left: 50%;
@@ -219,7 +199,8 @@
 		background: linear-gradient(180deg, #FF9B17 0%, #FFCC00 100%);
 		border-radius: 48rpx;
 	}
-	.nav1{
+
+	.nav1 {
 		position: absolute;
 		top: 830rpx;
 		width: 710rpx;
@@ -230,7 +211,8 @@
 		padding: 0 30rpx;
 		transform: translateX(-50%);
 		background: linear-gradient(360deg, #FFA836 0%, #FFD5A5 100%);
-		.item{
+
+		.item {
 			padding: 12rpx 0rpx;
 			height: 100%;
 			display: flex;
@@ -238,18 +220,21 @@
 			flex-direction: column;
 			justify-content: space-around;
 			align-items: center;
-			.txt1{
+
+			.txt1 {
 				font-size: 24rpx;
 				font-family: Segoe UI;
 				font-weight: 400;
 				line-height: 32rpx;
 				color: #C91919;
 			}
-			.pic1{
+
+			.pic1 {
 				height: 84rpx;
 				width: 84rpx;
 			}
-			.txt2{
+
+			.txt2 {
 				font-size: 20rpx;
 				font-family: Segoe UI;
 				font-weight: 400;
@@ -258,13 +243,15 @@
 			}
 		}
 	}
-	.nav2{
+
+	.nav2 {
 		position: absolute;
 		top: 1050rpx;
 		left: 50%;
 		transform: translateX(-50%);
 		width: 480rpx;
-		.txt1{
+
+		.txt1 {
 			font-size: 24rpx;
 			font-family: Segoe UI;
 			font-weight: 400;
@@ -273,7 +260,8 @@
 			text-align: center;
 			margin-bottom: 8rpx;
 		}
-		.txt2{
+
+		.txt2 {
 			font-size: 20rpx;
 			font-family: Segoe UI;
 			font-weight: 400;
@@ -281,25 +269,28 @@
 			color: #FFFFFF;
 		}
 	}
-	.zhuanpan{
+
+	.zhuanpan {
 		position: absolute;
 		top: 44rpx;
 		left: 50%;
 		transform: translateX(-50%);
-		.pic{
+
+		.pic {
 			width: 160rpx;
 			height: 160rpx;
 			position: absolute;
 			z-index: 2;
 			top: 50%;
 			left: 50%;
-			transform: translate(-50%,-50%);
+			transform: translate(-50%, -50%);
 		}
-		.txt1{
+
+		.txt1 {
 			position: absolute;
 			z-index: 3;
 			left: 50%;
-			transform: translate(-50%,-50%);
+			transform: translate(-50%, -50%);
 			top: 46%;
 			font-size: 40rpx;
 			font-family: Segoe UI;
@@ -307,11 +298,12 @@
 			line-height: 54rpx;
 			color: #FFD792;
 		}
-		.txt2{
+
+		.txt2 {
 			position: absolute;
 			z-index: 3;
 			left: 50%;
-			transform: translate(-50%,-50%);
+			transform: translate(-50%, -50%);
 			top: 54%;
 			font-size: 24rpx;
 			font-family: Segoe UI;

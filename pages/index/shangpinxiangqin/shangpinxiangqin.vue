@@ -7,7 +7,7 @@
 				<view class="tit2">{{shopObj.sub_title}}</view>
 				<view class="tit3">
 					<view class="txt1">￥<text class="big">{{shopObj.price}}</text></view>
-					<view class="txt2">已售出<text class="blue">31230</text>件</view>
+					<view class="txt2">已售出<text class="blue">{{serve_count}}</text>件</view>
 				</view>
 				<view class="tit4">商品描述</view>
 				<view class="tit5">
@@ -95,13 +95,13 @@
 						</view>
 						<view class="tit2">{{item.comment[0].content}}</view>
 						<view class="imgs">
-							<image v-for="(ele,i) in item.comment[0].images" :key='i' @click="seeImg(item.comment[0].images,i)" class="img-pic" :src="ele"
-								mode=""></image>
+							<image v-for="(ele,i) in item.comment[0].images" :key='i'
+								@click="seeImg(item.comment[0].images,i)" class="img-pic" :src="ele" mode=""></image>
 						</view>
 					</view>
 				</view>
 			</view>
-		
+
 		</view>
 		<!-- 底部 -->
 		<view class="footer">
@@ -110,7 +110,7 @@
 					<image class="pic1" src="/static/img/zu5.png" mode=""></image>
 					<view class="txt1">客服</view>
 				</view>
-				<view class="nav2">去下单</view>
+				<view @click="toFabu" class="nav2">去下单</view>
 			</template>
 			<template v-if="shopObj.type == 1">
 				<view class="nav1">
@@ -167,9 +167,9 @@
 				const res = await this.$api.items(this.optionId)
 				console.log(res)
 				this.comment = res.data.comment;
-				this.comment.forEach(ele=>{
-					ele.comment[0].images.forEach(ele2=>{
-						if(!ele2){
+				this.comment.forEach(ele => {
+					ele.comment[0].images.forEach(ele2 => {
+						if (!ele2) {
 							ele.comment[0].images.pop()
 						}
 					})
@@ -177,13 +177,13 @@
 				this.serve_count = res.data.serve_count;
 				this.shopObj = res.data.item;
 			},
-			toPingjia(){
+			toPingjia() {
 				uni.navigateTo({
-					url:`/pages/index/shangpinxiangqin/pingjialiebiao?id=${this.optionId}`
+					url: `/pages/index/shangpinxiangqin/pingjialiebiao?id=${this.optionId}`
 				})
 			},
 			// 浏览评论图片
-			seeImg(images,i) {
+			seeImg(images, i) {
 				uni.previewImage({
 					urls: images,
 					current: i
@@ -196,14 +196,18 @@
 				})
 			},
 			toFabu() {
-				// uni.navigateTo({
-				// 	url: `/pages/index/fabuxuqiu/xiadan?item_id=${this.optionId}&bgImg=${this.shopObj.main_img}&bgName=${this.shopObj.name}`
-				// })
-				this.$u.route('/pages/index/fabuxuqiu/xiadan', {
-					item_id: this.optionId,
-					bgName:this.shopObj.name,
-					bgImg:this.shopObj.main_img,
-				});
+				if (this.shopObj.type == 2) {
+					this.$u.route('/pages/index/fabuxuqiu/fabuxuqiu', {
+						type:2
+					});
+				} else {
+					this.$u.route('/pages/index/fabuxuqiu/xiadan', {
+						item_id: this.optionId,
+						bgName: this.shopObj.name,
+						bgImg: this.shopObj.main_img,
+					});
+				}
+
 			},
 		},
 		//用户点击右上角分享转发
@@ -242,9 +246,10 @@
 	}
 </style>
 <style scoped lang="scss">
-	.piccc{
+	.piccc {
 		width: 100%;
 	}
+
 	.index {
 		position: relative;
 	}
@@ -628,15 +633,18 @@
 		align-items: center;
 		justify-content: space-between;
 		padding: 0 36rpx;
-		.nav3.nav1{
+
+		.nav3.nav1 {
 			position: absolute;
 			left: 112rpx;
-			.pic1{
+
+			.pic1 {
 				width: 72rpx;
 				height: 72rpx;
 				transform: translateY(6rpx);
 			}
 		}
+
 		.nav1 {
 			width: 72rpx;
 			display: flex;

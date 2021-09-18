@@ -4,7 +4,11 @@
 			<image class="pic1" src="../../../static/img/1229310763000_mthumb.png" mode=""></image>
 			<view class="tit1">我的余额</view>
 			<view class="tit2">￥<text class="big">{{money}}</text></view>
-			<view @click="toTixian" class="tit3">发起提现</view>
+			
+			<view class="tit3">
+				<view @click="toTixian" class="tit3-1">发起提现</view>
+				<view @click="toJilu" class="tit3-2">提现记录</view>
+			</view>
 		</view>
 		<!-- <view class="nav2"> -->
 			<scroll-view @scrolltolower="lower" scroll-y='true' style="height: 62vh;">		
@@ -17,8 +21,8 @@
 							<view class="txt1-2">{{item.created_at}}</view>
 						</view>
 						<view class="txt2">
-							<view class="txt2-1">订单:31264564313313</view>
-							<view class="txt2-2">+{{item.value}}</view>
+							<view class="txt2-1"></view>
+							<view class="txt2-2">{{item.is_in == '0' ? '-' : '+'}}{{item.value}}</view>
 						</view>
 					</view>
 					<u-loadmore :status="status" :icon-type="iconType" :load-text="loadText" />
@@ -64,11 +68,15 @@
 			this.money = option.money;
 		},
 		onShow() {
+			this.list = [];
 			this.$store.commit("jinqianjiluPage", 1);
 			this.getData();
 		},
 		methods: {
 			async getData() {
+				const res2 = await this.$api.user()
+				console.log(res2)
+				this.money = res2.data.money;
 				this.status = 'loading';
 				setTimeout(async () => {
 					const res = await this.$api.moneyRecord({
@@ -88,7 +96,12 @@
 			},
 			toTixian() {
 				uni.navigateTo({
-					url: '/pages/wode/qianbao/tixian'
+					url: `/pages/wode/qianbao/tixian?money=${this.money}`
+				})
+			},
+			toJilu(){
+				uni.navigateTo({
+					url: '/pages/wode/qianbao/tixianjilu'
 				})
 			},
 			lower() {
@@ -139,7 +152,6 @@
 
 		.tit2 {
 			margin-top: 10rpx;
-			width: 204rpx;
 			font-size: 24rpx;
 			font-family: SimHei;
 			font-weight: 400;
@@ -150,20 +162,37 @@
 				font-size: 72rpx;
 			}
 		}
-
-		.tit3 {
-			margin-top: 20rpx;
-			width: 176rpx;
-			height: 56rpx;
-			background: #FFFFFF;
-			opacity: 1;
-			border-radius: 28rpx;
-			font-size: 28rpx;
-			font-family: Microsoft YaHei;
-			font-weight: 400;
-			line-height: 56rpx;
-			color: #4988FD;
-			text-align: center;
+		.tit3{
+			display: flex;
+			align-items: center;
+			.tit3-1 {
+				margin-top: 20rpx;
+				width: 176rpx;
+				height: 56rpx;
+				background: #FFFFFF;
+				opacity: 1;
+				border-radius: 28rpx;
+				font-size: 28rpx;
+				font-family: Microsoft YaHei;
+				font-weight: 400;
+				line-height: 56rpx;
+				color: #4988FD;
+				text-align: center;
+			}
+			.tit3-2 {
+				margin-left: 10rpx;
+				margin-top: 20rpx;
+				width: 176rpx;
+				height: 56rpx;
+				opacity: 1;
+				border-radius: 28rpx;
+				font-size: 28rpx;
+				font-family: Microsoft YaHei;
+				font-weight: 400;
+				line-height: 56rpx;
+				color: #ffffff;
+				text-align: center;
+			}
 		}
 	}
 
@@ -245,4 +274,5 @@
 			}
 		}
 	}
+
 </style>

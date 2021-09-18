@@ -37,7 +37,7 @@
 				<image class="pic2" src="/static/img/jf.png" mode=""></image>
 				<view class="txt">
 					<view class="txt1">我的积分</view>
-					<view class="txt2">99.99</view>
+					<view class="txt2">{{score}}</view>
 				</view>
 				<u-icon name="arrow-right" color="#989898" size="28"></u-icon>
 			</view>
@@ -93,6 +93,7 @@
 		data() {
 			return {
 				user: null,
+				score:0,
 				money:0,
 				kefuList: [{
 					text: '电话客服',
@@ -114,7 +115,9 @@
 			async getData(){
 				const res = await this.$api.user()
 				console.log(res)
+				uni.setStorageSync('user_id', res.data.id)
 				this.money = res.data.money;
+				this.score = res.data.score;
 			},
 			toLogin() {
 				uni.navigateTo({
@@ -138,7 +141,7 @@
 			},
 			toJifen() {
 				uni.navigateTo({
-					url: '/pages/wode/jifen/jifen'
+					url: `/pages/wode/jifen/jifen?score=${this.score}`
 				})
 			},
 			toAnquanzhongxin() {

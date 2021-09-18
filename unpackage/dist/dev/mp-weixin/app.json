@@ -42,7 +42,8 @@
     {
       "root": "pages/index/zhuanpan",
       "pages": [
-        "zhuanpan"
+        "zhuanpan",
+        "wodejiangping"
       ]
     },
     {
@@ -91,7 +92,8 @@
       "root": "pages/wode/qianbao",
       "pages": [
         "qianbao",
-        "tixian"
+        "tixian",
+        "tixianjilu"
       ]
     },
     {

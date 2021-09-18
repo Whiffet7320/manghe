@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "提现记录",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "u-loadmore": "/node-modules/uview-ui/components/u-loadmore/u-loadmore"
+  }
+}

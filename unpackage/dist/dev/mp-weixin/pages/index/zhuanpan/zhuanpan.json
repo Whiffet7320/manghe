@@ -4,6 +4,7 @@
   "navigationBarBackgroundColor": "#C91919",
   "navigationBarTextStyle": "white",
   "usingComponents": {
+    "u-modal": "/node-modules/uview-ui/components/u-modal/u-modal",
     "lucky-wheel": "/node-modules/uni-luck-draw/lucky-wheel"
   }
 }

@@ -263,9 +263,12 @@ export default {
 			},
 		})
 	},
-	categories() {
+	categories(obj) {
 		return myGet({
 			url: urls.categories,
+			params:{
+				...obj
+			}
 		})
 	},
 	cities() {
@@ -446,6 +449,74 @@ export default {
 		return myGet({
 			url: `${urls.itemsItemIdComments}/${id}/comments`,
 			params:{
+				...obj
+			}
+		})
+	},
+	withdraw(obj) {
+		return myPost({
+			url: urls.withdraw,
+			data:{
+				...obj
+			}
+		})
+	},
+	withdrawList(obj) {
+		return myGet({
+			url: urls.withdraw,
+			params:{
+				...obj
+			}
+		})
+	},
+	scoreRecords(obj) {
+		return myGet({
+			url: urls.scoreRecords,
+			params:{
+				...obj
+			}
+		})
+	},
+	scoreToMoney() {
+		return myPost({
+			url: urls.scoreToMoney,
+		})
+	},
+	turntableItems() {
+		return myGet({
+			url: urls.turntableItems
+		})
+	},
+	turntableTurn() {
+		return myGet({
+			url: urls.turntableTurn
+		})
+	},
+	awards(obj) {
+		return myGet({
+			url: urls.awards,
+			params:{
+				...obj
+			}
+		})
+	},
+	duihuanAwards(id) {
+		return myPut({
+			url: `${urls.awards}/${id}/use`,
+		})
+	},
+	itemsList(obj) {
+		return myGet({
+			url: urls.itemsList,
+			params:{
+				...obj
+			}
+		})
+	},
+	goodsOrder(obj) {
+		return myPost({
+			url: urls.goodsOrder,
+			data:{
 				...obj
 			}
 		})

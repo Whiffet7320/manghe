@@ -1,7 +1,7 @@
 <template>
 	<view class="index">
 		<u-toast ref="uToast" />
-		<view class="nav1">
+		<view class="nav1" v-if="option.type != 2">
 			<image class="pic1" :src="obj.selected_quote.user_info.avatar" mode=""></image>
 			<view class="tit1">
 				<view class="txt1">{{obj.selected_quote.user_info.nick_name}}</view>
@@ -14,7 +14,7 @@
 				</view>
 			</view>
 		</view>
-		<view class="nav2">
+		<view class="nav2" v-if="option.type != 2">
 			<view class="tit1">
 				<view class="txt1">{{obj.item.name}}</view>
 				<image class="pic1" :src="obj.images[0]" mode=""></image>
@@ -59,7 +59,7 @@
 				<view v-else class="tit3"></view>
 			</view>
 		</view>
-	
+
 		<view class="footer">
 			<view class="right">
 				<view class="tit1">
@@ -97,29 +97,55 @@
 		// },
 		methods: {
 			async pay() {
-				const res = await this.$api.order({
-					demand_quote_id: this.id,
-					pay_type: this.isMyRadio == 'wx' ? 1 : 0,
-					coupon_id:this.option.coupon_id
-				})
-				console.log(res)
-				if (res.code == 200) {
-					this.$refs.uToast.show({
-						title: '支付成功',
-						type: 'success',
-						back: true,
+				if (this.option == 2) {
+					const res = await this.$api.goodsOrder({
+						item_id: this.id,
+						address: JSON.parse(this.option.address),
+						pay_type: this.isMyRadio == 'wx' ? 1 : 0,
+						coupon_id: this.option.coupon_id
 					})
+					console.log(res)
+					if (res.code == 200) {
+						this.$refs.uToast.show({
+							title: '支付成功',
+							type: 'success',
+							back: true,
+						})
+					} else {
+						this.$refs.uToast.show({
+							title: res.msg,
+							type: 'warning',
+						})
+					}
 				} else {
-					this.$refs.uToast.show({
-						title: res.msg,
-						type: 'warning',
+					const res = await this.$api.order({
+						demand_quote_id: this.id,
+						pay_type: this.isMyRadio == 'wx' ? 1 : 0,
+						coupon_id: this.option.coupon_id
 					})
+					console.log(res)
+					if (res.code == 200) {
+						this.$refs.uToast.show({
+							title: '支付成功',
+							type: 'success',
+							back: true,
+						})
+					} else {
+						this.$refs.uToast.show({
+							title: res.msg,
+							type: 'warning',
+						})
+					}
 				}
+
 			},
 			async getData() {
-				const res = await this.$api.demandQuotesIdPreOrder(this.id);
-				console.log(res)
-				this.obj = res.data;
+				if (this.option.type != 2) {
+					const res = await this.$api.demandQuotesIdPreOrder(this.id);
+					console.log(res)
+					this.obj = res.data;
+				}
+
 				const res2 = await this.$api.coupons();
 				console.log(res2)
 
@@ -446,5 +472,4 @@
 			text-align: center;
 		}
 	}
-
 </style>

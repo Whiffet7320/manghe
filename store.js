@@ -15,6 +15,12 @@ export default new Vuex.Store({
 		jinqianjiluPageSize: 10,//金钱记录列表
 		pinglunliebiaoPage:1,
 		pinglunliebiaoPageSize: 10,//评论列表
+		jifenbiaoPage:1,
+		jifenbiaoPageSize: 10,//积分明细列表
+		wodejiangpinPage:1,
+		wodejiangpinPageSize: 10,//我的奖品列表
+		shopPage:1,
+		shopPageSize: 15,//商品列表
 		// 
 	},
 	mutations: {
@@ -35,6 +41,15 @@ export default new Vuex.Store({
 		},
 		youhuiquanPage(state, str) {
 			state.youhuiquanPage = str;
+		},
+		jifenbiaoPage(state, str) {
+			state.jifenbiaoPage = str;
+		},
+		wodejiangpinPage(state, str) {
+			state.wodejiangpinPage = str;
+		},
+		shopPage(state, str) {
+			state.shopPage = str;
 		},
 		// 
 		allshopPage(state, str) {

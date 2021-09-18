@@ -4,6 +4,7 @@
   "navigationBarBackgroundColor": "#5694FF",
   "navigationBarTextStyle": "white",
   "usingComponents": {
-    "u-mask": "/node-modules/uview-ui/components/u-mask/u-mask"
+    "u-mask": "/node-modules/uview-ui/components/u-mask/u-mask",
+    "u-loadmore": "/node-modules/uview-ui/components/u-loadmore/u-loadmore"
   }
 }
