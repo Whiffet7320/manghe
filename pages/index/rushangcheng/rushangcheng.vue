@@ -24,7 +24,7 @@
 					<view class="txt2-1">
 						￥<text class="big">{{item.price}}</text>
 					</view>
-					<view class="txt2-2">销售量4399</view>
+					<view class="txt2-2">销售量{{item.sales_count}}</view>
 				</view>
 			</view>
 			
@@ -73,6 +73,11 @@
 		onReachBottom() {
 			this.$store.commit("shopPage", this.shopPage + 1);
 		},
+		onLoad(option) {
+			if(option.id){
+				this.category_id = option.id;
+			}
+		},
 		onShow() {
 			this.list = [];
 			this.$store.commit("shopPage", 1);
@@ -85,6 +90,11 @@
 				})
 				console.log(res.data);
 				this.fenleiList = res.data;
+				this.fenleiList.forEach((ele,i)=>{
+					if(ele.id == this.category_id){
+						this.nowItem = i+1
+					}
+				})
 				this.status = 'loading';
 				setTimeout(async () => {
 					const res = await this.$api.itemsList({

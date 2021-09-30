@@ -113,11 +113,11 @@
 				// dataList2:[],
 				// dataList3:[],
 				list: [{
-					name: '未使用(0)'
+					name: '未使用'
 				}, {
-					name: '已使用(0)'
+					name: '已使用'
 				}, {
-					name: '已过期(10)'
+					name: '已过期'
 				}],
 				// 因为内部的滑动机制限制，请将tabs组件和swiper组件的current用不同变量赋值
 				current: 0, // tabs组件的current值，表示当前活动的tab选项

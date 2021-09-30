@@ -2,7 +2,6 @@
   "pages": [
     "pages/index/index",
     "pages/fenlei/fenlei",
-    "pages/gouwuche/gouwuche",
     "pages/dingdan/dingdan",
     "pages/wode/wode"
   ],
@@ -50,6 +49,24 @@
       "root": "pages/index/rushangcheng",
       "pages": [
         "rushangcheng"
+      ]
+    },
+    {
+      "root": "pages/index/wenzhangxiangqing",
+      "pages": [
+        "wenzhangxiangqing"
+      ]
+    },
+    {
+      "root": "pages/index/h5",
+      "pages": [
+        "h5"
+      ]
+    },
+    {
+      "root": "pages/index/jiancaijiedao",
+      "pages": [
+        "jiancaijiedao"
       ]
     },
     {
@@ -119,7 +136,8 @@
     {
       "root": "pages/wode/shezhi",
       "pages": [
-        "shezhi"
+        "shezhi",
+        "guanyurushifu"
       ]
     }
   ],
@@ -146,12 +164,6 @@
         "iconPath": "static/img/nav-fl.png",
         "selectedIconPath": "static/img/nav-fl-active.png",
         "text": "分类"
-      },
-      {
-        "pagePath": "pages/gouwuche/gouwuche",
-        "iconPath": "static/img/nav-gwc.png",
-        "selectedIconPath": "static/img/nav-gwc-active.png",
-        "text": "购物车"
       },
       {
         "pagePath": "pages/dingdan/dingdan",

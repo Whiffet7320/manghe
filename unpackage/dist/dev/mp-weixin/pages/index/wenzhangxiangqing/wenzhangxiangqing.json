@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "文章详情",
+  "enablePullDownRefresh": false,
+  "navigationBarBackgroundColor": "#5694FF",
+  "navigationBarTextStyle": "white",
+  "usingComponents": {
+    "u-parse": "/node-modules/uview-ui/components/u-parse/u-parse"
+  }
+}

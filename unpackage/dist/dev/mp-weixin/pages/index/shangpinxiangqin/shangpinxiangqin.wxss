@@ -345,6 +345,9 @@ page {
   margin-bottom: 20rpx;
   margin-right: 20rpx;
 }
+.container .pingjiaItem.data-v-6d432469 {
+  padding-bottom: 190rpx;
+}
 .container .pingjiaItem .item.data-v-6d432469 {
   margin-bottom: 20rpx;
   width: 668rpx;

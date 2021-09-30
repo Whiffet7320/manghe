@@ -21,9 +21,13 @@ export default new Vuex.Store({
 		wodejiangpinPageSize: 10,//我的奖品列表
 		shopPage:1,
 		shopPageSize: 15,//商品列表
+		dingdanStatus:null,
 		// 
 	},
 	mutations: {
+		dingdanStatus(state, str) {
+			state.dingdanStatus = str;
+		},
 		pinglunliebiaoPage(state, str) {
 			state.pinglunliebiaoPage = str;
 		},
@@ -37,7 +41,7 @@ export default new Vuex.Store({
 			state.nowAddress = str;
 		},
 		fl(state, str) {
-			state.youhuiquanPage = str;
+			state.fl = str;
 		},
 		youhuiquanPage(state, str) {
 			state.youhuiquanPage = str;

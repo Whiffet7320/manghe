@@ -62,10 +62,18 @@
 
 		<view class="footer">
 			<view class="right">
-				<view class="tit1">
-					￥{{Number(obj.selected_quote.price)-yhqPrice}}<text v-if="option.discount"
-						class="small">（优惠券抵扣{{option.discount}}元）</text>
-				</view>
+				<template v-if="option.shopPrice">
+					<view class="tit1">
+						￥{{Number(option.shopPrice)-yhqPrice}}<text v-if="option.discount"
+							class="small">（优惠券抵扣{{option.discount}}元）</text>
+					</view>
+				</template>
+				<template v-else>
+					<view class="tit1">
+						￥{{Number(obj.selected_quote.price)-yhqPrice}}<text v-if="option.discount"
+							class="small">（优惠券抵扣{{option.discount}}元）</text>
+					</view>
+				</template>
 			</view>
 			<view @click="pay" class="left">去支付</view>
 		</view>
@@ -97,26 +105,57 @@
 		// },
 		methods: {
 			async pay() {
-				if (this.option == 2) {
+				if (this.option.type == 2) {
 					const res = await this.$api.goodsOrder({
 						item_id: this.id,
 						address: JSON.parse(this.option.address),
 						pay_type: this.isMyRadio == 'wx' ? 1 : 0,
 						coupon_id: this.option.coupon_id
 					})
-					console.log(res)
-					if (res.code == 200) {
-						this.$refs.uToast.show({
-							title: '支付成功',
-							type: 'success',
-							back: true,
-						})
+					console.log(res,this.isMyRadio)
+					if (this.isMyRadio == 'wx') {
+						if (res.code == 200) {
+							uni.requestPayment({
+								provider: 'wxpay',
+								timeStamp: res.data.timeStamp,
+								nonceStr: res.data.nonceStr,
+								package: res.data.package,
+								signType: res.data.signType,
+								paySign: res.data.paySign,
+								success: function(res) {
+									this.$refs.uToast.show({
+										title: '支付成功',
+										type: 'success',
+										url: '/pages/dingdan/dingdan',
+										isTab: true,
+									})
+								},
+								fail: function(err) {
+									console.log('fail:' + JSON.stringify(err));
+								}
+							});
+						} else {
+							this.$refs.uToast.show({
+								title: res.msg,
+								type: 'warning',
+							})
+						}
 					} else {
-						this.$refs.uToast.show({
-							title: res.msg,
-							type: 'warning',
-						})
+						if (res.code == 200) {
+							this.$refs.uToast.show({
+								title: '支付成功',
+								type: 'success',
+								url: '/pages/dingdan/dingdan',
+								isTab: true,
+							})
+						} else {
+							this.$refs.uToast.show({
+								title: res.msg,
+								type: 'warning',
+							})
+						}
 					}
+
 				} else {
 					const res = await this.$api.order({
 						demand_quote_id: this.id,
@@ -154,9 +193,16 @@
 				this.isMyRadio = val;
 			},
 			toxuanzeyouhuiquan() {
-				uni.navigateTo({
-					url: `/pages/index/dingdantijiao/xuanzeyouhuiquan?id=${this.id}&price=${this.obj.selected_quote.price}`
-				})
+				if (this.option.type == 2) {
+					uni.navigateTo({
+						url: `/pages/index/dingdantijiao/xuanzeyouhuiquan?id=${this.id}&price=${this.option.shopPrice}`
+					})
+				} else {
+					uni.navigateTo({
+						url: `/pages/index/dingdantijiao/xuanzeyouhuiquan?id=${this.id}&price=${this.obj.selected_quote.price}`
+					})
+				}
+
 			},
 		}
 	}

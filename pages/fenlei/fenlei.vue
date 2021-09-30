@@ -80,10 +80,8 @@
 		},
 		onShow() {
 			console.log(this.fl)
-			if(this.fl == 1){
-				this.current = 0;
-			}else if(this.fl == 2){
-				this.current = 1;
+			if(this.fl){
+				this.current = Number(this.fl) - 1;
 			}
 			this.getData()
 		},
@@ -175,6 +173,7 @@
 		flex: 1;
 		display: flex;
 		overflow: hidden;
+		height: calc(100vh - 118rpx) !important;
 	}
 
 	.u-search-inner {
@@ -192,7 +191,8 @@
 
 	.u-tab-view {
 		width: 200rpx;
-		height: 100%;
+		height: calc(100vh - 118rpx) !important;
+		overflow-y: scroll;
 	}
 
 	.u-tab-item {

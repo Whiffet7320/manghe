@@ -264,7 +264,7 @@ page {
   color: #4D8BFD;
 }
 .box1-1.myheight.data-v-d6d5152c {
-  height: 410rpx;
+  height: 260rpx;
 }
 .box1-1.data-v-d6d5152c {
   margin-top: 20rpx;

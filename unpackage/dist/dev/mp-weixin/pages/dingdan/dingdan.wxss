@@ -353,6 +353,20 @@ page {
   -webkit-align-items: center;
           align-items: center;
 }
+.items .item .tit5 .lxkf.txt2.data-v-308dcaa4 {
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  right: 44rpx;
+}
+.items .item .tit5 .qrsh.txt2.data-v-308dcaa4 {
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  right: 44rpx;
+}
 .items .item .tit5 .zzfw.txt2.data-v-308dcaa4 {
   position: absolute;
   top: 50%;

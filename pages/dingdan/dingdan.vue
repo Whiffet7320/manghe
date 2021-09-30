@@ -32,12 +32,13 @@
 			<view v-if="top2Value==''" @click="chooesTop(2)" :class="{'tit1':true,'active':chooseTop2}">服务订单</view>
 		</view>
 		<view v-if="chooseTop1" class="nav2">
-			<view @click="cTop1Btn1('全部订单')" :class="{'btn':true,'active':top1Value=='全部订单'}">全部订单</view>
-			<view @click="cTop1Btn1('待付款')" :class="{'btn':true,'active':top1Value=='待付款'}">待付款</view>
-			<view @click="cTop1Btn1('待发货')" :class="{'btn':true,'active':top1Value=='待发货'}">待发货</view>
-			<view @click="cTop1Btn1('待收货')" :class="{'btn':true,'active':top1Value=='待收货'}">待收货</view>
+			<view @click="cTop1Btn1('全部订单','')" :class="{'btn':true,'active':top1Value=='全部订单'}">全部订单</view>
+			<view @click="cTop1Btn1('待付款',0)" :class="{'btn':true,'active':top1Value=='待付款'}">待付款</view>
+			<view @click="cTop1Btn1('待发货',1)" :class="{'btn':true,'active':top1Value=='待发货'}">待发货</view>
+			<view @click="cTop1Btn1('待收货',2)" :class="{'btn':true,'active':top1Value=='待收货'}">待收货</view>
 			<!-- <view @click="cTop1Btn1('待评价')" :class="{'btn':true,'active':top1Value=='待评价'}">待评价</view> -->
-			<view @click="cTop1Btn1('待评价')" :class="{'btn':true,'active':top1Value=='待评价'}">待评价</view>
+			<!-- <view @click="cTop1Btn1('待评价')" :class="{'btn':true,'active':top1Value=='待评价'}">待评价</view> -->
+			<view @click="cTop1Btn1('已完成',3)" :class="{'btn':true,'active':top1Value=='已完成'}">已完成</view>
 			<!-- <view @click="cTop1Btn1('售后')" :class="{'btn':true,'active':top1Value=='售后'}">售后</view> -->
 		</view>
 		<view v-if="chooseTop2" class="nav2">
@@ -51,11 +52,11 @@
 			<view @click="cTop2Btn1('售后',1,5)" :class="{'btn':true,'active':top2Value=='售后'}">售后</view>
 		</view>
 		<view v-if="current == 0" class="items">
-			<view class="item">
-				<!-- 待付款 -->
-				<template>
+			<view class="item" v-for="item in list2" :key='item.id'>
+				<!-- 已完成 -->
+				<template v-if="item.status == 3">
 					<view class="tit11">
-						<view class="tit1">待付款</view>
+						<view class="tit1">已完成</view>
 					</view>
 					<view class="titt">
 						<view class="tit2">
@@ -63,9 +64,9 @@
 								订单编号：<text class="black">{{item.order_num}}</text>
 							</view>
 							<view class="shu"></view>
-							<view @click="fuzhi" class="txt2">复制</view>
+							<view @click="fuzhi(item.order_num)" class="txt2">复制</view>
 						</view>
-						<view @click="toXiangqin(1)" class="tit1-3">查看详情</view>
+						<view @click="toXiangqin(1,item.id)" class="tit1-3">查看详情</view>
 					</view>
 
 					<view class="tit2">
@@ -80,12 +81,43 @@
 					</view>
 					<view class="heng"></view>
 					<view class="tit5">
+						<view @click="callPhone(kfPhone)" class="txt2 lxkf">联系客服</view>
+					</view>
+				</template>
+				<!-- 待付款 -->
+				<template v-if="item.status == 0">
+					<view class="tit11">
+						<view class="tit1">待付款</view>
+					</view>
+					<view class="titt">
+						<view class="tit2">
+							<view class="txt1">
+								订单编号：<text class="black">{{item.order_num}}</text>
+							</view>
+							<view class="shu"></view>
+							<view @click="fuzhi(item.order_num)" class="txt2">复制</view>
+						</view>
+						<view @click="toXiangqin(1,item.id)" class="tit1-3">查看详情</view>
+					</view>
+
+					<view class="tit2">
+						<view class="txt1">
+							服务类目：<text class="black">{{item.item_name}}</text>
+						</view>
+					</view>
+					<view class="tit2">
+						<view class="txt1">
+							下单时间：<text class="black">{{item.created_at}}</text>
+						</view>
+					</view>
+					<view class="heng"></view>
+					<view class="tit5">
 						<view class="txt1" @click="quxiaoDD('1')">取消订单</view>
-						<view class="txt2">去支付</view>
+						<view @click="toPay(item)" class="txt2">去支付</view>
 					</view>
 				</template>
 				<!-- 待发货 -->
-				<template>
+				<template v-if="item.status == 1">
 					<view class="tit11">
 						<view class="tit1">待发货</view>
 					</view>
@@ -95,9 +127,9 @@
 								订单编号：<text class="black">{{item.order_num}}</text>
 							</view>
 							<view class="shu"></view>
-							<view @click="fuzhi" class="txt2">复制</view>
+							<view @click="fuzhi(item.order_num)" class="txt2">复制</view>
 						</view>
-						<view @click="toXiangqin(1)" class="tit1-3">查看详情</view>
+						<view @click="toXiangqin(1,item.id)" class="tit1-3">查看详情</view>
 					</view>
 					<view class="tit2">
 						<view class="txt1">
@@ -106,17 +138,17 @@
 					</view>
 					<view class="tit2">
 						<view class="txt1">
-							下单时间：<text class="black">2021-07-22 14:39</text>
+							下单时间：<text class="black">{{item.created_at}}</text>
 						</view>
 					</view>
 					<view class="heng"></view>
 					<view class="tit5">
-						<view class="txt1" @click="quxiaoDD('1')">取消订单</view>
-						<view class="txt2">修改信息</view>
+						<!-- <view class="txt1" @click="quxiaoDD('1')">取消订单</view> -->
+						<view @click="callPhone(kfPhone)" class="txt2 lxkf">联系客服</view>
 					</view>
 				</template>
 				<!-- 待收货 -->
-				<template>
+				<template v-if="item.status == 2">
 					<view class="tit11">
 						<view class="tit1">待收货</view>
 						<view class="tit1-1">
@@ -129,9 +161,9 @@
 								快递单号：<text class="black">{{item.order_num}}</text>
 							</view>
 							<view class="shu"></view>
-							<view @click="fuzhi" class="txt2">复制</view>
+							<view @click="fuzhi(item.order_num)" class="txt2">复制</view>
 						</view>
-						<view @click="toXiangqin(1)" class="tit1-3">查看详情</view>
+						<view @click="toXiangqin(1,item.id)" class="tit1-3">查看详情</view>
 					</view>
 					<view class="tit2">
 						<view class="txt1">
@@ -140,13 +172,13 @@
 					</view>
 					<view class="tit2">
 						<view class="txt1">
-							下单时间：<text class="black">2021-07-22 14:39</text>
+							下单时间：<text class="black">{{item.created_at}}</text>
 						</view>
 					</view>
 					<view class="heng"></view>
 					<view class="tit5">
-						<!-- <view class="txt1">删除订单</view> -->
-						<view class="txt2">确认收货</view>
+						<view @click="callPhone(kfPhone)" class="txt1">联系客服</view>
+						<view @click="shouhuo(item.id)" class="txt2 qrsh">确认收货</view>
 					</view>
 				</template>
 				<!-- 确认收货 -->
@@ -161,7 +193,7 @@
 							订单编号：<text class="black">{{item.order_num}}</text>
 						</view>
 						<view class="shu"></view>
-						<view @click="fuzhi" class="txt2">复制</view>
+						<view @click="fuzhi(item.order_num)" class="txt2">复制</view>
 					</view>
 					<view class="tit2">
 						<view class="txt1">
@@ -181,7 +213,7 @@
 					</view>
 				</template> -->
 				<!-- 售后 -->
-				<template>
+				<!-- <template>
 					<view class="tit11">
 						<view class="tit1">售后</view>
 						<view class="tit1-2">已退款</view>
@@ -205,8 +237,9 @@
 						</view>
 					</view>
 				</template>
+			 -->
 				<!-- 待评价 -->
-				<template>
+				<!-- <template>
 					<view class="tit11">
 						<view class="tit1">待评价</view>
 						<view class="tit1-1" style="color:#D7373F ;">已签收</view>
@@ -220,7 +253,7 @@
 							<view class="shu"></view>
 							<view @click="fuzhi" class="txt2">复制</view>
 						</view>
-						<view @click="toXiangqin(1)" class="tit1-3">查看详情</view>
+						<view @click="toXiangqin(1,item.id)" class="tit1-3">查看详情</view>
 					</view>
 					<view class="tit2">
 						<view class="txt1">
@@ -234,20 +267,14 @@
 					</view>
 					<view class="heng"></view>
 					<view class="tit5">
-						<!-- <view class="img">
-							<image class="pic1" src="/static/img/1229310763000_mthumb.png" mode=""></image>
-							<view class="tit111">
-								<view class="txt11-1">李师傅</view>
-								<view class="txt11-2">￥200.00</view>
-							</view>
-						</view> -->
 						<view class="txt1 txt1-2">删除订单</view>
 						<view class="txt4">售后</view>
 						<view @click="toPingjia" class="txt2">去评价</view>
 					</view>
 				</template>
-
+ -->
 			</view>
+			<u-loadmore :status="status" :icon-type="iconType" :load-text="loadText" />
 		</view>
 		<view v-if="current == 1" class="items">
 			<view class="item" v-for="item in list" :key='item.id'>
@@ -402,7 +429,7 @@
 							:class="{'txt2':true,'active':!ischooseShifu}">选择师傅</view>
 					</view>
 				</template>
-				
+
 				<!-- 等待付款 -->
 				<template v-if="item.status == 1 && !item.order || item.order.status == 0">
 					<view class="tit11">
@@ -698,7 +725,7 @@
 	} from "vuex";
 	export default {
 		computed: {
-			...mapState(["dingdanPage", "dingdanPageSize"]),
+			...mapState(["dingdanPage", "dingdanPageSize", "dingdanStatus"]),
 		},
 		watch: {
 			dingdanPage: function(page) {
@@ -711,8 +738,11 @@
 		},
 		data() {
 			return {
-				order_status:'',
-				demand_status:'',
+				kfPhone: '',
+				goodStatus: '',
+				list2: [],
+				order_status: '',
+				demand_status: '',
 				qxDDitem: null,
 				orderItemcode: '', //服务码
 				itemId: null,
@@ -728,7 +758,7 @@
 				maskshow: false,
 				chooseTop1: false,
 				chooseTop2: false,
-				top1Value: '',
+				top1Value: '全部订单',
 				top2Value: '',
 				current: 0,
 				// 加载
@@ -741,10 +771,20 @@
 				},
 			}
 		},
+		onLoad(option) {
+			console.log(option, 'option')
+		},
 		async onShow() {
+			if (this.dingdanStatus == 'fuwu') {
+				this.current = 1;
+				this.top2Value = '全部订单';
+				this.top1Value = '';
+				this.$store.commit('dingdanStatus', null);
+			}
 			// this.top1Value = '';
 			// this.top2Value = '';
 			this.list = [];
+			this.list2 = [];
 			this.getData()
 			this.$store.commit("dingdanPage", 1);
 		},
@@ -754,27 +794,59 @@
 		methods: {
 			async getData() {
 				this.status = 'loading';
-				if (this.clock) {
-					this.list = [];
-					this.clock = false;
-				}
-				setTimeout(async () => {
-					const res = await this.$api.getDemandQuotesList({
-						page: this.dingdanPage,
-						limit: this.dingdanPageSize,
-						order_status:this.order_status,
-						demand_status:this.demand_status,
-					})
-					console.log(res)
-					if (res.data.data.length == 0) {
-						this.status = 'nomore'
-					} else {
-						this.status = 'loadmore';
-						console.log(this.list)
-						this.list = this.list.concat(res.data.data)
+				if (this.current == 0) {
+					// 商城
+					if (this.clock) {
+						this.list2 = [];
+						this.clock = false;
 					}
-				}, 200)
-				console.log(this.list)
+					setTimeout(async () => {
+						const res = await this.$api.goodsOrderList({
+							page: this.dingdanPage,
+							limit: this.dingdanPageSize,
+							status: this.goodStatus
+						})
+						console.log(res)
+						if (res.data.data.length == 0) {
+							this.status = 'nomore'
+						} else {
+							this.status = 'loadmore';
+							console.log(this.list2)
+							this.list2 = this.list2.concat(res.data.data)
+						}
+					}, 200)
+					console.log(this.list2)
+				} else if (this.current == 1) {
+					// 服务
+					if (this.clock) {
+						this.list = [];
+						this.clock = false;
+					}
+					setTimeout(async () => {
+						const res = await this.$api.getDemandQuotesList({
+							page: this.dingdanPage,
+							limit: this.dingdanPageSize,
+							order_status: this.order_status,
+							demand_status: this.demand_status,
+						})
+						console.log(res)
+						if (res.data.data.length == 0) {
+							this.status = 'nomore'
+						} else {
+							this.status = 'loadmore';
+							console.log(this.list)
+							this.list = this.list.concat(res.data.data)
+						}
+					}, 200)
+					console.log(this.list)
+				}
+				const ress = await this.$api.config();
+				console.log(ress.data)
+				ress.data.forEach(ele => {
+					if (ele.key == 'servicePhone') {
+						this.kfPhone = ele.value
+					}
+				})
 			},
 			callPhone(phone) {
 				uni.makePhoneCall({
@@ -789,19 +861,15 @@
 				this.popupShow = true;
 				this.orderItemcode = code;
 			},
-			async pay() {
-				const res = await this.$api.pay({
-					order_id: this.itemId,
-					pay_type: this.isMyRadio == 'wx' ? 1 : 0,
-				})
-				console.log(res)
+			async shouhuo(id) {
+				const res = await this.$api.goodsOrderShouhuo(id);
+				console.log(res.data);
 				if (res.code == 200) {
 					this.$refs.uToast.show({
-						title: '支付成功',
+						title: '收货成功',
 						type: 'success',
 					})
-					this.zjgmShow = false;
-					this.list = [];
+					this.list2 = [];
 					this.$store.commit("dingdanPage", 1);
 					this.getData()
 				} else {
@@ -811,22 +879,131 @@
 					})
 				}
 			},
-			toPay(item) {
-				if (item.order) {
-					this.itemPrice = item.order.actual_price;
-					this.zjgmShow = true;
-					this.itemId = item.order.id
-				} else {
-					if (!this.ischooseShifu) {
-						this.$refs.uToast.show({
-							title: '请先选择师傅',
-							type: 'warning',
-						})
+			async pay() {
+				if (this.current == 0) {
+					const res = await this.$api.goodsOrderPay({
+						goods_order_id: this.itemId,
+						pay_type: this.isMyRadio == 'wx' ? 1 : 0,
+					})
+					console.log(res)
+					if (this.isMyRadio == 'wx') {
+						if (res.code == 200) {
+							uni.requestPayment({
+								provider: 'wxpay',
+								...res.data,
+								success: () => {
+									this.$refs.uToast.show({
+										title: '支付成功',
+										type: 'success',
+									})
+								},
+								fail: function(err) {
+									console.log('fail:' + JSON.stringify(err));
+								}
+							});
+							this.zjgmShow = false;
+							this.list2 = [];
+							this.$store.commit("dingdanPage", 1);
+							this.getData()
+						} else {
+							this.$refs.uToast.show({
+								title: res.msg,
+								type: 'warning',
+							})
+						}
 					} else {
-						uni.navigateTo({
-							url: `/pages/index/dingdantijiao/dingdantijiao?id=${item.id}`,
-						})
+						if (res.code == 200) {
+							this.$refs.uToast.show({
+								title: '支付成功',
+								type: 'success',
+							})
+							this.zjgmShow = false;
+							this.list2 = [];
+							this.$store.commit("dingdanPage", 1);
+							this.getData()
+						} else {
+							this.$refs.uToast.show({
+								title: res.msg,
+								type: 'warning',
+							})
+						}
 					}
+
+				} else if (this.current == 1) {
+					const res = await this.$api.pay({
+						order_id: this.itemId,
+						pay_type: this.isMyRadio == 'wx' ? 1 : 0,
+					})
+					console.log(res)
+					if (this.isMyRadio == 'wx') {
+						if (res.code == 200) {
+							uni.requestPayment({
+								provider: 'wxpay',
+								...res.data,
+								success: () => {
+									this.$refs.uToast.show({
+										title: '支付成功',
+										type: 'success',
+									})
+								},
+								fail: function(err) {
+									console.log('fail:' + JSON.stringify(err));
+								}
+							});
+							this.zjgmShow = false;
+							this.list = [];
+							this.$store.commit("dingdanPage", 1);
+							this.getData()
+						} else {
+							this.$refs.uToast.show({
+								title: res.msg,
+								type: 'warning',
+							})
+						}
+					} else {
+						if (res.code == 200) {
+							this.$refs.uToast.show({
+								title: '支付成功',
+								type: 'success',
+							})
+							this.zjgmShow = false;
+							this.list = [];
+							this.$store.commit("dingdanPage", 1);
+							this.getData()
+						} else {
+							this.$refs.uToast.show({
+								title: res.msg,
+								type: 'warning',
+							})
+						}
+					}
+
+				}
+
+			},
+			toPay(item) {
+				if (this.current == 1) {
+					if (item.order) {
+						this.itemPrice = item.order.actual_price;
+						this.zjgmShow = true;
+						this.itemId = item.order.id
+					} else {
+						if (!this.ischooseShifu) {
+							this.$refs.uToast.show({
+								title: '请先选择师傅',
+								type: 'warning',
+							})
+						} else {
+							uni.navigateTo({
+								url: `/pages/index/dingdantijiao/dingdantijiao?id=${item.id}`,
+							})
+						}
+					}
+
+				} else if (this.current == 0) {
+					this.itemPrice = item.actual_price;
+					this.zjgmShow = true;
+					this.itemId = item.id
 				}
 
 			},
@@ -898,17 +1075,21 @@
 				this.chooseTop1 = false;
 				this.chooseTop2 = false;
 			},
-			cTop1Btn1(val) {
+			cTop1Btn1(val, goodStatus) {
+				this.goodStatus = goodStatus;
 				this.current = 0;
 				this.top1Value = val;
 				this.top2Value = '';
 				this.chooseTop1 = false;
 				this.maskshow = false;
+				this.list2 = [];
+				this.$store.commit("dingdanPage", 1);
+				this.getData()
 			},
 			closeTop1() {
 				this.top1Value = '';
 			},
-			cTop2Btn1(val,status1='',status2='') {
+			cTop2Btn1(val, status1 = '', status2 = '') {
 				this.order_status = status2;
 				this.demand_status = status1;
 				this.current = 1;
@@ -1246,6 +1427,20 @@
 				width: 750rpx;
 				display: flex;
 				align-items: center;
+
+				.lxkf.txt2 {
+					position: absolute;
+					top: 50%;
+					transform: translateY(-50%);
+					right: 44rpx;
+				}
+
+				.qrsh.txt2 {
+					position: absolute;
+					top: 50%;
+					transform: translateY(-50%);
+					right: 44rpx;
+				}
 
 				// 正在服务
 				.zzfw.txt2 {

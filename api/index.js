@@ -521,4 +521,45 @@ export default {
 			}
 		})
 	},
+	goodsOrderList(obj) {
+		return myGet({
+			url: urls.goodsOrder,
+			params:{
+				...obj
+			}
+		})
+	},
+	goodsOrderPay(obj) {
+		return myPost({
+			url: urls.goodsOrderPay,
+			data:{
+				...obj
+			}
+		})
+	},
+	goodsOrderId(id) {
+		return myGet({
+			url: `${urls.goodsOrder}/${id}`,
+		})
+	},
+	article(id) {
+		return myGet({
+			url: `${urls.article}/${id}`,
+		})
+	},
+	goodsOrderShouhuo(id) {
+		return myPut({
+			url: `${urls.goodsOrderShouhuo}/${id}/take-delivery`,
+		})
+	},
+	goodsStreet() {
+		return myGet({
+			url: urls.goodsStreet,
+		})
+	},
+	activity() {
+		return myGet({
+			url: urls.activity,
+		})
+	},
 }

@@ -57,6 +57,13 @@ page {
 .index.data-v-57280228 {
   position: relative;
 }
+.maskPic22.data-v-57280228 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+}
 .mask.data-v-57280228 {
   position: absolute;
   top: 50%;
@@ -545,7 +552,7 @@ page {
   margin-bottom: 7rpx;
 }
 .nav2 .tit6 .box2 .items .item.data-v-57280228:nth-child(2), .nav2 .tit6 .box2 .items .item.data-v-57280228:nth-child(5) {
-  margin: 0 120rpx;
+  margin: 0 116rpx;
 }
 .nav2 .tit6 .box2 .items .item .pic.data-v-57280228 {
   width: 125rpx;

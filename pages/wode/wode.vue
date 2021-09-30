@@ -75,7 +75,7 @@
 			</view>
 		</view>
 		<view class="nav4">
-			<view class="item">
+			<view class="item" @click="toshifuduan">
 				<image class="pic1" src="/static/img/weixiu.png" mode=""></image>
 				<view class="txt">
 					<view class="txt1">我是师傅</view>
@@ -97,10 +97,9 @@
 				money:0,
 				kefuList: [{
 					text: '电话客服',
-				}, {
-					text: '在线客服',
 				}],
 				kefuShow: false,
+				kfPhone:'',
 			}
 		},
 		onShow(){
@@ -118,10 +117,23 @@
 				uni.setStorageSync('user_id', res.data.id)
 				this.money = res.data.money;
 				this.score = res.data.score;
+				const ress = await this.$api.config();
+				console.log(ress.data)
+				ress.data.forEach(ele => {
+					if (ele.key == 'servicePhone') {
+						this.kfPhone = ele.value
+					}
+				})
 			},
 			toLogin() {
 				uni.navigateTo({
 					url: '/pages/wode/weixinshouquan/weixinshouquan'
+				})
+			},
+			toshifuduan(){
+				uni.navigateTo({
+					url:'/pages/index/h5/h5?url=https://craftsman.rushifu.hxqhhhh.shop'
+					// url:'/pages/index/h5/h5?url=http://localhost:8084'
 				})
 			},
 			toyouhuiquan() {
@@ -159,6 +171,11 @@
 			},
 			kefuClick(index) {
 				console.log(`点击了第${index + 1}项，内容为：${this.kefuList[index].text}`)
+				if(index == 0){
+					uni.makePhoneCall({
+						phoneNumber: this.kfPhone
+					});
+				}
 			},
 			toShezhi(){
 				uni.navigateTo({

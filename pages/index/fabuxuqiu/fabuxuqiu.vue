@@ -42,13 +42,13 @@
 				<view v-else class="txt2">{{option.intro}}</view>
 			</view>
 		</view>
-		<view v-if="option.type !=2" class="nav5">
+		<!-- <view v-if="option.type !=2" class="nav5">
 			<u-checkbox-group active-color='#24BC29' size=28 @change="radioGroupChange">
 				<u-checkbox label-size=20 name="rad1" v-model="myRad">
 					我已阅读并同意 <text class="blue">《万师傅服务协议》《隐私政策》</text>
 				</u-checkbox>
 			</u-checkbox-group>
-		</view>
+		</view> -->
 		<view v-if="option.type ==2" style="transform: translateY(0rpx);" @click="toDingdantijiao" class="nav6">立即下单
 		</view>
 		<view v-else @click="toBaojia" class="nav6">发布需求</view>
@@ -182,6 +182,7 @@
 					})
 				} else {
 					this.$u.route('/pages/index/dingdantijiao/dingdantijiao', {
+						shopPrice: this.option.shopPrice,
 						id: this.option.id,
 						type: 2,
 						address: JSON.stringify(this.address),
@@ -216,6 +217,9 @@
 							title: '发布成功',
 							type: 'success',
 							url: '/pages/dingdan/dingdan',
+							callback:()=>{
+								this.$store.commit('dingdanStatus','fuwu')
+							},
 							isTab: true,
 						})
 					} else {

@@ -88,6 +88,7 @@ page {
   display: -webkit-flex;
   display: flex;
   overflow: hidden;
+  height: calc(100vh - 118rpx) !important;
 }
 .u-search-inner.data-v-02bdc6a6 {
   background-color: #eaeaea;
@@ -106,7 +107,8 @@ page {
 }
 .u-tab-view.data-v-02bdc6a6 {
   width: 200rpx;
-  height: 100%;
+  height: calc(100vh - 118rpx) !important;
+  overflow-y: scroll;
 }
 .u-tab-item.data-v-02bdc6a6 {
   height: 110rpx;

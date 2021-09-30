@@ -107,6 +107,30 @@
           "pathName": "pages/index/fabuxuqiu/fabuxuqiu",
           "query": "type=2",
           "scene": null
+        },
+        {
+          "name": "pages/wode/wode",
+          "pathName": "pages/wode/wode",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/index/zhuanpan/zhuanpan",
+          "pathName": "pages/index/zhuanpan/zhuanpan",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/index/jiancaijiedao/jiancaijiedao",
+          "pathName": "pages/index/jiancaijiedao/jiancaijiedao",
+          "query": "id=31",
+          "scene": null
+        },
+        {
+          "name": "pages/index/jiancaijiedao/jiancaijiedao",
+          "pathName": "pages/index/jiancaijiedao/jiancaijiedao",
+          "query": "id=31",
+          "scene": null
         }
       ]
     }

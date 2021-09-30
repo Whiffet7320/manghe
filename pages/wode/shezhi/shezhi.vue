@@ -3,7 +3,7 @@
 		<u-toast ref="uToast" />
 		<u-modal @confirm='outLogin' :show-cancel-button='true' :mask-close-able='true' v-model="clockShow" :content="clockContent"></u-modal>
 		<view class="nav1">
-			<view class="item">
+			<view class="item" @click="toGuanyurushifu">
 				<image class="pic2" src="../../../static/img/shuben.png" mode=""></image>
 				<view class="txt">
 					<view class="txt1">关于如师傅</view>
@@ -52,7 +52,6 @@
 		},
 		methods:{
 			outLogin(){
-				const that = this;
 				console.log('outlogin')
 				uni.setStorageSync('myUser', '')
 				uni.setStorageSync('token', '')
@@ -62,11 +61,17 @@
 					success() {
 						that.$refs.uToast
 							.show({
-								title: '已退出登录',
-								type: 'success',
+								title: res
+									.msg,
+								type: '已退出登录',
 								back: true,
 							})
 					}
+				})
+			},
+			toGuanyurushifu(){
+				uni.navigateTo({
+					url:'/pages/wode/shezhi/guanyurushifu'
 				})
 			},
 		}

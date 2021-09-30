@@ -7,7 +7,7 @@
 				<view class="tit2">{{shopObj.sub_title}}</view>
 				<view class="tit3">
 					<view class="txt1">￥<text class="big">{{shopObj.price}}</text></view>
-					<view class="txt2">已售出<text class="blue">{{serve_count}}</text>件</view>
+					<view class="txt2">已售出<text class="blue">{{shopObj.sales_count}}</text>件</view>
 				</view>
 				<view class="tit4">商品描述</view>
 				<view class="tit5">
@@ -70,7 +70,7 @@
 				<view class="txt1 active">详情</view>
 				<view @click="scrollPingjia" class="txt1">评价</view>
 			</view>
-			<image :src="shopObj.detail_img" class="piccc" mode=""></image>
+			<image :src="shopObj.detail_img" class="piccc" mode="widthFix"></image>
 			<view class="tit7">
 				<view class="txt1">用户评价</view>
 				<view @click="toPingjia" class="txt2">查看全部<u-icon name="arrow-right" color="#707070" size="28"></u-icon>
@@ -106,28 +106,28 @@
 		<!-- 底部 -->
 		<view class="footer">
 			<template v-if="shopObj.type == 0">
-				<view class="nav1">
+				<view class="nav1" @click='callKfPhone'>
 					<image class="pic1" src="/static/img/zu5.png" mode=""></image>
-					<view class="txt1">客服</view>
+					<view @click='callKfPhone' class="txt1">客服</view>
 				</view>
 				<view @click="toFabu" class="nav2">去下单</view>
 			</template>
 			<template v-if="shopObj.type == 1">
-				<view class="nav1">
+				<view class="nav1" @click='callKfPhone'>
 					<image class="pic1" src="/static/img/zu5.png" mode=""></image>
 					<view class="txt1">客服</view>
 				</view>
 				<view @click="toFabu" class="nav2">去报价</view>
 			</template>
 			<template v-if="shopObj.type == 2">
-				<view class="nav1">
+				<view class="nav1" @click='callKfPhone'>
 					<image class="pic1" src="/static/img/zu106.png" mode=""></image>
 					<view class="txt1">客服</view>
 				</view>
-				<view class="nav3 nav1">
+				<!-- <view class="nav3 nav1">
 					<image class="pic1" src="/static/img/zu118.png" mode=""></image>
 					<view class="txt1">购物车</view>
-				</view>
+				</view> -->
 				<view @click="toFabu" class="nav2">去下单</view>
 			</template>
 		</view>
@@ -138,6 +138,7 @@
 	export default {
 		data() {
 			return {
+				kfPhone:'',
 				optionId: '',
 				pageStatus: 2,
 				pingjiaCount: 5,
@@ -154,7 +155,7 @@
 			}
 		},
 		onShow() {
-			this.$u.getRect(".pingjiaBtns").then(res => {
+			this.$u.getRect(".pingjiaItem").then(res => {
 				this.pingjiaBtnsTop = res.top - 50;
 			})
 		},
@@ -164,6 +165,12 @@
 		},
 		methods: {
 			async getData() {
+				const ress = await this.$api.config();
+				ress.data.forEach(ele => {
+					if (ele.key == 'servicePhone') {
+						this.kfPhone = ele.value
+					}
+				})
 				const res = await this.$api.items(this.optionId)
 				console.log(res)
 				this.comment = res.data.comment;
@@ -176,6 +183,11 @@
 				})
 				this.serve_count = res.data.serve_count;
 				this.shopObj = res.data.item;
+			},
+			callKfPhone(){
+				uni.makePhoneCall({
+					phoneNumber: this.kfPhone
+				});
 			},
 			toPingjia() {
 				uni.navigateTo({
@@ -198,7 +210,9 @@
 			toFabu() {
 				if (this.shopObj.type == 2) {
 					this.$u.route('/pages/index/fabuxuqiu/fabuxuqiu', {
-						type:2
+						type:2,
+						id:this.optionId,
+						shopPrice:this.shopObj.price,
 					});
 				} else {
 					this.$u.route('/pages/index/fabuxuqiu/xiadan', {
@@ -547,6 +561,7 @@
 		}
 
 		.pingjiaItem {
+			padding-bottom: 190rpx;
 			.item {
 				margin-bottom: 20rpx;
 				width: 668rpx;

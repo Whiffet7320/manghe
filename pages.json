@@ -15,13 +15,13 @@
 				"navigationBarTitleText": "分类"
 			}
 		},
-		{
-			"path": "pages/gouwuche/gouwuche",
-			"style": {
-				"navigationBarTitleText": "购物车",
-				"enablePullDownRefresh": false
-			}
-		},
+		// {
+		// 	"path": "pages/gouwuche/gouwuche",
+		// 	"style": {
+		// 		"navigationBarTitleText": "购物车",
+		// 		"enablePullDownRefresh": false
+		// 	}
+		// },
 		{
 			"path": "pages/dingdan/dingdan",
 			"style": {
@@ -100,7 +100,7 @@
 					"navigationBarTitleText": "商品详情",
 					"enablePullDownRefresh": false
 				}
-			},{
+			}, {
 				"path": "pingjialiebiao",
 				"style": {
 					// "navigationStyle": "custom",
@@ -120,7 +120,7 @@
 					"navigationBarBackgroundColor": "#C91919",
 					"navigationBarTextStyle": "white"
 				}
-			},{
+			}, {
 				"path": "wodejiangping",
 				"style": {
 					// "navigationStyle": "custom",
@@ -135,6 +135,42 @@
 				"style": {
 					// "navigationStyle": "custom",
 					"navigationBarTitleText": "如商城",
+					"enablePullDownRefresh": false,
+					"navigationBarBackgroundColor": "#5694FF",
+					"navigationBarTextStyle": "white"
+				}
+			}]
+		}, {
+			"root": "pages/index/wenzhangxiangqing",
+			"pages": [{
+				"path": "wenzhangxiangqing",
+				"style": {
+					// "navigationStyle": "custom",
+					"navigationBarTitleText": "文章详情",
+					"enablePullDownRefresh": false,
+					"navigationBarBackgroundColor": "#5694FF",
+					"navigationBarTextStyle": "white"
+				}
+			}]
+		}, {
+			"root": "pages/index/h5",
+			"pages": [{
+				"path": "h5",
+				"style": {
+					// "navigationStyle": "custom",
+					"navigationBarTitleText": "新页面",
+					"enablePullDownRefresh": false,
+					"navigationBarBackgroundColor": "#5694FF",
+					"navigationBarTextStyle": "white"
+				}
+			}]
+		}, {
+			"root": "pages/index/jiancaijiedao",
+			"pages": [{
+				"path": "jiancaijiedao",
+				"style": {
+					// "navigationStyle": "custom",
+					"navigationBarTitleText": "建材街道",
 					"enablePullDownRefresh": false,
 					"navigationBarBackgroundColor": "#5694FF",
 					"navigationBarTextStyle": "white"
@@ -315,6 +351,13 @@
 					"navigationBarTitleText": "设置",
 					"enablePullDownRefresh": false
 				}
+			},{
+				"path": "guanyurushifu",
+				"style": {
+					// "navigationStyle": "custom",
+					"navigationBarTitleText": "关于如师傅",
+					"enablePullDownRefresh": false
+				}
 			}]
 		}
 	],
@@ -330,30 +373,33 @@
 		"backgroundColor": "#FFFFFF",
 		"borderStyle": "black",
 		"list": [{
-			"pagePath": "pages/index/index",
-			"iconPath": "static/img/nav-sy.png",
-			"selectedIconPath": "static/img/nav-sy-active.png",
-			"text": "首页"
-		}, {
-			"pagePath": "pages/fenlei/fenlei",
-			"iconPath": "static/img/nav-fl.png",
-			"selectedIconPath": "static/img/nav-fl-active.png",
-			"text": "分类"
-		}, {
-			"pagePath": "pages/gouwuche/gouwuche",
-			"iconPath": "static/img/nav-gwc.png",
-			"selectedIconPath": "static/img/nav-gwc-active.png",
-			"text": "购物车"
-		}, {
-			"pagePath": "pages/dingdan/dingdan",
-			"iconPath": "static/img/nav-dd.png",
-			"selectedIconPath": "static/img/nav-dd-active.png",
-			"text": "订单"
-		}, {
-			"pagePath": "pages/wode/wode",
-			"iconPath": "static/img/nav-wd.png",
-			"selectedIconPath": "static/img/nav-wd-active.png",
-			"text": "我的"
-		}]
+				"pagePath": "pages/index/index",
+				"iconPath": "static/img/nav-sy.png",
+				"selectedIconPath": "static/img/nav-sy-active.png",
+				"text": "首页"
+			}, {
+				"pagePath": "pages/fenlei/fenlei",
+				"iconPath": "static/img/nav-fl.png",
+				"selectedIconPath": "static/img/nav-fl-active.png",
+				"text": "分类"
+			},
+			// {
+			// 	"pagePath": "pages/gouwuche/gouwuche",
+			// 	"iconPath": "static/img/nav-gwc.png",
+			// 	"selectedIconPath": "static/img/nav-gwc-active.png",
+			// 	"text": "购物车"
+			// },
+			{
+				"pagePath": "pages/dingdan/dingdan",
+				"iconPath": "static/img/nav-dd.png",
+				"selectedIconPath": "static/img/nav-dd-active.png",
+				"text": "订单"
+			}, {
+				"pagePath": "pages/wode/wode",
+				"iconPath": "static/img/nav-wd.png",
+				"selectedIconPath": "static/img/nav-wd-active.png",
+				"text": "我的"
+			}
+		]
 	}
 }

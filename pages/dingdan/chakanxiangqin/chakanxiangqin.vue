@@ -9,7 +9,8 @@
 				<view class="sf-txt2">￥<text class="big">{{obj.selected_quote.price}}</text></view>
 			</view>
 			<view class="sf-tit3">
-				<image @click="toShifuxiangqin(obj)" v-if="obj.selected_quote.user_info.avatar" class="pic1" :src="obj.selected_quote.user_info.avatar" mode=""></image>
+				<image @click="toShifuxiangqin(obj)" v-if="obj.selected_quote.user_info.avatar" class="pic1"
+					:src="obj.selected_quote.user_info.avatar" mode=""></image>
 				<image v-else class="pic1" src="/static/img/1229310763000_mthumb.png" mode=""></image>
 				<view @click="toShifuxiangqin(obj)" class="sf-right">
 					<view class="sf-txt1">
@@ -19,7 +20,8 @@
 					<view class="sf-txt2">
 						<view class="txt2-1">服务{{obj.selected_quote.craftsman_info.service_count}}次</view>
 						<view class="shu"></view>
-						<view v-if="obj.selected_quote.craftsman_info.good_rep" class="txt2-1">好评率{{obj.selected_quote.craftsman_info.good_rep}}%</view>
+						<view v-if="obj.selected_quote.craftsman_info.good_rep" class="txt2-1">
+							好评率{{obj.selected_quote.craftsman_info.good_rep}}%</view>
 						<view v-else class="txt2-1">暂无</view>
 					</view>
 				</view>
@@ -46,17 +48,21 @@
 					<view class="sf-txt1-1">{{obj.created_at}}</view>
 					<view class="sf-txt1-2">支付金额</view>
 				</view>
-				<view class="sf-txt2">￥<text class="big">{{obj.selected_quote.price}}</text></view>
+				<view class="sf-txt2">￥<text class="big">{{obj.origin_price}}</text></view>
 			</view>
-			<view class="tit11">
+			<view class="tit11" v-if="status == 1">
+				<view class="txt11">{{obj.item_name}}</view>
+				<image class="pic11" :src="obj.item_image" mode=""></image>
+			</view>
+			<view class="tit11" v-if="status == 2">
 				<view class="txt11">{{obj.item.name}}</view>
 				<image class="pic11" :src="obj.images[0]" mode=""></image>
 			</view>
-<!-- 			<view class="tit22">
+			<!-- 			<view class="tit22">
 				<view class="txt11">物品类型（必填）</view>
 				<view class="txt22">皮沙发1个</view>
 			</view> -->
-			<view class="tit33">
+			<view class="tit33" v-if="status == 2">
 				<view class="txt11">需求说明</view>
 				<view v-if="obj.intro" class="txt22">{{obj.intro}}</view>
 				<view v-else class="txt22">暂无</view>
@@ -78,7 +84,7 @@
 				<view class="txt1">下单时间</view>
 				<view class="txt2">{{obj.created_at}}</view>
 			</view>
-			<view class="tit33">
+			<view class="tit33" v-if="status == 2">
 				<view class="txt1">期望上门时间</view>
 				<view class="txt2">{{qwTime}}</view>
 			</view>
@@ -93,6 +99,10 @@
 				<view class="txt1">服务客户</view>
 				<view class="txt2">{{obj.address.name}} {{obj.address.phone}}</view>
 			</view>
+			<view class="tit33" v-if="obj.delivery_num">
+				<view class="txt1">快递单号</view>
+				<view class="txt2">{{obj.delivery_num}}</view>
+			</view>
 		</view>
 	</view>
 </template>
@@ -101,13 +111,13 @@
 	export default {
 		data() {
 			return {
-				status:null,
-				id:'',
-				obj:null,
-				qwTime:'',
+				status: null,
+				id: '',
+				obj: null,
+				qwTime: '',
 			}
 		},
-		onLoad(option){
+		onLoad(option) {
 			console.log(option)
 			this.status = option.status;
 			this.id = option.id;
@@ -116,11 +126,19 @@
 			this.getData()
 		},
 		methods: {
-			async getData(){
-				const res = await this.$api.getDemandQuotesListXq(this.id);
-				console.log(res)
-				this.obj = res.data;
-				this.qwTime = `${this.obj.expect_start_date.slice(0, 10)} ${this.obj.expect_start_date.slice(11, 16)}-${this.obj.expect_end_date.slice(11, 16)}`
+			async getData() {
+				if (this.status == 1) {
+					const res = await this.$api.goodsOrderId(this.id);
+					console.log(res)
+					this.obj = res.data;
+				} else {
+					const res = await this.$api.getDemandQuotesListXq(this.id);
+					console.log(res)
+					this.obj = res.data;
+					this.qwTime =
+						`${this.obj.expect_start_date.slice(0, 10)} ${this.obj.expect_start_date.slice(11, 16)}-${this.obj.expect_end_date.slice(11, 16)}`
+				}
+
 			},
 			fuzhi(e) {
 				uni.setClipboardData({
@@ -129,7 +147,7 @@
 			},
 			callPhone(item) {
 				uni.makePhoneCall({
-				    phoneNumber: item.selected_quote.user.phone
+					phoneNumber: item.selected_quote.user.phone
 				});
 			},
 			toShifuxiangqin(item) {
@@ -351,9 +369,11 @@
 			color: #4D8BFD;
 		}
 	}
-	.box1-1.myheight{
-		height: 410rpx;
+
+	.box1-1.myheight {
+		height: 260rpx;
 	}
+
 	.box1-1 {
 		margin-top: 20rpx;
 		margin-left: 28rpx;
@@ -362,6 +382,7 @@
 		height: 334rpx;
 		background: #FFFFFF;
 		border-radius: 16rpx;
+
 		.sf-tit1 {
 			display: flex;
 			align-items: center;
@@ -369,10 +390,11 @@
 			padding-top: 14rpx;
 			padding-bottom: 10rpx;
 			border-bottom: 2rpx solid #E6E6E6;
+
 			.sf-txt1 {
 				display: flex;
 				flex-direction: column;
-		
+
 				.sf-txt1-1 {
 					font-size: 20rpx;
 					font-family: Segoe UI;
@@ -380,7 +402,7 @@
 					line-height: 28rpx;
 					color: #999999;
 				}
-		
+
 				.sf-txt1-2 {
 					font-size: 28rpx;
 					font-family: Segoe UI;
@@ -389,27 +411,27 @@
 					color: #000000;
 				}
 			}
-		
+
 			.sf-txt2 {
 				font-size: 20rpx;
 				font-family: Segoe UI;
 				font-weight: 400;
 				line-height: 64rpx;
 				color: #FF0000;
-		
+
 				.big {
 					font-size: 48rpx;
 				}
 			}
 		}
-		
-	
+
+
 		.tit11 {
 			padding-top: 16rpx;
 			display: flex;
 			align-items: flex-start;
 			justify-content: space-between;
-	
+
 			.txt11 {
 				font-size: 32rpx;
 				font-family: Segoe UI;
@@ -417,19 +439,19 @@
 				line-height: 42rpx;
 				color: #000000;
 			}
-	
+
 			.pic11 {
 				width: 116rpx;
 				height: 116rpx;
 			}
 		}
-	
+
 		.tit22 {
 			margin-top: 14rpx;
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-	
+
 			.txt11 {
 				font-size: 24rpx;
 				font-family: Segoe UI;
@@ -437,7 +459,7 @@
 				line-height: 32rpx;
 				color: #999999;
 			}
-	
+
 			.txt22 {
 				font-size: 24rpx;
 				font-family: Segoe UI;
@@ -446,13 +468,13 @@
 				color: #000000;
 			}
 		}
-	
+
 		.tit33 {
 			margin-top: 22rpx;
 			display: flex;
 			align-items: flex-start;
 			justify-content: space-between;
-	
+
 			.txt11 {
 				font-size: 24rpx;
 				font-family: Segoe UI;
@@ -460,7 +482,7 @@
 				line-height: 32rpx;
 				color: #999999;
 			}
-	
+
 			.txt22 {
 				text-align: right;
 				width: 340rpx;
@@ -472,7 +494,7 @@
 			}
 		}
 	}
-	
+
 	.box1-2 {
 		width: 692rpx;
 		height: 340rpx;
@@ -480,7 +502,7 @@
 		border-radius: 16rpx;
 		margin: 20rpx 28rpx 0 28rpx;
 		padding: 0 40rpx;
-	
+
 		.tit11 {
 			padding-top: 16rpx;
 			font-size: 32rpx;
@@ -489,18 +511,18 @@
 			line-height: 42rpx;
 			color: #000000;
 		}
-	
+
 		.tit22 {
 			display: flex;
 			align-items: center;
-	
+
 			.tit22-1 {
 				margin-top: 20rpx;
 				width: 100%;
 				display: flex;
 				align-items: center;
 				justify-content: space-between;
-	
+
 				.txt1 {
 					font-size: 24rpx;
 					font-family: Segoe UI;
@@ -508,11 +530,11 @@
 					line-height: 32rpx;
 					color: #999999
 				}
-	
+
 				.txt2 {
 					display: flex;
 					align-items: center;
-	
+
 					.txt2-1 {
 						font-size: 24rpx;
 						font-family: Segoe UI;
@@ -520,13 +542,13 @@
 						line-height: 32rpx;
 						color: #000000;
 					}
-	
+
 					.shu {
 						height: 16rpx;
 						border: 2rpx solid #E6E6E6;
 						margin: 0 10rpx 0 20rpx;
 					}
-	
+
 					.txt2-2 {
 						font-size: 24rpx;
 						font-family: Segoe UI;
@@ -537,13 +559,13 @@
 				}
 			}
 		}
-	
+
 		.tit33 {
 			margin-top: 10rpx;
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-	
+
 			.txt1 {
 				font-size: 24rpx;
 				font-family: Segoe UI;
@@ -551,7 +573,7 @@
 				line-height: 32rpx;
 				color: #999999;
 			}
-	
+
 			.txt2 {
 				font-size: 24rpx;
 				font-family: Segoe UI;
@@ -560,13 +582,13 @@
 				color: #000000;
 			}
 		}
-	
+
 		.tit44 {
 			margin-top: 10rpx;
 			display: flex;
 			align-items: flex-start;
 			justify-content: space-between;
-	
+
 			.tit1 {
 				margin-top: 0;
 				font-size: 24rpx;
@@ -575,13 +597,13 @@
 				line-height: 32rpx;
 				color: #999999;
 			}
-	
+
 			.tit2 {
 				margin-top: 0;
 				display: flex;
 				flex-direction: column;
 				align-items: flex-end;
-	
+
 				.txt1 {
 					font-size: 24rpx;
 					font-family: Segoe UI;
@@ -592,5 +614,4 @@
 			}
 		}
 	}
-		
 </style>

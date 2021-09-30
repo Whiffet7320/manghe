@@ -59,6 +59,17 @@ page {
 .index.data-v-01eb282e {
   position: relative;
 }
+.lucky.data-v-01eb282e {
+  position: absolute;
+  top: 44rpx;
+  left: 50%;
+  -webkit-transform: translate(-50%, 0);
+          transform: translate(-50%, 0);
+  z-index: 1 !important;
+}
+.lucky .lucky-box.data-v-01eb282e {
+  z-index: 1 !important;
+}
 .btn1.data-v-01eb282e {
   cursor: pointer;
   position: absolute;
@@ -171,17 +182,20 @@ page {
   color: #FFFFFF;
 }
 .zhuanpan.data-v-01eb282e {
-  position: absolute;
+  width: 600rpx;
+  height: 600rpx;
+  position: relative;
   top: 44rpx;
   left: 50%;
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
+  z-index: 9999 !important;
 }
 .zhuanpan .pic.data-v-01eb282e {
   width: 160rpx;
   height: 160rpx;
   position: absolute;
-  z-index: 2;
+  z-index: 999 !important;
   top: 50%;
   left: 50%;
   -webkit-transform: translate(-50%, -50%);
@@ -189,7 +203,7 @@ page {
 }
 .zhuanpan .txt1.data-v-01eb282e {
   position: absolute;
-  z-index: 3;
+  z-index: 1000 !important;
   left: 50%;
   -webkit-transform: translate(-50%, -50%);
           transform: translate(-50%, -50%);
@@ -202,7 +216,7 @@ page {
 }
 .zhuanpan .txt2.data-v-01eb282e {
   position: absolute;
-  z-index: 3;
+  z-index: 1000 !important;
   left: 50%;
   -webkit-transform: translate(-50%, -50%);
           transform: translate(-50%, -50%);

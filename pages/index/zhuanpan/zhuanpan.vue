@@ -6,9 +6,11 @@
 			<image @click="startCallBack" class="pic" src="/static/img/zu20.png" mode=""></image>
 			<view @click="startCallBack" class="txt1">抽奖</view>
 			<view @click="startCallBack" class="txt2">还有{{timeNum}}次</view>
-			<LuckyWheel ref="luckyWheel" width="600rpx" height="600rpx" :blocks="blocks" :prizes="prizes"
-				:buttons="buttons" :defaultStyle="defaultStyle" @start="startCallBack" @end="endCallBack" />
+			<!-- 			<LuckyWheel class="lucky" ref="luckyWheel" width="600rpx" height="600rpx" :blocks="blocks" :prizes="prizes"
+				:buttons="buttons" :defaultStyle="defaultStyle" @start="startCallBack" @end="endCallBack" /> -->
 		</view>
+		<LuckyWheel class="lucky" ref="luckyWheel" width="600rpx" height="600rpx" :blocks="blocks" :prizes="prizes"
+			:buttons="buttons" :defaultStyle="defaultStyle" @start="startCallBack" @end="endCallBack" />
 		<button open-type="share" class="btn2">邀请好友额外抽奖</button>
 		<!-- <view @click="yaoqing" class="btn2">邀请好友额外抽奖</view> -->
 		<view class="nav1">
@@ -67,7 +69,8 @@
 				],
 				defaultStyle: {
 					fontColor: '#d64737',
-					fontSize: '14rpx'
+					fontSize: '14rpx',
+					zIndex:'-1',
 				},
 			}
 		},
@@ -83,7 +86,7 @@
 			}
 		},
 		//用户点击右上角分享朋友圈
-		onShareTimeline:async function() {
+		onShareTimeline: async function() {
 			var title = '分销商城app'; //data，return 数据title
 			return {
 				title: title || '',
@@ -135,7 +138,7 @@
 			endCallBack(prize) {
 				// 奖品详情
 				console.log(this.resultIndex, 'cyy')
-				if (this.resultIndex+1 == this.prizes.length) {
+				if (this.resultIndex + 1 == this.prizes.length) {
 					this.modalContent = '很遗憾，您这次没有抽中奖品！'
 				} else {
 					this.modalContent =
@@ -163,6 +166,18 @@
 <style scoped lang="scss">
 	.index {
 		position: relative;
+	}
+
+	.lucky {
+		position: absolute;
+		top: 44rpx;
+		left: 50%;
+		transform: translate(-50%,0);
+		z-index: 1 !important;
+
+		.lucky-box {
+			z-index: 1 !important;
+		}
 	}
 
 	.btn1 {
@@ -271,16 +286,19 @@
 	}
 
 	.zhuanpan {
-		position: absolute;
+		width: 600rpx;
+		height: 600rpx;
+		position: relative;
 		top: 44rpx;
 		left: 50%;
 		transform: translateX(-50%);
+		z-index: 9999 !important;
 
 		.pic {
 			width: 160rpx;
 			height: 160rpx;
 			position: absolute;
-			z-index: 2;
+			z-index: 999 !important;
 			top: 50%;
 			left: 50%;
 			transform: translate(-50%, -50%);
@@ -288,7 +306,7 @@
 
 		.txt1 {
 			position: absolute;
-			z-index: 3;
+			z-index: 1000 !important;
 			left: 50%;
 			transform: translate(-50%, -50%);
 			top: 46%;
@@ -301,7 +319,7 @@
 
 		.txt2 {
 			position: absolute;
-			z-index: 3;
+			z-index: 1000 !important;
 			left: 50%;
 			transform: translate(-50%, -50%);
 			top: 54%;

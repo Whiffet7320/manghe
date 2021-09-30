@@ -1,7 +1,8 @@
 <template>
 	<view class="index">
 		<view class="nav1">
-			<image class="pic1" src="../../../static/img/1229310763000_mthumb.png" mode=""></image>
+			<image v-if="avatar != ''" class="pic1" :src="avatar" mode=""></image>
+			<image v-else class="pic1" src="/static/img/1229310763000_mthumb.png" mode=""></image>
 			<view class="tit1">我的余额</view>
 			<view class="tit2">￥<text class="big">{{money}}</text></view>
 			
@@ -52,6 +53,7 @@
 		},
 		data() {
 			return {
+				avatar:'',
 				money: 0,
 				list: [],
 				// 加载
@@ -77,6 +79,7 @@
 				const res2 = await this.$api.user()
 				console.log(res2)
 				this.money = res2.data.money;
+				this.avatar = res2.data.user_info.avatar;
 				this.status = 'loading';
 				setTimeout(async () => {
 					const res = await this.$api.moneyRecord({

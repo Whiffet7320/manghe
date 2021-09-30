@@ -1,7 +1,7 @@
 export default {
-	baseUrl: 'http://192.168.50.96:8001',
-	// baseUrl:'https://hii7mo3m.dnat.tech',
-	// baseUrl:'https://fenxiao.5laoye.com',
+	// baseUrl: 'http://192.168.50.96:8001',
+	baseUrl:'https://rushifu.hxqhhhh.shop',
+	// baseUrl:'https://rushifu.5laoye.com',
 	loginWechat: '/api/login/wechat',
 	categories: '/api/categories', //分类页面
 	cities: '/api/cities', //城市列表
@@ -39,4 +39,9 @@ export default {
 	awards:'/api/awards',//奖品列表
 	itemsList:'/api/items',//商品列表
 	goodsOrder:'/api/goods-order',//生成商品订单
+	goodsOrderPay:'/api/goods-order/pay',//商品付款
+	article:'/api/article',//文章详情
+	goodsOrderShouhuo:'/api/goods-order',//商品收货
+	goodsStreet:'/api/goods-street',//建材一条街
+	activity:'/api/activity',//活动列表
 }
