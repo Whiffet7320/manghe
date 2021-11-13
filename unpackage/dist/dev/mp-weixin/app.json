@@ -42,7 +42,9 @@
       "root": "pages/index/zhuanpan",
       "pages": [
         "zhuanpan",
-        "wodejiangping"
+        "wodejiangping",
+        "shangpingmiandan",
+        "tiantianmiandan"
       ]
     },
     {
@@ -184,5 +186,6 @@
       "desc": "你的位置信息将用于小程序位置接口的效果展示"
     }
   },
-  "usingComponents": {}
+  "usingComponents": {},
+  "sitemapLocation": "sitemap.json"
 }

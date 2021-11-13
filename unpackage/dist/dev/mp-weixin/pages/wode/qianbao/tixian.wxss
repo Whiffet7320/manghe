@@ -78,12 +78,8 @@ page {
   padding: 0 28rpx;
   height: 108rpx;
   border-bottom: 1px solid #E6E6E6;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: end;
-  -webkit-align-items: flex-end;
-          align-items: flex-end;
+  align-items: flex-end;
 }
 .nav1 .tit1 .txt1.data-v-7bcdb5c4 {
   -webkit-transform: translateY(-26rpx);
@@ -98,15 +94,9 @@ page {
 .nav1 .tit2.data-v-7bcdb5c4 {
   padding: 0 28rpx;
   height: 96rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
+  align-items: center;
+  justify-content: space-between;
 }
 .nav1 .tit2 .txt1.data-v-7bcdb5c4 {
   font-size: 24rpx;

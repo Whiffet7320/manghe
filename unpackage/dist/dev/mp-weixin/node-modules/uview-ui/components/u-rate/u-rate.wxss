@@ -25,12 +25,8 @@
 /* 透明度 */
 /* 文章场景相关 */
 .u-rate.data-v-01de4127 {
-  display: -webkit-inline-flex;
-  display: -webkit-inline-box;
   display: inline-flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
   margin: 0;
   padding: 0;
 }

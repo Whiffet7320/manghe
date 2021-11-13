@@ -90,30 +90,16 @@ page {
   height: 176rpx;
   background: #FFFFFF;
   border-radius: 16rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-justify-content: space-around;
-          justify-content: space-around;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  justify-content: space-around;
+  align-items: center;
 }
 .nav1 .tit2 .box1.data-v-09dbe326 {
   width: 346rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-          justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 .nav1 .tit2 .box1 .txt1.data-v-09dbe326 {
   font-size: 48rpx;
@@ -162,12 +148,8 @@ page {
   border-bottom: 2rpx solid #E6E6E6;
 }
 .nav2 .items .boxx .tit2.data-v-09dbe326 {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
   margin-top: 24rpx;
 }
 .nav2 .items .boxx .tit2 .pic1.data-v-09dbe326 {
@@ -216,12 +198,8 @@ page {
   border-radius: 6rpx;
   margin-top: 20rpx;
   margin-left: 30rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
   padding: 0 32rpx;
 }
 .nav2 .items .nav11 .pic1.data-v-09dbe326 {
@@ -233,9 +211,7 @@ page {
   height: 56rpx;
 }
 .nav2 .items .nav11 .tit11.data-v-09dbe326 {
-  -webkit-box-flex: 1;
-  -webkit-flex: 1;
-          flex: 1;
+  flex: 1;
   margin-left: 16rpx;
 }
 .nav2 .items .nav11 .tit11 .txt1.data-v-09dbe326 {
@@ -253,12 +229,8 @@ page {
   color: #707070;
 }
 .nav2 .items .nav11 .tit22.data-v-09dbe326 {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
 }
 .nav2 .items .nav11 .tit22 .txt1.data-v-09dbe326 {
   margin-left: 22rpx;

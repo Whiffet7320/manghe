@@ -62,16 +62,9 @@ page {
   width: 750rpx;
   background: #4988FD;
   opacity: 1;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  flex-direction: column;
+  align-items: center;
 }
 .nav1 .pic1.data-v-16a5500a {
   margin-top: 20rpx;
@@ -102,12 +95,8 @@ page {
   font-size: 72rpx;
 }
 .nav1 .tit3.data-v-16a5500a {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
 }
 .nav1 .tit3 .tit3-1.data-v-16a5500a {
   margin-top: 20rpx;
@@ -159,12 +148,8 @@ page {
 }
 .nav2 .items .item .txt1.data-v-16a5500a {
   margin-top: 16rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
+  justify-content: space-between;
 }
 .nav2 .items .item .txt1 .txt1-1.data-v-16a5500a {
   font-size: 24rpx;
@@ -185,12 +170,8 @@ page {
 .nav2 .items .item .txt2.data-v-16a5500a {
   margin-top: 18rpx;
   margin-bottom: 24rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
+  justify-content: space-between;
 }
 .nav2 .items .item .txt2 .txt2-1.data-v-16a5500a {
   font-size: 24rpx;

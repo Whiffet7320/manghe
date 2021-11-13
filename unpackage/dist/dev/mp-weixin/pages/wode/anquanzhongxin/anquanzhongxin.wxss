@@ -67,15 +67,9 @@ page {
 }
 .items .item.data-v-a2cd895c {
   height: 76rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  justify-content: space-between;
+  align-items: center;
   margin: 0 42rpx;
 }
 .items .item .pic1.data-v-a2cd895c {
@@ -98,15 +92,9 @@ page {
 .items .item .txt.data-v-a2cd895c {
   margin: 0 46rpx 0 28rpx;
   width: 552rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
+  align-items: center;
+  justify-content: space-between;
 }
 .items .item .txt .txt1.data-v-a2cd895c {
   font-size: 24rpx;

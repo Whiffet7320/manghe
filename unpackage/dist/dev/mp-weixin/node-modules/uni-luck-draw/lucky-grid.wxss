@@ -1,0 +1,20 @@
+
+.lucky-box.data-v-6e57ccde {
+  position: relative;
+  overflow: hidden;
+}
+.lucky-box canvas.data-v-6e57ccde {
+  position: absolute;
+  pointer-events: none;
+}
+.lucky-grid-btn.data-v-6e57ccde {
+  position: absolute;
+  background: rgba(0, 0, 0, 0);
+  border-radius: 0;
+}
+.lucky-imgs.data-v-6e57ccde {
+  width: 0;
+  height: 0;
+  visibility: hidden;
+}
+

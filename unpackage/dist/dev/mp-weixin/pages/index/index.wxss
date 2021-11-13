@@ -113,20 +113,11 @@ page {
 .mask .mask-items .item .left.data-v-57280228 {
   height: 100%;
   position: absolute;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-          justify-content: center;
+  justify-content: center;
   width: 200rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  flex-direction: column;
+  align-items: center;
 }
 .mask .mask-items .item .left .txt1.data-v-57280228 {
   font-size: 20rpx;
@@ -147,16 +138,9 @@ page {
   height: 100%;
   position: absolute;
   left: 200rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-          justify-content: center;
+  flex-direction: column;
+  justify-content: center;
   padding-left: 60rpx;
 }
 .mask .mask-items .item .right .txt3.data-v-57280228 {
@@ -208,12 +192,8 @@ page {
   background: #FFFFFF;
   opacity: 1;
   border-radius: 16rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
 }
 .nav1 .txt1.data-v-57280228 {
   margin: 0 16rpx;
@@ -240,35 +220,21 @@ page {
           transform: translateY(-37rpx);
   width: 750rpx;
   height: 2456rpx;
-  background: -webkit-linear-gradient(top, #FFFFFF 0%, #EFEFEF 100%);
   background: linear-gradient(180deg, #FFFFFF 0%, #EFEFEF 100%);
   opacity: 1;
   border-radius: 60rpx 60rpx 0px 0px;
 }
 .nav2 .tit1.data-v-57280228 {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
   margin: 0 78rpx;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
+  justify-content: space-between;
 }
 .nav2 .tit1 .txt1-1.data-v-57280228 {
   margin-top: 36rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  flex-direction: column;
+  align-items: center;
 }
 .nav2 .tit1 .txt1-1 .txt1-1-1.data-v-57280228 {
   font-size: 48rpx;
@@ -294,12 +260,8 @@ page {
   background: #E9F0FD;
   opacity: 1;
   border-radius: 30rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
 }
 .nav2 .tit2 .pic2-1.data-v-57280228 {
   margin-left: 34rpx;
@@ -320,27 +282,15 @@ page {
   color: #FF5700;
 }
 .nav2 .tit3.data-v-57280228 {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-flex-wrap: wrap;
-          flex-wrap: wrap;
+  flex-wrap: wrap;
   padding: 44rpx 82rpx 0 82rpx;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
+  justify-content: space-between;
 }
 .nav2 .tit3 .item.data-v-57280228 {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  flex-direction: column;
+  align-items: center;
 }
 .nav2 .tit3 .item .pic.data-v-57280228 {
   width: 104rpx;
@@ -363,12 +313,8 @@ page {
   margin: 0 20rpx;
 }
 .nav2 .tit4 .kk1.data-v-57280228 {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
+  justify-content: space-between;
 }
 .nav2 .tit4 .kk1 .box1.data-v-57280228 {
   position: relative;
@@ -399,16 +345,9 @@ page {
   height: 100%;
 }
 .nav2 .tit4 .kk1 .kk2.data-v-57280228 {
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
-  display: -webkit-box;
-  display: -webkit-flex;
+  justify-content: space-between;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-          flex-direction: column;
+  flex-direction: column;
 }
 .nav2 .tit4 .kk1 .kk2 .box2.data-v-57280228 {
   position: relative;
@@ -488,12 +427,8 @@ page {
   height: 100%;
 }
 .nav2 .tit6 .box1 .txt1.data-v-57280228 {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
   padding-top: 30rpx;
 }
 .nav2 .tit6 .box1 .txt1 .pic2.data-v-57280228 {
@@ -532,23 +467,13 @@ page {
 }
 .nav2 .tit6 .box2 .items.data-v-57280228 {
   padding: 18rpx 48rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-flex-wrap: wrap;
-          flex-wrap: wrap;
+  flex-wrap: wrap;
 }
 .nav2 .tit6 .box2 .items .item.data-v-57280228 {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  flex-direction: column;
+  align-items: center;
   margin-bottom: 7rpx;
 }
 .nav2 .tit6 .box2 .items .item.data-v-57280228:nth-child(2), .nav2 .tit6 .box2 .items .item.data-v-57280228:nth-child(5) {
@@ -602,12 +527,8 @@ page {
 }
 .nav2 .tit7 .item.data-v-57280228 {
   height: 156rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
+  justify-content: space-between;
   padding: 20rpx 36rpx 14rpx 24rpx;
 }
 .nav2 .tit7 .item .txt1.data-v-57280228 {

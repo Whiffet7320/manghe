@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "商品免单",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "u-toast": "/node-modules/uview-ui/components/u-toast/u-toast",
+    "u-popup": "/node-modules/uview-ui/components/u-popup/u-popup"
+  }
+}

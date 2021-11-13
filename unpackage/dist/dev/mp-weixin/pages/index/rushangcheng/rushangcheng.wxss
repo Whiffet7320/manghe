@@ -67,12 +67,8 @@ page {
   width: 750rpx;
   height: 76rpx;
   background: #FFFFFF;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
 }
 .nav1 .txt1.data-v-d7728cae {
   font-size: 28rpx;
@@ -105,7 +101,6 @@ page {
   position: fixed;
   top: -26rpx;
   background: #FFFFFF;
-  -webkit-transition: all 1s;
   transition: all 1s;
   position: absolute;
   z-index: 2;
@@ -132,14 +127,9 @@ page {
 .nav2.data-v-d7728cae {
   margin-top: 102rpx;
   padding: 0 24rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-flex-wrap: wrap;
-          flex-wrap: wrap;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 .nav2 .item.data-v-d7728cae {
   margin-bottom: 20rpx;
@@ -170,15 +160,9 @@ page {
 }
 .nav2 .item .txt2.data-v-d7728cae {
   margin: 0 12rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
-  -webkit-box-align: end;
-  -webkit-align-items: flex-end;
-          align-items: flex-end;
+  justify-content: space-between;
+  align-items: flex-end;
 }
 .nav2 .item .txt2 .txt2-1.data-v-d7728cae {
   font-size: 24rpx;

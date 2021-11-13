@@ -65,12 +65,8 @@ page {
   padding: 20rpx;
 }
 .nav1 .tit1.data-v-42beb06c {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
 }
 .nav1 .tit1 .pic1.data-v-42beb06c {
   width: 76rpx;
@@ -100,11 +96,8 @@ page {
   margin-top: 20rpx;
 }
 .nav1 .tit3.data-v-42beb06c {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-flex-wrap: wrap;
-          flex-wrap: wrap;
+  flex-wrap: wrap;
   margin-top: 30rpx;
 }
 .nav1 .tit3 .imgItem.data-v-42beb06c {
@@ -115,15 +108,9 @@ page {
   background: #FFFFFF;
   border: 2rpx dashed #E6E6E6;
   opacity: 1;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-          justify-content: center;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  justify-content: center;
+  align-items: center;
 }
 .nav1 .tit3 .imgItem .pic1.data-v-42beb06c {
   width: 100%;

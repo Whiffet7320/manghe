@@ -116,15 +116,29 @@
 				"style": {
 					// "navigationStyle": "custom",
 					"navigationBarTitleText": "抽奖大转盘",
-					"enablePullDownRefresh": false,
-					"navigationBarBackgroundColor": "#C91919",
-					"navigationBarTextStyle": "white"
+					"enablePullDownRefresh": false
+					// "navigationBarBackgroundColor": "#C91919",
+					// "navigationBarTextStyle": "white"
 				}
 			}, {
 				"path": "wodejiangping",
 				"style": {
 					// "navigationStyle": "custom",
 					"navigationBarTitleText": "我的奖品",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "shangpingmiandan",
+				"style": {
+					// "navigationStyle": "custom",
+					"navigationBarTitleText": "商品免单",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "tiantianmiandan",
+				"style": {
+					// "navigationStyle": "custom",
+					"navigationBarTitleText": "天天免单",
 					"enablePullDownRefresh": false
 				}
 			}]

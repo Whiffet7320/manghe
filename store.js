@@ -5,6 +5,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
 	state: {
+		dzpWodejiangpinPage:1,
 		nowAddress:null,
 		fl:null,
 		youhuiquanPage:1,
@@ -25,6 +26,9 @@ export default new Vuex.Store({
 		// 
 	},
 	mutations: {
+		dzpWodejiangpinPage(state, str) {
+			state.dzpWodejiangpinPage = str;
+		},
 		dingdanStatus(state, str) {
 			state.dingdanStatus = str;
 		},

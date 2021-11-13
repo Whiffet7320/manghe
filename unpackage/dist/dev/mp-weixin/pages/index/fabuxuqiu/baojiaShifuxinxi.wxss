@@ -107,15 +107,9 @@ page {
 }
 .tit3 .item .item-1.data-v-af03ab60 {
   padding-top: 22rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: start;
-  -webkit-align-items: flex-start;
-          align-items: flex-start;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
+  align-items: flex-start;
+  justify-content: space-between;
 }
 .tit3 .item .item-1 .pic1.data-v-af03ab60 {
   width: 76rpx;
@@ -127,12 +121,8 @@ page {
   position: relative;
 }
 .tit3 .item .item-1 .left .txt1.data-v-af03ab60 {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
 }
 .tit3 .item .item-1 .left .txt1 .txt1-1.data-v-af03ab60 {
   margin-right: 20rpx;
@@ -144,12 +134,8 @@ page {
 }
 .tit3 .item .item-1 .left .txt2.data-v-af03ab60 {
   margin-top: 8rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
 }
 .tit3 .item .item-1 .left .txt2 .pic1.data-v-af03ab60 {
   width: 28rpx;
@@ -166,12 +152,8 @@ page {
 }
 .tit3 .item .item-1 .left .txt3.data-v-af03ab60 {
   margin-top: 8rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
 }
 .tit3 .item .item-1 .left .txt3 .txt3-1.data-v-af03ab60 {
   font-size: 20rpx;
@@ -194,24 +176,16 @@ page {
 }
 .tit3 .item .item-2.data-v-af03ab60 {
   margin-top: 42rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
 }
 .tit3 .item .item-2 .item-2-1.data-v-af03ab60 {
   padding: 0 12rpx;
   height: 40rpx;
   background: #E9F0FD;
   border-radius: 10rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
   margin-right: 20rpx;
 }
 .tit3 .item .item-2 .item-2-1 .pic1.data-v-af03ab60 {
@@ -243,25 +217,14 @@ page {
   border-radius: 16rpx;
 }
 .tit3 .shifu-item .sf-tit1.data-v-af03ab60 {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
+  align-items: center;
+  justify-content: space-between;
   padding-top: 14rpx;
 }
 .tit3 .shifu-item .sf-tit1 .sf-txt1.data-v-af03ab60 {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-          flex-direction: column;
+  flex-direction: column;
 }
 .tit3 .shifu-item .sf-tit1 .sf-txt1 .sf-txt1-1.data-v-af03ab60 {
   font-size: 20rpx;
@@ -288,21 +251,14 @@ page {
   font-size: 48rpx;
 }
 .tit3 .shifu-item .sf-tit2.data-v-af03ab60 {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: reverse;
-  -webkit-flex-direction: row-reverse;
-          flex-direction: row-reverse;
+  flex-direction: row-reverse;
 }
 .tit3 .shifu-item .sf-tit2 .sf-tit2-1.data-v-af03ab60 {
   width: 132rpx;
   height: 34rpx;
   border: 2rpx solid #4D8BFD;
   border-radius: 6rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
 }
 .tit3 .shifu-item .sf-tit2 .sf-tit2-1 .sf-txt1.data-v-af03ab60 {
@@ -326,8 +282,6 @@ page {
   text-align: center;
 }
 .tit3 .shifu-item .sf-tit3.data-v-af03ab60 {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
   position: relative;
 }
@@ -349,12 +303,8 @@ page {
 }
 .tit3 .shifu-item .sf-tit3 .sf-right .sf-txt1.data-v-af03ab60 {
   height: 38rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
 }
 .tit3 .shifu-item .sf-tit3 .sf-right .sf-txt1 .txt1-1.data-v-af03ab60 {
   margin-right: 20rpx;
@@ -366,12 +316,8 @@ page {
 }
 .tit3 .shifu-item .sf-tit3 .sf-right .sf-txt2.data-v-af03ab60 {
   margin-top: 10rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
 }
 .tit3 .shifu-item .sf-tit3 .sf-right .sf-txt2 .txt2-1.data-v-af03ab60 {
   font-size: 20rpx;
@@ -387,24 +333,16 @@ page {
 }
 .tit3 .shifu-item .sf-tit4.data-v-af03ab60 {
   margin-top: 64rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
 }
 .tit3 .shifu-item .sf-tit4 .item-2-1.data-v-af03ab60 {
   padding: 0 12rpx;
   height: 40rpx;
   background: #E9F0FD;
   border-radius: 10rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
   margin-right: 20rpx;
 }
 .tit3 .shifu-item .sf-tit4 .item-2-1 .pic1.data-v-af03ab60 {
@@ -453,15 +391,9 @@ page {
 }
 .tit3 .box1-1 .tit11.data-v-af03ab60 {
   padding-top: 16rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: start;
-  -webkit-align-items: flex-start;
-          align-items: flex-start;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
+  align-items: flex-start;
+  justify-content: space-between;
 }
 .tit3 .box1-1 .tit11 .txt11.data-v-af03ab60 {
   font-size: 32rpx;
@@ -476,15 +408,9 @@ page {
 }
 .tit3 .box1-1 .tit22.data-v-af03ab60 {
   margin-top: 14rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
+  align-items: center;
+  justify-content: space-between;
 }
 .tit3 .box1-1 .tit22 .txt11.data-v-af03ab60 {
   font-size: 24rpx;
@@ -502,15 +428,9 @@ page {
 }
 .tit3 .box1-1 .tit33.data-v-af03ab60 {
   margin-top: 22rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: start;
-  -webkit-align-items: flex-start;
-          align-items: flex-start;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
+  align-items: flex-start;
+  justify-content: space-between;
 }
 .tit3 .box1-1 .tit33 .txt11.data-v-af03ab60 {
   font-size: 24rpx;
@@ -544,25 +464,15 @@ page {
   color: #000000;
 }
 .tit3 .box1-2 .tit22.data-v-af03ab60 {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
 }
 .tit3 .box1-2 .tit22 .tit22-1.data-v-af03ab60 {
   margin-top: 20rpx;
   width: 100%;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
+  align-items: center;
+  justify-content: space-between;
 }
 .tit3 .box1-2 .tit22 .tit22-1 .txt1.data-v-af03ab60 {
   font-size: 24rpx;
@@ -572,12 +482,8 @@ page {
   color: #999999;
 }
 .tit3 .box1-2 .tit22 .tit22-1 .txt2.data-v-af03ab60 {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
 }
 .tit3 .box1-2 .tit22 .tit22-1 .txt2 .txt2-1.data-v-af03ab60 {
   font-size: 24rpx;
@@ -600,15 +506,9 @@ page {
 }
 .tit3 .box1-2 .tit33.data-v-af03ab60 {
   margin-top: 10rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
+  align-items: center;
+  justify-content: space-between;
 }
 .tit3 .box1-2 .tit33 .txt1.data-v-af03ab60 {
   font-size: 24rpx;
@@ -626,15 +526,9 @@ page {
 }
 .tit3 .box1-2 .tit44.data-v-af03ab60 {
   margin-top: 10rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: start;
-  -webkit-align-items: flex-start;
-          align-items: flex-start;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
+  align-items: flex-start;
+  justify-content: space-between;
 }
 .tit3 .box1-2 .tit44 .tit1.data-v-af03ab60 {
   margin-top: 0;
@@ -646,16 +540,9 @@ page {
 }
 .tit3 .box1-2 .tit44 .tit2.data-v-af03ab60 {
   margin-top: 0;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-align: end;
-  -webkit-align-items: flex-end;
-          align-items: flex-end;
+  flex-direction: column;
+  align-items: flex-end;
 }
 .tit3 .box1-2 .tit44 .tit2 .txt1.data-v-af03ab60 {
   font-size: 24rpx;
@@ -671,29 +558,16 @@ page {
   height: 136rpx;
   background: #FFFFFF;
   border-top: 2rpx solid #E6E6E6;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
+  align-items: center;
+  justify-content: space-between;
   padding: 0 44rpx;
 }
 .footer .nav1.data-v-af03ab60 {
   width: 52rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  flex-direction: column;
+  align-items: center;
 }
 .footer .nav1 .pic1.data-v-af03ab60 {
   width: 52rpx;

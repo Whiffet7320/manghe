@@ -1,6 +1,7 @@
 export default {
 	// baseUrl: 'http://192.168.50.96:8001',
 	baseUrl:'https://rushifu.hxqhhhh.shop',
+	dzpBaseUrl:'https://lpw.zhangba.shop',
 	// baseUrl:'https://rushifu.5laoye.com',
 	loginWechat: '/api/login/wechat',
 	categories: '/api/categories', //分类页面
@@ -44,4 +45,17 @@ export default {
 	goodsOrderShouhuo:'/api/goods-order',//商品收货
 	goodsStreet:'/api/goods-street',//建材一条街
 	activity:'/api/activity',//活动列表
+	choujiangIndex:'/xcx/choujiang/index',//抽奖首页
+	choujiangChou_jiang:'/xcx/choujiang/chou_jiang',//抽奖
+	choujiangI_prize_list:'/xcx/choujiang/i_prize_list',//我的奖品
+	choujiangMianDanShopList:'/xcx/choujiang/mianDanShopList',//实物奖品列表
+	choujiangCheckShop:'/xcx/choujiang/checkShop',//实物奖品-选择提交
+	choujiangTreeTurntable:'/xcx/choujiang/treeTurntable',//二级转盘页面
+	choujiangDaYeLaiWan:'/xcx/choujiang/daYeLaiWan',//二级抽奖页面-抽奖
+	choujiangAddress:'/xcx/choujiang/address',//填写收货地址
+	choujiangInvite_log:'/xcx/choujiang/invite_log',//邀请记录
+	choujiangPrize_log:'/xcx/choujiang/prize_log',//抽奖记录
+	choujiangZhuLi:'/xcx/choujiang/zhuLi',//助力 -分享链接参数说明
+	choujiangKuaidi:'/xcx/choujiang/kuaidi',//查看物流信息
+	choujiangLive_prize:'/xcx/choujiang/live_prize',//观看完视频提交
 }

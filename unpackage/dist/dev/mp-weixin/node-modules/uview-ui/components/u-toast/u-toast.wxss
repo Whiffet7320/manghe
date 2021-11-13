@@ -27,27 +27,17 @@
 .u-toast.data-v-7c5492c7 {
   position: fixed;
   z-index: -1;
-  -webkit-transition: opacity 0.3s;
   transition: opacity 0.3s;
   text-align: center;
   color: #fff;
   border-radius: 8rpx;
   background: #585858;
 
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: row;
-          flex-direction: row;
+  flex-direction: row;
 
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-          justify-content: center;
+  align-items: center;
+  justify-content: center;
   font-size: 28rpx;
   opacity: 0;
   pointer-events: none;
@@ -59,17 +49,10 @@
 .u-icon.data-v-7c5492c7 {
   margin-right: 10rpx;
 
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: row;
-          flex-direction: row;
+  flex-direction: row;
 
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
   line-height: normal;
 }
 .u-position-center.data-v-7c5492c7 {

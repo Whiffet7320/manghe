@@ -64,12 +64,8 @@ page {
   border-bottom: 2rpx solid #E6E6E6;
 }
 .nav1 .tit3.data-v-dff57a06 {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
   margin-bottom: 10rpx;
 }
 .nav1 .tit3 .txt3-1.data-v-dff57a06 {
@@ -94,23 +90,13 @@ page {
 }
 .nav1 .tit1.data-v-dff57a06 {
   height: 34rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  justify-content: space-between;
+  align-items: center;
 }
 .nav1 .tit1 .tit1-1.data-v-dff57a06 {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
   margin-left: 28rpx;
 }
 .nav1 .tit1 .tit1-1 .pic1.data-v-dff57a06 {
@@ -141,8 +127,6 @@ page {
   width: 750rpx;
   height: 394rpx;
   background: #FFFFFF;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
   padding: 20rpx;
 }
@@ -180,23 +164,13 @@ page {
   margin-top: 20rpx;
   height: 34rpx;
   background: #FFFFFF;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
+  align-items: center;
+  justify-content: space-between;
 }
 .nav2 .nav2-right .tit3 .left.data-v-dff57a06 {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
 }
 .nav2 .nav2-right .tit3 .left .pic1.data-v-dff57a06 {
   width: 34rpx;
@@ -224,12 +198,8 @@ page {
   color: #FF6F00;
 }
 .nav2 .nav2-right .tit3 .right.data-v-dff57a06 {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
 }
 .nav2 .nav2-right .tit3 .right .txt1.data-v-dff57a06 {
   margin-right: 16rpx;
@@ -241,12 +211,8 @@ page {
 }
 .nav2 .nav2-right .tit4.data-v-dff57a06 {
   margin-top: 32rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
 }
 .nav2 .nav2-right .tit4 .txt4-1.data-v-dff57a06 {
   font-size: 24rpx;
@@ -264,12 +230,8 @@ page {
   color: #999999;
 }
 .nav2 .nav2-right .tit5.data-v-dff57a06 {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
 }
 .nav2 .nav2-right .tit5 .txt5-1.data-v-dff57a06 {
   font-size: 24rpx;
@@ -299,8 +261,6 @@ page {
 }
 .footer.data-v-dff57a06 {
   position: fixed;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
   bottom: 0;
   width: 750rpx;
@@ -308,9 +268,7 @@ page {
   background: #FFFFFF;
 }
 .footer .f-1.data-v-dff57a06 {
-  -webkit-box-flex: 1;
-  -webkit-flex: 1;
-          flex: 1;
+  flex: 1;
   margin-left: 32rpx;
   font-size: 24rpx;
   font-family: SimHei;

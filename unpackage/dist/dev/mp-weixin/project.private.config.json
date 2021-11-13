@@ -131,6 +131,18 @@
           "pathName": "pages/index/jiancaijiedao/jiancaijiedao",
           "query": "id=31",
           "scene": null
+        },
+        {
+          "name": "pages/index/zhuanpan/tiantianmiandan",
+          "pathName": "pages/index/zhuanpan/tiantianmiandan",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "大转盘",
+          "pathName": "pages/index/zhuanpan/zhuanpan",
+          "query": "scene=38_0",
+          "scene": null
         }
       ]
     }

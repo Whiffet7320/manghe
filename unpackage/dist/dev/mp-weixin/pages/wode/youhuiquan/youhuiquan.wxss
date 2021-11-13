@@ -81,19 +81,10 @@ page {
 }
 .items .item .txt2.data-v-861e519c {
   position: absolute;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-          justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   width: 226rpx;
   height: 178rpx;
 }
@@ -172,12 +163,8 @@ page {
   position: absolute;
   top: 146rpx;
   left: 250rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
   height: 30rpx;
 }
 .items .item .txt7 .pic1.data-v-861e519c {

@@ -55,12 +55,8 @@ page {
 /* 透明度 */
 /* 文章场景相关 */
 .data-v-55539d90 .u-form-item--right__content__slot {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
 }
 .data-v-55539d90 .u-form-item--right {
   margin: 0 46rpx 0 116rpx;

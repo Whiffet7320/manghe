@@ -94,8 +94,6 @@ page {
   opacity: 1;
 }
 .nav1 .btn.data-v-17dab09c {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
   width: 496rpx;
   height: 88rpx;

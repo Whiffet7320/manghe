@@ -308,20 +308,11 @@
 }
 .interlayer {
 	display: inherit;
-	-webkit-box-orient: inherit;
-	-webkit-box-direction: inherit;
-	-webkit-flex-direction: inherit;
-	        flex-direction: inherit;
-	-webkit-flex-wrap: inherit;
-	        flex-wrap: inherit;
-	-webkit-align-content: inherit;
-	        align-content: inherit;
-	-webkit-box-align: inherit;
-	-webkit-align-items: inherit;
-	        align-items: inherit;
-	-webkit-box-pack: inherit;
-	-webkit-justify-content: inherit;
-	        justify-content: inherit;
+	flex-direction: inherit;
+	flex-wrap: inherit;
+	align-content: inherit;
+	align-items: inherit;
+	justify-content: inherit;
 	width: 100%;
 	white-space: inherit;
 }
@@ -382,9 +373,7 @@
 	text-decoration: underline;
 }
 ._li {
-	-webkit-box-flex: 1;
-	-webkit-flex: 1;
-	        flex: 1;
+	flex: 1;
 	width: 0;
 }
 ._ol-bef {
@@ -399,9 +388,7 @@
 }
 ._ol-bef,
 ._ul-bef {
-	-webkit-box-flex: 0;
-	-webkit-flex: none;
-	        flex: none;
+	flex: none;
 	-webkit-user-select: none;
 	        user-select: none;
 }

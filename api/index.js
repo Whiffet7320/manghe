@@ -23,6 +23,26 @@ let myPut = axios.create({
 	method: 'put',
 	// timeout: 1000,
 })
+let dzpMyPost = axios.create({
+	baseURL: urls.dzpBaseUrl,
+	method: 'post',
+	// timeout: 1000,
+})
+let dzpMyGet = axios.create({
+	baseURL: urls.dzpBaseUrl,
+	method: 'get',
+	// timeout: 1000,
+})
+let dzpMyDelete = axios.create({
+	baseURL: urls.dzpBaseUrl,
+	method: 'delete',
+	// timeout: 1000,
+})
+let dzpMyPut = axios.create({
+	baseURL: urls.dzpBaseUrl,
+	method: 'put',
+	// timeout: 1000,
+})
 axios.defaults.adapter = function(config) { //自己定义个适配器，用来适配uniapp的语法
 	return new Promise((resolve, reject) => {
 		var settle = require('axios/lib/core/settle');
@@ -204,6 +224,213 @@ myPost.interceptors.response.use(response => {
 	}
 })
 myGet.interceptors.response.use(response => {
+	if (response.status === 200) {
+		if (response.data.code == 401) {
+			uni.navigateTo({
+				url: '/pages/wode/weixinshouquan/weixinshouquan'
+			})
+		} else {
+			return response.data
+		}
+	}
+	// if (response.status === 200 && response.data.code == '200') {
+	//     vue.$message({
+	//         message: response.data.msg,
+	//         type: "success",
+	//     });
+	//     return response.data;
+	// }
+	else {
+		vue.$message.error(response.data.info);
+		Promise.reject();
+	}
+}, error => {
+	//错误跳转
+	console.log(error);
+	if (error.response.status === 500) {
+		if (error.response.data.info != '参数错误') {
+			vue.$message.error(error.response.data.info);
+		}
+	} else if (error.response.status === 401) {
+		sessionStorage.setItem("isLogin", false);
+		console.log(sessionStorage.getItem("isLogin"));
+		// router.push({ path: "/" })
+		// router.go(0)
+		return Promise.reject();
+	} else if (error.response.status === 404) {
+		vue.$alert('页面不存在', '404错误', {
+			confirmButtonText: '确定',
+		});
+		return Promise.reject();
+	} else if (error.response.status === 402) {
+		vue.$alert('请求次数限制', '402错误', {
+			confirmButtonText: '确定',
+		});
+		return Promise.reject();
+	} else {
+		if (error.response.data.info != '参数错误') {
+			vue.$message.error(error.response.data.info);
+		}
+	}
+})
+
+
+
+dzpMyPut.interceptors.request.use(config => {
+	if (uni.getStorageSync('token')) {
+		config.headers = {
+			'Accept': 'application/json',
+			'Authorization': `Bearer ${uni.getStorageSync('token')}`
+			// 'token':  uni.getStorageSync('token'),
+			// 'Access-Control-Allow-Origin': '*',
+			// "access-control-allow-credentials": "true"
+		}
+		// config.headers.token = uni.getStorageSync('token');
+	}
+	console.log(config)
+	return config;
+}, error => {
+	console.log(error);
+	return Promise.reject();
+})
+dzpMyPost.interceptors.request.use(config => {
+	if (uni.getStorageSync('token')) {
+		config.headers = {
+			'Accept': 'application/json',
+			'Authorization': `Bearer ${uni.getStorageSync('token')}`
+			// 'token':  uni.getStorageSync('token'),
+			// 'Access-Control-Allow-Origin': '*',
+			// "access-control-allow-credentials": "true"
+		}
+		// config.headers.token = uni.getStorageSync('token');
+	}
+	console.log(config)
+	return config;
+}, error => {
+	console.log(error);
+	return Promise.reject();
+})
+dzpMyGet.interceptors.request.use(config => {
+	if (uni.getStorageSync('token')) {
+		config.headers = {
+			'Accept': 'application/json',
+			// 'token': sessionStorage.token,
+			'Authorization': `Bearer ${uni.getStorageSync('token')}`,
+			'Access-Control-Allow-Origin': '*',
+			"access-control-allow-credentials": "true"
+		}
+		config.headers.token = uni.getStorageSync('token');
+	}
+	return config;
+}, error => {
+	console.log(error);
+	return Promise.reject();
+})
+dzpMyPut.interceptors.response.use(response => {
+	// console.log(response)
+	if (response.status === 200) {
+		if (response.data.code == 401) {
+			uni.navigateTo({
+				url: '/pages/wode/weixinshouquan/weixinshouquan'
+			})
+		} else {
+			return response.data
+		}
+	}
+	// if (response.status === 200 && response.data.code == '200') {
+	//     vue.$message({
+	//         message: response.data.msg,
+	//         type: "success",
+	//     });
+	//     return response.data;
+	// }
+	else {
+		vue.$message.error(response.data.info);
+		Promise.reject();
+	}
+}, error => {
+	//错误跳转
+	console.log(error)
+	if (error.response.status === 500) {
+		console.log(vue)
+		if (error.response.data.info != '参数错误') {
+			vue.$message.error(error.response.data.info);
+		}
+	} else if (error.response.status === 401) {
+		sessionStorage.setItem("isLogin", false);
+		console.log(sessionStorage.getItem("isLogin"));
+		// router.push({ path: "/" })
+		// router.go(0)
+		return Promise.reject();
+	} else if (error.response.status === 404) {
+		vue.$alert('页面不存在', '404错误', {
+			confirmButtonText: '确定',
+		});
+		return Promise.reject();
+	} else if (error.response.status === 402) {
+		vue.$alert('请求次数限制', '402错误', {
+			confirmButtonText: '确定',
+		});
+		return Promise.reject();
+	} else {
+		if (error.response.data.info != '参数错误') {
+			vue.$message.error(error.response.data.info);
+		}
+	}
+})
+dzpMyPost.interceptors.response.use(response => {
+	// console.log(response)
+	if (response.status === 200) {
+		if (response.data.code == 401) {
+			uni.navigateTo({
+				url: '/pages/wode/weixinshouquan/weixinshouquan'
+			})
+		} else {
+			return response.data
+		}
+	}
+	// if (response.status === 200 && response.data.code == '200') {
+	//     vue.$message({
+	//         message: response.data.msg,
+	//         type: "success",
+	//     });
+	//     return response.data;
+	// }
+	else {
+		vue.$message.error(response.data.info);
+		Promise.reject();
+	}
+}, error => {
+	//错误跳转
+	console.log(error)
+	if (error.response.status === 500) {
+		console.log(vue)
+		if (error.response.data.info != '参数错误') {
+			vue.$message.error(error.response.data.info);
+		}
+	} else if (error.response.status === 401) {
+		sessionStorage.setItem("isLogin", false);
+		console.log(sessionStorage.getItem("isLogin"));
+		// router.push({ path: "/" })
+		// router.go(0)
+		return Promise.reject();
+	} else if (error.response.status === 404) {
+		vue.$alert('页面不存在', '404错误', {
+			confirmButtonText: '确定',
+		});
+		return Promise.reject();
+	} else if (error.response.status === 402) {
+		vue.$alert('请求次数限制', '402错误', {
+			confirmButtonText: '确定',
+		});
+		return Promise.reject();
+	} else {
+		if (error.response.data.info != '参数错误') {
+			vue.$message.error(error.response.data.info);
+		}
+	}
+})
+dzpMyGet.interceptors.response.use(response => {
 	if (response.status === 200) {
 		if (response.data.code == 401) {
 			uni.navigateTo({
@@ -560,6 +787,104 @@ export default {
 	activity() {
 		return myGet({
 			url: urls.activity,
+		})
+	},
+	choujiangIndex(){
+		return dzpMyPost({
+			url: urls.choujiangIndex,
+		})
+	},
+	choujiangChou_jiang(){
+		return dzpMyPost({
+			url: urls.choujiangChou_jiang,
+		})
+	},
+	choujiangI_prize_list(obj){
+		return dzpMyPost({
+			url: urls.choujiangI_prize_list,
+			data:{
+				...obj
+			}
+		})
+	},
+	choujiangMianDanShopList(obj){
+		return dzpMyPost({
+			url: urls.choujiangMianDanShopList,
+			data:{
+				...obj
+			}
+		})
+	},
+	choujiangCheckShop(obj){
+		return dzpMyPost({
+			url: urls.choujiangCheckShop,
+			data:{
+				...obj
+			}
+		})
+	},
+	choujiangTreeTurntable(obj){
+		return dzpMyPost({
+			url: urls.choujiangTreeTurntable,
+			data:{
+				...obj
+			}
+		})
+	},
+	choujiangDaYeLaiWan(obj){
+		return dzpMyPost({
+			url: urls.choujiangDaYeLaiWan,
+			data:{
+				...obj
+			}
+		})
+	},
+	choujiangAddress(obj){
+		return dzpMyPost({
+			url: urls.choujiangAddress,
+			data:{
+				...obj
+			}
+		})
+	},
+	choujiangInvite_log(obj){
+		return dzpMyPost({
+			url: urls.choujiangInvite_log,
+			data:{
+				...obj
+			}
+		})
+	},
+	choujiangPrize_log(obj){
+		return dzpMyPost({
+			url: urls.choujiangPrize_log,
+			data:{
+				...obj
+			}
+		})
+	},
+	choujiangZhuLi(obj){
+		return dzpMyPost({
+			url: urls.choujiangZhuLi,
+			data:{
+				...obj
+			}
+		})
+	},
+	choujiangKuaidi(obj){
+		return dzpMyPost({
+			url: urls.choujiangKuaidi,
+			data:{
+				...obj
+			}
+		})
+	},
+	choujiangLive_prize(obj){
+		return dzpMyPost({
+			url: urls.choujiangLive_prize,
+			data:{
+				...obj
+			}
 		})
 	},
 }

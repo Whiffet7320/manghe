@@ -63,15 +63,9 @@ page {
 }
 .nav1 .item.data-v-3742b412 {
   height: 90rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  justify-content: space-between;
+  align-items: center;
   padding: 0 42rpx;
 }
 .nav1 .item.data-v-3742b412:nth-child(1) {
@@ -88,15 +82,9 @@ page {
 .nav1 .item .txt.data-v-3742b412 {
   margin: 0 46rpx 0 28rpx;
   width: 552rpx;
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
+  align-items: center;
+  justify-content: space-between;
 }
 .nav1 .item .txt .txt1.data-v-3742b412 {
   font-size: 24rpx;

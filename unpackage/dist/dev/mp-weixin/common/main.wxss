@@ -56,64 +56,40 @@ text {
 }
 .u-flex {
 
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
 
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: row;
-          flex-direction: row;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  flex-direction: row;
+  align-items: center;
 }
 .u-flex-wrap {
-  -webkit-flex-wrap: wrap;
-          flex-wrap: wrap;
+  flex-wrap: wrap;
 }
 .u-flex-nowrap {
-  -webkit-flex-wrap: nowrap;
-          flex-wrap: nowrap;
+  flex-wrap: nowrap;
 }
 .u-col-center {
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
 }
 .u-col-top {
-  -webkit-box-align: start;
-  -webkit-align-items: flex-start;
-          align-items: flex-start;
+  align-items: flex-start;
 }
 .u-col-bottom {
-  -webkit-box-align: end;
-  -webkit-align-items: flex-end;
-          align-items: flex-end;
+  align-items: flex-end;
 }
 .u-row-center {
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-          justify-content: center;
+  justify-content: center;
 }
 .u-row-left {
-  -webkit-box-pack: start;
-  -webkit-justify-content: flex-start;
-          justify-content: flex-start;
+  justify-content: flex-start;
 }
 .u-row-right {
-  -webkit-box-pack: end;
-  -webkit-justify-content: flex-end;
-          justify-content: flex-end;
+  justify-content: flex-end;
 }
 .u-row-between {
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-          justify-content: space-between;
+  justify-content: space-between;
 }
 .u-row-around {
-  -webkit-justify-content: space-around;
-          justify-content: space-around;
+  justify-content: space-around;
 }
 .u-text-left {
   text-align: left;
@@ -126,79 +102,48 @@ text {
 }
 .u-flex-col {
 
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
 
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-          flex-direction: column;
+  flex-direction: column;
 }
 .u-flex-0 {
-  -webkit-box-flex: 0;
-  -webkit-flex: 0;
-          flex: 0;
+  flex: 0;
 }
 .u-flex-1 {
-  -webkit-box-flex: 1;
-  -webkit-flex: 1;
-          flex: 1;
+  flex: 1;
 }
 .u-flex-2 {
-  -webkit-box-flex: 2;
-  -webkit-flex: 2;
-          flex: 2;
+  flex: 2;
 }
 .u-flex-3 {
-  -webkit-box-flex: 3;
-  -webkit-flex: 3;
-          flex: 3;
+  flex: 3;
 }
 .u-flex-4 {
-  -webkit-box-flex: 4;
-  -webkit-flex: 4;
-          flex: 4;
+  flex: 4;
 }
 .u-flex-5 {
-  -webkit-box-flex: 5;
-  -webkit-flex: 5;
-          flex: 5;
+  flex: 5;
 }
 .u-flex-6 {
-  -webkit-box-flex: 6;
-  -webkit-flex: 6;
-          flex: 6;
+  flex: 6;
 }
 .u-flex-7 {
-  -webkit-box-flex: 7;
-  -webkit-flex: 7;
-          flex: 7;
+  flex: 7;
 }
 .u-flex-8 {
-  -webkit-box-flex: 8;
-  -webkit-flex: 8;
-          flex: 8;
+  flex: 8;
 }
 .u-flex-9 {
-  -webkit-box-flex: 9;
-  -webkit-flex: 9;
-          flex: 9;
+  flex: 9;
 }
 .u-flex-10 {
-  -webkit-box-flex: 10;
-  -webkit-flex: 10;
-          flex: 10;
+  flex: 10;
 }
 .u-flex-11 {
-  -webkit-box-flex: 11;
-  -webkit-flex: 11;
-          flex: 11;
+  flex: 11;
 }
 .u-flex-12 {
-  -webkit-box-flex: 12;
-  -webkit-flex: 12;
-          flex: 12;
+  flex: 12;
 }
 .u-font-9 {
   font-size: 9px;
@@ -2943,13 +2888,8 @@ text {
   padding-bottom: 80rpx !important;
 }
 .u-reset-nvue {
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: row;
-          flex-direction: row;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  flex-direction: row;
+  align-items: center;
 }
 .u-type-primary-light {
   color: #ecf5ff;
@@ -3079,12 +3019,8 @@ page {
 /* end--去除webkit的默认样式--end */
 /* start--icon图标外层套一个view，让其达到更好的垂直居中的效果--start */
 .u-icon-wrap {
-  display: -webkit-box;
-  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
 }
 /* end-icon图标外层套一个view，让其达到更好的垂直居中的效果--end */
 /* start--iPhoneX底部安全区定义--start */
@@ -3227,46 +3163,29 @@ page {
 
 /* start--微信小程序编译后页面有组件名的元素，特别处理--start */
 u-td, u-th {
-  -webkit-box-flex: 1;
-  -webkit-flex: 1;
-          flex: 1;
-  -webkit-align-self: stretch;
-          align-self: stretch;
+  flex: 1;
+  align-self: stretch;
 }
 .u-td {
   height: 100%;
 }
 u-icon {
-  display: -webkit-inline-box;
-  display: -webkit-inline-flex;
   display: inline-flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
 }
 u-grid {
   width: 100%;
-  -webkit-box-flex: 0;
-  -webkit-flex: 0 0 100%;
-          flex: 0 0 100%;
+  flex: 0 0 100%;
 }
 u-line {
-  -webkit-box-flex: 1;
-  -webkit-flex: 1;
-          flex: 1;
+  flex: 1;
 }
 u-switch {
-  display: -webkit-inline-box;
-  display: -webkit-inline-flex;
   display: inline-flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
+  align-items: center;
 }
 u-dropdown {
-  -webkit-box-flex: 1;
-  -webkit-flex: 1;
-          flex: 1;
+  flex: 1;
 }
 
 /* end-微信小程序编译后页面有组件名的元素，特别处理--end */
@@ -3276,16 +3195,6 @@ u-dropdown {
 
 
 /* start--头条小程序编译后页面有组件名的元素，特别处理--start */
-
-
-
-
-
-
-
-
-
-
 
 
 
