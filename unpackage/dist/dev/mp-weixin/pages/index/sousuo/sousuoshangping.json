@@ -1,8 +1,0 @@
-{
-  "onReachBottomDistance": 400,
-  "navigationBarTitleText": "商品",
-  "enablePullDownRefresh": false,
-  "usingComponents": {
-    "u-loadmore": "/node-modules/uview-ui/components/u-loadmore/u-loadmore"
-  }
-}

@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "关于如师傅",
-  "enablePullDownRefresh": false,
-  "usingComponents": {
-    "u-parse": "/node-modules/uview-ui/components/u-parse/u-parse"
-  }
-}

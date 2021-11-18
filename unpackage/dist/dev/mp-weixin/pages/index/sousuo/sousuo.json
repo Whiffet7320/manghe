@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "搜索",
-  "enablePullDownRefresh": false,
-  "usingComponents": {
-    "u-input": "/node-modules/uview-ui/components/u-input/u-input"
-  }
-}

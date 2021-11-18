@@ -1,9 +1,0 @@
-{
-  "navigationBarTitleText": "优惠券",
-  "enablePullDownRefresh": false,
-  "usingComponents": {
-    "u-toast": "/node-modules/uview-ui/components/u-toast/u-toast",
-    "u-tabs-swiper": "/node-modules/uview-ui/components/u-tabs-swiper/u-tabs-swiper",
-    "u-loadmore": "/node-modules/uview-ui/components/u-loadmore/u-loadmore"
-  }
-}

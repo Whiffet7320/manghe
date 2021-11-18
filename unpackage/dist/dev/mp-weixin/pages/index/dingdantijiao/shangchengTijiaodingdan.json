@@ -1,8 +1,0 @@
-{
-  "navigationBarTitleText": "订单支付",
-  "enablePullDownRefresh": false,
-  "usingComponents": {
-    "u-icon": "/node-modules/uview-ui/components/u-icon/u-icon",
-    "u-input": "/node-modules/uview-ui/components/u-input/u-input"
-  }
-}

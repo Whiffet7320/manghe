@@ -1,6 +1,0 @@
-{
-  "usingComponents": {
-    "u-loading": "/node-modules/uview-ui/components/u-loading/u-loading"
-  },
-  "component": true
-}

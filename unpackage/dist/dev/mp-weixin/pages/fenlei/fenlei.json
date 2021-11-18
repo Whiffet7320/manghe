@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "分类",
-  "usingComponents": {
-    "u-icon": "/node-modules/uview-ui/components/u-icon/u-icon",
-    "u-input": "/node-modules/uview-ui/components/u-input/u-input"
-  }
-}

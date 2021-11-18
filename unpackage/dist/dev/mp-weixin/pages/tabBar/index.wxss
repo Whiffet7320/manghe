@@ -1,0 +1,236 @@
+
+page {
+	background: #F7F8FA;
+}
+
+@charset "UTF-8";
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+.nav1.data-v-40e5343a {
+  width: 750rpx;
+  height: 298rpx;
+  background: linear-gradient(316deg, #F6A309 0%, #F8B607 22%, #FFD438 42%, #F9C706 51%, #F8CA20 80%, #FECF05 100%);
+  padding: 0 36rpx;
+}
+.nav1 .tit1.data-v-40e5343a {
+  padding-top: 32rpx;
+  display: flex;
+  align-items: center;
+}
+.nav1 .tit1 .txt1.data-v-40e5343a {
+  font-size: 28rpx;
+  font-weight: 500;
+  line-height: 40rpx;
+  color: #122106;
+  margin-right: 14rpx;
+}
+.nav1 .tit1 .myInp.data-v-40e5343a {
+  margin-left: 60rpx;
+  padding: 0 24rpx;
+  width: 494rpx;
+  height: 60rpx;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50rpx;
+  display: flex;
+  align-items: center;
+}
+.nav1 .tit1 .myInp.data-v-40e5343a .u-input {
+  width: 400rpx !important;
+}
+.nav1 .tit1 .myInp.data-v-40e5343a .u-input .u-input__input {
+  font-size: 24rpx;
+  font-weight: 400;
+  line-height: 60rpx;
+  color: #122106 !important;
+}
+.nav1 .tit2.data-v-40e5343a {
+  margin-top: 30rpx;
+  display: flex;
+  align-items: center;
+  padding: 0 10rpx;
+  justify-content: space-between;
+}
+.nav1 .tit2 .hot.data-v-40e5343a {
+  display: flex;
+  align-items: center;
+}
+.nav1 .tit2 .hot .txt1-1.data-v-40e5343a {
+  font-size: 24rpx;
+  font-weight: bold;
+  line-height: 34rpx;
+  color: #122106;
+}
+.nav1 .tit2 .hot .pic.data-v-40e5343a {
+  margin-left: 8rpx;
+  width: 20rpx;
+  height: 20rpx;
+}
+.nav1 .tit2 .txt2.data-v-40e5343a {
+  font-size: 24rpx;
+  font-weight: 400;
+  line-height: 34rpx;
+  color: #122106;
+}
+.nav1 .tit3.data-v-40e5343a {
+  margin-top: 34rpx;
+}
+.nav2.data-v-40e5343a {
+  background: #FFFFFF;
+  margin-top: 232rpx;
+  padding: 0 38rpx;
+}
+.nav2 .items.data-v-40e5343a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav2 .items .item.data-v-40e5343a {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.nav2 .items .item .pic-item.data-v-40e5343a {
+  width: 76rpx;
+  height: 76rpx;
+}
+.nav2 .items .item .txt-item.data-v-40e5343a {
+  margin-top: 20rpx;
+  font-size: 24rpx;
+  font-weight: 400;
+  color: #BD9E81;
+}
+.nav2 .items2.items.data-v-40e5343a {
+  margin-top: 40rpx;
+}
+.nav2 .nav2-1.data-v-40e5343a {
+  margin-top: 40rpx;
+  padding-bottom: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav2 .nav2-1 .pic3-1.data-v-40e5343a {
+  width: 28rpx;
+  height: 28rpx;
+  -webkit-transform: translateX(16rpx);
+          transform: translateX(16rpx);
+  margin-right: 16rpx;
+}
+.nav2 .nav2-1 .tit3-1.data-v-40e5343a {
+  padding-left: 24rpx;
+  width: 612rpx;
+  height: 60rpx;
+  background: #fff2ee;
+  border-radius: 30rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+  color: #FF7C5E;
+  line-height: 60rpx;
+}
+.nav3.data-v-40e5343a {
+  margin-top: 20rpx;
+  width: 750rpx;
+  background: #FFFFFF;
+  padding: 28rpx 0;
+}
+.nav3 .title.data-v-40e5343a {
+  display: flex;
+  align-items: center;
+}
+.nav3 .title .shu.data-v-40e5343a {
+  margin-left: 24rpx;
+  margin-right: 20rpx;
+  width: 6rpx;
+  height: 28rpx;
+  background: #BD9E81;
+}
+.nav3 .title .t-txt.data-v-40e5343a {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #BD9E81;
+}
+.nav3 .items.data-v-40e5343a {
+  padding: 0 40rpx;
+  margin-top: 36rpx;
+  display: flex;
+  align-items: center;
+}
+.nav3 .items .item.data-v-40e5343a {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.nav3 .items .item .pic.data-v-40e5343a {
+  width: 150rpx;
+  height: 150rpx;
+  background: #FECF05;
+  border-radius: 10rpx;
+}
+.nav3 .items .item .txt.data-v-40e5343a {
+  margin-top: 12rpx;
+  font-size: 28rpx;
+  font-weight: 400;
+  color: #BD9E81;
+}
+.nav4.nav3 .itemss.data-v-40e5343a {
+  display: flex;
+  align-items: center;
+}
+.nav4.nav3 .itemss .item.data-v-40e5343a {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.nav4.nav3 .itemss .item .pic.data-v-40e5343a {
+  height: 284rpx;
+  width: 196rpx;
+}
+.nav4.nav3 .itemss .item .right.data-v-40e5343a {
+  width: 192rpx;
+  margin-left: 20rpx;
+}
+.nav4.nav3 .itemss .item .right .txt1.data-v-40e5343a {
+  margin-bottom: 16rpx;
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #BD9E81;
+}
+.nav4.nav3 .itemss .item .right .txt1 .small.data-v-40e5343a {
+  margin-left: 12rpx;
+  font-weight: 500;
+  font-size: 24rpx;
+}
+.nav4.nav3 .itemss .item .right .txt2.data-v-40e5343a {
+  margin-top: 10rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #707071;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+

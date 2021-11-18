@@ -4,377 +4,59 @@
 	},
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-			"path": "pages/index/index",
+			"path": "pages/tabBar/index",
 			"style": {
-				"navigationBarTitleText": "首页"
+				"navigationBarTitleText": "医美小程序",
+				"navigationBarBackgroundColor": "#FECF05",
+				"navigationBarTextStyle": "black"
 			}
 		},
 		{
-			"path": "pages/fenlei/fenlei",
+			"path": "pages/tabBar/yimeixiangmu",
 			"style": {
-				"navigationBarTitleText": "分类"
+				"navigationBarTitleText": "医美项目",
+				"navigationBarBackgroundColor": "#FECF05",
+				"navigationBarTextStyle": "black"
 			}
 		},
-		// {
-		// 	"path": "pages/gouwuche/gouwuche",
-		// 	"style": {
-		// 		"navigationBarTitleText": "购物车",
-		// 		"enablePullDownRefresh": false
-		// 	}
-		// },
 		{
-			"path": "pages/dingdan/dingdan",
+			"path": "pages/tabBar/yanxuanshangcheng",
 			"style": {
-				// "navigationStyle": "custom",
-				"navigationBarTitleText": "订单",
-				"enablePullDownRefresh": false
+				"navigationBarTitleText": "严选商城",
+				"navigationBarBackgroundColor": "#FECF05",
+				"navigationBarTextStyle": "black"
 			}
-
 		},
 		{
-			"path": "pages/wode/wode",
+			"path": "pages/tabBar/user",
 			"style": {
-				"navigationBarTitleText": "个人中心",
-				"enablePullDownRefresh": false
+				"navigationBarTitleText": "我的",
+				"navigationBarBackgroundColor": "#FECF05",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
+			"path": "pages/login/index",
+			"style": {
+				"navigationBarTitleText": "登录",
+				"navigationBarBackgroundColor": "#FECF05",
+				"navigationBarTextStyle": "black"
 			}
 		}
 	],
-	"subPackages": [{
-			"root": "pages/dingdan/xuanzeshifu",
-			"pages": [{
-				"path": "xuanzeshifu",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "选择师傅",
-					"enablePullDownRefresh": false
-				}
-			}]
-		},
-		{
-			"root": "pages/dingdan/pingjia",
-			"pages": [{
-				"path": "pingjia",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "评价",
-					"enablePullDownRefresh": false
-				}
-			}]
-		},
-		{
-			"root": "pages/dingdan/chakanxiangqin",
-			"pages": [{
-				"path": "chakanxiangqin",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "查看详情",
-					"enablePullDownRefresh": false
-				}
-			}]
-		},
-		{
-			"root": "pages/index/sousuo",
-			"pages": [{
-				"path": "sousuo",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "搜索",
-					"enablePullDownRefresh": false
-				}
-			}, {
-				"path": "sousuoshangping",
-				"style": {
-					// "navigationStyle": "custom",
-					"onReachBottomDistance": 400,
-					"navigationBarTitleText": "商品",
-					"enablePullDownRefresh": false
-				}
-			}]
-		},
-		{
-			"root": "pages/index/shangpinxiangqin",
-			"pages": [{
-				"path": "shangpinxiangqin",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "商品详情",
-					"enablePullDownRefresh": false
-				}
-			}, {
-				"path": "pingjialiebiao",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "全部评价",
-					"enablePullDownRefresh": false
-				}
-			}]
-		},
-		{
-			"root": "pages/index/zhuanpan",
-			"pages": [{
-				"path": "zhuanpan",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "抽奖大转盘",
-					"enablePullDownRefresh": false
-					// "navigationBarBackgroundColor": "#C91919",
-					// "navigationBarTextStyle": "white"
-				}
-			}, {
-				"path": "wodejiangping",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "我的奖品",
-					"enablePullDownRefresh": false
-				}
-			}, {
-				"path": "shangpingmiandan",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "商品免单",
-					"enablePullDownRefresh": false
-				}
-			}, {
-				"path": "tiantianmiandan",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "天天免单",
-					"enablePullDownRefresh": false
-				}
-			}]
-		}, {
-			"root": "pages/index/rushangcheng",
-			"pages": [{
-				"path": "rushangcheng",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "如商城",
-					"enablePullDownRefresh": false,
-					"navigationBarBackgroundColor": "#5694FF",
-					"navigationBarTextStyle": "white"
-				}
-			}]
-		}, {
-			"root": "pages/index/wenzhangxiangqing",
-			"pages": [{
-				"path": "wenzhangxiangqing",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "文章详情",
-					"enablePullDownRefresh": false,
-					"navigationBarBackgroundColor": "#5694FF",
-					"navigationBarTextStyle": "white"
-				}
-			}]
-		}, {
-			"root": "pages/index/h5",
-			"pages": [{
-				"path": "h5",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "新页面",
-					"enablePullDownRefresh": false,
-					"navigationBarBackgroundColor": "#5694FF",
-					"navigationBarTextStyle": "white"
-				}
-			}]
-		}, {
-			"root": "pages/index/jiancaijiedao",
-			"pages": [{
-				"path": "jiancaijiedao",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "建材街道",
-					"enablePullDownRefresh": false,
-					"navigationBarBackgroundColor": "#5694FF",
-					"navigationBarTextStyle": "white"
-				}
-			}]
-		}, {
-			"root": "pages/index/dingdantijiao",
-			"pages": [{
-				"path": "dingdantijiao",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "订单支付",
-					"enablePullDownRefresh": false
-				}
-			}, {
-				"path": "shangchengTijiaodingdan",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "订单支付",
-					"enablePullDownRefresh": false
-				}
-			}, {
-				"path": "xuanzeyouhuiquan",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "优惠券",
-					"enablePullDownRefresh": false
-				}
-			}]
-		},
-		{
-			"root": "pages/index/fabuxuqiu",
-			"pages": [{
-				"path": "fabuxuqiu",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "发布需求",
-					"enablePullDownRefresh": false,
-					"navigationBarTextStyle": "black"
-				}
-			}, {
-				"path": "xiadan",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "下单",
-					"enablePullDownRefresh": false,
-					"navigationBarTextStyle": "black"
-				}
-			}, {
-				"path": "baojiaShifuxinxi",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "正在报价",
-					"enablePullDownRefresh": false,
-					"navigationBarTextStyle": "black"
-				}
-			}, {
-				"path": "shifuxiangqin",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "师傅详情",
-					"enablePullDownRefresh": false,
-					"navigationBarTextStyle": "black"
-				}
-			}]
-		},
-		{
-			"root": "pages/wode/weixinshouquan",
-			"pages": [{
-				"path": "weixinshouquan",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "授权",
-					"enablePullDownRefresh": false
-				}
-			}]
-		}, {
-			"root": "pages/wode/shouhuodizhi",
-			"pages": [{
-				"path": "shouhuodizhi",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "收货地址",
-					"enablePullDownRefresh": false
-				}
-			}, {
-				"path": "xinzengdizhi",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "添加/编辑地址",
-					"enablePullDownRefresh": false
-				}
-			}]
-		}, {
-			"root": "pages/wode/youhuiquan",
-			"pages": [{
-				"path": "youhuiquan",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "优惠券",
-					"enablePullDownRefresh": false
-				}
-			}]
-		}, {
-			"root": "pages/wode/qianbao",
-			"pages": [{
-				"path": "qianbao",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "我的钱包",
-					"enablePullDownRefresh": false
-				}
-			}, {
-				"path": "tixian",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "我的钱包",
-					"enablePullDownRefresh": false
-				}
-			}, {
-				"path": "tixianjilu",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "提现记录",
-					"enablePullDownRefresh": false
-				}
-			}]
-		}, {
-			"root": "pages/wode/jifen",
-			"pages": [{
-				"path": "jifen",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "我的积分",
-					"enablePullDownRefresh": false
-				}
-			}]
-		}, {
-			"root": "pages/wode/anquanzhongxin",
-			"pages": [{
-				"path": "anquanzhongxin",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "安全中心",
-					"enablePullDownRefresh": false
-				}
-			}, {
-				"path": "anquanbaozhang",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "安全中心",
-					"enablePullDownRefresh": false
-				}
-			}, {
-				"path": "jinjilianxiren",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "安全中心",
-					"enablePullDownRefresh": false
-				}
-			}]
-		}, {
-			"root": "pages/wode/yijianfankui",
-			"pages": [{
-				"path": "yijianfankui",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "意见反馈",
-					"enablePullDownRefresh": false
-				}
-			}]
-		}, {
-			"root": "pages/wode/shezhi",
-			"pages": [{
-				"path": "shezhi",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "设置",
-					"enablePullDownRefresh": false
-				}
-			},{
-				"path": "guanyurushifu",
-				"style": {
-					// "navigationStyle": "custom",
-					"navigationBarTitleText": "关于如师傅",
-					"enablePullDownRefresh": false
-				}
-			}]
-		}
-	],
+	"subPackages": [
+	// 	{
+	// 	"root": "pages/dingdan/xuanzeshifu",
+	// 	"pages": [{
+	// 		"path": "xuanzeshifu",
+	// 		"style": {
+	// 			// "navigationStyle": "custom",
+	// 			"navigationBarTitleText": "选择师傅",
+	// 			"enablePullDownRefresh": false
+	// 		}
+	// 	}]
+	// },
+	 ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
@@ -383,35 +65,29 @@
 	},
 	"tabBar": {
 		"color": "#000000",
-		"selectedColor": "#4988FD",
+		"selectedColor": "#BD9E81",
 		"backgroundColor": "#FFFFFF",
 		"borderStyle": "black",
 		"list": [{
-				"pagePath": "pages/index/index",
-				"iconPath": "static/img/nav-sy.png",
-				"selectedIconPath": "static/img/nav-sy-active.png",
+				"pagePath": "pages/tabBar/index",
+				"iconPath": "static/tabBar/sy.png",
+				"selectedIconPath": "static/tabBar/sy-active.png",
 				"text": "首页"
 			}, {
-				"pagePath": "pages/fenlei/fenlei",
-				"iconPath": "static/img/nav-fl.png",
-				"selectedIconPath": "static/img/nav-fl-active.png",
-				"text": "分类"
+				"pagePath": "pages/tabBar/yimeixiangmu",
+				"iconPath": "static/tabBar/ymxm.png",
+				"selectedIconPath": "static/tabBar/ymxm-active.png",
+				"text": "医美项目"
 			},
-			// {
-			// 	"pagePath": "pages/gouwuche/gouwuche",
-			// 	"iconPath": "static/img/nav-gwc.png",
-			// 	"selectedIconPath": "static/img/nav-gwc-active.png",
-			// 	"text": "购物车"
-			// },
 			{
-				"pagePath": "pages/dingdan/dingdan",
-				"iconPath": "static/img/nav-dd.png",
-				"selectedIconPath": "static/img/nav-dd-active.png",
-				"text": "订单"
+				"pagePath": "pages/tabBar/yanxuanshangcheng",
+				"iconPath": "static/tabBar/yxsc.png",
+				"selectedIconPath": "static/tabBar/yxsc-active.png",
+				"text": "严选商城"
 			}, {
-				"pagePath": "pages/wode/wode",
-				"iconPath": "static/img/nav-wd.png",
-				"selectedIconPath": "static/img/nav-wd-active.png",
+				"pagePath": "pages/tabBar/user",
+				"iconPath": "static/tabBar/wd.png",
+				"selectedIconPath": "static/tabBar/wd-active.png",
 				"text": "我的"
 			}
 		]

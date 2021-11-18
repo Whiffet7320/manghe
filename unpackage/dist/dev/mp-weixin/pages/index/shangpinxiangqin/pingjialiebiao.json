@@ -1,8 +1,0 @@
-{
-  "navigationBarTitleText": "全部评价",
-  "enablePullDownRefresh": false,
-  "usingComponents": {
-    "u-rate": "/node-modules/uview-ui/components/u-rate/u-rate",
-    "u-loadmore": "/node-modules/uview-ui/components/u-loadmore/u-loadmore"
-  }
-}

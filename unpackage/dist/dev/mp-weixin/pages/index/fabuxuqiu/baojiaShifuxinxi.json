@@ -1,9 +1,0 @@
-{
-  "navigationBarTitleText": "正在报价",
-  "enablePullDownRefresh": false,
-  "navigationBarTextStyle": "black",
-  "usingComponents": {
-    "u-tabs-swiper": "/node-modules/uview-ui/components/u-tabs-swiper/u-tabs-swiper",
-    "u-icon": "/node-modules/uview-ui/components/u-icon/u-icon"
-  }
-}

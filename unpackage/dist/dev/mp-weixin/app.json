@@ -1,148 +1,12 @@
 {
   "pages": [
-    "pages/index/index",
-    "pages/fenlei/fenlei",
-    "pages/dingdan/dingdan",
-    "pages/wode/wode"
+    "pages/tabBar/index",
+    "pages/tabBar/yimeixiangmu",
+    "pages/tabBar/yanxuanshangcheng",
+    "pages/tabBar/user",
+    "pages/login/index"
   ],
-  "subPackages": [
-    {
-      "root": "pages/dingdan/xuanzeshifu",
-      "pages": [
-        "xuanzeshifu"
-      ]
-    },
-    {
-      "root": "pages/dingdan/pingjia",
-      "pages": [
-        "pingjia"
-      ]
-    },
-    {
-      "root": "pages/dingdan/chakanxiangqin",
-      "pages": [
-        "chakanxiangqin"
-      ]
-    },
-    {
-      "root": "pages/index/sousuo",
-      "pages": [
-        "sousuo",
-        "sousuoshangping"
-      ]
-    },
-    {
-      "root": "pages/index/shangpinxiangqin",
-      "pages": [
-        "shangpinxiangqin",
-        "pingjialiebiao"
-      ]
-    },
-    {
-      "root": "pages/index/zhuanpan",
-      "pages": [
-        "zhuanpan",
-        "wodejiangping",
-        "shangpingmiandan",
-        "tiantianmiandan"
-      ]
-    },
-    {
-      "root": "pages/index/rushangcheng",
-      "pages": [
-        "rushangcheng"
-      ]
-    },
-    {
-      "root": "pages/index/wenzhangxiangqing",
-      "pages": [
-        "wenzhangxiangqing"
-      ]
-    },
-    {
-      "root": "pages/index/h5",
-      "pages": [
-        "h5"
-      ]
-    },
-    {
-      "root": "pages/index/jiancaijiedao",
-      "pages": [
-        "jiancaijiedao"
-      ]
-    },
-    {
-      "root": "pages/index/dingdantijiao",
-      "pages": [
-        "dingdantijiao",
-        "shangchengTijiaodingdan",
-        "xuanzeyouhuiquan"
-      ]
-    },
-    {
-      "root": "pages/index/fabuxuqiu",
-      "pages": [
-        "fabuxuqiu",
-        "xiadan",
-        "baojiaShifuxinxi",
-        "shifuxiangqin"
-      ]
-    },
-    {
-      "root": "pages/wode/weixinshouquan",
-      "pages": [
-        "weixinshouquan"
-      ]
-    },
-    {
-      "root": "pages/wode/shouhuodizhi",
-      "pages": [
-        "shouhuodizhi",
-        "xinzengdizhi"
-      ]
-    },
-    {
-      "root": "pages/wode/youhuiquan",
-      "pages": [
-        "youhuiquan"
-      ]
-    },
-    {
-      "root": "pages/wode/qianbao",
-      "pages": [
-        "qianbao",
-        "tixian",
-        "tixianjilu"
-      ]
-    },
-    {
-      "root": "pages/wode/jifen",
-      "pages": [
-        "jifen"
-      ]
-    },
-    {
-      "root": "pages/wode/anquanzhongxin",
-      "pages": [
-        "anquanzhongxin",
-        "anquanbaozhang",
-        "jinjilianxiren"
-      ]
-    },
-    {
-      "root": "pages/wode/yijianfankui",
-      "pages": [
-        "yijianfankui"
-      ]
-    },
-    {
-      "root": "pages/wode/shezhi",
-      "pages": [
-        "shezhi",
-        "guanyurushifu"
-      ]
-    }
-  ],
+  "subPackages": [],
   "window": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "uni-app",
@@ -151,32 +15,32 @@
   },
   "tabBar": {
     "color": "#000000",
-    "selectedColor": "#4988FD",
+    "selectedColor": "#BD9E81",
     "backgroundColor": "#FFFFFF",
     "borderStyle": "black",
     "list": [
       {
-        "pagePath": "pages/index/index",
-        "iconPath": "static/img/nav-sy.png",
-        "selectedIconPath": "static/img/nav-sy-active.png",
+        "pagePath": "pages/tabBar/index",
+        "iconPath": "static/tabBar/sy.png",
+        "selectedIconPath": "static/tabBar/sy-active.png",
         "text": "首页"
       },
       {
-        "pagePath": "pages/fenlei/fenlei",
-        "iconPath": "static/img/nav-fl.png",
-        "selectedIconPath": "static/img/nav-fl-active.png",
-        "text": "分类"
+        "pagePath": "pages/tabBar/yimeixiangmu",
+        "iconPath": "static/tabBar/ymxm.png",
+        "selectedIconPath": "static/tabBar/ymxm-active.png",
+        "text": "医美项目"
       },
       {
-        "pagePath": "pages/dingdan/dingdan",
-        "iconPath": "static/img/nav-dd.png",
-        "selectedIconPath": "static/img/nav-dd-active.png",
-        "text": "订单"
+        "pagePath": "pages/tabBar/yanxuanshangcheng",
+        "iconPath": "static/tabBar/yxsc.png",
+        "selectedIconPath": "static/tabBar/yxsc-active.png",
+        "text": "严选商城"
       },
       {
-        "pagePath": "pages/wode/wode",
-        "iconPath": "static/img/nav-wd.png",
-        "selectedIconPath": "static/img/nav-wd-active.png",
+        "pagePath": "pages/tabBar/user",
+        "iconPath": "static/tabBar/wd.png",
+        "selectedIconPath": "static/tabBar/wd-active.png",
         "text": "我的"
       }
     ]
@@ -186,6 +50,5 @@
       "desc": "你的位置信息将用于小程序位置接口的效果展示"
     }
   },
-  "usingComponents": {},
-  "sitemapLocation": "sitemap.json"
+  "usingComponents": {}
 }

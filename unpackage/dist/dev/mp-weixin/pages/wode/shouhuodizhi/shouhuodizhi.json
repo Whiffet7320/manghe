@@ -1,9 +1,0 @@
-{
-  "navigationBarTitleText": "收货地址",
-  "enablePullDownRefresh": false,
-  "usingComponents": {
-    "u-toast": "/node-modules/uview-ui/components/u-toast/u-toast",
-    "u-radio-group": "/node-modules/uview-ui/components/u-radio-group/u-radio-group",
-    "u-radio": "/node-modules/uview-ui/components/u-radio/u-radio"
-  }
-}

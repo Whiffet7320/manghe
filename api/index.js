@@ -1,9 +1,13 @@
 import axios from 'axios';
-import Vue from 'vue'
-// import router from '../router.js';
+import Vue from 'vue';
 import urls from './url.js';
 const vue = new Vue()
 let myPost = axios.create({
+	baseURL: urls.baseUrl,
+	method: 'post',
+	// timeout: 1000,
+})
+let myUploadImg = axios.create({
 	baseURL: urls.baseUrl,
 	method: 'post',
 	// timeout: 1000,
@@ -86,6 +90,23 @@ myPut.interceptors.request.use(config => {
 	console.log(error);
 	return Promise.reject();
 })
+myDelete.interceptors.request.use(config => {
+	if (uni.getStorageSync('token')) {
+		config.headers = {
+			'Accept': 'application/json',
+			'Authorization': `Bearer ${uni.getStorageSync('token')}`
+			// 'token':  uni.getStorageSync('token'),
+			// 'Access-Control-Allow-Origin': '*',
+			// "access-control-allow-credentials": "true"
+		}
+		// config.headers.token = uni.getStorageSync('token');
+	}
+	console.log(config)
+	return config;
+}, error => {
+	console.log(error);
+	return Promise.reject();
+})
 myPost.interceptors.request.use(config => {
 	if (uni.getStorageSync('token')) {
 		config.headers = {
@@ -102,6 +123,124 @@ myPost.interceptors.request.use(config => {
 }, error => {
 	console.log(error);
 	return Promise.reject();
+})
+myUploadImg.interceptors.request.use(config => {
+	if (uni.getStorageSync('token')) {
+		config.headers = {
+			"Content-Type": "multipart/form-data;charse=UTF-8",
+			'Authorization': `Bearer ${uni.getStorageSync('token')}`,
+		}
+		// config.headers.token = uni.getStorageSync('token');
+	}
+	console.log(config)
+	return config;
+}, error => {
+	console.log(error);
+	return Promise.reject();
+})
+myDelete.interceptors.response.use(response => {
+	// console.log(response)
+	if (response.status === 200) {
+		if (response.data.code == 401) {
+			uni.navigateTo({
+				url: '/pages/login/index'
+			})
+		} else {
+			return response.data
+		}
+	}
+	// if (response.status === 200 && response.data.code == '200') {
+	//     vue.$message({
+	//         message: response.data.msg,
+	//         type: "success",
+	//     });
+	//     return response.data;
+	// }
+	else {
+		vue.$message.error(response.data.info);
+		Promise.reject();
+	}
+}, error => {
+	//错误跳转
+	console.log(error)
+	if (error.response.status === 500) {
+		console.log(vue)
+		if (error.response.data.info != '参数错误') {
+			vue.$message.error(error.response.data.info);
+		}
+	} else if (error.response.status === 401) {
+		sessionStorage.setItem("isLogin", false);
+		console.log(sessionStorage.getItem("isLogin"));
+		// router.push({ path: "/" })
+		// router.go(0)
+		return Promise.reject();
+	} else if (error.response.status === 404) {
+		vue.$alert('页面不存在', '404错误', {
+			confirmButtonText: '确定',
+		});
+		return Promise.reject();
+	} else if (error.response.status === 402) {
+		vue.$alert('请求次数限制', '402错误', {
+			confirmButtonText: '确定',
+		});
+		return Promise.reject();
+	} else {
+		if (error.response.data.info != '参数错误') {
+			vue.$message.error(error.response.data.info);
+		}
+	}
+})
+myUploadImg.interceptors.response.use(response => {
+	// console.log(response)
+	if (response.status === 200) {
+		if (response.data.code == 401) {
+			uni.navigateTo({
+				url: '/pages/login/index'
+			})
+		} else {
+			return response.data
+		}
+	}
+	// if (response.status === 200 && response.data.code == '200') {
+	//     vue.$message({
+	//         message: response.data.msg,
+	//         type: "success",
+	//     });
+	//     return response.data;
+	// }
+	else {
+		vue.$message.error(response.data.info);
+		Promise.reject();
+	}
+}, error => {
+	//错误跳转
+	console.log(error)
+	if (error.response.status === 500) {
+		console.log(vue)
+		if (error.response.data.info != '参数错误') {
+			vue.$message.error(error.response.data.info);
+		}
+	} else if (error.response.status === 401) {
+		sessionStorage.setItem("isLogin", false);
+		console.log(sessionStorage.getItem("isLogin"));
+		// router.push({ path: "/" })
+		// router.go(0)
+		return Promise.reject();
+	} else if (error.response.status === 404) {
+		vue.$alert('页面不存在', '404错误', {
+			confirmButtonText: '确定',
+		});
+		return Promise.reject();
+	} else if (error.response.status === 402) {
+		vue.$alert('请求次数限制', '402错误', {
+			confirmButtonText: '确定',
+		});
+		return Promise.reject();
+	} else {
+		if (error.response.data.info != '参数错误') {
+			vue.$message.error(error.response.data.info);
+		}
+	}
 })
 myGet.interceptors.request.use(config => {
 	if (uni.getStorageSync('token')) {
@@ -124,7 +263,7 @@ myPut.interceptors.response.use(response => {
 	if (response.status === 200) {
 		if (response.data.code == 401) {
 			uni.navigateTo({
-				url: '/pages/wode/weixinshouquan/weixinshouquan'
+				url: '/pages/login/index'
 			})
 		} else {
 			return response.data
@@ -176,7 +315,7 @@ myPost.interceptors.response.use(response => {
 	if (response.status === 200) {
 		if (response.data.code == 401) {
 			uni.navigateTo({
-				url: '/pages/wode/weixinshouquan/weixinshouquan'
+				url: '/pages/login/index'
 			})
 		} else {
 			return response.data
@@ -227,7 +366,7 @@ myGet.interceptors.response.use(response => {
 	if (response.status === 200) {
 		if (response.data.code == 401) {
 			uni.navigateTo({
-				url: '/pages/wode/weixinshouquan/weixinshouquan'
+				url: '/pages/login/index'
 			})
 		} else {
 			return response.data
@@ -331,7 +470,7 @@ dzpMyPut.interceptors.response.use(response => {
 	if (response.status === 200) {
 		if (response.data.code == 401) {
 			uni.navigateTo({
-				url: '/pages/wode/weixinshouquan/weixinshouquan'
+				url: '/pages/login/index'
 			})
 		} else {
 			return response.data
@@ -383,7 +522,7 @@ dzpMyPost.interceptors.response.use(response => {
 	if (response.status === 200) {
 		if (response.data.code == 401) {
 			uni.navigateTo({
-				url: '/pages/wode/weixinshouquan/weixinshouquan'
+				url: '/pages/login/index'
 			})
 		} else {
 			return response.data
@@ -434,7 +573,7 @@ dzpMyGet.interceptors.response.use(response => {
 	if (response.status === 200) {
 		if (response.data.code == 401) {
 			uni.navigateTo({
-				url: '/pages/wode/weixinshouquan/weixinshouquan'
+				url: '/pages/login/index'
 			})
 		} else {
 			return response.data
@@ -490,401 +629,29 @@ export default {
 			},
 		})
 	},
-	categories(obj) {
-		return myGet({
-			url: urls.categories,
-			params:{
-				...obj
-			}
-		})
-	},
-	cities() {
-		return myGet({
-			url: urls.cities,
-		})
-	},
-	home() {
-		return myGet({
-			url: urls.home,
-		})
-	},
-	items(id) {
-		return myGet({
-			url: `${urls.items}/${id}`,
-		})
-	},
-	uploadToken() {
-		return myGet({
-			url: urls.uploadToken,
-		})
-	},
-	demandQuotes(obj) {
-		return myPost({
-			url: urls.demandQuotes,
-			data:{
-				...obj
-			}
-		})
-	},
-	address() {
-		return myGet({
-			url: urls.address,
-		})
-	},
-	addressAdd(obj) {
-		return myPost({
-			url: urls.addressAdd,
-			data: {
-				...obj
-			},
-		})
-	},
-	addressEdit(obj) {
-		return myPut({
-			url: `${urls.addressEdit}/${obj.id}`,
-			data: {
-				...obj
-			},
-		})
-	},
-	addressXq(id) {
-		return myGet({
-			url: `${urls.addressXq}/${id}`,
-		})
-	},
-	config() {
-		return myGet({
-			url: urls.config,
-		})
-	},
-	userInfo(obj) {
-		return myPut({
-			url: urls.userInfo,
-			data: {
-				...obj
-			},
-		})
-	},
-	getDemandQuotes(id) {
-		return myGet({
-			url: `${urls.getDemandQuotes}/${id}`,
-		})
-	},
-	getDemandQuotesList(obj) {
-		return myGet({
-			url: urls.getDemandQuotesList,
-			params:{
-				...obj
-			}
-		})
-	},
-	getDemandQuotesListXq(id) {
-		return myGet({
-			url: `${urls.getDemandQuotesListXq}/${id}`
-		})
-	},
-	selectDemandQuotes(obj) {
-		return myPut({
-			url: `${urls.selectDemandQuotes}/${obj.id}/select`,
-			data:{
-				quote_id:obj.quote_id
-			}
-		})
-	},
-	demandQuotesIdPreOrder(id) {
-		return myGet({
-			url: `${urls.demandQuotesIdPreOrder}/${id}/pre-order`
-		})
-	},
-	order(obj) {
-		return myPost({
-			url: urls.order,
-			data: {
-				...obj
-			},
-		})
-	},
-	coupons(obj) {
-		return myGet({
-			url: urls.coupons,
-			params:{
-				...obj
-			}
-		})
-	},
-	pay(obj) {
-		return myPost({
-			url: urls.pay,
-			data: {
-				...obj
-			},
-		})
-	},
-	user() {
-		return myGet({
-			url: urls.user
-		})
-	},
-	moneyRecord(obj) {
-		return myGet({
-			url: urls.moneyRecord,
-			params:{
-				...obj
-			}
-		})
-	},
-	demandQuotesIidCancel(obj) {
-		return myPost({
-			url: `${urls.demandQuotesIidCancel}/${obj.id}/cancel`,
-			data:{
-				...obj
-			}
-		})
-	},
-	orderIdComment(obj,id) {
-		return myPost({
-			url: `${urls.orderIdComment}/${id}/comment`,
-			data:{
-				...obj
-			}
-		})
-	},
-	orderIdCommentXq(id) {
-		return myGet({
-			url: `${urls.orderIdCommentXq}/${id}/comment`
-		})
-	},
-	feedbacksTypes() {
-		return myGet({
-			url: urls.feedbacksTypes
-		})
-	},
-	addFeedbacks(obj) {
-		return myPost({
-			url: urls.feedbacks,
-			data:{
-				...obj
-			}
-		})
-	},
-	feedbacks() {
-		return myGet({
-			url: urls.feedbacks
-		})
-	},
-	itemsItemIdComments(obj,id) {
-		return myGet({
-			url: `${urls.itemsItemIdComments}/${id}/comments`,
-			params:{
-				...obj
-			}
-		})
-	},
-	withdraw(obj) {
-		return myPost({
-			url: urls.withdraw,
-			data:{
-				...obj
-			}
-		})
-	},
-	withdrawList(obj) {
-		return myGet({
-			url: urls.withdraw,
-			params:{
-				...obj
-			}
-		})
-	},
-	scoreRecords(obj) {
-		return myGet({
-			url: urls.scoreRecords,
-			params:{
-				...obj
-			}
-		})
-	},
-	scoreToMoney() {
-		return myPost({
-			url: urls.scoreToMoney,
-		})
-	},
-	turntableItems() {
-		return myGet({
-			url: urls.turntableItems
-		})
-	},
-	turntableTurn() {
-		return myGet({
-			url: urls.turntableTurn
-		})
-	},
-	awards(obj) {
-		return myGet({
-			url: urls.awards,
-			params:{
-				...obj
-			}
-		})
-	},
-	duihuanAwards(id) {
-		return myPut({
-			url: `${urls.awards}/${id}/use`,
-		})
-	},
-	itemsList(obj) {
-		return myGet({
-			url: urls.itemsList,
-			params:{
-				...obj
-			}
-		})
-	},
-	goodsOrder(obj) {
-		return myPost({
-			url: urls.goodsOrder,
-			data:{
-				...obj
-			}
-		})
-	},
-	goodsOrderList(obj) {
-		return myGet({
-			url: urls.goodsOrder,
-			params:{
-				...obj
-			}
-		})
-	},
-	goodsOrderPay(obj) {
-		return myPost({
-			url: urls.goodsOrderPay,
-			data:{
-				...obj
-			}
-		})
-	},
-	goodsOrderId(id) {
-		return myGet({
-			url: `${urls.goodsOrder}/${id}`,
-		})
-	},
-	article(id) {
-		return myGet({
-			url: `${urls.article}/${id}`,
-		})
-	},
-	goodsOrderShouhuo(id) {
-		return myPut({
-			url: `${urls.goodsOrderShouhuo}/${id}/take-delivery`,
-		})
-	},
-	goodsStreet() {
-		return myGet({
-			url: urls.goodsStreet,
-		})
-	},
-	activity() {
-		return myGet({
-			url: urls.activity,
-		})
-	},
-	choujiangIndex(){
-		return dzpMyPost({
-			url: urls.choujiangIndex,
-		})
-	},
-	choujiangChou_jiang(){
-		return dzpMyPost({
-			url: urls.choujiangChou_jiang,
-		})
-	},
-	choujiangI_prize_list(obj){
-		return dzpMyPost({
-			url: urls.choujiangI_prize_list,
-			data:{
-				...obj
-			}
-		})
-	},
-	choujiangMianDanShopList(obj){
-		return dzpMyPost({
-			url: urls.choujiangMianDanShopList,
-			data:{
-				...obj
-			}
-		})
-	},
-	choujiangCheckShop(obj){
-		return dzpMyPost({
-			url: urls.choujiangCheckShop,
-			data:{
-				...obj
-			}
-		})
-	},
-	choujiangTreeTurntable(obj){
-		return dzpMyPost({
-			url: urls.choujiangTreeTurntable,
-			data:{
-				...obj
-			}
-		})
-	},
-	choujiangDaYeLaiWan(obj){
-		return dzpMyPost({
-			url: urls.choujiangDaYeLaiWan,
-			data:{
-				...obj
-			}
-		})
-	},
-	choujiangAddress(obj){
-		return dzpMyPost({
-			url: urls.choujiangAddress,
-			data:{
-				...obj
-			}
-		})
-	},
-	choujiangInvite_log(obj){
-		return dzpMyPost({
-			url: urls.choujiangInvite_log,
-			data:{
-				...obj
-			}
-		})
-	},
-	choujiangPrize_log(obj){
-		return dzpMyPost({
-			url: urls.choujiangPrize_log,
-			data:{
-				...obj
-			}
-		})
-	},
-	choujiangZhuLi(obj){
-		return dzpMyPost({
-			url: urls.choujiangZhuLi,
-			data:{
-				...obj
-			}
-		})
-	},
-	choujiangKuaidi(obj){
-		return dzpMyPost({
-			url: urls.choujiangKuaidi,
-			data:{
-				...obj
-			}
-		})
-	},
-	choujiangLive_prize(obj){
-		return dzpMyPost({
-			url: urls.choujiangLive_prize,
-			data:{
-				...obj
-			}
+	upload_pic(file, type) {
+		return new Promise(async (resolve, reject) => {
+			uni.uploadFile({
+				url: `${urls.baseUrl}${urls.upload_pic}`,
+				filePath: file.path,
+				header: {
+					"Content-Type": "multipart/form-data;charse=UTF-8",
+					'Authorization': `Bearer ${uni.getStorageSync('token')}`,
+				},
+				name: 'image',
+				formData: {
+					token: uni.getStorageSync('token'),
+					type,
+				},
+				success: (res) => {
+					if(JSON.parse(res.data).code == 401){
+						uni.navigateTo({
+							url: '/pages/login/index'
+						})
+					}
+					return resolve(JSON.parse(res.data))
+				}
+			})
 		})
 	},
 }

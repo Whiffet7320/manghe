@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "查看详情",
-  "enablePullDownRefresh": false,
-  "usingComponents": {
-    "u-icon": "/node-modules/uview-ui/components/u-icon/u-icon"
-  }
-}
