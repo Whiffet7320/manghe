@@ -1,6 +1,7 @@
 <template>
 	<view class="index">
 		<view class="nav1">
+			
 			<view class="nav1-flex">
 				<image class="pic" src="https://img2.baidu.com/it/u=1991026848,3099564169&fm=26&fmt=auto" mode="">
 				</image>
@@ -27,8 +28,140 @@
 					</view>
 				</view>
 			</view>
-
+			
+			
 		</view>
+		
+		<view class="uc">
+			<view class="uc-item">
+				<view class="uc-item-title">
+					<view class="uc-item-title-text">我的订单</view>
+					<image class="uc-item-title-icon" src="../../static/image/user/jiantou.png"></image>
+				</view>
+				
+				<view class="uc-item-body">
+					
+					<view class="uc-item-body-item">
+						<image class="uc-item-body-item-icon" src="../../static/image/user/daifukuan.png"></image>
+							
+						<view class="uc-item-body-item-text">红包</view>
+					</view>
+					
+					<view class="uc-item-body-item">
+						<image class="uc-item-body-item-icon" src="../../static/image/user/daifukuan.png"></image>
+							
+						<view class="uc-item-body-item-text">红包</view>
+					</view>
+					
+					<view class="uc-item-body-item">
+						<image class="uc-item-body-item-icon" src="../../static/image/user/daifukuan.png"></image>
+							
+						<view class="uc-item-body-item-text">红包</view>
+					</view>
+					
+					<view class="uc-item-body-item">
+						<image class="uc-item-body-item-icon" src="../../static/image/user/daifukuan.png"></image>
+							
+						<view class="uc-item-body-item-text">红包</view>
+					</view>
+					
+				</view>
+			
+
+				
+			</view>
+			
+			<view class="uc-item">
+				<view class="uc-item-title">
+					<view class="uc-item-title-text">其他功能</view>
+					<image class="uc-item-title-icon" src="../../static/image/user/jiantou.png"></image>
+				</view>
+				
+				<view class="uc-item-body">
+					
+					<view class="uc-item-body-item">
+						<image class="uc-item-body-item-icon" src="../../static/image/user/daifukuan.png"></image>
+							
+						<view class="uc-item-body-item-text">红包</view>
+					</view>
+					
+					<view class="uc-item-body-item">
+						<image class="uc-item-body-item-icon" src="../../static/image/user/daifukuan.png"></image>
+							
+						<view class="uc-item-body-item-text">红包</view>
+					</view>
+					
+					<view class="uc-item-body-item">
+						<image class="uc-item-body-item-icon" src="../../static/image/user/daifukuan.png"></image>
+							
+						<view class="uc-item-body-item-text">红包</view>
+					</view>
+					
+					<view class="uc-item-body-item">
+						<image class="uc-item-body-item-icon" src="../../static/image/user/daifukuan.png"></image>
+							
+						<view class="uc-item-body-item-text">红包</view>
+					</view>
+					
+					<view class="uc-item-body-item">
+						<image class="uc-item-body-item-icon" src="../../static/image/user/daifukuan.png"></image>
+							
+						<view class="uc-item-body-item-text">红包</view>
+					</view>
+					
+					<view class="uc-item-body-item">
+						<image class="uc-item-body-item-icon" src="../../static/image/user/daifukuan.png"></image>
+							
+						<view class="uc-item-body-item-text">红包</view>
+					</view>
+					
+					<view class="uc-item-body-item">
+						
+					</view>
+					
+					<view class="uc-item-body-item">
+						
+					</view>
+					
+				</view>
+			
+			
+				
+			</view>
+			
+			<view class="uc-item">
+				
+				<view class="uc-item-last">
+					
+					<view class="uc-item-last-item">
+						<image class="uc-item-last-item-icon" src="../../static/image/user/daifukuan.png"></image>
+						
+						<view class="uc-item-last-item-text">
+							电话咨询
+						</view>
+					</view>
+
+					<view class="uc-item-last-item">
+						<image class="uc-item-last-item-icon" src="../../static/image/user/daifukuan.png"></image>
+						
+						<view class="uc-item-last-item-text">
+							专属客服
+						</view>
+					</view>					
+					
+				</view>
+			
+			
+				
+			</view>
+			
+			<view class="form-button">
+				<view>退出登录</view>
+			</view>
+			
+		</view>
+		
+		
 	</view>
 </template>
 
@@ -63,7 +196,81 @@
 	}
 </style>
 <style lang="scss" scoped>
-	.index {}
+	.form-button{
+		width: 522rpx;
+		height: 80rpx;
+		background: #BD9E81;
+		opacity: 1;
+		border-radius: 10rpx;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin: 88rpx auto 0 auto;
+		color: #FFFFFF;
+
+		
+	}
+	.uc{
+		display: flex;
+		flex-direction: column;
+		margin:0 24rpx;
+		margin-top: -28rpx;
+		
+		.uc-item:not(:first-child){
+			margin-top: 28rpx;
+		}
+		.uc-item{
+			color:#BD9E81;
+			background-color: #FFFFFF;
+			border-radius: 10rpx;
+			.uc-item-title{
+				margin-top:28rpx;
+				margin-left: 28rpx;
+				margin-right: 28rpx;
+				display: flex;
+				justify-content: space-between;
+				.uc-item-title-icon{
+					width: 12rpx;
+					height: 24rpx;
+				}
+
+			}
+			
+			.uc-item-body{
+				display: flex;
+				justify-content: space-around;
+
+				margin-bottom:28rpx;
+				flex-wrap:wrap;
+				.uc-item-body-item{
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					width: 25%;
+					margin-top:28rpx;
+					.uc-item-body-item-icon{
+						width: 46rpx;
+						height: 46rpx;
+					}
+				}
+			}
+			
+			.uc-item-last-item{
+				height: 96rpx;
+				display: flex;
+				align-items: center;
+				
+				.uc-item-last-item-icon{
+					width: 26rpx;
+					height: 34rpx;
+					margin-left: 42rpx;
+				}
+				.uc-item-last-item-text{
+					margin-left: 18rpx;
+				}
+			}
+		}
+	}
 
 	.nav1 {
 		width: 750rpx;
