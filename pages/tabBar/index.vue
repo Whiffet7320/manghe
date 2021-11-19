@@ -21,7 +21,7 @@
 				<view class="txt2">面部抗衰</view>
 			</view>
 			<view class="tit3">
-				<u-swiper height='320rpx' :list="bannerList"></u-swiper>
+				<u-swiper height='320' :list="bannerList"></u-swiper>
 			</view>
 		</view>
 		<view class="nav2">

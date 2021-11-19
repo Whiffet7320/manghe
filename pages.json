@@ -62,19 +62,16 @@
 			}
 		}
 	],
-	"subPackages": [
-	// 	{
-	// 	"root": "pages/dingdan/xuanzeshifu",
-	// 	"pages": [{
-	// 		"path": "xuanzeshifu",
-	// 		"style": {
-	// 			// "navigationStyle": "custom",
-	// 			"navigationBarTitleText": "选择师傅",
-	// 			"enablePullDownRefresh": false
-	// 		}
-	// 	}]
-	// },
-	 ],
+	"subPackages": [{
+		"root": "pages/index/search",
+		"pages": [{
+			"path": "xiangqin",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTextStyle": "black"
+			}
+		}]
+	}],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
