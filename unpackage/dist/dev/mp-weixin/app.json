@@ -4,7 +4,9 @@
     "pages/tabBar/yimeixiangmu",
     "pages/tabBar/yanxuanshangcheng",
     "pages/tabBar/user",
-    "pages/login/index"
+    "pages/login/index",
+    "pages/search/search",
+    "pages/search/searchResult"
   ],
   "subPackages": [],
   "window": {
@@ -14,7 +16,7 @@
     "backgroundColor": "#282828"
   },
   "tabBar": {
-    "color": "#000000",
+    "color": "#B4B4B4",
     "selectedColor": "#BD9E81",
     "backgroundColor": "#FFFFFF",
     "borderStyle": "black",

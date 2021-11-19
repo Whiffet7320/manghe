@@ -42,6 +42,24 @@
 				"navigationBarBackgroundColor": "#FECF05",
 				"navigationBarTextStyle": "black"
 			}
+		},
+		{
+			"path": "pages/search/search",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "搜索",
+				"navigationBarBackgroundColor": "#FECF05",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
+			"path": "pages/search/searchResult",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "搜索",
+				"navigationBarBackgroundColor": "#FECF05",
+				"navigationBarTextStyle": "black"
+			}
 		}
 	],
 	"subPackages": [
@@ -64,7 +82,7 @@
 		"backgroundColor": "#282828"
 	},
 	"tabBar": {
-		"color": "#000000",
+		"color": "#B4B4B4",
 		"selectedColor": "#BD9E81",
 		"backgroundColor": "#FFFFFF",
 		"borderStyle": "black",

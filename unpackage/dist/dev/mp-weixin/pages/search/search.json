@@ -1,0 +1,10 @@
+{
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "搜索",
+  "navigationBarBackgroundColor": "#FECF05",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+    "u-icon": "/node-modules/uview-ui/components/u-icon/u-icon",
+    "u-input": "/node-modules/uview-ui/components/u-input/u-input"
+  }
+}
