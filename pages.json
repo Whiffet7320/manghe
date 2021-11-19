@@ -74,6 +74,17 @@
 	// 		}
 	// 	}]
 	// },
+		{
+		"root": "pages/users",
+		"pages": [{
+			"path": "order",
+			"style": {
+				"navigationBarTitleText": "我的订单",
+				"navigationBarBackgroundColor": "#FECF05",
+				"enablePullDownRefresh": false
+			}
+		}]
+		}
 	 ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
