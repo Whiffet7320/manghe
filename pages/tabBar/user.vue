@@ -34,35 +34,36 @@
 		
 		<view class="uc">
 			<view class="uc-item">
-				<view class="uc-item-title">
+				
+				<view class="uc-item-title" >
 					<view class="uc-item-title-text">我的订单</view>
 					<image class="uc-item-title-icon" src="../../static/image/user/jiantou.png"></image>
 				</view>
 				
 				<view class="uc-item-body">
 					
-					<view class="uc-item-body-item">
+					<view class="uc-item-body-item" @click='gotoOrder'>
 						<image class="uc-item-body-item-icon" src="../../static/image/user/daifukuan.png"></image>
 							
-						<view class="uc-item-body-item-text">红包</view>
+						<view class="uc-item-body-item-text">待付款</view>
 					</view>
 					
 					<view class="uc-item-body-item">
-						<image class="uc-item-body-item-icon" src="../../static/image/user/daifukuan.png"></image>
+						<image class="uc-item-body-item-icon" src="../../static/image/user/daifuweikuan.png"></image>
 							
-						<view class="uc-item-body-item-text">红包</view>
+						<view class="uc-item-body-item-text">待付尾款</view>
 					</view>
 					
 					<view class="uc-item-body-item">
-						<image class="uc-item-body-item-icon" src="../../static/image/user/daifukuan.png"></image>
+						<image class="uc-item-body-item-icon" src="../../static/image/user/yiwancheng.png"></image>
 							
-						<view class="uc-item-body-item-text">红包</view>
+						<view class="uc-item-body-item-text">已完成</view>
 					</view>
 					
 					<view class="uc-item-body-item">
-						<image class="uc-item-body-item-icon" src="../../static/image/user/daifukuan.png"></image>
+						<image class="uc-item-body-item-icon" src="../../static/image/user/yiguanbi.png"></image>
 							
-						<view class="uc-item-body-item-text">红包</view>
+						<view class="uc-item-body-item-text">已关闭</view>
 					</view>
 					
 				</view>
@@ -80,39 +81,39 @@
 				<view class="uc-item-body">
 					
 					<view class="uc-item-body-item">
-						<image class="uc-item-body-item-icon" src="../../static/image/user/daifukuan.png"></image>
+						<image class="uc-item-body-item-icon" src="../../static/image/user/dizhiguanli.png"></image>
 							
-						<view class="uc-item-body-item-text">红包</view>
+						<view class="uc-item-body-item-text">地址管理</view>
 					</view>
 					
 					<view class="uc-item-body-item">
-						<image class="uc-item-body-item-icon" src="../../static/image/user/daifukuan.png"></image>
+						<image class="uc-item-body-item-icon" src="../../static/image/user/fenxiangma.png"></image>
 							
-						<view class="uc-item-body-item-text">红包</view>
+						<view class="uc-item-body-item-text">分享码</view>
 					</view>
 					
 					<view class="uc-item-body-item">
-						<image class="uc-item-body-item-icon" src="../../static/image/user/daifukuan.png"></image>
+						<image class="uc-item-body-item-icon" src="../../static/image/user/wodeyuyue.png"></image>
 							
-						<view class="uc-item-body-item-text">红包</view>
+						<view class="uc-item-body-item-text">我的预约</view>
 					</view>
 					
 					<view class="uc-item-body-item">
-						<image class="uc-item-body-item-icon" src="../../static/image/user/daifukuan.png"></image>
+						<image class="uc-item-body-item-icon" src="../../static/image/user/wodejifen.png"></image>
 							
-						<view class="uc-item-body-item-text">红包</view>
+						<view class="uc-item-body-item-text">我的积分</view>
 					</view>
 					
 					<view class="uc-item-body-item">
-						<image class="uc-item-body-item-icon" src="../../static/image/user/daifukuan.png"></image>
+						<image class="uc-item-body-item-icon" src="../../static/image/user/jifendingdan.png"></image>
 							
-						<view class="uc-item-body-item-text">红包</view>
+						<view class="uc-item-body-item-text">积分订单</view>
 					</view>
 					
 					<view class="uc-item-body-item">
-						<image class="uc-item-body-item-icon" src="../../static/image/user/daifukuan.png"></image>
+						<image class="uc-item-body-item-icon" src="../../static/image/user/wodetuandui.png"></image>
 							
-						<view class="uc-item-body-item-text">红包</view>
+						<view class="uc-item-body-item-text">我的团队</view>
 					</view>
 					
 					<view class="uc-item-body-item">
@@ -134,7 +135,7 @@
 				<view class="uc-item-last">
 					
 					<view class="uc-item-last-item">
-						<image class="uc-item-last-item-icon" src="../../static/image/user/daifukuan.png"></image>
+						<image class="uc-item-last-item-icon" src="../../static/image/user/dianhua.png"></image>
 						
 						<view class="uc-item-last-item-text">
 							电话咨询
@@ -142,7 +143,7 @@
 					</view>
 
 					<view class="uc-item-last-item">
-						<image class="uc-item-last-item-icon" src="../../static/image/user/daifukuan.png"></image>
+						<image class="uc-item-last-item-icon" src="../../static/image/user/kefu.png"></image>
 						
 						<view class="uc-item-last-item-text">
 							专属客服
@@ -185,6 +186,12 @@
 					}
 				})
 			},
+			gotoOrder(){
+				console.log(1111)
+				uni.navigateTo({
+					url:"/pages/users/order"
+				})
+			}
 		}
 	}
 </script>

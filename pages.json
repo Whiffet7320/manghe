@@ -62,6 +62,7 @@
 			}
 		}
 	],
+<<<<<<< HEAD
 	"subPackages": [{
 		"root": "pages/index/search",
 		"pages": [{
@@ -72,6 +73,32 @@
 			}
 		}]
 	}],
+=======
+	"subPackages": [
+	// 	{
+	// 	"root": "pages/dingdan/xuanzeshifu",
+	// 	"pages": [{
+	// 		"path": "xuanzeshifu",
+	// 		"style": {
+	// 			// "navigationStyle": "custom",
+	// 			"navigationBarTitleText": "选择师傅",
+	// 			"enablePullDownRefresh": false
+	// 		}
+	// 	}]
+	// },
+		{
+		"root": "pages/users",
+		"pages": [{
+			"path": "order",
+			"style": {
+				"navigationBarTitleText": "我的订单",
+				"navigationBarBackgroundColor": "#FECF05",
+				"enablePullDownRefresh": false
+			}
+		}]
+		}
+	 ],
+>>>>>>> temp
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",

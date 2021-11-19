@@ -1,0 +1,128 @@
+
+page {
+	background: #F7F8FA;
+
+	color:#707070
+}
+
+@charset "UTF-8";
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+.oc-bar.data-v-1234cdc4 {
+  height: 80rpx;
+  display: flex;
+  justify-content: space-around;
+  background-color: #FFFFFF;
+}
+.oc-bar .oc-bar-text.data-v-1234cdc4 {
+  margin: 28rpx 0;
+}
+.oc-body .oc-body-item.data-v-1234cdc4 {
+  margin-top: 25rpx;
+  background-color: #FFFFFF;
+  padding-left: 24rpx;
+  padding-right: 24rpx;
+}
+.oc-body .oc-body-item .oc-body-item-top.data-v-1234cdc4 {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 2rpx solid #F7F8FA;
+  padding: 28rpx 0;
+  align-items: center;
+}
+.oc-body .oc-body-item .oc-body-item-top .oc-body-item-top-num.data-v-1234cdc4 {
+  width: 42rpx;
+  height: 42rpx;
+  background-color: #E48879;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10rpx;
+  color: #FFFFFF;
+}
+.oc-body .oc-body-item .oc-body-item-top .oc-body-item-top-maohao.data-v-1234cdc4 {
+  width: 42rpx;
+  height: 42rpx;
+  background-color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.oc-body .oc-body-item .oc-body-item-center.data-v-1234cdc4 {
+  padding: 28rpx 0;
+  display: flex;
+  border-bottom: 2rpx solid #F7F8FA;
+}
+.oc-body .oc-body-item .oc-body-item-center .oc-body-item-center-left.data-v-1234cdc4 {
+  width: 186rpx;
+  height: 186rpx;
+}
+.oc-body .oc-body-item .oc-body-item-center .oc-body-item-center-right.data-v-1234cdc4 {
+  margin-left: 24rpx;
+  width: 530rpx;
+  height: 186rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.oc-body .oc-body-item .oc-body-item-center .oc-body-item-center-right .oc-body-item-center-right-top.data-v-1234cdc4 {
+  display: flex;
+  justify-content: space-between;
+}
+.oc-body .oc-body-item .oc-body-item-bottom.data-v-1234cdc4 {
+  display: flex;
+  padding: 28rpx 0;
+}
+.oc-body .oc-body-item .oc-body-item-bottom .oc-body-item-bottom-fuzhi.data-v-1234cdc4 {
+  color: #BD9E81;
+  margin-left: 20rpx;
+}
+.oc-body .oc-body-item .oc-body-item-button.data-v-1234cdc4 {
+  display: flex;
+  padding-bottom: 28rpx;
+  flex-direction: row-reverse;
+}
+.oc-body .oc-body-item .oc-body-item-button .cancel-button.data-v-1234cdc4 {
+  width: 152rpx;
+  height: 56rpx;
+  border: 4rpx solid #F7F8FA;
+  border-radius: 10rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.oc-body .oc-body-item .oc-body-item-button .confirm-button.data-v-1234cdc4 {
+  width: 152rpx;
+  height: 56rpx;
+  background-color: #BD9E81;
+  margin-left: 20rpx;
+  border-radius: 10rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+}
+

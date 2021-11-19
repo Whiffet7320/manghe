@@ -31,9 +31,15 @@
           "scene": null
         },
         {
+<<<<<<< HEAD
           "name": "pages/index/search/xiangqin",
           "pathName": "pages/index/search/xiangqin",
           "query": "title=肋骨鼻综合(活动特价)",
+=======
+          "name": "pages/users/order",
+          "pathName": "pages/users/order",
+          "query": "",
+>>>>>>> temp
           "scene": null
         }
       ]
