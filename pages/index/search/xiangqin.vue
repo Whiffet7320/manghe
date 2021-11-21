@@ -116,7 +116,7 @@
 				<image src="/static/image/lujin2228.png" class="pic2" mode=""></image>
 				<view class="txt">收藏</view>
 			</view>
-			<view class="btn">立即购买</view>
+			<view @click="toShouyintai" class="btn">立即购买</view>
 		</view>
 	</view>
 </template>
@@ -186,6 +186,11 @@
 						}
 					}
 				});
+			},
+			toShouyintai(){
+				uni.navigateTo({
+					url:'/pages/index/search/shouyintai'
+				})
 			},
 			// tabs通知swiper切换
 			tabsChange(index) {

@@ -1,5 +1,4 @@
 {
-  "setting": {},
   "condition": {
     "plugin": {
       "list": []
@@ -13,33 +12,9 @@
     "miniprogram": {
       "list": [
         {
-          "name": "pages/tabBar/user",
-          "pathName": "pages/tabBar/user",
-          "query": "",
-          "scene": null
-        },
-        {
-          "name": "pages/tabBar/index",
-          "pathName": "pages/tabBar/index",
-          "query": "",
-          "scene": null
-        },
-        {
-          "name": "pages/search/searchResult",
-          "pathName": "pages/search/searchResult",
-          "query": "",
-          "scene": null
-        },
-        {
-<<<<<<< HEAD
           "name": "pages/index/search/xiangqin",
           "pathName": "pages/index/search/xiangqin",
-          "query": "title=肋骨鼻综合(活动特价)",
-=======
-          "name": "pages/users/order",
-          "pathName": "pages/users/order",
           "query": "",
->>>>>>> temp
           "scene": null
         }
       ]

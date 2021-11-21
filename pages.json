@@ -62,7 +62,6 @@
 			}
 		}
 	],
-<<<<<<< HEAD
 	"subPackages": [{
 		"root": "pages/index/search",
 		"pages": [{
@@ -71,22 +70,15 @@
 				"navigationStyle": "custom",
 				"navigationBarTextStyle": "black"
 			}
+		},{
+			"path": "shouyintai",
+			"style": {
+				"navigationBarTitleText": "收银台",
+				"navigationBarTextStyle": "black",
+				"navigationBarBackgroundColor": "#FECF05"
+			}
 		}]
-	}],
-=======
-	"subPackages": [
-	// 	{
-	// 	"root": "pages/dingdan/xuanzeshifu",
-	// 	"pages": [{
-	// 		"path": "xuanzeshifu",
-	// 		"style": {
-	// 			// "navigationStyle": "custom",
-	// 			"navigationBarTitleText": "选择师傅",
-	// 			"enablePullDownRefresh": false
-	// 		}
-	// 	}]
-	// },
-		{
+	} ,{
 		"root": "pages/users",
 		"pages": [{
 			"path": "order",
@@ -96,9 +88,7 @@
 				"enablePullDownRefresh": false
 			}
 		}]
-		}
-	 ],
->>>>>>> temp
+	}],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",

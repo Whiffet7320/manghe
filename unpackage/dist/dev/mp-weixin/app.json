@@ -10,15 +10,16 @@
   ],
   "subPackages": [
     {
-<<<<<<< HEAD
       "root": "pages/index/search",
       "pages": [
-        "xiangqin"
-=======
+        "xiangqin",
+        "shouyintai"
+      ]
+    },
+    {
       "root": "pages/users",
       "pages": [
         "order"
->>>>>>> temp
       ]
     }
   ],
