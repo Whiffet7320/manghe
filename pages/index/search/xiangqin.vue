@@ -102,6 +102,7 @@
 				</swiper-item>
 			</swiper>
 		</view>
+		
 		<view class="footer1">
 			<image src="/static/image/zu1840.png" class="kefu" mode=""></image>
 			<view class="txt1">预付款 ¥2000</view>
@@ -116,7 +117,7 @@
 				<image src="/static/image/lujin2228.png" class="pic2" mode=""></image>
 				<view class="txt">收藏</view>
 			</view>
-			<view class="btn">立即购买</view>
+			<view @click="toShouyintai" class="btn">立即购买</view>
 		</view>
 	</view>
 </template>
@@ -186,6 +187,14 @@
 						}
 					}
 				});
+			},
+			toShouyintai(){
+				uni.navigateTo({
+					url:'/pages/index/search/querendingdan'
+				})
+				// uni.navigateTo({
+				// 	url:'/pages/index/search/shouyintai'
+				// })
 			},
 			// tabs通知swiper切换
 			tabsChange(index) {
@@ -489,6 +498,7 @@
 			}
 		}
 	}
+	
 	.footer1{
 		position: fixed;
 		bottom: 140rpx;

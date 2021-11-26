@@ -68,20 +68,117 @@
 			"path": "xiangqin",
 			"style": {
 				"navigationStyle": "custom",
-				"enablePullDownRefresh": false,
 				"navigationBarTextStyle": "black"
+			}
+		}, {
+			"path": "shouyintai",
+			"style": {
+				"navigationBarTitleText": "收银台",
+				"navigationBarTextStyle": "black"
+				// "navigationBarBackgroundColor": "#FECF05"
+			}
+		}, {
+			"path": "querendingdan",
+			"style": {
+				"navigationBarTitleText": "确认订单",
+				"navigationBarTextStyle": "black",
+				"navigationBarBackgroundColor": "#FECF05"
 			}
 		}]
 	}, {
-		"root": "pages/users",
+		"root": "pages/index/zhuanjiatuandui",
+		"pages": [{
+			"path": "zhuanjiatuandui",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTextStyle": "black"
+				// "navigationBarBackgroundColor": "#FECF05"
+			}
+		}]
+	}, {
+		"root": "pages/yanxuanshangcheng/jifenchanpin",
+		"pages": [{
+			"path": "liebiao",
+			"style": {
+				// "navigationStyle": "custom",
+				"navigationBarTextStyle": "black",
+				"navigationBarTitleText": "积分产品列表"
+				// "navigationBarBackgroundColor": "#FECF05"
+			}
+		}, {
+			"path": "chanpin",
+			"style": {
+				// "navigationStyle": "custom",
+				"navigationBarTextStyle": "black",
+				"navigationBarTitleText": "积分产品"
+				// "navigationBarBackgroundColor": "#FECF05"
+			}
+		}]
+	}, {
+		"root": "pages/yanxuanshangcheng/dijiapintuan",
+		"pages": [{
+			"path": "dijiapintuan",
+			"style": {
+				// "navigationStyle": "custom",
+				"navigationBarTextStyle": "black"
+				// "navigationBarTitleText": "积分产品列表"
+				// "navigationBarBackgroundColor": "#FECF05"
+			}
+		}]
+	}, {
+		"root": "pages/yanxuanshangcheng/rexiaoxiangqin",
+		"pages": [{
+			"path": "rexiaoxiangqin",
+			"style": {
+				// "navigationStyle": "custom",
+				"navigationBarTextStyle": "black"
+				// "navigationBarTitleText": "积分产品列表"
+				// "navigationBarBackgroundColor": "#FECF05"
+			}
+		}]
+	}, {
+		"root": "pages/index/xiufu",
+		"pages": [{
+			"path": "xiufu",
+			"style": {
+				// "navigationStyle": "custom",
+				"navigationBarTextStyle": "black"
+				// "navigationBarBackgroundColor": "#FECF05"
+			}
+		}]
+	}, {
+		"root": "pages/users/order",
 		"pages": [{
 			"path": "order",
 			"style": {
 				"navigationBarTitleText": "我的订单",
-				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FECF05",
+				"enablePullDownRefresh": false
+			}
+		},{
+			"path": "querendingdan",
+			"style": {
+				"navigationBarTitleText": "确认订单",
+				// "navigationBarBackgroundColor": "#FECF05",
+				"enablePullDownRefresh": false
+			}
+		},{
+			"path": "tijiaodingdan",
+			"style": {
+				"navigationBarTitleText": "提交订单",
+				// "navigationBarBackgroundColor": "#FECF05",
+				"enablePullDownRefresh": false
+			}
+		}]
+	},{
+		"root": "pages/users/address",
+		"pages": [{
+			"path": "xinjiandizhi",
+			"style": {
+				// "navigationStyle": "custom",
+				"navigationBarTitleText": "新建收货地址",
 				"navigationBarTextStyle": "black",
 				"navigationBarBackgroundColor": "#FECF05"
-				
 			}
 		}]
 	}],

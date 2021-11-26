@@ -1,0 +1,1 @@
+{"version":3,"sources":["uni-app:///main.js"],"names":["createPage","Page"],"mappings":";;;;wEAAA,qBACA,sBACA,0D,mDACAA,EAAWC,a","file":"pages/users/address/xianjiandizhi.js","sourcesContent":["import 'uni-pages';\nimport Vue from 'vue'\nimport Page from './pages/users/address/xianjiandizhi.vue'\ncreatePage(Page)"],"sourceRoot":""}

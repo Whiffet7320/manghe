@@ -80,19 +80,19 @@
 				<view class="t-txt">修复专区</view>
 			</view>
 			<view class="items">
-				<view class="item">
+				<view class="item" @click="toXiufu(1)">
 					<image src="/static/image/mcz193.png" class="pic" mode=""></image>
 					<view class="txt">鼻修复</view>
 				</view>
-				<view class="item">
+				<view class="item" @click="toXiufu(2)">
 					<image src="/static/image/mcz192.png" class="pic" mode=""></image>
 					<view class="txt">眼修复</view>
 				</view>
-				<view class="item">
+				<view class="item" @click="toXiufu(3)">
 					<image src="/static/image/mcz194.png" class="pic" mode=""></image>
 					<view class="txt">胸修复</view>
 				</view>
-				<view class="item">
+				<view class="item" @click="toXiufu(4)">
 					<image src="/static/image/mcz195.png" class="pic" mode=""></image>
 					<view class="txt">其他修复</view>
 				</view>
@@ -105,7 +105,7 @@
 			</view>
 			<scroll-view class="scroll-view" scroll-x style="width: 100%;white-space:nowrap;">
 				<view class="itemss">
-					<view class="item" v-for="item in 3">
+					<view class="item" @click="toZhuanjiatuandui" v-for="item in 3">
 						<image src="/static/image/zzks196.png" class="pic" mode=""></image>
 						<view class="right">
 							<view class="txt1">
@@ -203,6 +203,16 @@
 			this.getCurrentSwiperHeight('.nav5Items')
 		},
 		methods: {
+			toZhuanjiatuandui(){
+				uni.navigateTo({
+					url:'/pages/index/zhuanjiatuandui/zhuanjiatuandui'
+				})
+			},
+			toXiufu(i){
+				uni.navigateTo({
+					url:`/pages/index/xiufu/xiufu?index=${i}`
+				})
+			},
 			toSearch(){
 				uni.navigateTo({
 					url:'/pages/search/search'
@@ -320,8 +330,7 @@
 
 	.nav2 {
 		background: #FFFFFF;
-		margin-top: 232rpx;
-		padding: 0 38rpx;
+		padding: 232rpx 38rpx 0 38rpx;
 
 		.items {
 			display: flex;
@@ -564,4 +573,5 @@
 			}
 		}
 	}
+
 </style>

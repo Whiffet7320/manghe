@@ -1,6 +1,5 @@
 {
   "navigationStyle": "custom",
-  "enablePullDownRefresh": false,
   "navigationBarTextStyle": "black",
   "usingComponents": {
     "u-navbar": "/node-modules/uview-ui/components/u-navbar/u-navbar",

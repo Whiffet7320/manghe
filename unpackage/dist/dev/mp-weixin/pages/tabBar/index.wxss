@@ -99,8 +99,7 @@ page {
 }
 .nav2.data-v-40e5343a {
   background: #FFFFFF;
-  margin-top: 232rpx;
-  padding: 0 38rpx;
+  padding: 232rpx 38rpx 0 38rpx;
 }
 .nav2 .items.data-v-40e5343a {
   display: flex;

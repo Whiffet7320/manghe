@@ -13,14 +13,32 @@
     "miniprogram": {
       "list": [
         {
-          "name": "pages/tabBar/user",
-          "pathName": "pages/tabBar/user",
+          "name": "pages/index/search/xiangqin",
+          "pathName": "pages/index/search/xiangqin",
           "query": "",
           "scene": null
         },
         {
-          "name": "pages/tabBar/index",
-          "pathName": "pages/tabBar/index",
+          "name": "pages/index/search/shouyintai",
+          "pathName": "pages/index/search/shouyintai",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "确认订单",
+          "pathName": "pages/index/search/querendingdan",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "专家团队",
+          "pathName": "pages/index/zhuanjiatuandui/zhuanjiatuandui",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/tabBar/yanxuanshangcheng",
+          "pathName": "pages/tabBar/yanxuanshangcheng",
           "query": "",
           "scene": null
         },
@@ -31,15 +49,33 @@
           "scene": null
         },
         {
-<<<<<<< HEAD
-          "name": "pages/index/search/xiangqin",
-          "pathName": "pages/index/search/xiangqin",
-          "query": "title=肋骨鼻综合(活动特价)",
-=======
-          "name": "pages/users/order",
-          "pathName": "pages/users/order",
+          "name": "pages/yanxuanshangcheng/dijiapintuan/dijiapintuan",
+          "pathName": "pages/yanxuanshangcheng/dijiapintuan/dijiapintuan",
           "query": "",
->>>>>>> temp
+          "scene": null
+        },
+        {
+          "name": "pages/yanxuanshangcheng/jifenchanpin/chanpin",
+          "pathName": "pages/yanxuanshangcheng/jifenchanpin/chanpin",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "热销详情",
+          "pathName": "pages/yanxuanshangcheng/rexiaoxiangqin/rexiaoxiangqin",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "新建地址",
+          "pathName": "pages/users/address/xinjiandizhi",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "确认订单",
+          "pathName": "pages/users/order/querendingdan",
+          "query": "",
           "scene": null
         }
       ]

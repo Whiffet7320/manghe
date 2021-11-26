@@ -12,13 +12,54 @@
     {
       "root": "pages/index/search",
       "pages": [
-        "xiangqin"
+        "xiangqin",
+        "shouyintai",
+        "querendingdan"
       ]
     },
     {
-      "root": "pages/users",
+      "root": "pages/index/zhuanjiatuandui",
       "pages": [
-        "order"
+        "zhuanjiatuandui"
+      ]
+    },
+    {
+      "root": "pages/yanxuanshangcheng/jifenchanpin",
+      "pages": [
+        "liebiao",
+        "chanpin"
+      ]
+    },
+    {
+      "root": "pages/yanxuanshangcheng/dijiapintuan",
+      "pages": [
+        "dijiapintuan"
+      ]
+    },
+    {
+      "root": "pages/yanxuanshangcheng/rexiaoxiangqin",
+      "pages": [
+        "rexiaoxiangqin"
+      ]
+    },
+    {
+      "root": "pages/index/xiufu",
+      "pages": [
+        "xiufu"
+      ]
+    },
+    {
+      "root": "pages/users/order",
+      "pages": [
+        "order",
+        "querendingdan",
+        "tijiaodingdan"
+      ]
+    },
+    {
+      "root": "pages/users/address",
+      "pages": [
+        "xinjiandizhi"
       ]
     }
   ],
