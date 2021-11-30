@@ -2,5 +2,8 @@
   "navigationBarTitleText": "我的",
   "navigationBarBackgroundColor": "#FECF05",
   "navigationBarTextStyle": "black",
-  "usingComponents": {}
+  "usingComponents": {
+    "u-gap": "/node-modules/uview-ui/components/u-gap/u-gap",
+    "u-action-sheet": "/node-modules/uview-ui/components/u-action-sheet/u-action-sheet"
+  }
 }

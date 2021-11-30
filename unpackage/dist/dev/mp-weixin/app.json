@@ -6,7 +6,8 @@
     "pages/tabBar/user",
     "pages/login/index",
     "pages/search/search",
-    "pages/search/searchResult"
+    "pages/search/searchResult",
+    "pages/cart/index"
   ],
   "subPackages": [
     {
@@ -57,8 +58,62 @@
       ]
     },
     {
+      "root": "pages/users/follow",
+      "pages": [
+        "index"
+      ]
+    },
+    {
+      "root": "pages/users/subscribe",
+      "pages": [
+        "index"
+      ]
+    },
+    {
+      "root": "pages/users/collect",
+      "pages": [
+        "index"
+      ]
+    },
+    {
+      "root": "pages/users/share",
+      "pages": [
+        "index"
+      ]
+    },
+    {
+      "root": "pages/users/integral",
+      "pages": [
+        "index",
+        "order"
+      ]
+    },
+    {
+      "root": "pages/users/team",
+      "pages": [
+        "index",
+        "list"
+      ]
+    },
+    {
+      "root": "pages/users/comment",
+      "pages": [
+        "index",
+        "detail"
+      ]
+    },
+    {
+      "root": "pages/users/info",
+      "pages": [
+        "index",
+        "bind",
+        "hbind"
+      ]
+    },
+    {
       "root": "pages/users/address",
       "pages": [
+        "index",
         "xinjiandizhi"
       ]
     }
