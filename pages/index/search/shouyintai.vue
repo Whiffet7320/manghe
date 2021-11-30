@@ -27,7 +27,7 @@
 			<u-icon name="checkmark-circle-fill" color="#BD9E81" size="40"></u-icon>
 		</view>
 		<view class="footer">
-			<view class="btn">专家会诊团预约</view>
+			<view class="btn">支付¥2000.00</view>
 		</view>
 	</view>
 </template>

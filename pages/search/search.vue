@@ -10,7 +10,7 @@
 		</view>
 		<view class="tit1">搜索发现</view>
 		<view class="items1">
-			<view class="item">小眼综合</view>
+			<view @click="toSearchResult" class="item">小眼综合</view>
 			<view class="item">胸部整形</view>
 			<view class="item">面部抗衰</view>
 			<view class="item">私密</view>
@@ -39,6 +39,11 @@
 			toBack(){
 				uni.navigateBack({
 					delta:1
+				})
+			},
+			toSearchResult(){
+				uni.navigateTo({
+					url:'/pages/search/searchResult'
 				})
 			},
 		}

@@ -77,6 +77,12 @@
           "pathName": "pages/users/order/querendingdan",
           "query": "",
           "scene": null
+        },
+        {
+          "name": "提交订单",
+          "pathName": "pages/users/order/tijiaodingdan",
+          "query": "",
+          "scene": null
         }
       ]
     }

@@ -108,11 +108,11 @@
 			},
 			confirmTime(e) {
 				this.startTime =
-					`${this.multiSelector[0][e[0]].substring(0, this.multiSelector[0][e[0]].length - 4)} ${this.multiSelector[1][e[1]].substring(0,5)}:00`;
+					`${this.multiSelector[0][e[0]].substring(0, this.multiSelector[0][e[0]].length - 4)} ${this.multiSelector[1][e[1]].substring(0,5)}`;
 				this.endTime =
 					`${this.multiSelector[0][e[0]].substring(0, this.multiSelector[0][e[0]].length - 4)} ${this.multiSelector[1][e[1]].substring(6,this.multiSelector[1][e[1]].length)}:00`;
 				this.showTimeVal = `${this.multiSelector[0][e[0]]} ${this.multiSelector[1][e[1]]}`
-				console.log(this.startTime, this.endTime);
+				console.log(this.startTime);
 			},
 			getDay(day) {
 				var today = new Date();

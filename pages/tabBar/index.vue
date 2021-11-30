@@ -15,7 +15,7 @@
 					<view class="txt1-1">热搜榜</view>
 					<image src="/static/image/lujin1732.png" class="pic" mode=""></image>
 				</view>
-				<view class="txt2">肋骨鼻综合</view>
+				<view @click="toSearchResult()" class="txt2">肋骨鼻综合</view>
 				<view class="txt2">小眼综合</view>
 				<view class="txt2">胸部整形</view>
 				<view class="txt2">面部抗衰</view>
@@ -135,7 +135,7 @@
 							<!-- {{item.name}} -->
 							<!-- 热销 -->
 							<template v-if="swiperCurrent == 0">
-								<view class="item" v-for="item in 3">
+								<view class="item" @click="toXianqgin" v-for="item in 3">
 									<image src="https://img1.baidu.com/it/u=1217556490,2247340394&fm=26&fmt=auto" class="pic" mode=""></image>
 									<view class="txt">超光子美白嫩肤一次（活动 特价）</view>
 								</view>
@@ -203,6 +203,16 @@
 			this.getCurrentSwiperHeight('.nav5Items')
 		},
 		methods: {
+			toSearchResult(){
+				uni.navigateTo({
+					url:'/pages/search/searchResult'
+				})
+			},
+			toXianqgin(){
+				uni.navigateTo({
+					url:'/pages/index/search/xiangqin'
+				})
+			},
 			toZhuanjiatuandui(){
 				uni.navigateTo({
 					url:'/pages/index/zhuanjiatuandui/zhuanjiatuandui'

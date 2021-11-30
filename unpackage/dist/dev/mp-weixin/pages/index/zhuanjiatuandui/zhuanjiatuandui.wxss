@@ -230,6 +230,9 @@ page {
   right: 40rpx;
   bottom: 100rpx;
 }
+.fixedBtns .btn1.data-v-5d168003::after {
+  border: none;
+}
 .fixedBtns .btn1.data-v-5d168003 {
   width: 168rpx;
   height: 92rpx;

@@ -122,7 +122,7 @@
 			<view @click="toShouyintai" class="btn">立即购买</view>
 		</view> -->
 		<view class="footer">
-			<view class="btn">我要开团</view>
+			<view @click="toPintuan" class="btn">我要开团</view>
 		</view>
 	</view>
 </template>
@@ -177,6 +177,11 @@
 			this.getCurrentSwiperHeight('.nav5Items')
 		},
 		methods: {
+			toPintuan(){
+				uni.navigateTo({
+					url:'/pages/users/order/tijiaodingdan'
+				})
+			},
 			toSeeImg(i, imgArr) {
 				this.isOnShow = false;
 				uni.previewImage({

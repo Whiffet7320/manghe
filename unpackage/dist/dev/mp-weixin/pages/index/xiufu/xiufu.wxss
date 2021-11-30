@@ -50,6 +50,9 @@ page {
   background: #FFFFFF;
   box-shadow: 0rpx 8rpx 28rpx rgba(166, 179, 194, 0.3);
 }
+.footer .btn.data-v-06af0bf1::after {
+  border: none;
+}
 .footer .btn.data-v-06af0bf1 {
   width: 682rpx;
   height: 84rpx;
