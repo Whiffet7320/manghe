@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "个人信息",
+  "navigationBarTextStyle": "black",
+  "navigationBarBackgroundColor": "#FECF05",
+  "usingComponents": {
+    "u-action-sheet": "/node-modules/uview-ui/components/u-action-sheet/u-action-sheet",
+    "u-picker": "/node-modules/uview-ui/components/u-picker/u-picker"
+  }
+}

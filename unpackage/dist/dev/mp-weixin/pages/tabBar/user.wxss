@@ -25,7 +25,6 @@
 /* 透明度 */
 /* 文章场景相关 */
 page {
-  height: 100%;
   background: #f7f8fa;
 }
 
@@ -71,31 +70,30 @@ page {
   display: flex;
   flex-direction: column;
   margin: 0 24rpx;
-  margin-top: -28rpx;
-}
-.uc .uc-item.data-v-35c33513:not(:first-child) {
-  margin-top: 28rpx;
 }
 .uc .uc-item.data-v-35c33513 {
-  color: #BD9E81;
   background-color: #FFFFFF;
   border-radius: 10rpx;
+  margin-top: 26rpx;
+}
+.uc .uc-item.data-v-35c33513:first-child {
+  margin-top: -26rpx;
 }
 .uc .uc-item .uc-item-title.data-v-35c33513 {
-  margin-top: 28rpx;
-  margin-left: 28rpx;
-  margin-right: 28rpx;
+  padding: 28rpx;
   display: flex;
   justify-content: space-between;
+  font-size: 28rpx;
+  font-family: PingFang SC;
+  font-weight: bold;
+  color: #BD9E81;
 }
 .uc .uc-item .uc-item-title .uc-item-title-icon.data-v-35c33513 {
-  width: 12rpx;
-  height: 24rpx;
+  width: 13rpx;
+  height: 23rpx;
 }
 .uc .uc-item .uc-item-body.data-v-35c33513 {
   display: flex;
-  justify-content: space-around;
-  margin-bottom: 28rpx;
   flex-wrap: wrap;
 }
 .uc .uc-item .uc-item-body .uc-item-body-item.data-v-35c33513 {
@@ -103,24 +101,43 @@ page {
   flex-direction: column;
   align-items: center;
   width: 25%;
-  margin-top: 28rpx;
+  margin-bottom: 28rpx;
 }
-.uc .uc-item .uc-item-body .uc-item-body-item .uc-item-body-item-icon.data-v-35c33513 {
-  width: 46rpx;
-  height: 46rpx;
+.uc .uc-item .uc-item-body .uc-item-body-item .uc-item-body-item-text.data-v-35c33513 {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  font-family: PingFang SC;
+  font-weight: 500;
+  color: #707070;
 }
 .uc .uc-item .uc-item-last-item.data-v-35c33513 {
+  padding: 0 40rpx 0 0;
+  margin-left: 42rpx;
+  border-bottom: 2rpx #F9F9F9 solid;
   height: 96rpx;
   display: flex;
   align-items: center;
 }
+.uc .uc-item .uc-item-last-item.data-v-35c33513:last-child {
+  border: 0;
+}
 .uc .uc-item .uc-item-last-item .uc-item-last-item-icon.data-v-35c33513 {
   width: 26rpx;
   height: 34rpx;
-  margin-left: 42rpx;
 }
 .uc .uc-item .uc-item-last-item .uc-item-last-item-text.data-v-35c33513 {
-  margin-left: 18rpx;
+  padding-left: 18rpx;
+  flex: 1;
+}
+.uc .uc-item .uc-item-last-item .icon.data-v-35c33513 {
+  width: 13rpx;
+  height: 24rpx;
+}
+.uc .uc-item .uc-item-last-item .contactbtn.data-v-35c33513 {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  text-align: left;
 }
 .nav1.data-v-35c33513 {
   width: 750rpx;

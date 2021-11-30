@@ -172,15 +172,152 @@
 		}]
 	},{
 		"root": "pages/users/address",
-		"pages": [{
-			"path": "xinjiandizhi",
-			"style": {
-				// "navigationStyle": "custom",
-				"navigationBarTitleText": "新建收货地址",
-				"navigationBarTextStyle": "black",
-				"navigationBarBackgroundColor": "#FECF05"
+		"pages": [
+			{
+				"path": "index",
+				"style": {
+					"navigationBarTitleText": "我的地址",
+					"navigationBarTextStyle": "black",
+					"navigationBarBackgroundColor": "#FECF05"
+				}
+			},
+			{
+				"path": "xinjiandizhi",
+				"style": {
+					"navigationBarTitleText": "新建收货地址",
+					"navigationBarTextStyle": "black",
+					"navigationBarBackgroundColor": "#FECF05"
+				}
 			}
-		}]
+		]
+	},{
+		"root": "pages/users/follow",
+		"pages": [
+			{
+				"path": "index",
+				"style": {
+					"navigationBarTitleText": "我的关注",
+					"navigationBarTextStyle": "black",
+					"navigationBarBackgroundColor": "#FECF05"
+				}
+			}
+		]
+	},{
+		"root": "pages/users/subscribe",
+		"pages": [
+			{
+				"path": "index",
+				"style": {
+					"navigationBarTitleText": "我的预约",
+					"navigationBarTextStyle": "black",
+					"navigationBarBackgroundColor": "#FECF05"
+				}
+			}
+		]
+	},{
+		"root": "pages/users/collect",
+		"pages": [
+			{
+				"path": "index",
+				"style": {
+					"navigationBarTitleText": "我的收藏",
+					"navigationBarTextStyle": "black",
+					"navigationBarBackgroundColor": "#FECF05"
+				}
+			}
+		]
+	},{
+		"root": "pages/users/share",
+		"pages": [
+			{
+				"path": "index",
+				"style": {
+					"navigationBarTitleText": "分享码",
+					"navigationBarTextStyle": "black",
+					"navigationBarBackgroundColor": "#FECF05"
+				}
+			}
+		]
+	},{
+		"root": "pages/users/integral",
+		"pages": [
+			{
+				"path": "index",
+				"style": {
+					"navigationBarTitleText": "我的积分"
+				}
+			},
+			{
+				"path": "order",
+				"style": {
+					"navigationBarTitleText": "积分订单"
+				}
+			}
+		]
+	},{
+		"root": "pages/users/team",
+		"pages": [
+			{
+				"path": "index",
+				"style": {
+					"navigationBarTitleText": "我的团队"
+				}
+			},
+			{
+				"path": "list",
+				"style": {
+					"navigationBarTitleText": "加载中..."
+				}
+			}
+		]
+	},{
+		"root": "pages/users/comment",
+		"pages": [
+			{
+				"path": "index",
+				"style": {
+					"navigationBarTitleText": "我的评论",
+					"navigationBarTextStyle": "black",
+					"navigationBarBackgroundColor": "#FECF05"
+				}
+			},
+			{
+				"path": "detail",
+				"style": {
+					"navigationBarTitleText": "订单评价",
+					"navigationBarTextStyle": "black",
+					"navigationBarBackgroundColor": "#FECF05"
+				}
+			}
+		]
+	},{
+		"root": "pages/users/info",
+		"pages": [
+			{
+				"path": "index",
+				"style": {
+					"navigationBarTitleText": "个人信息",
+					"navigationBarTextStyle": "black",
+					"navigationBarBackgroundColor": "#FECF05"
+				}
+			},
+			{
+				"path": "bind",
+				"style": {
+					"navigationBarTitleText": "绑定手机号",
+					"navigationBarTextStyle": "black",
+					"navigationBarBackgroundColor": "#FECF05"
+				}
+			},
+			{
+				"path": "hbind",
+				"style": {
+					"navigationBarTitleText": "换绑手机号",
+					"navigationBarTextStyle": "black",
+					"navigationBarBackgroundColor": "#FECF05"
+				}
+			}
+		]
 	}],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

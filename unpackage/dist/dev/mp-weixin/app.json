@@ -59,7 +59,61 @@
     {
       "root": "pages/users/address",
       "pages": [
+        "index",
         "xinjiandizhi"
+      ]
+    },
+    {
+      "root": "pages/users/follow",
+      "pages": [
+        "index"
+      ]
+    },
+    {
+      "root": "pages/users/subscribe",
+      "pages": [
+        "index"
+      ]
+    },
+    {
+      "root": "pages/users/collect",
+      "pages": [
+        "index"
+      ]
+    },
+    {
+      "root": "pages/users/share",
+      "pages": [
+        "index"
+      ]
+    },
+    {
+      "root": "pages/users/integral",
+      "pages": [
+        "index",
+        "order"
+      ]
+    },
+    {
+      "root": "pages/users/team",
+      "pages": [
+        "index",
+        "list"
+      ]
+    },
+    {
+      "root": "pages/users/comment",
+      "pages": [
+        "index",
+        "detail"
+      ]
+    },
+    {
+      "root": "pages/users/info",
+      "pages": [
+        "index",
+        "bind",
+        "hbind"
       ]
     }
   ],
@@ -106,6 +160,5 @@
       "desc": "你的位置信息将用于小程序位置接口的效果展示"
     }
   },
-  "usingComponents": {},
-  "sitemapLocation": "sitemap.json"
+  "usingComponents": {}
 }
