@@ -1,10 +1,10 @@
 <script>
 	export default {
 		onLaunch: function(route) {
-			console.log(route, 'cyy11111')
+			console.log(route, 'onLaunch')
 		},
 		onShow: function(route) {
-			console.log(route, 'cyy11111')
+			console.log(route, 'onShow')
 		},
 		onHide: function() {
 			console.log('App Hide')
