@@ -71,6 +71,11 @@ page{
   color: #707070;
   text-align: right;
 }
+.celllist .cell .right .reset.data-v-0dbeaa64 {
+  border-left: 2px solid #F7F8FA;
+  margin-left: 20rpx;
+  padding-left: 38rpx;
+}
 .btn.data-v-0dbeaa64 {
   margin: 0 auto;
   margin-top: 90rpx;

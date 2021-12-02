@@ -3,6 +3,8 @@
   "navigationBarBackgroundColor": "#FECF05",
   "navigationBarTextStyle": "black",
   "usingComponents": {
+    "u-avatar": "/node-modules/uview-ui/components/u-avatar/u-avatar",
+    "u-badge": "/node-modules/uview-ui/components/u-badge/u-badge",
     "u-gap": "/node-modules/uview-ui/components/u-gap/u-gap",
     "u-action-sheet": "/node-modules/uview-ui/components/u-action-sheet/u-action-sheet"
   }

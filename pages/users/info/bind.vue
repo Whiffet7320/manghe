@@ -4,15 +4,15 @@
 			<view class="cell">
 				<view class="left">手机号</view>
 				<view class="right">
-					<input type="text" v-model="phone" class="ipt" placeholder="请输入" />
+					<input type="number" v-model="phone" class="ipt" placeholder="请输入" />
 				</view>
 			</view>
 			<view class="cell">
 				<view class="left">验证码</view>
 				<view class="right">
-					<input type="text" v-model="code" class="ipt" placeholder="请输入" />
+					<input type="number" v-model="captcha" class="ipt" placeholder="请输入" />
 					<view class="light" v-if="isSend" @click="getVerifyCode">发送验证码</view>
-					<view v-else>{{verifyText}}</view>
+					<view class="reset" v-else>{{verifyText}}</view>
 				</view>
 			</view>
 		</view>
@@ -27,7 +27,7 @@
 			return{
 				isSend:true,
 				phone:"",
-				code:"",
+				captcha:"",
 				second: 0,
 				clockTimer: null
 			}
@@ -41,7 +41,7 @@
 				}
 			},
 			disabled(){
-				if(this.phone==""&&this.code==""){
+				if(this.phone==""||this.captcha==""){
 					return false;
 				}else{
 					return true;
@@ -50,7 +50,7 @@
 		},
 		methods:{
 			//获取验证码
-			getVerifyCode(){
+			async getVerifyCode(){
 				if (this.second > 0) {
 					return;
 				}
@@ -62,8 +62,56 @@
 						clearInterval(this.clockTimer);
 					}
 				}, 1000)
+				await this.$api.verifyCode().then(res => {
+					this.$api.registerVerify(this.phone, 'reset', res.data.key, this.captcha).then(res => {
+						this.$u.toast(res.msg);
+					}).catch(err => {
+						this.$u.toast(err);
+					});
+				})
 			},
-			onSubmit(){}
+			onSubmit(){
+				this.$api.bindingUserPhone({
+					phone: this.phone,
+					captcha: this.captcha
+				}).then(res => {
+					if (res.data !== undefined && res.data.is_bind) {
+						uni.showModal({
+							title: '是否绑定账号',
+							content: res.msg,
+							confirmText: '绑定',
+							success:(res)=> {
+								if (res.confirm) {
+									this.$api.bindingUserPhone({
+										phone: this.phone,
+										captcha: this.captcha,
+										step: 1
+									}).then(res => {
+										this.$u.toast(res.msg);
+										setTimeout(()=> {
+											uni.navigateBack();
+										}, 2000);
+									}).catch(err => {
+										this.$u.toast(err);
+									})
+								} else if (res.cancel) {
+									this.$u.toast('您已取消绑定！');
+									setTimeout(()=> {
+										uni.navigateBack();
+									}, 2000);
+								}
+							}
+						});
+					} else{
+						this.$u.toast('绑定成功！');
+						setTimeout(()=> {
+							uni.navigateBack();
+						}, 2000);
+					}
+				}).catch(err => {
+					this.$u.toast(err);
+				})
+			}
 		},
 		onUnload() {
 			clearInterval(this.clockTimer);
@@ -121,6 +169,11 @@
 					font-family: PingFang SC;
 					color: #707070;
 					text-align: right;
+				}
+				.reset{
+					border-left: 2px solid #F7F8FA;
+					margin-left: 20rpx;
+					padding-left: 38rpx;
 				}
 			}
 		}

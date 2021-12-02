@@ -25,21 +25,17 @@
 /* 透明度 */
 /* 文章场景相关 */
 .wechat_login.data-v-4586967a {
-  padding: 72rpx 116rpx;
+  padding: 72rpx 34rpx;
   height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 }
 .wechat_login .img.data-v-4586967a {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
 }
 .wechat_login .img image.data-v-4586967a {
-  width: 452rpx;
-  height: 450rpx;
+  width: 100%;
 }
 .wechat_login .btn-wrapper.data-v-4586967a {
   margin-top: 86rpx;
@@ -49,10 +45,10 @@
 }
 .wechat_login .btn-wrapper .btn.data-v-4586967a {
   width: 100%;
-  height: 64rpx;
-  line-height: 64rpx;
+  height: 86rpx;
+  line-height: 86rpx;
   margin-bottom: 40rpx;
-  border-radius: 32rpx;
+  border-radius: 43rpx;
   font-size: 28rpx;
   color: #fff;
   background: #07c160;

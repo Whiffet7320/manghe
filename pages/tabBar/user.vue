@@ -2,27 +2,29 @@
 	<view class="index">
 		<view class="nav1">
 			<view class="nav1-flex">
-				<image class="pic" src="https://img2.baidu.com/it/u=1991026848,3099564169&fm=26&fmt=auto" mode=""></image>
+				<image class="pic" :src="userInfo.avatar" mode="aspectFill" v-if="userInfo.avatar" @click="goEdit()"></image>
+				<u-avatar size="184" @click="goLogin()" v-else></u-avatar>
 				<view class="f-right">
-					<view class="tit1">
-						<view class="txt1">Jay Jone</view>
+					<view class="tit1" v-if="userInfo.uid">
+						<view class="txt1">{{userInfo.nickname}}</view>
 						<view @click="onSet">
-							<image src="/static/image/zu1528.png" class="f-r-pic1" mode=""></image>
+							<image src="/static/image/zu1528.png" class="f-r-pic1" mode="aspectFit"></image>
 						</view>
 					</view>
+					<view @click="goLogin()" v-if="!userInfo.uid">请登录/注册</view>
 					<view class="tit2">
 						<view class="item" @click="onFollow">
-							<view class="txt1">2</view>
+							<view class="txt1">{{userInfo.special_doctor_num||0}}</view>
 							<view class="txt2">关注医生</view>
 						</view>
 						<view class="shu"></view>
 						<view class="item" @click="onComment">
-							<view class="txt1">2</view>
+							<view class="txt1">{{userInfo.product_reply_num||0}}</view>
 							<view class="txt2">我的评论</view>
 						</view>
 						<view class="shu"></view>
 						<view class="item" @click="onCollect">
-							<view class="txt1">2</view>
+							<view class="txt1">{{userInfo.collect_count||0}}</view>
 							<view class="txt2">我的收藏</view>
 						</view>
 					</view>
@@ -38,11 +40,17 @@
 				</view>
 				<view class="uc-item-body">
 					<view class="uc-item-body-item" @click='gotoOrder(0)'>
-						<image src="../../static/image/user/daifukuan.png" mode="aspectFit" style="width: 46rpx;height: 45rpx;"></image>
+						<view class="pic">
+							<image src="../../static/image/user/daifukuan.png" mode="aspectFit" style="width: 46rpx;height: 45rpx;"></image>
+							<u-badge bgColor="#BD9E81" :count="userInfo.orderStatusNum.unpaid_count" :offset="[-12,-16]" v-if="userInfo.orderStatusNum"></u-badge>
+						</view>
 						<view class="uc-item-body-item-text">待付款</view>
 					</view>
 					<view class="uc-item-body-item" @click='gotoOrder(1)'>
-						<image src="../../static/image/user/daifuweikuan.png" mode="aspectFit" style="width: 46rpx;height: 45rpx;"></image>
+						<view class="pic">
+							<image src="../../static/image/user/daifuweikuan.png" mode="aspectFit" style="width: 46rpx;height: 45rpx;"></image>
+							<u-badge bgColor="#BD9E81" :count="userInfo.weikuan_num" :offset="[-12,-16]" v-if="userInfo.weikuan_num"></u-badge>
+						</view>
 						<view class="uc-item-body-item-text">待付尾款</view>
 					</view>
 					<view class="uc-item-body-item" @click='gotoOrder(2)'>
@@ -116,7 +124,7 @@
 					</view>
 				</view>
 			</view>
-			<view class="form-button" @click="logout">退出登录</view>
+			<view class="form-button" v-if="isLogin" @click="logout">退出登录</view>
 			<u-gap height="80"></u-gap>
 		</view>
 		<u-action-sheet :list="calllist" v-model="phoneShow" :cancel-btn="true" @click="callClick"></u-action-sheet>
@@ -124,9 +132,11 @@
 </template>
 
 <script>
+	import {mapGetters} from "vuex";
 	export default {
 		data() {
 			return {
+				userInfo:{},
 				phoneShow:false,
 				calllist:[
 					{
@@ -138,62 +148,70 @@
 						text:'呼叫'
 					}
 				],
-				phone:"0577-83527198"
+				phone:""
 			}
 		},
+		computed: {
+			...mapGetters(['isLogin'])
+		},
 		methods: {
-			onSet(){
+			goLogin(){
+				console.log(this.isLogin)
+				if(!this.isLogin){
+					uni.navigateTo({
+						url:"/pages/login/index"
+					})
+				}
+			},
+			jump(url){
+				if(!this.isLogin){
+					uni.navigateTo({
+						url:"/pages/login/index"
+					})
+					return;
+				}
 				uni.navigateTo({
-					url:"/pages/users/info/index"
+					url:url
 				})
+			},
+			onSet(){
+				this.jump("/pages/users/info/index");
 			},
 			onFollow(){
-				uni.navigateTo({
-					url:"/pages/users/follow/index"
-				})
+				this.jump("/pages/users/follow/index");
 			},
 			onComment(){
-				uni.navigateTo({
-					url:"/pages/users/comment/index"
-				})
+				this.jump("/pages/users/comment/index");
 			},
 			onCollect(){
-				uni.navigateTo({
-					url:"/pages/users/collect/index"
-				})
+				this.jump("/pages/users/collect/index");
 			},
 			onTeam(){
-				uni.navigateTo({
-					url:"/pages/users/team/index"
-				})
+				this.jump("/pages/users/team/index");
 			},
 			onShare(){
-				uni.navigateTo({
-					url:"/pages/users/share/index"
-				})
+				this.jump("/pages/users/share/index");
 			},
 			onMeet(){
-				uni.navigateTo({
-					url:"/pages/users/subscribe/index"
-				})
+				this.jump("/pages/users/subscribe/index");
 			},
 			onPoint(){
-				uni.navigateTo({
-					url:"/pages/users/integral/index"
-				})
+				this.jump("/pages/users/integral/index");
 			},
 			onPointOrder(){
-				uni.navigateTo({
-					url:"/pages/users/integral/order"
-				})
+				this.jump("/pages/users/integral/order");
 			},
 			onCall(){
+				if(this.userInfo.phone==""){
+					this.$u.toast("暂无联系方式");
+					return false;
+				}
 				this.phoneShow = !this.phoneShow;
-				this.calllist[0].subText = this.phone;
+				this.calllist[0].subText = this.userInfo.phone;
 			},
 			callClick(index){
 				if(index==1){
-					this.CallPhone(this.phone);
+					this.CallPhone(this.userInfo.phone);
 					this.phoneShow = !this.phoneShow;
 				}
 			},
@@ -207,21 +225,28 @@
 				})
 			},
 			gotoOrder(){
-				uni.navigateTo({
-					url:"/pages/users/order/order"
-				})
+				this.jump("/pages/users/order/order");
 			},
 			goAddress(){
-				uni.navigateTo({
-					url:"/pages/users/address/index"
-				})
+				this.jump("/pages/users/address/index");
 			},
 			logout(){
 				uni.clearStorageSync();
 				uni.reLaunch({
 					url:"/pages/tabBar/index"
 				})
+			},
+			getUserInfo() {
+				this.$api.getUserInfo().then(res => {
+					if(res.status==200){
+						this.userInfo = res.data;
+						this.$store.commit('SetUid', res.data.uid);
+					}
+				});
 			}
+		},
+		onShow(){
+			this.getUserInfo();
 		}
 	}
 </script>
@@ -243,8 +268,6 @@
 		align-items: center;
 		margin: 88rpx auto 0 auto;
 		color: #FFFFFF;
-
-		
 	}
 	.uc{
 		display: flex;
@@ -280,6 +303,9 @@
 					align-items: center;
 					width: 25%;
 					margin-bottom:28rpx;
+					.pic{
+						position: relative;
+					}
 					.uc-item-body-item-text{
 						margin-top: 12rpx;
 						font-size: 24rpx;
@@ -337,6 +363,7 @@
 				height: 184rpx;
 				border-radius: 50%;
 				margin-right: 20rpx;
+				background-color: #eee;
 			}
 			.f-right{
 				height: 184rpx;

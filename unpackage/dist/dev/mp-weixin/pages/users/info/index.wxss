@@ -45,12 +45,23 @@ page{
 .cellwrap .avatar.data-v-34e23711 {
   width: 100rpx;
   height: 100rpx;
+  position: relative;
 }
 .cellwrap .avatar .icon.data-v-34e23711 {
   width: 100%;
   height: 100%;
   background-color: #eee;
   border-radius: 20rpx;
+}
+.cellwrap .avatar .photo.data-v-34e23711 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 20;
+}
+.cellwrap .avatar .photo .imgs.data-v-34e23711 {
+  width: 100rpx;
+  height: 100rpx;
 }
 .celllist.data-v-34e23711 {
   margin-top: 20rpx;

@@ -3,22 +3,25 @@
 		<view class="cellwrap">
 			<text>头像</text>
 			<view class="avatar">
-				<image src="" mode="aspectFit" class="icon"></image>
+				<image :src="userInfo.avatar" mode="aspectFit" class="icon"></image>
+				<view class="photo" v-if="pshow" @click='uploadpic'>
+					<image src="/static/image/user/ico_photo.png" mode="aspectFit" class="imgs"></image>
+				</view>
 			</view>
 		</view>
 		<view class="celllist">
 			<view class="cell">
 				<view class="left">昵称</view>
-				<view class="right" v-if="show">{{nickname}}</view>
+				<view class="right" v-if="show">{{userInfo.nickname}}</view>
 				<view class="right" v-if="edshow">
-					<input type="text" v-model="nickname" class="ipt" placeholder="请输入昵称" />
+					<input type="text" v-model="userInfo.nickname" class="ipt" placeholder="请输入昵称" />
 				</view>
 			</view>
 			<view class="cell">
 				<view class="left">手机号</view>
 				<view class="right">
-					<view class="light" v-if="phone==''" @click="bindPhone">去绑定</view>
-					<view class="u-flex" v-else>{{phone}}<view class="light change" @click="hbindPhone">换绑</view></view>
+					<view class="light" v-if="!userInfo.phone" @click="bindPhone">去绑定</view>
+					<view class="u-flex" v-else>{{userInfo.phone}}<view class="light change" @click="hbindPhone">换绑</view></view>
 				</view>
 			</view>
 			<view class="cell">
@@ -33,42 +36,57 @@
 				<view class="left">生日</view>
 				<view class="right" v-if="show">{{birthday}}</view>
 				<view class="right" @click="birShow=true" v-if="edshow">
-					<text>{{birthday==""?"请选择":birthday}}</text>
+					<text>{{birthday==''?"请选择":birthday}}</text>
 					<image src="/static/image/user/arrow_right.png" mode="aspectFit" class="icon"></image>
 				</view>
 			</view>
 		</view>
 		<view class="btn" v-if="show" @click="onEdit">编辑</view>
-		<view class="btn" v-if="edshow">保存</view>
+		<view class="btn" v-if="edshow" @click="onSubmit">保存</view>
 		<u-action-sheet :list="sexlist" v-model="sexShow" :cancel-btn="true" @click="sexChange"></u-action-sheet>
 		<u-picker v-model="birShow" mode="time" confirm-color="#BD9E81" @confirm="birChange"></u-picker>
 	</view>
 </template>
 
 <script>
+	import {mapGetters} from "vuex";
 	export default{
 		data(){
 			return{
+				userInfo: {},
 				show:true,
 				edshow:false,
 				sexShow:false,
 				birShow:false,
-				nickname:"",
-				phone:"13039878787",
+				pshow:false,
 				sex:"",
 				birthday:"",
+				curbir:0,
 				sexlist:[
-					{
-						text:"女",
-						color:"#707070",
-						fontSize:28
-					},
 					{
 						text:"男",
 						color:"#707070",
 						fontSize:28
+					},
+					{
+						text:"女",
+						color:"#707070",
+						fontSize:28
 					}
 				]
+			}
+		},
+		computed:{
+			...mapGetters(['isLogin'])
+		},
+		watch:{
+			isLogin:{
+				handler(newV,oldV){
+					if(newV){
+						this.getUserInfo();
+					}
+				},
+				deep:true
 			}
 		},
 		methods:{
@@ -86,11 +104,58 @@
 				this.sex = this.sexlist[index].text;
 			},
 			birChange(val){
-				this.birthday = val.year+"-"+val.month+"-"+val.day;
+				let data = val.year+"-"+val.month+"-"+val.day;
+				this.birthday = data;
 			},
 			onEdit(){
 				this.show = false;
 				this.edshow = true;
+				this.pshow = true;
+			},
+			getUserInfo(){
+				this.$api.getUserInfo().then(res => {
+					if(res.status==200){
+						this.userInfo = res.data;
+						this.sex = res.data.sex==1?"男":res.data.sex==2?"女":"";
+						this.birthday = res.data.birthday==0?"":this.$u.timeFormat(res.data.birthday*1000, 'yyyy-mm-dd');
+					}
+				});
+			},
+			uploadpic() {
+				this.$tool.uploadImageOne('upload/image',(res)=>{
+					if(res.status==200){
+						this.userInfo.avatar = res.data.url;
+						this.pshow = false;
+					}
+				});
+			},
+			onSubmit(){
+				if (!this.userInfo.nickname){
+					this.$u.toast("用户姓名不能为空");
+					return
+				}
+				let userInfo = {
+					nickName:this.userInfo.nickname,
+					avatar:this.userInfo.avatar,
+					sex:this.sex=="男"?1:this.sex=="女"?2:0,
+					birthday:Math.round(new Date(this.birthday) / 1000)
+				}
+				this.$api.userEdit({userInfo:userInfo}).then(res => {
+					this.$u.toast(res.msg);
+					setTimeout(()=> {
+						uni.navigateBack();
+					}, 1500);
+				}).catch(msg => {
+					this.$u.toast(msg || '保存失败，您并没有修改');
+					setTimeout(()=> {
+						uni.navigateBack();
+					}, 1500);
+				});
+			}
+		},
+		onLoad(){
+			if(this.isLogin){
+				this.getUserInfo();
 			}
 		}
 	}
@@ -116,11 +181,22 @@
 		.avatar{
 			width: 100rpx;
 			height: 100rpx;
+			position: relative;
 			.icon{
 				width: 100%;
 				height: 100%;
 				background-color: #eee;
 				border-radius: 20rpx;
+			}
+			.photo{
+				position: absolute;
+				top:0;
+				left:0;
+				z-index: 20;
+				.imgs{
+					width: 100rpx;
+					height: 100rpx;
+				}
 			}
 		}
 	}
