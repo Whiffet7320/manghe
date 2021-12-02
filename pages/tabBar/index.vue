@@ -15,7 +15,7 @@
 					<view class="txt1-1">热搜榜</view>
 					<image src="/static/image/lujin1732.png" class="pic" mode=""></image>
 				</view>
-				<view @click="toSearchResult()" class="txt2">肋骨鼻综合</view>
+				<view class="txt2">肋骨鼻综合</view>
 				<view class="txt2">小眼综合</view>
 				<view class="txt2">胸部整形</view>
 				<view class="txt2">面部抗衰</view>

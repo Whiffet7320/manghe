@@ -115,16 +115,13 @@
 <style lang="scss" scoped>
 	.address_wrap{
 		.address_item{
-			padding:32rpx 0;
+			padding:32rpx 40rpx;
 			background: #FFFFFF;
 			border: 2rpx solid #F4F4F4;
-			border-radius: 0px 20rpx 20rpx 0px;
+			border-radius: 0rpx 20rpx 20rpx 0rpx;
 			height: 252rpx;
 			margin-bottom: 20rpx;
 			.hd{
-				margin-left: 40rpx;
-				border-bottom: 2rpx #F9F9F9 solid;
-				padding-right: 40rpx;
 				.top{
 					display: flex;
 					align-items: center;
@@ -152,12 +149,24 @@
 					font-size: 24rpx;
 					color:#707070;
 					height: 62rpx;
+					position: relative;
+					overflow: hidden;
+					&::before{
+						content:"";
+						width: 660rpx;
+						height: 2rpx;
+						background-color: #F9F9F9;
+						position: absolute;
+						left:42rpx;
+						bottom: 0;
+						box-sizing: border-box;
+					}
 				}
 			}
 			.ft{
-				padding: 30rpx 40rpx 0 40rpx;
 				display: flex;
 				align-items: center;
+				padding-top: 30rpx;
 				font-size: 26rpx;
 				font-family: PingFang SC;
 				font-weight: 400;
@@ -214,7 +223,7 @@
 		height: 110rpx;
 		padding: 10rpx 30rpx;
 		background: #FFFFFF;
-		box-shadow: 0px 8px 28px rgba(166, 179, 194, 0.3);
+		box-shadow: 0rpx 16rpx 56rpx rgba(166, 179, 194, 0.3);
 		.btn_primary{
 			width: 100%;
 			height: 84rpx;

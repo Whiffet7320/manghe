@@ -43,7 +43,7 @@
 			</view>
 			<view class="right">
 				<view class="b1" @click="addGwc">加入购物车</view>
-				<view class="b2" @click="toTijiaodingdan">立即抢购</view>
+				<view class="b2">立即抢购</view>
 			</view>
 		</view>
 		<!-- 选择SKU -->

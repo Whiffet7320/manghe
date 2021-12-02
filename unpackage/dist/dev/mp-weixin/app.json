@@ -6,7 +6,8 @@
     "pages/tabBar/user",
     "pages/login/index",
     "pages/search/search",
-    "pages/search/searchResult"
+    "pages/search/searchResult",
+    "pages/cart/index"
   ],
   "subPackages": [
     {
@@ -54,13 +55,6 @@
         "order",
         "querendingdan",
         "tijiaodingdan"
-      ]
-    },
-    {
-      "root": "pages/users/address",
-      "pages": [
-        "index",
-        "xinjiandizhi"
       ]
     },
     {
@@ -114,6 +108,13 @@
         "index",
         "bind",
         "hbind"
+      ]
+    },
+    {
+      "root": "pages/users/address",
+      "pages": [
+        "index",
+        "xinjiandizhi"
       ]
     }
   ],

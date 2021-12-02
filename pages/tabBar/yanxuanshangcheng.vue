@@ -68,7 +68,7 @@
 						<view class="txt2">星品限时1086积分</view>
 						<view class="btn">点击进入 >></view>
 					</view>
-					<view class="item2" @click="toRexiaoxiangqin">
+					<view class="item2" @click="toZhuanjiatuandui">
 						<view class="txt1">每日特惠</view>
 						<view class="i2-items2">
 							<view class="i2-item" v-for="item in imgArr">

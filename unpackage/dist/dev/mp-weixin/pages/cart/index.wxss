@@ -1,0 +1,250 @@
+@charset "UTF-8";
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+.alldelete.data-v-457cfe48 {
+  width: 100%;
+  height: 74rpx;
+  background: #FCFAF9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  font-family: PingFang SC;
+  font-weight: 500;
+  color: #BD9E81;
+  opacity: 1;
+}
+.alldelete .icon.data-v-457cfe48 {
+  width: 28rpx;
+  height: 30rpx;
+  margin-right: 20rpx;
+}
+.cartlist.data-v-457cfe48 {
+  background-color: #F7F8FA;
+}
+.cartlist .cart_item.data-v-457cfe48 {
+  background-color: #FFFFFF;
+  margin-bottom: 20rpx;
+  padding: 24rpx 34rpx 24rpx 40rpx;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+.cartlist .cart_item.data-v-457cfe48:last-child {
+  margin-bottom: 0;
+}
+.cartlist .cart_item .check.data-v-457cfe48 {
+  margin-right: 32rpx;
+}
+.cartlist .cart_item .img.data-v-457cfe48 {
+  width: 160rpx;
+  height: 160rpx;
+  background-color: #eee;
+  border-radius: 40rpx;
+}
+.cartlist .cart_item .info.data-v-457cfe48 {
+  padding-left: 24rpx;
+}
+.cartlist .cart_item .info .hd.data-v-457cfe48 {
+  display: flex;
+  flex-direction: row;
+}
+.cartlist .cart_item .info .name.data-v-457cfe48 {
+  padding-right: 56rpx;
+  height: 76rpx;
+  font-size: 28rpx;
+  font-family: PingFang SC;
+  font-weight: 500;
+  line-height: 40rpx;
+  color: #BD9E81;
+}
+.cartlist .cart_item .info .name.none.data-v-457cfe48 {
+  color: #707070;
+}
+.cartlist .cart_item .info .ft.data-v-457cfe48 {
+  margin-top: 40rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.cartlist .cart_item .info .ft .price.data-v-457cfe48 {
+  flex: 1;
+  font-size: 28rpx;
+  font-family: PingFang SC;
+  font-weight: bold;
+  line-height: 40rpx;
+  color: #FA8677;
+}
+.cartlist .cart_item .info .status.data-v-457cfe48 {
+  margin-top: 40rpx;
+  padding: 0 24rpx;
+  height: 44rpx;
+  background: #FCFAF9;
+  border-radius: 10rpx;
+  font-size: 24rpx;
+  font-family: PingFang SC;
+  font-weight: 400;
+  line-height: 44rpx;
+  color: #BD9E81;
+}
+.emptybox.data-v-457cfe48 {
+  width: 100%;
+  height: 572rpx;
+  background-color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.emptybox .icon.data-v-457cfe48 {
+  margin-top: 96rpx;
+  width: 228rpx;
+  height: 172rpx;
+}
+.emptybox .text.data-v-457cfe48 {
+  margin-top: 16rpx;
+  font-size: 24rpx;
+  font-family: PingFang SC;
+  color: #707070;
+}
+.emptybox .btn.data-v-457cfe48 {
+  margin-top: 74rpx;
+  width: 278rpx;
+  height: 60rpx;
+  background: #BD9E81;
+  border-radius: 10rpx;
+  font-size: 28rpx;
+  font-family: PingFang SC;
+  font-weight: 500;
+  line-height: 60rpx;
+  color: #FFFFFF;
+  text-align: center;
+}
+.likewrap.data-v-457cfe48 {
+  background-color: #FFFFFF;
+}
+.likewrap .tit.data-v-457cfe48 {
+  width: 100%;
+  height: 120rpx;
+  background-color: #F7F8FA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  font-size: 28rpx;
+  font-family: PingFang SC;
+  font-weight: 500;
+  color: #BD9E81;
+}
+.likewrap .likelist.data-v-457cfe48 {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  padding: 40rpx 26rpx;
+}
+.likewrap .likelist .like_item.data-v-457cfe48 {
+  width: 50%;
+  padding-left: 14rpx;
+  box-sizing: border-box;
+  margin-bottom: 20rpx;
+  display: flex;
+  flex-direction: column;
+}
+.likewrap .likelist .like_item .img.data-v-457cfe48 {
+  width: 334rpx;
+  height: 334rpx;
+  background-color: #eee;
+  border-radius: 20rpx;
+}
+.likewrap .likelist .like_item .name.data-v-457cfe48 {
+  padding: 16rpx 0 12rpx 0;
+  font-size: 24rpx;
+  font-family: PingFang SC;
+  font-weight: 400;
+  color: #BD9E81;
+}
+.likewrap .likelist .like_item .price.data-v-457cfe48 {
+  font-size: 28rpx;
+  font-family: PingFang SC;
+  font-weight: 500;
+  color: #FA8677;
+}
+.footbar.data-v-457cfe48 {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  width: 100%;
+  background: #FFFFFF;
+  box-shadow: 0 8rpx 28rpx rgba(166, 179, 194, 0.3);
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+  -webkit-user-select: none;
+          user-select: none;
+}
+.footbar .footbar_bar.data-v-457cfe48 {
+  height: 112rpx;
+  padding: 0 40rpx;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+.footbar .allck.data-v-457cfe48 {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+.footbar .allck .text.data-v-457cfe48 {
+  font-size: 24rpx;
+  color: #707070;
+}
+.footbar .bar_text.data-v-457cfe48 {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-direction: row;
+  font-size: 24rpx;
+  color: #707070;
+  font-family: PingFang SC;
+  padding-right: 24rpx;
+}
+.footbar .bar_text .price.data-v-457cfe48 {
+  font-size: 32rpx;
+  color: #FA8677;
+  font-weight: bold;
+}
+.footbar .bar_btn.data-v-457cfe48 {
+  width: 278rpx;
+  height: 80rpx;
+  background: #BD9E81;
+  border-radius: 40rpx;
+  text-align: center;
+  line-height: 80rpx;
+  font-size: 28rpx;
+  color: #FFFFFF;
+}
+

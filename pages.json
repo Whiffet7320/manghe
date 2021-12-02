@@ -60,6 +60,15 @@
 				"navigationBarBackgroundColor": "#FECF05",
 				"navigationBarTextStyle": "black"
 			}
+		},
+		{
+			"path": "pages/cart/index",
+			"style": {
+				"navigationStyle":"custom",
+				"navigationBarTitleText": "购物车",
+				"navigationBarBackgroundColor": "#FECF05",
+				"navigationBarTextStyle": "black"
+			}
 		}
 	],
 	"subPackages": [{
@@ -170,26 +179,6 @@
 				"enablePullDownRefresh": false
 			}
 		}]
-	},{
-		"root": "pages/users/address",
-		"pages": [
-			{
-				"path": "index",
-				"style": {
-					"navigationBarTitleText": "我的地址",
-					"navigationBarTextStyle": "black",
-					"navigationBarBackgroundColor": "#FECF05"
-				}
-			},
-			{
-				"path": "xinjiandizhi",
-				"style": {
-					"navigationBarTitleText": "新建收货地址",
-					"navigationBarTextStyle": "black",
-					"navigationBarBackgroundColor": "#FECF05"
-				}
-			}
-		]
 	},{
 		"root": "pages/users/follow",
 		"pages": [
@@ -313,6 +302,26 @@
 				"path": "hbind",
 				"style": {
 					"navigationBarTitleText": "换绑手机号",
+					"navigationBarTextStyle": "black",
+					"navigationBarBackgroundColor": "#FECF05"
+				}
+			}
+		]
+	},{
+		"root": "pages/users/address",
+		"pages": [
+			{
+				"path": "index",
+				"style": {
+					"navigationBarTitleText": "我的地址",
+					"navigationBarTextStyle": "black",
+					"navigationBarBackgroundColor": "#FECF05"
+				}
+			},
+			{
+				"path": "xinjiandizhi",
+				"style": {
+					"navigationBarTitleText": "新建收货地址",
 					"navigationBarTextStyle": "black",
 					"navigationBarBackgroundColor": "#FECF05"
 				}

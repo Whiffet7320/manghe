@@ -108,24 +108,21 @@
 </script>
 
 <style lang="scss" scoped>
-	.category_wrap {
+	.category_wrap{
 		width: 100%;
 		height: calc(100vh);
 		display: flex;
 		flex-direction: column;
 	}
-
 	.menu_wrap {
 		flex: 1;
 		display: flex;
 		overflow: hidden;
 		background-color: #FFFFFF;
-
 		.tab_view {
 			width: 170rpx;
 			height: 100%;
 		}
-
 		.tab_item {
 			height: 122rpx;
 			background: #FFFFFF;
@@ -139,14 +136,12 @@
 			font-weight: 400;
 			line-height: 1;
 		}
-
 		.tab_item_active {
 			position: relative;
 			color: #BD9E81;
 			font-weight: 600;
 			background: #fcfaf9;
 		}
-
 		.tab_item_active::before {
 			content: "";
 			position: absolute;
@@ -156,32 +151,25 @@
 			top: 0;
 		}
 	}
-
-	.rightbox {
+	.rightbox{
 		background-color: #F4F5F7;
-
-		.pageview {
-			padding: 20rpx 24rpx;
-
-			.banner {
+		.pageview{
+			padding:20rpx 24rpx;
+			.banner{
 				width: 100%;
 				height: 180rpx;
 				background-color: #eee;
 			}
-
 			.list {
 				display: flex;
 				flex-wrap: wrap;
-
 				.thumb_item {
 					width: 50%;
 					box-sizing: border-box;
-
 					&:nth-child(even) {
 						padding-left: 20rpx;
 					}
 				}
-
 				.thumb_box {
 					width: 100%;
 					display: flex;
@@ -192,13 +180,11 @@
 					background: #FFFFFF;
 					box-shadow: 0rpx 12rpx 40rpx rgba(0, 0, 0, 0.05);
 					border-radius: 8rpx;
-
-					.image {
+					.image{
 						width: 256rpx;
 						height: 256rpx;
 					}
-
-					.name {
+					.name{
 						width: 100%;
 						height: 88rpx;
 						display: flex;

@@ -103,6 +103,9 @@ page {
   width: 25%;
   margin-bottom: 28rpx;
 }
+.uc .uc-item .uc-item-body .uc-item-body-item .pic.data-v-35c33513 {
+  position: relative;
+}
 .uc .uc-item .uc-item-body .uc-item-body-item .uc-item-body-item-text.data-v-35c33513 {
   margin-top: 12rpx;
   font-size: 24rpx;
@@ -155,6 +158,7 @@ page {
   height: 184rpx;
   border-radius: 50%;
   margin-right: 20rpx;
+  background-color: #eee;
 }
 .nav1 .nav1-flex .f-right.data-v-35c33513 {
   height: 184rpx;
