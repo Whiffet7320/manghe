@@ -26,27 +26,90 @@
 			</view>
 		</view>
 		<view class="nav3">
-			<view class="item" v-for="item in 10" @click="toSousuoXiangqin">
-				<image src="/static/image/mcz192.png" class="pic" mode=""></image>
+			<view class="item" v-for="item in list" :key='item.id' @click="toSousuoXiangqin(item.id)">
+				<image :src="item.image" class="pic" mode=""></image>
 				<view class="right">
-					<view class="txt1">肋骨鼻综合(活动特价)</view>
+					<view class="txt1">{{item.store_name}}</view>
 					<view class="txt2">肋骨鼻综合</view>
-					<view class="txt3">¥3600.00<text class="small">¥4800.00</text></view>
+					<view class="txt3">¥{{item.price}}<text class="small" style="margin-left: 10rpx;">¥{{item.ot_price}}</text></view>
 				</view>
 			</view>
 		</view>
+		<u-loadmore :status="status" />
 	</view>
 </template>
 
 <script>
+	import {
+		mapState
+	} from "vuex";
 	export default {
 		data() {
 			return {
 				searchVal: '',
 				RadIndex: 1,
+				sid:'',
+				list:[],
+				// 加载
+				status: 'loadmore',
+				iconType: 'flower',
+				loadText: {
+					loadmore: '上拉加载更多',
+					loading: '正在加载...',
+					nomore: '没有了更多了'
+				},
 			}
 		},
+		computed: {
+			...mapState(["shopPage", "shopPageSize"]),
+		},
+		watch: {
+			shopPage: function(page) {
+				console.log('ddpage')
+				this.$store.commit("shopPage", page);
+				if (this.shopPage != 1) {
+					this.getData();
+				}
+			},
+		},
+		onLoad(options) {
+			this.sid = options.sid;
+			this.list = [];
+			this.$store.commit("shopPage", 1);
+			this.getData();
+		},
+		// onShow() {
+		// 	this.getData()
+		// },
+		onReachBottom() {
+			this.$store.commit("shopPage", this.shopPage + 1);
+		},
 		methods: {
+			async getData(){
+				this.status = 'loading';
+				setTimeout(async () => {
+					const res = await this.$api.products({
+						sid:this.sid,
+						page: this.shopPage,
+						limit: this.shopPageSize,
+					})
+					if (res.data.length == 0) {
+						this.status = 'nomore'
+					} else {
+						this.status = 'loadmore';
+						this.list = this.list.concat(res.data)
+						// this.list.forEach(ele => {
+						// 	if (ele.img_paths) {
+						// 		ele.myImg_paths = ele.img_paths.split(',')
+						// 		ele.myImg_paths.forEach((img, i) => {
+						// 			this.$set(ele.myImg_paths, i, `${this.$url}/${img}`)
+						// 		})
+						// 	}
+						// })
+					}
+				}, 200)
+				console.log(this.list)
+			},
 			changeRad(val) {
 				this.RadIndex = val;
 			},
@@ -55,9 +118,9 @@
 					delta: 1
 				})
 			},
-			toSousuoXiangqin(){
+			toSousuoXiangqin(id){
 				uni.navigateTo({
-					url:'/pages/index/search/xiangqin?title=肋骨鼻综合(活动特价)'
+					url:`/pages/index/search/xiangqin?title=肋骨鼻综合(活动特价)&id=${id}`
 				})
 			},
 		}
@@ -141,15 +204,21 @@
 				margin-right: 24rpx;
 			}
 			.right{
+				width: 512rpx;
 				display: flex;
 				flex-direction: column;
-				justify-content: space-between;
+				// justify-content: space-between;
 				.txt1{
 					font-size: 32rpx;
 					font-weight: 500;
 					color: #BD9E81;
+					display: -webkit-box;
+					-webkit-box-orient: vertical;
+					-webkit-line-clamp: 2;
+					overflow: hidden;
 				}
 				.txt2{
+					margin: 12rpx 0;
 					font-size: 24rpx;
 					font-weight: 400;
 					color: #707070;

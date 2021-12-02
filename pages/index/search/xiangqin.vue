@@ -8,16 +8,16 @@
 			<image src="/static/image/zu1873.png" class="pic" mode=""></image>
 			<view class="left">
 				<view class="txt1">原价</view>
-				<view class="txt2">¥<text class="big">4800.00</text></view>
+				<view class="txt2">¥<text class="big">{{obj.storeInfo.ot_price}}</text></view>
 			</view>
 			<view class="right">
 				<view class="txt1">活动特价</view>
-				<view class="txt2">¥<text class="big">3600.00</text></view>
+				<view class="txt2">¥<text class="big">{{obj.storeInfo.price}}</text></view>
 			</view>
 		</view>
 		<view class="nav2">
 			<view class="left">
-				<view class="txt1">肋骨鼻综合(活动特价)</view>
+				<view class="txt1">{{obj.storeInfo.store_name}}</view>
 				<view class="txt2">肋骨鼻综合</view>
 			</view>
 			<view class="right">
@@ -105,8 +105,8 @@
 		
 		<view class="footer1">
 			<image src="/static/image/zu1840.png" class="kefu" mode=""></image>
-			<view class="txt1">预付款 ¥2000</view>
-			<view class="txt2">尾款 ¥1600面诊后支付</view>
+			<view class="txt1">预付款 ¥{{obj.storeInfo.finish_pay_price}}</view>
+			<view class="txt2">尾款 ¥{{Number(obj.storeInfo.price) - Number(obj.storeInfo.finish_pay_price)}}面诊后支付</view>
 		</view>
 		<view class="footer2">
 			<view class="item">
@@ -117,7 +117,7 @@
 				<image src="/static/image/lujin2228.png" class="pic2" mode=""></image>
 				<view class="txt">收藏</view>
 			</view>
-			<view @click="toShouyintai" class="btn">立即购买</view>
+			<view @click="toQuerendingdan" class="btn">立即购买</view>
 		</view>
 	</view>
 </template>
@@ -126,19 +126,18 @@
 	export default {
 		data() {
 			return {
+				id:'',
+				obj:{},
 				isOnShow:true,
 				navTitle: '',
 				bannerList: [{
 						image: 'https://cdn.uviewui.com/uview/swiper/1.jpg',
-						title: '昨夜星辰昨夜风，画楼西畔桂堂东'
 					},
 					{
 						image: 'https://cdn.uviewui.com/uview/swiper/2.jpg',
-						title: '身无彩凤双飞翼，心有灵犀一点通'
 					},
 					{
 						image: 'https://cdn.uviewui.com/uview/swiper/3.jpg',
-						title: '谁念西风独自凉，萧萧黄叶闭疏窗，沉思往事立残阳'
 					}
 				],
 				imgArr:['https://img1.baidu.com/it/u=3303981320,1355171730&fm=26&fmt=auto','https://img0.baidu.com/it/u=2394303781,1797253216&fm=26&fmt=auto','https://img0.baidu.com/it/u=3941318376,4022646771&fm=26&fmt=auto'],
@@ -160,17 +159,28 @@
 		onLoad(option) {
 			console.log(option)
 			this.navTitle = option.title;
+			this.id = option.id
 		},
 		onShow() {
 			if(!this.isOnShow){
 				return;
 			}
+			this.getData()
 			this.tabsChange(this.current);
 		},
 		mounted() {
 			this.getCurrentSwiperHeight('.nav5Items')
 		},
 		methods: {
+			async getData(){
+				const res = await this.$api.detail(this.id)
+				console.log(res)
+				this.obj = res.data;
+				this.obj.storeInfo.slider_image.forEach((ele,i)=>{
+					this.$set(this.bannerList[i],'image',ele)
+				})
+				
+			},
 			toSeeImg(i, imgArr) {
 				this.isOnShow = false;
 				uni.previewImage({
@@ -188,9 +198,9 @@
 					}
 				});
 			},
-			toShouyintai(){
+			toQuerendingdan(){
 				uni.navigateTo({
-					url:'/pages/index/search/querendingdan'
+					url:`/pages/index/search/querendingdan?obj=${encodeURIComponent(JSON.stringify(this.obj))}`
 				})
 				// uni.navigateTo({
 				// 	url:'/pages/index/search/shouyintai'

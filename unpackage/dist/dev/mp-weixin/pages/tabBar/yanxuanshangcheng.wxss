@@ -29,6 +29,10 @@ page {
 /* 垂直间距 */
 /* 透明度 */
 /* 文章场景相关 */
+.data-v-24c77868 .u-load-more-wrap {
+  width: 686rpx;
+  height: 100rpx !important;
+}
 .fixed-icon.data-v-24c77868 {
   z-index: 99;
   position: fixed;
@@ -374,6 +378,7 @@ page {
   height: 212rpx;
 }
 .nav5 .nav5Items .item .right.data-v-24c77868 {
+  width: 452rpx;
   margin-left: 20rpx;
   height: 212rpx;
   display: flex;
@@ -384,6 +389,10 @@ page {
   font-size: 32rpx;
   font-weight: 500;
   color: #BD9E81;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
 }
 .nav5 .nav5Items .item .right .up .txt2.data-v-24c77868 {
   margin-top: 10rpx;

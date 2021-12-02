@@ -7,12 +7,12 @@
 		</view>
 		<view class="nav2">
 			<view class="tit1">
-				<view class="txt1">250ml 雅漾补水喷雾赠一</view>
-				<view class="txt2">销量 201</view>
+				<view class="txt1">{{obj.storeInfo.store_name}}</view>
+				<view class="txt2">销量 {{obj.storeInfo.sales}}</view>
 			</view>
 			<view class="tit2">
-				<view class="txt1">¥9.90</view>
-				<view class="txt2">¥89.90</view>
+				<view class="txt1">¥{{obj.storeInfo.price}}</view>
+				<view class="txt2">¥{{obj.storeInfo.ot_price}}</view>
 			</view>
 		</view>
 		<view class="nav3">
@@ -25,8 +25,8 @@
 			</view>
 			<view class="tit2">
 				<view class="items" @click="skuShow = true">
-					<image v-for="item in imgArr" :src="item" class="i-pic" mode=""></image>
-					<view class="i-txt">1种类型可选</view>
+					<image v-for="item in skuArr" :src="item.image" class="i-pic" mode=""></image>
+					<view class="i-txt">{{skuArr.length}}种类型可选</view>
 				</view>
 			</view>
 		</view>
@@ -50,7 +50,7 @@
 		<u-popup v-model="skuShow" z-index='100' mode="bottom" height='900' closeable border-radius='10'>
 			<view class="skuPop">
 				<view class="p-nav1">
-					<image class="pic1" src="https://img2.baidu.com/it/u=4006635947,2132087516&fm=26&fmt=auto" mode="">
+					<image class="pic1" :src="skuImg" mode="">
 					</image>
 					<view class="right">
 						<view class="tit1">
@@ -63,8 +63,8 @@
 				</view>
 				<view class="p-nav2">规格</view>
 				<view class="p-nav3">
-					<view v-for="(item,i) in 6" @click="changSku(i)" :class="{'p-item':true,'active':skuIndex == i}">
-						250ml 雅漾补水喷</view>
+					<view v-for="(item,i) in skuArr" :key='i' @click="changSku(item,i)" :class="{'p-item':true,'active':skuIndex == i}">
+						{{item.suk}}</view>
 				</view>
 				<view class="p-nav4">
 					<view class="left">购买数量</view>
@@ -77,7 +77,7 @@
 				<view class="p-nav5">
 					<view class="btns">
 						<view class="b1" @click="addGwc">加入购物车</view>
-						<view class="b2">立即抢购</view>
+						<view class="b2" @click="toTijiaodingdan">立即抢购</view>
 					</view>
 				</view>
 			</view>
@@ -97,45 +97,62 @@
 	export default {
 		data() {
 			return {
+				skuItem:'',
+				id: '',
+				obj: {},
 				skuNum: 1,
 				skuIndex: 0,
 				gwcShow: false,
 				skuShow: false,
-				bannerList: [{
-						image: 'https://cdn.uviewui.com/uview/swiper/1.jpg',
-						title: '昨夜星辰昨夜风，画楼西畔桂堂东'
-					},
-					{
-						image: 'https://cdn.uviewui.com/uview/swiper/2.jpg',
-						title: '身无彩凤双飞翼，心有灵犀一点通'
-					},
-					{
-						image: 'https://cdn.uviewui.com/uview/swiper/3.jpg',
-						title: '谁念西风独自凉，萧萧黄叶闭疏窗，沉思往事立残阳'
-					}
-				],
-				imgArr: ['https://img2.baidu.com/it/u=4006635947,2132087516&fm=26&fmt=auto',
-					'https://img1.baidu.com/it/u=3303981320,1355171730&fm=26&fmt=auto',
-					'https://img0.baidu.com/it/u=2394303781,1797253216&fm=26&fmt=auto',
-					'https://img0.baidu.com/it/u=3941318376,4022646771&fm=26&fmt=auto',
-					'https://img2.baidu.com/it/u=4006635947,2132087516&fm=26&fmt=auto',
-					'https://img1.baidu.com/it/u=3303981320,1355171730&fm=26&fmt=auto',
-					'https://img0.baidu.com/it/u=2394303781,1797253216&fm=26&fmt=auto',
-					'https://img0.baidu.com/it/u=3941318376,4022646771&fm=26&fmt=auto'
-				]
+				bannerList: [],
+				skuArr: [],
+				skuImg:'',
 			}
 		},
+		onLoad(option) {
+			this.id = option.id;
+			this.getData();
+		},
 		methods: {
-			addGwc(){
+			async getData() {
+				this.imgArr = [];
+				const res = await this.$api.detail(this.id)
+				console.log(res)
+				this.obj = res.data;
+				this.obj.storeInfo.slider_image.forEach((ele, i) => {
+					this.$set(this.bannerList, i, {})
+					this.$set(this.bannerList[i], 'image', ele)
+				})
+				for (let key in this.obj.productValue) {
+					this.skuArr.push(this.obj.productValue[key])
+				}
+				this.skuImg = this.skuArr[0].image;
+			},
+			async addGwc() {
+				const res = await this.$api.cartAdd({
+					productId:this.id,
+					cartNum:this.skuNum,
+					uniqueId:this.skuItem.unique,
+				})
+				console.log(res)
 				this.skuShow = false;
 				this.gwcShow = true;
 			},
-			toTijiaodingdan(){
+			async toTijiaodingdan() {
+				const res = await this.$api.cartAdd({
+					productId:this.id,
+					cartNum:this.skuNum,
+					uniqueId:this.skuItem.unique,
+					new:1
+				})
+				console.log(res)
 				uni.navigateTo({
-					url:'/pages/users/order/tijiaodingdan'
+					url: '/pages/users/order/tijiaodingdan'
 				})
 			},
-			changSku(i) {
+			changSku(item,i) {
+				this.skuItem = item;
+				this.skuImg = item.image;
 				this.skuIndex = i;
 			},
 			jia() {
@@ -146,9 +163,9 @@
 					this.$refs.uToast.show({
 						title: '数量不能少于一件',
 						type: 'warning',
-						duration:1000
+						duration: 1000
 					})
-				}else{
+				} else {
 					this.skuNum--
 				}
 			},
@@ -187,6 +204,7 @@
 			justify-content: space-between;
 
 			.txt1 {
+				width: 584rpx;
 				font-size: 32rpx;
 				font-weight: 500;
 				color: #BD9E81;
@@ -371,7 +389,10 @@
 	/deep/ .u-drawer-content {
 		overflow: initial !important;
 	}
-
+	/deep/ .u-close{
+		position: fixed !important;
+		z-index: 99999 !important;
+	}
 	.skuPop {
 		position: relative;
 		padding: 0 40rpx;
@@ -382,7 +403,7 @@
 
 		.p-nav1 {
 			display: flex;
-
+			width: 628rpx;
 			.pic1 {
 				width: 182rpx;
 				height: 182rpx;
@@ -441,7 +462,7 @@
 		}
 
 		.p-nav3 {
-			display: flex;
+			// display: flex;
 			align-items: center;
 			flex-wrap: wrap;
 			margin-top: 28rpx;
@@ -449,6 +470,7 @@
 			overflow: auto;
 
 			.p-item {
+				display: inline-block;
 				height: 70rpx;
 				background: #F8F8F8;
 				border: 2rpx solid #FAFBFF;
@@ -542,23 +564,27 @@
 			}
 		}
 	}
-	.gwcPop{
+
+	.gwcPop {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		.txt1{
+
+		.txt1 {
 			margin-top: 52rpx;
 			font-size: 36rpx;
 			font-weight: bold;
 			color: #000000;
 		}
-		.txt2{
+
+		.txt2 {
 			margin-top: 40rpx;
 			font-size: 28rpx;
 			font-weight: 400;
 			color: #000000;
 		}
-		.btn{
+
+		.btn {
 			margin-top: 48rpx;
 			width: 240rpx;
 			height: 80rpx;

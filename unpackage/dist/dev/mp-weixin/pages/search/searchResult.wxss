@@ -92,16 +92,21 @@ page {
   margin-right: 24rpx;
 }
 .nav3 .item .right.data-v-7cde3403 {
+  width: 512rpx;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
 }
 .nav3 .item .right .txt1.data-v-7cde3403 {
   font-size: 32rpx;
   font-weight: 500;
   color: #BD9E81;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
 }
 .nav3 .item .right .txt2.data-v-7cde3403 {
+  margin: 12rpx 0;
   font-size: 24rpx;
   font-weight: 400;
   color: #707070;

@@ -5,9 +5,9 @@
 				<view class="txt1">浙江省</view>
 				<u-icon name="arrow-down" color="#000000" size="20"></u-icon>
 				<view class="myInp" @click="toSearch">
-					<u-icon  @click="toSearch" name="search" color="#000000" size="28"></u-icon>
-					<u-input  @click="toSearch" :clearable='false' v-model="searchVal" input-align='center' placeholder='搜索专家/项目/关键词'
-						placeholder-style='color: #122106;' type="text" height="60rpx" />
+					<u-icon @click="toSearch" name="search" color="#000000" size="28"></u-icon>
+					<u-input @click="toSearch" :clearable='false' v-model="searchVal" input-align='center'
+						placeholder='搜索专家/项目/关键词' placeholder-style='color: #122106;' type="text" height="60rpx" />
 				</view>
 			</view>
 			<view class="tit2">
@@ -26,45 +26,45 @@
 		</view>
 		<view class="nav2">
 			<view class="items">
-				<view class="item">
+				<view class="item" @click="toYimeixiangmu(21)">
 					<image src="/static/image/tu188.png" class="pic-item" mode=""></image>
 					<view class="txt-item">眼部整形</view>
 				</view>
-				<view class="item">
+				<view class="item" @click="toYimeixiangmu(25)">
 					<image src="/static/image/tu189.png" class="pic-item" mode=""></image>
 					<view class="txt-item">胸部整形</view>
 				</view>
-				<view class="item">
+				<view class="item" @click="toYimeixiangmu(26)">
 					<image src="/static/image/tu190.png" class="pic-item" mode=""></image>
 					<view class="txt-item">鼻部整修</view>
 				</view>
-				<view class="item">
+				<view class="item" @click="toYimeixiangmu(27)">
 					<image src="/static/image/tu198.png" class="pic-item" mode=""></image>
 					<view class="txt-item">玻尿酸</view>
 				</view>
-				<view class="item">
+				<view class="item" @click="toYimeixiangmu(28)">
 					<image src="/static/image/tu196.png" class="pic-item" mode=""></image>
 					<view class="txt-item">瘦脸针</view>
 				</view>
 			</view>
 			<view class="items items2">
-				<view class="item">
+				<view class="item" @click="toYimeixiangmu(29)">
 					<image src="/static/image/tu193.png" class="pic-item" mode=""></image>
 					<view class="txt-item">医学美肤</view>
 				</view>
-				<view class="item">
+				<view class="item" @click="toYimeixiangmu(30)">
 					<image src="/static/image/tu194.png" class="pic-item" mode=""></image>
 					<view class="txt-item">脂肪填充</view>
 				</view>
-				<view class="item">
+				<view class="item" @click="toYimeixiangmu(31)">
 					<image src="/static/image/tu195.png" class="pic-item" mode=""></image>
 					<view class="txt-item">半永久妆</view>
 				</view>
-				<view class="item">
+				<view class="item" @click="toYimeixiangmu(32)">
 					<image src="/static/image/tu199.png" class="pic-item" mode=""></image>
 					<view class="txt-item">激光脱毛</view>
 				</view>
-				<view class="item">
+				<view class="item" @click="toYimeixiangmu(33)">
 					<image src="/static/image/tu197.png" class="pic-item" mode=""></image>
 					<view class="txt-item">美丽咨询</view>
 				</view>
@@ -130,13 +130,14 @@
 				@change="tabsChange" :is-scroll="false" swiperWidth="750"></u-tabs-swiper>
 			<swiper :style="[{height: height + 'px'}]" :current="swiperCurrent">
 				<swiper-item @touchmove.stop class="swiper-item" v-for="(item, index) in list" :key="index">
-					<scroll-view scroll-y='true' >
+					<scroll-view scroll-y='true'>
 						<view class="nav5Items">
 							<!-- {{item.name}} -->
 							<!-- 热销 -->
 							<template v-if="swiperCurrent == 0">
 								<view class="item" @click="toXianqgin" v-for="item in 3">
-									<image src="https://img1.baidu.com/it/u=1217556490,2247340394&fm=26&fmt=auto" class="pic" mode=""></image>
+									<image src="https://img1.baidu.com/it/u=1217556490,2247340394&fm=26&fmt=auto"
+										class="pic" mode=""></image>
 									<view class="txt">超光子美白嫩肤一次（活动 特价）</view>
 								</view>
 							</template>
@@ -203,29 +204,35 @@
 			this.getCurrentSwiperHeight('.nav5Items')
 		},
 		methods: {
-			toSearchResult(){
-				uni.navigateTo({
-					url:'/pages/search/searchResult'
+			toYimeixiangmu(val) {
+				this.$store.commit('from',val)
+				uni.switchTab({
+					url: `/pages/tabBar/yimeixiangmu`
 				})
 			},
-			toXianqgin(){
+			toSearchResult() {
 				uni.navigateTo({
-					url:'/pages/index/search/xiangqin'
+					url: '/pages/search/searchResult'
 				})
 			},
-			toZhuanjiatuandui(){
+			toXianqgin() {
 				uni.navigateTo({
-					url:'/pages/index/zhuanjiatuandui/zhuanjiatuandui'
+					url: '/pages/index/search/xiangqin'
 				})
 			},
-			toXiufu(i){
+			toZhuanjiatuandui() {
 				uni.navigateTo({
-					url:`/pages/index/xiufu/xiufu?index=${i}`
+					url: '/pages/index/zhuanjiatuandui/zhuanjiatuandui'
 				})
 			},
-			toSearch(){
+			toXiufu(i) {
 				uni.navigateTo({
-					url:'/pages/search/search'
+					url: `/pages/index/xiufu/xiufu?index=${i}`
+				})
+			},
+			toSearch() {
+				uni.navigateTo({
+					url: '/pages/search/search'
 				})
 			},
 			// tabs通知swiper切换
@@ -552,28 +559,33 @@
 			height: 220rpx;
 		}
 	}
-	.nav5{
-		.swiper-item{
+
+	.nav5 {
+		.swiper-item {
 			background: #FFFFFF;
 		}
-		.nav5Items{
+
+		.nav5Items {
 			padding: 8rpx 24rpx 20rpx 24rpx;
 			background: #FFFFFF;
 			display: flex;
 			flex-wrap: wrap;
 			justify-content: space-between;
-			.item{
+
+			.item {
 				margin-top: 24rpx;
 				display: flex;
 				flex-direction: column;
 				align-items: center;
 				box-sizing: border-box;
 				width: 50%;
-				.pic{
+
+				.pic {
 					width: 334rpx;
 					height: 334rpx;
 				}
-				.txt{
+
+				.txt {
 					margin-top: 20rpx;
 					width: 334rpx;
 					font-size: 28rpx;
@@ -583,5 +595,4 @@
 			}
 		}
 	}
-
 </style>

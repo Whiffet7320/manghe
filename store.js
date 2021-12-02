@@ -20,12 +20,20 @@ export default new Vuex.Store({
 		jifenbiaoPageSize: 10,//积分明细列表
 		wodejiangpinPage:1,
 		wodejiangpinPageSize: 10,//我的奖品列表
-		shopPage:1,
-		shopPageSize: 15,//商品列表
 		dingdanStatus:null,
 		// 
+		shopPage:1,
+		shopPageSize: 15,//商品列表
+		from:21,
 	},
 	mutations: {
+		from(state, str) {
+			state.from = str;
+		},
+		shopPage(state, str) {
+			state.shopPage = str;
+		},
+		// 
 		dzpWodejiangpinPage(state, str) {
 			state.dzpWodejiangpinPage = str;
 		},
@@ -55,9 +63,6 @@ export default new Vuex.Store({
 		},
 		wodejiangpinPage(state, str) {
 			state.wodejiangpinPage = str;
-		},
-		shopPage(state, str) {
-			state.shopPage = str;
 		},
 		// 
 		allshopPage(state, str) {

@@ -72,6 +72,7 @@
 	export default {
 		data() {
 			return {
+				obj:{},
 				beizhu: '',
 				timeShow: false,
 				multiSelector: [
@@ -80,6 +81,12 @@
 				],
 				startTime: '',
 				endTime: '',
+			}
+		},
+		onLoad(option) {
+			if(option.obj){
+				this.obj = JSON.parse(decodeURIComponent(option.obj));
+				console.log(this.obj.storeInfo)
 			}
 		},
 		onShow() {
@@ -98,7 +105,16 @@
 			this.multiSelector[1].push(`晚上`)
 		},
 		methods: {
-			toShouyintai(){
+			async toShouyintai(){
+				const res = await this.$api.cartAdd({
+					productId:this.obj.storeInfo.id,
+					cartNum:1,
+					new:1,
+					appointment_time:this.startTime,
+					mark:this.beizhu
+				})
+				console.log(res)
+				
 				uni.navigateTo({
 					url:'/pages/index/search/shouyintai'
 				})

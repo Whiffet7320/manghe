@@ -6,6 +6,7 @@
     "u-icon": "/node-modules/uview-ui/components/u-icon/u-icon",
     "u-input": "/node-modules/uview-ui/components/u-input/u-input",
     "u-swiper": "/node-modules/uview-ui/components/u-swiper/u-swiper",
-    "u-tabs-swiper": "/node-modules/uview-ui/components/u-tabs-swiper/u-tabs-swiper"
+    "u-tabs-swiper": "/node-modules/uview-ui/components/u-tabs-swiper/u-tabs-swiper",
+    "u-loadmore": "/node-modules/uview-ui/components/u-loadmore/u-loadmore"
   }
 }

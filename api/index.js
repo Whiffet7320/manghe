@@ -654,4 +654,33 @@ export default {
 			})
 		})
 	},
+	category(obj) {
+		return myGet({
+			url: urls.category,
+			params:{
+				...obj
+			}
+		})
+	},
+	products(obj) {
+		return myGet({
+			url: urls.products,
+			params:{
+				...obj
+			}
+		})
+	},
+	detail(id) {
+		return myGet({
+			url: `${urls.detail}/${id}`,
+		})
+	},
+	cartAdd(obj) {
+		return myPost({
+			url: urls.cartAdd,
+			data:{
+				...obj
+			}
+		})
+	},
 }

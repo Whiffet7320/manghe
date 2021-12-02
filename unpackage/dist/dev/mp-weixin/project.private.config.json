@@ -83,6 +83,18 @@
           "pathName": "pages/users/order/tijiaodingdan",
           "query": "",
           "scene": null
+        },
+        {
+          "name": "pages/search/searchResult",
+          "pathName": "pages/search/searchResult",
+          "query": "sid=22",
+          "scene": null
+        },
+        {
+          "name": "pages/tabBar/yanxuanshangcheng",
+          "pathName": "pages/tabBar/yanxuanshangcheng",
+          "query": "",
+          "scene": null
         }
       ]
     }

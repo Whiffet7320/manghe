@@ -50,6 +50,7 @@ page {
   justify-content: space-between;
 }
 .nav2 .tit1 .txt1.data-v-3017033b {
+  width: 584rpx;
   font-size: 32rpx;
   font-weight: 500;
   color: #BD9E81;
@@ -207,6 +208,10 @@ page {
 .data-v-3017033b .u-drawer-content {
   overflow: initial !important;
 }
+.data-v-3017033b .u-close {
+  position: fixed !important;
+  z-index: 99999 !important;
+}
 .skuPop.data-v-3017033b {
   position: relative;
   padding: 0 40rpx;
@@ -217,6 +222,7 @@ page {
 }
 .skuPop .p-nav1.data-v-3017033b {
   display: flex;
+  width: 628rpx;
 }
 .skuPop .p-nav1 .pic1.data-v-3017033b {
   width: 182rpx;
@@ -266,7 +272,6 @@ page {
   color: #BD9E81;
 }
 .skuPop .p-nav3.data-v-3017033b {
-  display: flex;
   align-items: center;
   flex-wrap: wrap;
   margin-top: 28rpx;
@@ -274,6 +279,7 @@ page {
   overflow: auto;
 }
 .skuPop .p-nav3 .p-item.data-v-3017033b {
+  display: inline-block;
   height: 70rpx;
   background: #F8F8F8;
   border: 2rpx solid #FAFBFF;
