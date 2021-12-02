@@ -413,8 +413,6 @@ myGet.interceptors.response.use(response => {
 	}
 })
 
-
-
 dzpMyPut.interceptors.request.use(config => {
 	if (uni.getStorageSync('token')) {
 		config.headers = {
@@ -621,12 +619,49 @@ dzpMyGet.interceptors.response.use(response => {
 })
 
 export default {
-	loginWechat(obj) {
+	silenceAuth(obj) {
+		return myGet({
+			url: urls.silence_auth,
+			params: {
+				...obj
+			}
+		})
+	},
+	getUserInfo(obj) {
+		return myGet({
+			url: urls.user,
+			params: {
+				...obj
+			}
+		})
+	},
+	userEdit(obj) {
 		return myPost({
-			url: urls.loginWechat,
+			url: urls.user_update,
 			data: {
 				...obj
-			},
+			}
+		})
+	},
+	addressList() {
+		return myGet({
+			url: urls.addressList
+		})
+	},
+	editAddress(obj) {
+		return myPost({
+			url: urls.editAddress,
+			data: {
+				...obj
+			}
+		})
+	},
+	delAddress(obj) {
+		return myPost({
+			url: urls.delAddress,
+			data: {
+				...obj
+			}
 		})
 	},
 	upload_pic(file, type) {

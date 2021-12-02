@@ -1,5 +1,12 @@
 <script>
 	export default {
+		globalData: {
+			spid: 0,
+			code: 0,
+			isLogin: false,
+			userInfo: {},
+			globalData: false
+		},
 		onLaunch: function(route) {
 			console.log(route, 'onLaunch')
 		},

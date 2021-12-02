@@ -11,6 +11,7 @@
       "list": []
     },
     "miniprogram": {
+<<<<<<< HEAD
       "list": [
         {
           "name": "pages/index/search/xiangqin",
@@ -97,6 +98,9 @@
           "scene": null
         }
       ]
+=======
+      "list": []
+>>>>>>> master
     }
   }
 }

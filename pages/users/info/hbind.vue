@@ -12,7 +12,7 @@
 				<view class="right">
 					<input type="text" v-model="code" class="ipt" placeholder="请输入" />
 					<view class="light" v-if="isSend" @click="getVerifyCode">发送验证码</view>
-					<view v-else>{{verifyText}}</view>
+					<view class="reset" v-else>{{verifyText}}</view>
 				</view>
 			</view>
 		</view>
@@ -50,7 +50,7 @@
 				}
 			},
 			disabled(){
-				if(this.phone==""&&this.code==""&&this.nphone==""){
+				if(this.phone==""||this.code==""||this.nphone==""){
 					return false;
 				}else{
 					return true;
@@ -130,6 +130,11 @@
 					font-family: PingFang SC;
 					color: #707070;
 					text-align: right;
+				}
+				.reset{
+					border-left: 2px solid #F7F8FA;
+					margin-left: 20rpx;
+					padding-left: 38rpx;
 				}
 			}
 		}
