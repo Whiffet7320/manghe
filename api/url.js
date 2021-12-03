@@ -16,4 +16,5 @@ export default {
 	cartAdd: '/api/cart/add', //添加到购物车
 	orderConfirm:'/api/order/confirm',//订单确认
 	orderCreate:'/api/order/create',//订单创建
+	orderList:'/api/order/list',//订单列表
 }

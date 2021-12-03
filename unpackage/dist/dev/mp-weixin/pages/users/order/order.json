@@ -2,5 +2,7 @@
   "navigationBarTitleText": "我的订单",
   "navigationBarBackgroundColor": "#FECF05",
   "enablePullDownRefresh": false,
-  "usingComponents": {}
+  "usingComponents": {
+    "u-tabs-swiper": "/node-modules/uview-ui/components/u-tabs-swiper/u-tabs-swiper"
+  }
 }

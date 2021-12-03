@@ -744,4 +744,12 @@ export default {
 			}
 		})
 	},
+	orderList(obj) {
+		return myGet({
+			url: urls.orderList,
+			params: {
+				...obj
+			}
+		})
+	},
 }

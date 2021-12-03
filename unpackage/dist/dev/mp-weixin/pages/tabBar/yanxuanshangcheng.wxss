@@ -356,6 +356,7 @@ page {
   height: 220rpx;
 }
 .nav5 .swiper-item.data-v-24c77868 {
+  height: 100%;
   background: #FFFFFF;
 }
 .nav5 .nav5Items.data-v-24c77868 {

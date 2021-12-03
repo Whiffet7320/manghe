@@ -1,11 +1,14 @@
 <template>
 	<view class="index">
 		<view class="nav1">
-			<view class="icon">
+			<view class="icon" @click="toBack">
 				<u-icon name="arrow-left" color="#000000" size="34"></u-icon>
 			</view>
 			<view class="position-icon">
-				<u-icon name="star" color="#000000" size="48"></u-icon>
+				<!-- 未收藏 -->
+				<!-- <u-icon name="star" color="#000000" size="48"></u-icon> -->
+				<!-- 已收藏 -->
+				<u-icon name="star-fill" color="#000000" size="48"></u-icon>
 				<u-icon name="zhuanfa" style='margin-left: 40rpx;' color="#000000" size="50"></u-icon>
 			</view>
 			<view class="nav1-flex">
@@ -108,18 +111,18 @@
 			</swiper>
 		</view>
 		<view class="fixedBtns">
-			<view class="btn1">
+			<button open-type="contact" bindcontact="handleContact" class="btn1">
 				<image src="/static/image/zu1574.png" class="b-pic" mode=""></image>
 				<view class="b-txt">在线咨询</view>
-			</view>
-			<view class="btn1 btn2">
+			</button>
+			<button open-type="contact" bindcontact="handleContact" class="btn1 btn2">
 				<image src="/static/image/zu1575.png" class="b-pic" mode=""></image>
 				<view class="b-txt">挂号预约</view>
-			</view>
-			<view class="btn1 btn2">
+			</button>
+			<button open-type="contact" bindcontact="handleContact" class="btn1 btn2">
 				<image src="/static/image/lujin2236.png" class="b-pic" mode=""></image>
 				<view class="b-txt">专家面诊</view>
-			</view>
+			</button>
 		</view>
 	</view>
 </template>
@@ -156,6 +159,15 @@
 			this.getCurrentSwiperHeight('.nav5Items')
 		},
 		methods:{
+			handleContact(e) {
+				console.log(e.detail.path)
+				console.log(e.detail.query)
+			},
+			toBack(){
+				uni.navigateBack({
+					delta:1
+				})
+			},
 			toSeeImg(i, imgArr) {
 				this.isOnShow = false;
 				uni.previewImage({
@@ -449,6 +461,9 @@
 		position: fixed;
 		right: 40rpx;
 		bottom: 100rpx;
+		.btn1::after {
+				border: none;
+			}
 		.btn1{
 			width: 168rpx;
 			height: 92rpx;

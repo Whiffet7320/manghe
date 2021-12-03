@@ -6,6 +6,8 @@ export default new Vuex.Store({
 	state: {
 		shopPage:1,
 		shopPageSize: 15,//商品列表
+		dingdanPage:1,
+		dingdanPageSize: 15,//订单列表
 		from:21,
 		token:uni.getStorageSync("token")||"",
 		userInfo: {},
@@ -17,6 +19,9 @@ export default new Vuex.Store({
 		},
 		shopPage(state, str) {
 			state.shopPage = str;
+		},
+		dingdanPage(state, str) {
+			state.dingdanPage = str;
 		},
 		// 
 		Login(state, opt) {

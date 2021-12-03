@@ -96,8 +96,10 @@
 			<u-tabs-swiper bg-color="#F7F8FA" height='96' font-size="28" gutter="30" inactive-color="#707070"
 				bar-height="4" bar-width="64" active-color="#BD9E81" ref="uTabs" :list="list" :current="current"
 				@change="tabsChange" :is-scroll="false" swiperWidth="750"></u-tabs-swiper>
-			<swiper :style="[{height: height + 'px'}]" :current="swiperCurrent">
-				<swiper-item @touchmove.stop class="swiper-item" v-for="(item, index) in list" :key="index">
+			<swiper :style="[{height: height + 'px'}]" :current="swiperCurrent" :vertical='false'
+				@transition="transition" @animationfinish="animationfinish">
+				<!-- @touchmove.stop -->
+				<swiper-item class="swiper-item" v-for="(item, index) in list" :key="index">
 					<scroll-view scroll-y='true'>
 						<view class="nav5Items">
 							<!-- {{item.name}} -->
@@ -121,20 +123,19 @@
 							</template>
 							<!-- 推荐 -->
 							<template v-if="swiperCurrent == 1">
-
+								123
 							</template>
 							<!-- 口碑 -->
 							<template v-if="swiperCurrent == 2">
-
+								456
 							</template>
 							<!-- 精选 -->
 							<template v-if="swiperCurrent == 3">
-
+								789
 							</template>
-							<u-loadmore :status="status" />
+							<u-loadmore v-if='swiperCurrent == index' :status="status" />
 						</view>
 					</scroll-view>
-
 				</swiper-item>
 			</swiper>
 		</view>
@@ -223,7 +224,7 @@
 						page: this.shopPage,
 						limit: this.shopPageSize,
 					})
-					res.data = res.data.filter(ele=>{
+					res.data = res.data.filter(ele => {
 						return ele.spec_type == 1
 					})
 					if (res.data.length == 0) {
@@ -277,6 +278,17 @@
 				setTimeout(() => {
 					this.getCurrentSwiperHeight('.nav5Items')
 				}, 900)
+			},
+			// swiper-item左右移动，通知tabs的滑块跟随移动
+			transition(e) {
+				let dx = e.detail.dx;
+				this.$refs.uTabs.setDx(dx);
+			},
+			animationfinish(e) {
+				let current = e.detail.current;
+				this.$refs.uTabs.setFinishCurrent(current);
+				this.swiperCurrent = current;
+				this.current = current;
 			},
 			getCurrentSwiperHeight(element) {
 				let query = uni.createSelectorQuery().in(this);
@@ -690,6 +702,7 @@
 
 	.nav5 {
 		.swiper-item {
+			height: 100%;
 			background: #FFFFFF;
 		}
 
