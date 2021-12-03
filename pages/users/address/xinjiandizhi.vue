@@ -7,7 +7,7 @@
 					收货人
 				</view>
 				<view class="Puin">
-					<u-input type="text" :clearable='false' v-model="infoName" input-align="right" placeholder="请输入收货人姓名" />
+					<u-input type="text" :clearable='false' v-model="infoName" input-align="right" placeholder="请输入收货人姓名" placeholder-style="color:#DEDEDE" />
 				</view>
 			</view>
 			<view class="UserPhoes">
@@ -15,23 +15,25 @@
 					手机号码
 				</view>
 				<view class="Puin">
-					<u-input type="text" :clearable='false' v-model="Phone" input-align="right" placeholder="请输入收货人手机号" maxlength="11" />
+					<u-input type="text" :clearable='false' v-model="Phone" input-align="right" placeholder="请输入收货人手机号" maxlength="11" placeholder-style="color:#DEDEDE" />
 				</view>
 			</view>
 		</view>
 
 		<view class="Ress">
-			<view class="Location" @click="addressShow = true">
+			<view class="Location">
 				<view class="LocaTes">
 					所在地区
 				</view>
 				<view class="AddStat">
 					<view class="Puin">
-						<view style="margin-right: 20rpx;color: #000000;">{{myAddress}}</view>
-						<u-picker @confirm='changeAddress' mode="region" v-model="addressShow" confirm-color="#FE694F"></u-picker>
+						<picker mode="multiSelector" @change="bindRegionChange" @columnchange="bindMultiPickerColumnChange" :value="valueRegion" :range="multiArray">
+							<view class="picker" v-if="region.length">{{region[0]}}{{region[1]}}{{region[2]}}</view>
+							<view style="color:#DEDEDE" v-else>请选择地区</view>
+						</picker>
 					</view>
 					<view class="icon">
-						<u-icon name="arrow-right" color="#707070" size="28"></u-icon>
+						<u-icon name="arrow-right" color="#CCCCCC" size="28"></u-icon>
 					</view>
 				</view>
 			</view>
@@ -40,7 +42,7 @@
 					详细地址
 				</view>
 				<view class="AddStat">
-					<u-input type="text" :clearable='false' v-model="DateAddrs" input-align="right" placeholder="请输入详细地址信息" />
+					<u-input type="text" :clearable='false' v-model="DateAddrs" input-align="right" placeholder="请输入详细地址信息" placeholder-style="color:#DEDEDE" />
 				</view>
 			</view>
 		</view>
@@ -69,12 +71,8 @@
 				</view>
 			</view>
 		</view>
-
-		<!-- <view class="btnState" @click="PresInfo">
-			保存地址
-		</view> -->
 		<view class="footer">
-			<view @click="PresInfo" v-if="infoName!='' && Phone!='' && myAddress!='' && DateAddrs!=''" class="btn">保存</view>
+			<view @click="PresInfo" v-if="infoName!='' && Phone!='' && region.length!=0 && DateAddrs!=''" class="btn">保存</view>
 			<view v-else class="btn noactive">保存</view>
 		</view>
 
@@ -90,40 +88,136 @@
 </template>
 
 <script>
+	import {mapGetters} from "vuex";
 	export default {
 		data() {
 			return {
 				popShow1: false,
-				addressShow: false,
 				infoName: '', //收货人
 				Phone: '', //手机号码
+				region: [],
+				valueRegion: [0, 0, 0],
 				Address: '', //地址
 				DateAddrs: '', //详情地址
-				Switch: false, //是否默认
-				keep: true, //提示保存成功
-				myAddress: '',
-				isEdit: null,
-				id: '',
+				Switch: true, //是否默认
+				id: 0,
+				district: [],
+				multiArray: [],
+				multiIndex: [0, 0, 0],
+				cityId: 0,
+				defaultRegion: ['广东省', '广州市', '番禺区'],
+				defaultRegionCode: '440113',
 			}
 		},
+		computed:{
+			...mapGetters(['isLogin'])
+		},
 		onLoad(options) {
-			if (options.editAddress) {
-				this.isEdit = true;
-				console.log(JSON.parse(options.editAddress))
-				var editAddress = JSON.parse(options.editAddress)
-				this.id = editAddress.id;
-				this.infoName = editAddress.real_name;
-				this.Phone = editAddress.phone;
-				this.Switch = editAddress.is_default == '0' ? false : true;
-				var addressDetail = editAddress.detail.split(' ')
-				this.myAddress = addressDetail[0];
-				this.DateAddrs = addressDetail[1];
+			if(this.isLogin){
+				this.id = options.id || 0;
+				uni.setNavigationBarTitle({
+					title: options.id ? '修改收货地址' : '新建收货地址'
+				})
+				this.getUserAddress();
+				this.getCitylist();
 			}
 		},
 		methods: {
-			changeAddress(e) {
-				console.log(e)
-				this.myAddress = `${e.province.label}-${e.city.label}-${e.area.label}`
+			getCitylist(){
+				this.$api.cityList().then((res)=>{
+					this.district = res.data;
+					this.initialize();
+				})
+			},
+			initialize(){
+				let that = this,
+					province = [],
+					city = [],
+					area = [];
+				if (that.district.length) {
+					let cityChildren = that.district[0].c || [];
+					let areaChildren = cityChildren.length ? (cityChildren[0].c || []) : [];
+					that.district.forEach(function(item) {
+						province.push(item.n);
+					});
+					cityChildren.forEach(function(item) {
+						city.push(item.n);
+					});
+					areaChildren.forEach(function(item) {
+						area.push(item.n);
+					});
+					this.multiArray = [province, city, area]
+				}
+			},
+			bindRegionChange(e) {
+				let multiIndex = this.multiIndex,
+					province = this.district[multiIndex[0]] || {
+						c: []
+					},
+					city = province.c[multiIndex[1]] || {
+						v: 0
+					},
+					multiArray = this.multiArray,
+					value = e.detail.value;
+			
+				this.region = [multiArray[0][value[0]], multiArray[1][value[1]], multiArray[2][value[2]]];
+				this.cityId = city.v;
+				this.valueRegion = [0, 0, 0];
+				this.initialize();
+			},
+			bindMultiPickerColumnChange(e) {
+				let that = this,
+					column = e.detail.column,
+					value = e.detail.value,
+					currentCity = this.district[value] || {
+						c: []
+					},
+					multiArray = that.multiArray,
+					multiIndex = that.multiIndex;
+				multiIndex[column] = value;
+				switch (column) {
+					case 0:
+						let areaList = currentCity.c[0] || {
+							c: []
+						};
+						multiArray[1] = currentCity.c.map((item) => {
+							return item.n;
+						});
+						multiArray[2] = areaList.c.map((item) => {
+							return item.n;
+						});
+						break;
+					case 1:
+						let cityList = that.district[multiIndex[0]].c[multiIndex[1]].c || [];
+						multiArray[2] = cityList.map((item) => {
+							return item.n;
+						});
+						break;
+					case 2:
+			
+						break;
+				}
+				// #ifdef MP
+				this.$set(this.multiArray, 0, multiArray[0]);
+				this.$set(this.multiArray, 1, multiArray[1]);
+				this.$set(this.multiArray, 2, multiArray[2]);
+				// #endif
+				// #ifdef H5
+				this.multiArray = multiArray;
+				// #endif
+				this.multiIndex = multiIndex;
+			},
+			getUserAddress() {
+				if (!this.id) return false;
+				this.$api.getAddressDetail(this.id).then(res => {
+					let region = [res.data.province, res.data.city, res.data.district];
+					this.infoName = res.data.real_name;
+					this.Phone = res.data.phone;
+					this.Switch = res.data.is_default==1?true:false;
+					this.DateAddrs = res.data.detail;
+					this.region = region;
+					this.cityId = res.data.city_id
+				});
 			},
 			queding() {
 				this.popShow1 = false;
@@ -139,58 +233,54 @@
 			SwitchOpen() {
 				this.Switch = !this.Switch
 			},
-			//选择地址
-			DDress(e) {
-
-			},
 			//保存
 			async PresInfo() {
 				var myreg = /^[1][3,4,5,7,8,9][0-9]{9}$/;
-				if (!myreg.test(this.Phone)) {
+				if (!myreg.test(this.Phone)){
 					this.$refs.uToast.show({
 						title: "请填写正确的手机号码",
 						type: 'warning',
 					})
-				} else {
-					if (this.isEdit) {
-						const res = await this.$api.upDateAddress({
-							real_name: this.infoName,
-							phone: this.Phone,
-							is_default: this.Switch ? '1' : '0',
-							detail: `${this.myAddress} ${this.DateAddrs}`
-						}, this.id)
-						console.log(res)
-						if (res.code == 200) {
-							this.popShow1 = true;
-						} else {
-							this.$refs.uToast.show({
-								title: res.message,
-								type: 'warning',
-							})
-						}
-					} else {
-						const res = await this.$api.addAddress({
-							real_name: this.infoName,
-							phone: this.Phone,
-							is_default: this.Switch ? '1' : '0',
-							detail: `${this.myAddress} ${this.DateAddrs}`
-						})
-						console.log(res)
-						if (res.code == 200) {
-							this.popShow1 = true;
-						} else {
-							this.$refs.uToast.show({
-								title: res.message,
-								type: 'warning',
-							})
-						}
-					}
+					return;
 				}
-			},
-			//提示
-			okExit() {
-				this.keep = !this.keep
-			},
+				if (this.region[0] === '省'&&this.region[1] === '市'&&this.region[2] === '区'){
+					this.$refs.uToast.show({
+						title: '请选择所在地区',
+						type: 'warning',
+					})
+					return;
+				}
+				if (!this.DateAddrs){
+					this.$refs.uToast.show({
+						title: '请填写详细地址',
+						type: 'warning',
+					})
+					return;
+				}
+				let regionArray = this.region;
+				let address = {
+					province: regionArray[0],
+					city: regionArray[1],
+					district: regionArray[2],
+					city_id: this.cityId,
+				};
+				const res = await this.$api.editAddress({
+					id:this.id,
+					real_name: this.infoName,
+					phone: this.Phone,
+					is_default: this.Switch ? 1 : 0,
+					address: address,
+					detail: this.DateAddrs
+				})
+				if (res.status == 200) {
+					this.popShow1 = true;
+				} else {
+					this.$refs.uToast.show({
+						title: res.msg,
+						type: 'warning',
+					})
+				}
+			}
 		}
 	}
 </script>
@@ -202,6 +292,16 @@
 	}
 </style>
 <style lang="scss" scoped>
+	.acea-row{
+		display: flex;
+		flex-direction: column;
+	}
+	.picker{
+		text-align: right;
+		font-size: 28rpx;
+		font-weight: 400;
+		color: #707070;
+	}
 	.pop2 {
 		display: flex;
 		flex-direction: column;
@@ -227,7 +327,7 @@
 			margin-top: 60rpx;
 			width: 240rpx;
 			height: 80rpx;
-			background: #fe694f;
+			background: #BD9E81;
 			border-radius: 40rpx;
 			font-size: 28rpx;
 			font-weight: 500;

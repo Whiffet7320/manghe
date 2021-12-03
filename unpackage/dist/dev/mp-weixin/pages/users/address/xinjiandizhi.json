@@ -5,7 +5,6 @@
   "usingComponents": {
     "u-toast": "/node-modules/uview-ui/components/u-toast/u-toast",
     "u-input": "/node-modules/uview-ui/components/u-input/u-input",
-    "u-picker": "/node-modules/uview-ui/components/u-picker/u-picker",
     "u-icon": "/node-modules/uview-ui/components/u-icon/u-icon",
     "u-popup": "/node-modules/uview-ui/components/u-popup/u-popup"
   }

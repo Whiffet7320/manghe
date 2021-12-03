@@ -679,7 +679,7 @@ export default {
 					type,
 				},
 				success: (res) => {
-					if(JSON.parse(res.data).code == 401){
+					if (JSON.parse(res.data).code == 401) {
 						uni.navigateTo({
 							url: '/pages/login/index'
 						})
@@ -692,7 +692,7 @@ export default {
 	category(obj) {
 		return myGet({
 			url: urls.category,
-			params:{
+			params: {
 				...obj
 			}
 		})
@@ -700,7 +700,7 @@ export default {
 	products(obj) {
 		return myGet({
 			url: urls.products,
-			params:{
+			params: {
 				...obj
 			}
 		})
@@ -713,7 +713,33 @@ export default {
 	cartAdd(obj) {
 		return myPost({
 			url: urls.cartAdd,
-			data:{
+			data: {
+				...obj
+			}
+		})
+	},
+	getAddressDetail(id) {
+		return myGet({
+			url: `${urls.addressDetail}/${id}`,
+		})
+	},
+	cityList() {
+		return myGet({
+			url: urls.city_list
+		})
+	},
+	orderConfirm(obj) {
+		return myPost({
+			url: urls.orderConfirm,
+			data: {
+				...obj
+			}
+		})
+	},
+	orderCreate(obj,key) {
+		return myPost({
+			url: `${urls.orderCreate}/${key}`,
+			data: {
 				...obj
 			}
 		})

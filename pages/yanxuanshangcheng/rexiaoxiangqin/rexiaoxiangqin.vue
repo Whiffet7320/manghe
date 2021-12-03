@@ -42,8 +42,8 @@
 				<view class="txt">首页</view>
 			</view>
 			<view class="right">
-				<view class="b1" @click="addGwc">加入购物车</view>
-				<view class="b2">立即抢购</view>
+				<view class="b1" @click="clickGwc">加入购物车</view>
+				<view class="b2" @click="clickGwc">立即抢购</view>
 			</view>
 		</view>
 		<!-- 选择SKU -->
@@ -54,11 +54,11 @@
 					</image>
 					<view class="right">
 						<view class="tit1">
-							<view class="txt1">¥9.90</view>
-							<view class="txt2">¥89.90</view>
+							<view class="txt1">¥{{skuItem.price}}</view>
+							<view class="txt2">¥{{skuItem.ot_price}}</view>
 						</view>
-						<view class="tit2">库存9982件</view>
-						<view class="tit3">250ml 雅漾补水喷雾赠一</view>
+						<view class="tit2">库存{{skuItem.stock}}件</view>
+						<view class="tit3">{{skuItem.suk}}</view>
 					</view>
 				</view>
 				<view class="p-nav2">规格</view>
@@ -126,13 +126,17 @@
 				for (let key in this.obj.productValue) {
 					this.skuArr.push(this.obj.productValue[key])
 				}
-				this.skuImg = this.skuArr[0].image;
+				// this.skuImg = this.skuArr[0].image;
+				this.changSku(this.skuArr[0],0)
+			},
+			clickGwc(){
+				this.skuShow = true;
 			},
 			async addGwc() {
 				const res = await this.$api.cartAdd({
 					productId:this.id,
 					cartNum:this.skuNum,
-					uniqueId:this.skuItem.unique,
+					uniqueId:this.skuItem.unique,sss
 				})
 				console.log(res)
 				this.skuShow = false;
@@ -147,7 +151,7 @@
 				})
 				console.log(res)
 				uni.navigateTo({
-					url: '/pages/users/order/tijiaodingdan'
+					url: `/pages/users/order/tijiaodingdan?skuItem=${JSON.stringify(this.skuItem)}&shopName=${this.obj.storeInfo.store_name}&buyNum=${this.skuNum}&isGWC=no&cartId=${res.data.cartId}`
 				})
 			},
 			changSku(item,i) {

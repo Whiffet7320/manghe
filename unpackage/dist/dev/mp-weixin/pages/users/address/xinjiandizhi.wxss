@@ -30,6 +30,16 @@ page {
 /* 垂直间距 */
 /* 透明度 */
 /* 文章场景相关 */
+.acea-row.data-v-3d6cea70 {
+  display: flex;
+  flex-direction: column;
+}
+.picker.data-v-3d6cea70 {
+  text-align: right;
+  font-size: 28rpx;
+  font-weight: 400;
+  color: #707070;
+}
 .pop2.data-v-3d6cea70 {
   display: flex;
   flex-direction: column;
@@ -53,7 +63,7 @@ page {
   margin-top: 60rpx;
   width: 240rpx;
   height: 80rpx;
-  background: #fe694f;
+  background: #BD9E81;
   border-radius: 40rpx;
   font-size: 28rpx;
   font-weight: 500;
