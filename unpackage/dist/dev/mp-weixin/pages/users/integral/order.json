@@ -1,6 +1,0 @@
-{
-  "navigationBarTitleText": "积分订单",
-  "usingComponents": {
-    "u-badge": "/node-modules/uview-ui/components/u-badge/u-badge"
-  }
-}

@@ -1,1 +1,0 @@
-{"version":3,"sources":["uni-app:///main.js"],"names":["createPage","Page"],"mappings":";;;;;;;;;;kDAAA;AACA;AACA,2M;AACAA,UAAU,CAACC,aAAD,CAAV,C","file":"pages/tabBar/wode.js","sourcesContent":["import 'uni-pages';\nimport Vue from 'vue'\nimport Page from './pages/tabBar/wode.vue'\ncreatePage(Page)"],"sourceRoot":""}

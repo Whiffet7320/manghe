@@ -1,6 +1,8 @@
 <template>
 	<view class="index">
-		<image src="/static/image/zu1842.png" class="fixed-icon" mode=""></image>
+		<view @click="goCart">
+			<image src="/static/image/zu1842.png" class="fixed-icon" mode=""></image>
+		</view>
 		<image src="/static/image/zu1525.png" class="fixed-icon2" mode=""></image>
 		<view class="nav1">
 			<view class="tit1">
@@ -143,9 +145,7 @@
 </template>
 
 <script>
-	import {
-		mapState
-	} from "vuex";
+	import {mapState} from "vuex";
 	export default {
 		computed: {
 			...mapState(["shopPage", "shopPageSize"]),
@@ -297,6 +297,11 @@
 					this.height = res[0][this.swiperCurrentIndex].height;
 				})
 			},
+			goCart(){
+				uni.navigateTo({
+					url:"/pages/cart/index"
+				})
+			}
 		}
 	}
 </script>

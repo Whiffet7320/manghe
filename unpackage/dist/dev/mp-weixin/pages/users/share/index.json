@@ -1,8 +1,0 @@
-{
-  "navigationBarTitleText": "分享码",
-  "navigationBarTextStyle": "black",
-  "navigationBarBackgroundColor": "#FECF05",
-  "usingComponents": {
-    "u-gap": "/node-modules/uview-ui/components/u-gap/u-gap"
-  }
-}
