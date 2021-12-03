@@ -140,8 +140,131 @@
 									</view>
 									<view class="btns">
 										<view class="btn2">再次购买</view>
-										<view class="btn1">去评论</view>
+										<view class="btn1">查看评价</view>
 										<view class="btn1 btn3">申请售后</view>
+									</view>
+								</view>
+							</view>
+							<!-- 已关闭 -->
+							<view class="item dfwk">
+								<view class="tit1">
+									<view class="left">下单时间：2021-09-24 20:00</view>
+									<view class="right" style="color: #707070;">已关闭</view>
+								</view>
+								<view class="tit2">
+									<image class="pic"
+										src="https://img2.baidu.com/it/u=4006635947,2132087516&fm=26&fmt=auto" mode="">
+									</image>
+									<!-- 未预付款 -->
+									<!-- <view class="box1">
+										<view class="tit2-1">
+											<view class="txt1" style="color: #707070;">250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一</view>
+											<view class="txt2">X1</view>
+										</view>
+										<view class="down">
+											<view class="tit2-2">250ml</view>
+										</view>
+									</view> -->
+									<!-- 预付款 -->
+									<view class="box1">
+										<view class="tit2-1">
+											<view class="txt1" style="color: #707070;">250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一250ml
+												雅漾补水喷雾赠一</view>
+										</view>
+										<view class="tit2-1-1">预约时间：2021-11-06 下午</view>
+										<view class="tit2-1-2">预约医生：李竞</view>
+									</view>
+								</view>
+								<view class="tit3">
+									<view class="box1">
+										<view class="txt1">订单编号:JHS123456123456</view>
+										<view class="txt2">复制</view>
+									</view>
+									<view class="btns">
+										<view class="btn2">再次购买</view>
+									</view>
+								</view>
+							</view>
+							<!-- 拼团中 -->
+							<view class="item dfwk ptz">
+								<view class="tit1">
+									<view class="left">下单时间：2021-09-24 20:00</view>
+									<view class="right">拼团中</view>
+								</view>
+								<view class="tit2">
+									<image class="pic"
+										src="https://img2.baidu.com/it/u=4006635947,2132087516&fm=26&fmt=auto" mode="">
+									</image>
+									<!-- 未预付款 -->
+									<view class="box1">
+										<view class="tit2-1">
+											<view class="txt1">250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一</view>
+											<view class="txt2">X1</view>
+										</view>
+										<view class="down">
+											<view class="tit2-2">250ml</view>
+										</view>
+									</view>
+									<!-- 预付款 -->
+									<!-- <view class="box1">
+										<view class="tit2-1">
+											<view class="txt1">250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一</view>
+										</view>
+										<view class="tit2-1-1">预约时间：2021-11-06 下午</view>
+										<view class="tit2-1-2">预约医生：李竞</view>
+									</view> -->
+								</view>
+								<view class="tit3">
+									<view class="box1">
+										<view class="txt1">订单编号:JHS123456123456</view>
+										<view class="txt2">复制</view>
+									</view>
+									<view class="btns">
+										<view class="b-left">
+											<view class="txt1">等待开团</view>
+											<view class="imgss">
+												<image class="imggg"
+													src="https://img2.baidu.com/it/u=4006635947,2132087516&fm=26&fmt=auto"
+													mode=""></image>
+											</view>
+										</view>
+										<view class="btn1">取消订单</view>
+									</view>
+								</view>
+							</view>
+							<!-- 未成团 -->
+							<view class="item dfwk ptz">
+								<view class="tit1">
+									<view class="left">下单时间：2021-09-24 20:00</view>
+									<view class="right" style="color: #707070;">未成团</view>
+								</view>
+								<view class="tit2">
+									<image class="pic"
+										src="https://img2.baidu.com/it/u=4006635947,2132087516&fm=26&fmt=auto" mode="">
+									</image>
+									<!-- 未预付款 -->
+									<view class="box1">
+										<view class="tit2-1">
+											<view class="txt1" style="color: #707070;">250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一</view>
+											<view class="txt2">X1</view>
+										</view>
+										<view class="down">
+											<view class="tit2-2">250ml</view>
+										</view>
+									</view>
+									<!-- 预付款 -->
+									<!-- <view class="box1">
+										<view class="tit2-1">
+											<view class="txt1" style="color: #707070;">250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一</view>
+										</view>
+										<view class="tit2-1-1">预约时间：2021-11-06 下午</view>
+										<view class="tit2-1-2">预约医生：李竞</view>
+									</view> -->
+								</view>
+								<view class="tit3">
+									<view class="box1">
+										<view class="txt1">订单编号:JHS123456123456</view>
+										<view class="txt2">复制</view>
 									</view>
 								</view>
 							</view>
@@ -624,6 +747,38 @@
 					color: #FA8677;
 				}
 
+			}
+		}
+
+		.item.dfwk.ptz {
+			.btns {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				justify-content: space-between;
+
+				.b-left {
+					display: flex;
+					align-items: center;
+
+					.txt1 {
+						font-size: 20rpx;
+						font-weight: 400;
+						color: #707070;
+					}
+
+					.imgss {
+						margin-left: 20rpx;
+						display: flex;
+						align-items: center;
+
+						.imggg {
+							width: 34rpx;
+							height: 34rpx;
+							border-radius: 50%;
+						}
+					}
+				}
 			}
 		}
 	}

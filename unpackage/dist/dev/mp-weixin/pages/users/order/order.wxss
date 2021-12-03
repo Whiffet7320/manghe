@@ -246,4 +246,29 @@ page {
 .nav5Items .item.dfwk .down.dfwk .tit2-1-2-2.red.data-v-7021119d {
   color: #FA8677;
 }
+.nav5Items .item.dfwk.ptz .btns.data-v-7021119d {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav5Items .item.dfwk.ptz .btns .b-left.data-v-7021119d {
+  display: flex;
+  align-items: center;
+}
+.nav5Items .item.dfwk.ptz .btns .b-left .txt1.data-v-7021119d {
+  font-size: 20rpx;
+  font-weight: 400;
+  color: #707070;
+}
+.nav5Items .item.dfwk.ptz .btns .b-left .imgss.data-v-7021119d {
+  margin-left: 20rpx;
+  display: flex;
+  align-items: center;
+}
+.nav5Items .item.dfwk.ptz .btns .b-left .imgss .imggg.data-v-7021119d {
+  width: 34rpx;
+  height: 34rpx;
+  border-radius: 50%;
+}
 
