@@ -367,6 +367,9 @@
 					font-size: 28rpx;
 					font-weight: 400;
 					color: #999999;
+					/deep/.u-input__input{
+						color: #707070;
+					}
 				}
 			}
 
@@ -387,6 +390,9 @@
 					font-size: 28rpx;
 					font-weight: 400;
 					color: #999999;
+					/deep/.u-input__input{
+						color: #707070;
+					}
 				}
 			}
 		}
@@ -453,6 +459,9 @@
 					font-size: 28rpx;
 					font-weight: 400;
 					color: #999999;
+					/deep/.u-input__input{
+						color: #707070;
+					}
 				}
 			}
 		}

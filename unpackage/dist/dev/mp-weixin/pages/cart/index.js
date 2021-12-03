@@ -227,43 +227,23 @@ var _default =
 {
   data: function data() {
     return {
-      total: 1,
+      adelShow: false,
+      total: 0,
       Allchecked: false,
       totalPrice: 0.00,
-      list: [
-      {
-        checked: false,
-        image: "",
-        title: "250ml 雅漾补水喷雾赠一",
-        price: 9.99,
-        status: 1 },
+      list: [],
+      likelist: [] };
 
-      {
-        checked: false,
-        image: "",
-        title: "250ml 雅漾补水喷雾赠一",
-        price: 9.90,
-        status: 0 }],
+  },
+  methods: {
+    getCartlist: function getCartlist() {
+      this.$api.cartlist().then(function (res) {
+        console.log(res);
+      });
+    } },
 
-
-      likelist: [
-      {
-        image: "",
-        title: "肋骨鼻综合～肋软骨隆鼻（活动特价）",
-        price: 9.95 },
-
-      {
-        image: "",
-        title: "肋骨鼻综合～肋软骨隆鼻（活动特价）",
-        price: 9.95 },
-
-      {
-        image: "",
-        title: "肋骨鼻综合～肋软骨隆鼻（活动特价）",
-        price: 9.95 }] };
-
-
-
+  onShow: function onShow() {
+    this.getCartlist();
   } };exports.default = _default;
 
 /***/ }),

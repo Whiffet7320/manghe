@@ -2,15 +2,15 @@
 	<view>
 		<view class="celllist">
 			<view class="cell">
-				<view class="left">手机号</view>
+				<view class="left">换绑手机号</view>
 				<view class="right">
-					<input type="text" v-model="phone" class="ipt" placeholder="请输入" />
+					<input type="number" v-model="nphone" class="ipt" placeholder="请输入" maxlength="11" />
 				</view>
 			</view>
 			<view class="cell">
 				<view class="left">验证码</view>
 				<view class="right">
-					<input type="text" v-model="code" class="ipt" placeholder="请输入" />
+					<input type="number" v-model="code" class="ipt" placeholder="请输入" />
 					<view class="light" v-if="isSend" @click="getVerifyCode">发送验证码</view>
 					<view class="reset" v-else>{{verifyText}}</view>
 				</view>
@@ -18,9 +18,9 @@
 		</view>
 		<view class="celllist">
 			<view class="cell">
-				<view class="left">换绑手机号</view>
+				<view class="left">原手机号</view>
 				<view class="right">
-					<input type="text" v-model="nphone" class="ipt" placeholder="请输入" />
+					<input type="number" v-model="phone" class="ipt" placeholder="请输入" />
 				</view>
 			</view>
 		</view>
@@ -59,7 +59,11 @@
 		},
 		methods:{
 			//获取验证码
-			getVerifyCode(){
+			async getVerifyCode(){
+				if (!this.$u.test.mobile(this.phone)) {
+					this.$u.toast("请输入正确的手机号");
+					return false;
+				}
 				if (this.second > 0) {
 					return;
 				}
@@ -71,8 +75,52 @@
 						clearInterval(this.clockTimer);
 					}
 				}, 1000)
+				await this.$api.verifyCode().then(res => {
+					let data = {
+						phone:this.nphone,
+						type:"register",
+						key:res.data.key
+					}
+					this.$api.registerVerify(data).then(res => {
+						this.$u.toast(res.msg);
+					}).catch(err => {
+						this.$u.toast(err);
+					});
+				})
 			},
-			onSubmit(){}
+			onSubmit(){
+				uni.showModal({
+					title: '温馨提示',
+					content: "是否绑定账号",
+					confirmText: '绑定',
+					confirmColor:"#BD9E81",
+					success:(res)=> {
+						if (res.confirm) {
+							this.$api.updatePhone({
+								phone: this.phone,
+								captcha: this.captcha
+							}).then(res => {
+								this.$u.toast('绑定成功！');
+								setTimeout(()=> {
+									uni.navigateBack();
+								}, 1500);
+							}).catch(err => {
+								this.$u.toast(err);
+							})
+						} else if (res.cancel) {
+							this.$u.toast('您已取消绑定！');
+							setTimeout(()=> {
+								uni.navigateBack();
+							}, 1500);
+						}
+					}
+				});
+			}
+		},
+		onLoad(options){
+			if(options.phone){
+				this.phone = options.phone;
+			}
 		},
 		onUnload() {
 			clearInterval(this.clockTimer);

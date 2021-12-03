@@ -4,7 +4,7 @@
 			<view class="cell">
 				<view class="left">手机号</view>
 				<view class="right">
-					<input type="number" v-model="phone" class="ipt" placeholder="请输入" />
+					<input type="number" v-model="phone" class="ipt" placeholder="请输入" maxlength="11" />
 				</view>
 			</view>
 			<view class="cell">
@@ -51,6 +51,10 @@
 		methods:{
 			//获取验证码
 			async getVerifyCode(){
+				if (!this.$u.test.mobile(this.phone)) {
+					this.$u.toast("请输入正确的手机号");
+					return false;
+				}
 				if (this.second > 0) {
 					return;
 				}
@@ -63,7 +67,12 @@
 					}
 				}, 1000)
 				await this.$api.verifyCode().then(res => {
-					this.$api.registerVerify(this.phone, 'reset', res.data.key, this.captcha).then(res => {
+					let data = {
+						phone:this.phone,
+						type:"register",
+						key:res.data.key
+					}
+					this.$api.registerVerify(data).then(res => {
 						this.$u.toast(res.msg);
 					}).catch(err => {
 						this.$u.toast(err);
@@ -71,46 +80,32 @@
 				})
 			},
 			onSubmit(){
-				this.$api.bindingUserPhone({
-					phone: this.phone,
-					captcha: this.captcha
-				}).then(res => {
-					if (res.data !== undefined && res.data.is_bind) {
-						uni.showModal({
-							title: '是否绑定账号',
-							content: res.msg,
-							confirmText: '绑定',
-							success:(res)=> {
-								if (res.confirm) {
-									this.$api.bindingUserPhone({
-										phone: this.phone,
-										captcha: this.captcha,
-										step: 1
-									}).then(res => {
-										this.$u.toast(res.msg);
-										setTimeout(()=> {
-											uni.navigateBack();
-										}, 2000);
-									}).catch(err => {
-										this.$u.toast(err);
-									})
-								} else if (res.cancel) {
-									this.$u.toast('您已取消绑定！');
-									setTimeout(()=> {
-										uni.navigateBack();
-									}, 2000);
-								}
-							}
-						});
-					} else{
-						this.$u.toast('绑定成功！');
-						setTimeout(()=> {
-							uni.navigateBack();
-						}, 2000);
+				uni.showModal({
+					title: '温馨提示',
+					content: "是否绑定账号",
+					confirmText: '绑定',
+					confirmColor:"#BD9E81",
+					success:(res)=> {
+						if (res.confirm) {
+							this.$api.updatePhone({
+								phone: this.phone,
+								captcha: this.captcha
+							}).then(res => {
+								this.$u.toast('绑定成功！');
+								setTimeout(()=> {
+									uni.navigateBack();
+								}, 1500);
+							}).catch(err => {
+								this.$u.toast(err);
+							})
+						} else if (res.cancel) {
+							this.$u.toast('您已取消绑定！');
+							setTimeout(()=> {
+								uni.navigateBack();
+							}, 1500);
+						}
 					}
-				}).catch(err => {
-					this.$u.toast(err);
-				})
+				});
 			}
 		},
 		onUnload() {

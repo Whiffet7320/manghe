@@ -21,7 +21,7 @@
 				<view class="left">手机号</view>
 				<view class="right">
 					<view class="light" v-if="!userInfo.phone" @click="bindPhone">去绑定</view>
-					<view class="u-flex" v-else>{{userInfo.phone}}<view class="light change" @click="hbindPhone">换绑</view></view>
+					<view class="u-flex" v-else>{{userInfo.phone}}<view class="light change" @click="hbindPhone(userInfo.phone)">换绑</view></view>
 				</view>
 			</view>
 			<view class="cell">
@@ -95,9 +95,9 @@
 					url:"/pages/users/info/bind"
 				})
 			},
-			hbindPhone(){
+			hbindPhone(phone){
 				uni.navigateTo({
-					url:"/pages/users/info/hbind"
+					url:"/pages/users/info/hbind?phone="+phone
 				})
 			},
 			sexChange(index){
@@ -153,7 +153,7 @@
 				});
 			}
 		},
-		onLoad(){
+		onShow(){
 			if(this.isLogin){
 				this.getUserInfo();
 			}

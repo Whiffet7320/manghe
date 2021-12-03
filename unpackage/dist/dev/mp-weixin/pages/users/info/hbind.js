@@ -132,7 +132,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0; //
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _regenerator = _interopRequireDefault(__webpack_require__(/*! ./node_modules/@babel/runtime/regenerator */ 20));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {try {var info = gen[key](arg);var value = info.value;} catch (error) {reject(error);return;}if (info.done) {resolve(value);} else {Promise.resolve(value).then(_next, _throw);}}function _asyncToGenerator(fn) {return function () {var self = this,args = arguments;return new Promise(function (resolve, reject) {var gen = fn.apply(self, args);function _next(value) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);}function _throw(err) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);}_next(undefined);});};} //
 //
 //
 //
@@ -193,21 +193,69 @@ var _default =
 
   methods: {
     //获取验证码
-    getVerifyCode: function getVerifyCode() {var _this = this;
-      if (this.second > 0) {
-        return;
-      }
-      this.isSend = !this.isSend;
-      this.second = 60;
-      this.clockTimer = setInterval(function () {
-        _this.second--;
-        if (_this.second == 0) {
-          clearInterval(_this.clockTimer);
-        }
-      }, 1000);
-    },
-    onSubmit: function onSubmit() {} },
+    getVerifyCode: function getVerifyCode() {var _this = this;return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:if (
+                _this.$u.test.mobile(_this.phone)) {_context.next = 3;break;}
+                _this.$u.toast("请输入正确的手机号");return _context.abrupt("return",
+                false);case 3:if (!(
 
+                _this.second > 0)) {_context.next = 5;break;}return _context.abrupt("return");case 5:
+
+
+                _this.isSend = !_this.isSend;
+                _this.second = 60;
+                _this.clockTimer = setInterval(function () {
+                  _this.second--;
+                  if (_this.second == 0) {
+                    clearInterval(_this.clockTimer);
+                  }
+                }, 1000);_context.next = 10;return (
+                  _this.$api.verifyCode().then(function (res) {
+                    var data = {
+                      phone: _this.nphone,
+                      type: "register",
+                      key: res.data.key };
+
+                    _this.$api.registerVerify(data).then(function (res) {
+                      _this.$u.toast(res.msg);
+                    }).catch(function (err) {
+                      _this.$u.toast(err);
+                    });
+                  }));case 10:case "end":return _context.stop();}}}, _callee);}))();
+    },
+    onSubmit: function onSubmit() {var _this2 = this;
+      uni.showModal({
+        title: '温馨提示',
+        content: "是否绑定账号",
+        confirmText: '绑定',
+        confirmColor: "#BD9E81",
+        success: function success(res) {
+          if (res.confirm) {
+            _this2.$api.updatePhone({
+              phone: _this2.phone,
+              captcha: _this2.captcha }).
+            then(function (res) {
+              _this2.$u.toast('绑定成功！');
+              setTimeout(function () {
+                uni.navigateBack();
+              }, 1500);
+            }).catch(function (err) {
+              _this2.$u.toast(err);
+            });
+          } else if (res.cancel) {
+            _this2.$u.toast('您已取消绑定！');
+            setTimeout(function () {
+              uni.navigateBack();
+            }, 1500);
+          }
+        } });
+
+    } },
+
+  onLoad: function onLoad(options) {
+    if (options.phone) {
+      this.phone = options.phone;
+    }
+  },
   onUnload: function onUnload() {
     clearInterval(this.clockTimer);
     this.clockTimer = null;
@@ -218,6 +266,7 @@ var _default =
     this.clockTimer = null;
     this.second = 0;
   } };exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ }),
 

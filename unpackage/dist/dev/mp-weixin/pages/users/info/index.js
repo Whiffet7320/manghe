@@ -264,9 +264,9 @@ var _vuex = __webpack_require__(/*! vuex */ 75);function ownKeys(object, enumera
         url: "/pages/users/info/bind" });
 
     },
-    hbindPhone: function hbindPhone() {
+    hbindPhone: function hbindPhone(phone) {
       uni.navigateTo({
-        url: "/pages/users/info/hbind" });
+        url: "/pages/users/info/hbind?phone=" + phone });
 
     },
     sexChange: function sexChange(index) {
@@ -322,7 +322,7 @@ var _vuex = __webpack_require__(/*! vuex */ 75);function ownKeys(object, enumera
       });
     } },
 
-  onLoad: function onLoad() {
+  onShow: function onShow() {
     if (this.isLogin) {
       this.getUserInfo();
     }

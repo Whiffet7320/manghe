@@ -6,7 +6,7 @@
 			<view class="text">购物车空空如也～</view>
 			<view class="btn">去挑选</view>
 		</view>
-		<view class="alldelete">
+		<view class="alldelete" v-if="adelShow">
 			<image src="/static/images/icon_delete.png" mode="aspectFit" class="icon"></image>
 			<text>全部清空</text>
 		</view>
@@ -34,7 +34,7 @@
 		</view>
 		<view class="likewrap">
 			<view class="tit">
-				<image src="" mode="aspectFit" style="width: 35rpx;height:29rpx;margin-right: 20rpx;"></image>
+				<image src="/static/image/user/icon_like.png" mode="aspectFit" style="width: 35rpx;height:29rpx;margin-right: 20rpx;"></image>
 				<text>推荐商品</text>
 			</view>
 			<view class="likelist">
@@ -66,43 +66,23 @@
 	export default{
 		data(){
 			return{
-				total:1,
+				adelShow:false,
+				total:0,
 				Allchecked:false,
 				totalPrice:0.00,
-				list:[
-					{
-						checked:false,
-						image:"",
-						title:"250ml 雅漾补水喷雾赠一",
-						price:9.99,
-						status:1
-					},
-					{
-						checked:false,
-						image:"",
-						title:"250ml 雅漾补水喷雾赠一",
-						price:9.90,
-						status:0
-					}
-				],
-				likelist:[
-					{
-						image:"",
-						title:"肋骨鼻综合～肋软骨隆鼻（活动特价）",
-						price:9.95
-					},
-					{
-						image:"",
-						title:"肋骨鼻综合～肋软骨隆鼻（活动特价）",
-						price:9.95
-					},
-					{
-						image:"",
-						title:"肋骨鼻综合～肋软骨隆鼻（活动特价）",
-						price:9.95
-					}
-				]
+				list:[],
+				likelist:[]
 			}
+		},
+		methods:{
+			getCartlist(){
+				this.$api.cartlist().then((res)=>{
+					console.log(res)
+				})
+			}
+		},
+		onShow(){
+			this.getCartlist();
 		}
 	}
 </script>

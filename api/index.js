@@ -643,6 +643,27 @@ export default {
 			}
 		})
 	},
+	verifyCode() {
+		return myGet({
+			url: urls.verifyCode
+		})
+	},
+	registerVerify(obj) {
+		return myPost({
+			url: urls.user_update,
+			data: {
+				...obj
+			}
+		})
+	},
+	updatePhone(obj) {
+		return myPost({
+			url: urls.user_update,
+			data: {
+				...obj
+			}
+		})
+	},
 	addressList() {
 		return myGet({
 			url: urls.addressList
@@ -662,6 +683,11 @@ export default {
 			data: {
 				...obj
 			}
+		})
+	},
+	cartlist() {
+		return myGet({
+			url: urls.cartlist
 		})
 	},
 	upload_pic(file, type) {

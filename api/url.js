@@ -3,11 +3,15 @@ export default {
 	silence_auth: "/api/v2/wechat/silence_auth_login",
 	user: "/api/user",
 	user_update: "/api/v2/user/user_update",
+	updatePhone:"/api/user/updatePhone",
+	verifyCode:"/api/verify_code",
+	registerVerify:"/api/register/verify",
 	addressList: "/api/address/list",
 	editAddress: "/api/address/edit",
 	delAddress: "api/address/del",
 	city_list: "/api/city_list",
 	addressDetail: "/api/address/detail",
+	cartlist:"/api/cart/list",
 	// 
 	loginWechat: '/api/login/wechat',
 	category: '/api/category', //商品分类

@@ -184,8 +184,12 @@ var _default =
 
   methods: {
     //获取验证码
-    getVerifyCode: function getVerifyCode() {var _this = this;return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:if (!(
-                _this.second > 0)) {_context.next = 2;break;}return _context.abrupt("return");case 2:
+    getVerifyCode: function getVerifyCode() {var _this = this;return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:if (
+                _this.$u.test.mobile(_this.phone)) {_context.next = 3;break;}
+                _this.$u.toast("请输入正确的手机号");return _context.abrupt("return",
+                false);case 3:if (!(
+
+                _this.second > 0)) {_context.next = 5;break;}return _context.abrupt("return");case 5:
 
 
                 _this.isSend = !_this.isSend;
@@ -195,56 +199,47 @@ var _default =
                   if (_this.second == 0) {
                     clearInterval(_this.clockTimer);
                   }
-                }, 1000);_context.next = 7;return (
+                }, 1000);_context.next = 10;return (
                   _this.$api.verifyCode().then(function (res) {
-                    _this.$api.registerVerify(_this.phone, 'reset', res.data.key, _this.captcha).then(function (res) {
+                    var data = {
+                      phone: _this.phone,
+                      type: "register",
+                      key: res.data.key };
+
+                    _this.$api.registerVerify(data).then(function (res) {
                       _this.$u.toast(res.msg);
                     }).catch(function (err) {
                       _this.$u.toast(err);
                     });
-                  }));case 7:case "end":return _context.stop();}}}, _callee);}))();
+                  }));case 10:case "end":return _context.stop();}}}, _callee);}))();
     },
     onSubmit: function onSubmit() {var _this2 = this;
-      this.$api.bindingUserPhone({
-        phone: this.phone,
-        captcha: this.captcha }).
-      then(function (res) {
-        if (res.data !== undefined && res.data.is_bind) {
-          uni.showModal({
-            title: '是否绑定账号',
-            content: res.msg,
-            confirmText: '绑定',
-            success: function success(res) {
-              if (res.confirm) {
-                _this2.$api.bindingUserPhone({
-                  phone: _this2.phone,
-                  captcha: _this2.captcha,
-                  step: 1 }).
-                then(function (res) {
-                  _this2.$u.toast(res.msg);
-                  setTimeout(function () {
-                    uni.navigateBack();
-                  }, 2000);
-                }).catch(function (err) {
-                  _this2.$u.toast(err);
-                });
-              } else if (res.cancel) {
-                _this2.$u.toast('您已取消绑定！');
-                setTimeout(function () {
-                  uni.navigateBack();
-                }, 2000);
-              }
-            } });
+      uni.showModal({
+        title: '温馨提示',
+        content: "是否绑定账号",
+        confirmText: '绑定',
+        confirmColor: "#BD9E81",
+        success: function success(res) {
+          if (res.confirm) {
+            _this2.$api.updatePhone({
+              phone: _this2.phone,
+              captcha: _this2.captcha }).
+            then(function (res) {
+              _this2.$u.toast('绑定成功！');
+              setTimeout(function () {
+                uni.navigateBack();
+              }, 1500);
+            }).catch(function (err) {
+              _this2.$u.toast(err);
+            });
+          } else if (res.cancel) {
+            _this2.$u.toast('您已取消绑定！');
+            setTimeout(function () {
+              uni.navigateBack();
+            }, 1500);
+          }
+        } });
 
-        } else {
-          _this2.$u.toast('绑定成功！');
-          setTimeout(function () {
-            uni.navigateBack();
-          }, 2000);
-        }
-      }).catch(function (err) {
-        _this2.$u.toast(err);
-      });
     } },
 
   onUnload: function onUnload() {
