@@ -1,5 +1,6 @@
 <template>
 	<view class="index">
+		<u-toast ref="uToast" />
 		<view class="nav1">
 			<view class="tit1">支付剩余时间 04:59</view>
 			<view class="tit2">￥<text class="big">9.90</text></view>
@@ -24,19 +25,40 @@
 	export default {
 		data() {
 			return {
-				a:null
+				a:null,
+				payObj:null,
 			}
 		},
 		onLoad(options) {
 			this.uni = options.uni;
+			this.payObj = JSON.parse(decodeURIComponent(options.payObj)) ;
+			console.log(this.payObj)
 		},
 		methods:{
 			async pay(){
-				const res = await this.$api.orderPay({
-					uni:this.uni,
-					from:'routine',
-				})
-				console.log(res)
+				// const res = await this.$api.orderPay({
+				// 	uni:this.uni,
+				// 	from:'routine',
+				// })
+				// console.log(res)
+				uni.requestPayment({
+					provider: 'wxpay',
+					timeStamp: this.payObj.timestamp,
+					nonceStr: this.payObj.nonceStr,
+					package: this.payObj.package,
+					signType: this.payObj.signType,
+					paySign: this.payObj.paySign,
+					success: function(res) {
+						this.$refs.uToast.show({
+							title: '支付成功',
+							type: 'success',
+							url: '/pages/users/order/order',
+						})
+					},
+					fail: function(err) {
+						console.log('fail:' + JSON.stringify(err));
+					}
+				});
 			},
 		}
 	}

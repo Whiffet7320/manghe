@@ -20,7 +20,7 @@
 		<view v-else @click="toAddAddress" class="noAddress">添加收货地址</view>
 		<view class="nav2" v-for="item in skuItem" :key='item.id'>
 			<view class="nav2-1">
-				<image src="https://img2.baidu.com/it/u=4006635947,2132087516&fm=26&fmt=auto" class="pic" mode="">
+				<image :src="item.image" class="pic" mode="">
 				</image>
 				<view class="right">
 					<view class="tit1">
@@ -131,7 +131,7 @@
 					console.log(res2)
 					if (res2.status == 200) {
 						uni.navigateTo({
-							url: `/pages/users/order/querendingdan?uni=${res2.data.result.orderId}`
+							url: `/pages/users/order/querendingdan?uni=${res2.data.result.orderId}&payObj=${encodeURIComponent(JSON.stringify(res2.data.result.jsConfig))}`
 						})
 					}
 				}
