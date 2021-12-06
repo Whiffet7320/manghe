@@ -80,21 +80,9 @@
 				<view class="t-txt">修复专区</view>
 			</view>
 			<view class="items">
-				<view class="item" @click="toXiufu(1)">
-					<image src="/static/image/mcz193.png" class="pic" mode=""></image>
-					<view class="txt">鼻修复</view>
-				</view>
-				<view class="item" @click="toXiufu(2)">
-					<image src="/static/image/mcz192.png" class="pic" mode=""></image>
-					<view class="txt">眼修复</view>
-				</view>
-				<view class="item" @click="toXiufu(3)">
-					<image src="/static/image/mcz194.png" class="pic" mode=""></image>
-					<view class="txt">胸修复</view>
-				</view>
-				<view class="item" @click="toXiufu(4)">
-					<image src="/static/image/mcz195.png" class="pic" mode=""></image>
-					<view class="txt">其他修复</view>
+				<view class="item" v-for="item in xfzqList" :key='item.id' @click="toXiufu(item.xiufu_name,item.xiufu_big_img)">
+					<image :src="item.xiufu_img" class="pic" mode=""></image>
+					<view class="txt">{{item.xiufu_name}}</view>
 				</view>
 			</view>
 		</view>
@@ -105,14 +93,14 @@
 			</view>
 			<scroll-view class="scroll-view" scroll-x style="width: 100%;white-space:nowrap;">
 				<view class="itemss">
-					<view class="item" @click="toZhuanjiatuandui" v-for="item in 3">
-						<image src="/static/image/zzks196.png" class="pic" mode=""></image>
+					<view class="item" @click="toZhuanjiatuandui" v-for="item in zjtdList" :key='item.id'>
+						<image :src="item.doctor_img" class="pic" mode=""></image>
 						<view class="right">
 							<view class="txt1">
-								巴扎嘿<text class="small">院长</text>
+								{{item.doctor_name}}<text class="small">{{item.doctor_titles}}</text>
 							</view>
-							<view class="txt2">美容主治医生</view>
-							<view class="txt2">医美湘军医生 集团创始人</view>
+							<view class="txt2">{{item.doctor_sub_titles}}</view>
+							<view class="txt2">{{item.doctor_content}}</view>
 							<view class="btn">
 								<image src="/static/image/lujin1758.png" class="btn-img" mode=""></image>
 								<view class="btn-txt">点击预约</view>
@@ -166,6 +154,8 @@
 	export default {
 		data() {
 			return {
+				zjtdList:[],
+				xfzqList:[],
 				searchVal: '',
 				bannerList: [{
 						image: 'https://cdn.uviewui.com/uview/swiper/1.jpg',
@@ -199,11 +189,19 @@
 		},
 		onShow() {
 			this.tabsChange(this.current);
+			this.getData()
 		},
 		mounted() {
 			this.getCurrentSwiperHeight('.nav5Items')
 		},
 		methods: {
+			async getData(){
+				const res = await this.$api.zhuanjia()
+				this.zjtdList = res.data;
+				const res2 = await this.$api.xiufu()
+				this.xfzqList = res2.data;
+				console.log(res2)
+			},
 			toYimeixiangmu(val) {
 				this.$store.commit('from',val)
 				uni.switchTab({
@@ -225,9 +223,9 @@
 					url: '/pages/index/zhuanjiatuandui/zhuanjiatuandui'
 				})
 			},
-			toXiufu(i) {
+			toXiufu(val,img) {
 				uni.navigateTo({
-					url: `/pages/index/xiufu/xiufu?index=${i}`
+					url: `/pages/index/xiufu/xiufu?index=${val}&bigImg=${img}`
 				})
 			},
 			toSearch() {

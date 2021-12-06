@@ -22,4 +22,7 @@ export default {
 	orderCreate:'/api/order/create',//订单创建
 	orderList:'/api/order/list',//订单列表
 	orderPay:'/api/order/pay',//订单支付
+	zhuanjia:'/api/zhuanjia',//专家列表
+	xiufu:'/api/xiufu',//修复专区
+	orderComputed:'/api/order/computed',//计算订单金额
 }

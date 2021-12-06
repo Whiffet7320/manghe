@@ -3,7 +3,7 @@
 		<u-toast ref="uToast" />
 		<view class="nav1">
 			<view class="tit1">支付剩余时间 04:59</view>
-			<view class="tit2">￥<text class="big">9.90</text></view>
+			<view class="tit2">￥<text class="big">{{price}}</text></view>
 			<view class="tit3">严选商城消费</view>
 		</view>
 		<view class="nav2">
@@ -27,11 +27,13 @@
 			return {
 				a:null,
 				payObj:null,
+				price:0,
 			}
 		},
 		onLoad(options) {
 			this.uni = options.uni;
 			this.payObj = JSON.parse(decodeURIComponent(options.payObj)) ;
+			this.price = options.price;
 			console.log(this.payObj)
 		},
 		methods:{

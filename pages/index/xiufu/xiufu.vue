@@ -4,6 +4,9 @@
 		<!-- <view class="nav2">
 			<u-parse :html="content"></u-parse>
 		</view> -->
+		<view class="nav2">
+			<image :src="bigImg" mode=""></image>
+		</view>
 		<view class="footer">
 			<view class="btn">专家会诊团预约</view>
 		</view>
@@ -14,13 +17,14 @@
 	export default {
 		data() {
 			return {
-
+				bigImg:'',
 			}
 		},
 		onLoad(options) {
 			console.log(options)
+			this.bigImg = options.bigImg;
 			uni.setNavigationBarTitle({
-				title: options.index == 1 ? "鼻修复" : options.index == 2 ? "眼修复" : options.index == 3 ? "胸修复" : "其他修复"
+				title: options.index
 			})
 		},
 		methods: {

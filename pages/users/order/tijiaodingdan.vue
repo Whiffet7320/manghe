@@ -41,7 +41,7 @@
 				</view>
 				<view class="tit1">
 					<view class="txt1">运费</view>
-					<view class="txt2">¥ 0.00</view>
+					<view class="txt2">¥ {{pay_postage}}</view>
 				</view>
 				<view class="tit1">
 					<view class="txt1">优惠券</view>
@@ -49,7 +49,7 @@
 				</view>
 				<view class="tit1">
 					<view class="txt1">合计</view>
-					<view class="txt2">¥ 9.90</view>
+					<view class="txt2">¥ {{zongPrice}}</view>
 				</view>
 			</view>
 		</view>
@@ -63,7 +63,7 @@
 		</view>
 		<view class="footer">
 			<view class="left">
-				<view class="txt1">合计¥9.90</view>
+				<view class="txt1">合计¥{{zongPrice}}</view>
 				<view class="txt2">(共1件)</view>
 			</view>
 			<view @click="toQuerenzhifu" class="btn">立即支付</view>
@@ -83,6 +83,9 @@
 				isGWC: null,
 				cartId: '',
 				mark: '',
+				orderKey:'',
+				zongPrice:'',
+				pay_postage:''
 			}
 		},
 		onLoad(options) {
@@ -99,25 +102,35 @@
 		},
 		methods: {
 			async getData() {
+				this.zongPrice2 = 0;
 				const res = await this.$api.addressList()
 				this.addressObj = res.data.filter(ele => {
 					return ele.is_default == 1
 				})[0]
 				console.log(this.addressObj)
+				var cartId = '';
+				if (this.isGWC == 'no') {
+					cartId = this.cartId
+				}
+				const res2 = await this.$api.orderConfirm({
+					cartId: cartId,
+					new: this.isGWC == 'no' ? 1 : 0,
+				})
+				this.orderKey = res2.data.orderKey;
+				const res3 = await this.$api.orderComputed({
+					addressId: this.addressObj.id,
+					payType : 'weixin',
+					useIntegral:0
+				}, this.orderKey)
+				console.log(res3)
+				this.zongPrice = res3.data.result.total_price;
+				this.pay_postage = res3.data.result.pay_postage;
 			},
 			changInp(e) {
 				console.log(e.length)
 				this.InpNum = e.length;
 			},
 			async toQuerenzhifu() {
-				var cartId = '';
-				if (this.isGWC == 'no') {
-					cartId = this.cartId
-				}
-				const res = await this.$api.orderConfirm({
-					cartId: cartId,
-					new: this.isGWC == 'no' ? 1 : 0,
-				})
 				console.log(res)
 				if (res.status == 200) {
 					const res2 = await this.$api.orderCreate({
@@ -127,14 +140,15 @@
 						useIntegral: 0,
 						mark: this.mark,
 						from: 'routine',
-					}, res.data.orderKey)
+					}, this.orderKey)
 					console.log(res2)
 					if (res2.status == 200) {
 						uni.navigateTo({
-							url: `/pages/users/order/querendingdan?uni=${res2.data.result.orderId}&payObj=${encodeURIComponent(JSON.stringify(res2.data.result.jsConfig))}`
+							url: `/pages/users/order/querendingdan?uni=${res2.data.result.orderId}&payObj=${encodeURIComponent(JSON.stringify(res2.data.result.jsConfig))}&price=${this.zongPrice}`
 						})
 					}
 				}
+				
 
 			},
 			toAddAddress() {
