@@ -8,10 +8,12 @@ export default {
 	registerVerify:"/api/register/verify",
 	addressList: "/api/address/list",
 	editAddress: "/api/address/edit",
-	delAddress: "api/address/del",
+	delAddress: "/api/address/del",
 	city_list: "/api/city_list",
 	addressDetail: "/api/address/detail",
 	cartlist:"/api/cart/list",
+	cartDel:"/api/cart/del",
+	cartNum:"/api/cart/num",
 	// 
 	loginWechat: '/api/login/wechat',
 	category: '/api/category', //商品分类

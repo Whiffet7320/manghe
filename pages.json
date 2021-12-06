@@ -139,10 +139,8 @@
 		"pages": [{
 			"path": "rexiaoxiangqin",
 			"style": {
-				// "navigationStyle": "custom",
-				"navigationBarTextStyle": "black"
-				// "navigationBarTitleText": "积分产品列表"
-				// "navigationBarBackgroundColor": "#FECF05"
+				"navigationBarTextStyle": "black",
+				"navigationBarTitleText": "商品详情"
 			}
 		}]
 	}, {
@@ -178,7 +176,77 @@
 				// "navigationBarBackgroundColor": "#FECF05",
 				"enablePullDownRefresh": false
 			}
+		},{
+			"path": "comment",
+			"style": {
+				"navigationBarTitleText": "订单评价"
+			}
+		},{
+			"path": "wkorderDetail",
+			"style": {
+				"navigationBarTitleText": "等待买家支付尾款"
+			}
 		}]
+	},{
+		"root": "pages/users/sale",
+		"pages": [
+			{
+				"path": "index",
+				"style": {
+					"navigationBarTitleText": "售后服务",
+					"navigationBarTextStyle": "black",
+					"navigationBarBackgroundColor": "#FECF05"
+				}
+			},
+			{
+				"path": "refund",
+				"style": {
+					"navigationBarTitleText": "我要退款",
+					"navigationBarTextStyle": "black",
+					"navigationBarBackgroundColor": "#FECF05"
+				}
+			},
+			{
+				"path": "restep",
+				"style": {
+					"navigationBarTitleText": "退款进度",
+					"navigationBarTextStyle": "black",
+					"navigationBarBackgroundColor": "#FECF05"
+				}
+			},
+			{
+				"path": "refundPro",
+				"style": {
+					"navigationBarTitleText": "我要退货退款",
+					"navigationBarTextStyle": "black",
+					"navigationBarBackgroundColor": "#FECF05"
+				}
+			},
+			{
+				"path": "detail",
+				"style": {
+					"navigationBarTitleText": "退款退货详情",
+					"navigationBarTextStyle": "black",
+					"navigationBarBackgroundColor": "#FECF05"
+				}
+			},
+			{
+				"path": "exchange",
+				"style": {
+					"navigationBarTitleText": "我要换货",
+					"navigationBarTextStyle": "black",
+					"navigationBarBackgroundColor": "#FECF05"
+				}
+			},
+			{
+				"path": "exchangeDetail",
+				"style": {
+					"navigationBarTitleText": "换货详情",
+					"navigationBarTextStyle": "black",
+					"navigationBarBackgroundColor": "#FECF05"
+				}
+			}
+		]
 	},{
 		"root": "pages/users/follow",
 		"pages": [

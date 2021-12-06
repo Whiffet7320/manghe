@@ -96,13 +96,16 @@ var components
 try {
   components = {
     uNavbar: function() {
-      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-navbar/u-navbar */ "node-modules/uview-ui/components/u-navbar/u-navbar").then(__webpack_require__.bind(null, /*! uview-ui/components/u-navbar/u-navbar.vue */ 526))
+      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-navbar/u-navbar */ "node-modules/uview-ui/components/u-navbar/u-navbar").then(__webpack_require__.bind(null, /*! uview-ui/components/u-navbar/u-navbar.vue */ 616))
+    },
+    uCheckboxGroup: function() {
+      return Promise.all(/*! import() | node-modules/uview-ui/components/u-checkbox-group/u-checkbox-group */[__webpack_require__.e("common/vendor"), __webpack_require__.e("node-modules/uview-ui/components/u-checkbox-group/u-checkbox-group")]).then(__webpack_require__.bind(null, /*! uview-ui/components/u-checkbox-group/u-checkbox-group.vue */ 787))
     },
     uCheckbox: function() {
-      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-checkbox/u-checkbox */ "node-modules/uview-ui/components/u-checkbox/u-checkbox").then(__webpack_require__.bind(null, /*! uview-ui/components/u-checkbox/u-checkbox.vue */ 533))
+      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-checkbox/u-checkbox */ "node-modules/uview-ui/components/u-checkbox/u-checkbox").then(__webpack_require__.bind(null, /*! uview-ui/components/u-checkbox/u-checkbox.vue */ 794))
     },
     uGap: function() {
-      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-gap/u-gap */ "node-modules/uview-ui/components/u-gap/u-gap").then(__webpack_require__.bind(null, /*! uview-ui/components/u-gap/u-gap.vue */ 512))
+      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-gap/u-gap */ "node-modules/uview-ui/components/u-gap/u-gap").then(__webpack_require__.bind(null, /*! uview-ui/components/u-gap/u-gap.vue */ 602))
     }
   }
 } catch (e) {
@@ -159,92 +162,317 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0; //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-var _default =
-{
-  data: function data() {
-    return {
-      adelShow: false,
-      total: 0,
-      Allchecked: false,
-      totalPrice: 0.00,
-      list: [],
-      likelist: [] };
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
 
-  },
-  methods: {
-    getCartlist: function getCartlist() {
-      this.$api.cartlist().then(function (res) {
-        console.log(res);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var _vuex = __webpack_require__(/*! vuex */ 75); //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+var _default = { data: function data() {return { cartCount: 0, cartList: { valid: [], invalid: [] }, isAllSelect: false, //全选
+      selectValue: [], //选中的数据
+      selectCountPrice: 0.00, attr: { cartAttr: false, productAttr: [], productSelect: {} }, productValue: [], //系统属性
+      attrValue: '', //已选属性
+      cartId: 0, product_id: 0, hotlist: [] };}, methods: { getCartlist: function getCartlist() {var _this = this;this.$api.cartlist().then(function (res) {var cartList = res.data;var validList = cartList.valid;if (validList.length > 0) {_this.cartCount = validList.length;for (var index in validList) {validList[index].checked = false;}}_this.cartList.valid = validList;});}, ChangeCartNum: function ChangeCartNum(changeValue) {//changeValue:是否 加|减
+      //获取当前变动属性
+      var productSelect = this.productValue[this.attrValue]; //如果没有属性,赋值给商品默认库存
+      if (productSelect === undefined && !this.attr.productAttr.length) productSelect = this.attr.productSelect; //无属性值即库存为0；不存在加减；
+      if (productSelect === undefined) return;var stock = productSelect.stock || 0;var num = this.attr.productSelect;if (changeValue) {num.cart_num++;if (num.cart_num > stock) {this.$set(this.attr.productSelect, "cart_num", stock ? stock : 1);this.$set(this, "cart_num", stock ? stock : 1);}} else {num.cart_num--;if (num.cart_num < 1) {this.$set(this.attr.productSelect, "cart_num", 1);this.$set(this, "cart_num", 1);}}}, subCart: function subCart(index) {var _this2 = this;var status = false;var item = this.cartList.valid[index];item.cart_num = Number(item.cart_num) - 1;if (item.cart_num < 1) status = true;if (item.cart_num <= 1) {item.cart_num = 1;item.numSub = true;} else {item.numSub = false;item.numAdd = false;}if (false == status) {this.$api.changeCartNum({ id: item.id, number: item.cart_num }).then(function (res) {if (res.status == 200) {_this2.cartList.valid[index] = item;_this2.switchSelect();}});}}, addCart: function addCart(index) {var _this3 = this;var item = this.cartList.valid[index];
+      item.cart_num = Number(item.cart_num) + 1;
+      var productInfo = item.productInfo;
+      if (productInfo.hasOwnProperty('attrInfo') && item.cart_num >= item.productInfo.attrInfo.stock) {
+        item.cart_num = item.productInfo.attrInfo.stock;
+        item.numAdd = true;
+        item.numSub = false;
+      } else {
+        item.numAdd = false;
+        item.numSub = false;
+      }
+      this.$api.changeCartNum({ id: item.id, number: item.cart_num }).then(function (res) {
+        if (res.status == 200) {
+          _this3.cartList.valid[index] = item;
+          _this3.switchSelect();
+        }
+      });
+    },
+    subDel: function subDel(id, index) {var _this4 = this;
+      var selectValue = this.selectValue;
+      if (selectValue.length > 0) {
+        this.$api.cartDel(id).then(function (res) {
+          if (res.status == 200) {
+            uni.showToast({
+              title: "删除成功",
+              icon: "none" });
+
+            _this4.cartList.valid.splice(index, 1);
+          }
+        });
+      } else {
+        uni.showToast({
+          title: "请选择产品",
+          icon: "none" });
+
+      }
+    },
+    subOrder: function subOrder() {
+      var selectValue = this.selectValue;
+      if (selectValue.length > 0) {
+        var skuItem = "";
+        uni.navigateTo({
+          url: '/pages/users/order/tijiaodingdan?cartId=' + selectValue.join(',') + "&isGWC=yes" });
+
+      } else {
+        uni.showToast({
+          title: "请选择产品",
+          icon: "none" });
+
+      }
+    },
+    checkboxAllChange: function checkboxAllChange(event) {
+      var value = event;
+      if (value.length > 0) {
+        this.setAllSelectValue(1);
+      } else {
+        this.setAllSelectValue(0);
+      }
+    },
+    setAllSelectValue: function setAllSelectValue(status) {var _this5 = this;
+      var selectValue = [];
+      var valid = this.cartList.valid;
+      if (valid.length > 0) {
+        var newValid = valid.map(function (item) {
+          if (status) {
+            if (item.attrStatus) {
+              item.checked = true;
+              selectValue.push(item.id);
+            } else {
+              item.checked = false;
+            }
+            _this5.isAllSelect = true;
+          } else {
+            item.checked = false;
+            _this5.isAllSelect = false;
+          }
+          return item;
+        });
+        this.cartList.valid = newValid;
+        this.selectValue = selectValue;
+        this.switchSelect();
+      }
+    },
+    checkboxChange: function checkboxChange(val) {var _this6 = this;
+      var value = val;
+      var valid = this.cartList.valid;
+      var arr1 = [];
+      var arr2 = [];
+      var arr3 = [];
+      var newValid = valid.map(function (item) {
+        if (_this6.inArray(item.id, value)) {
+          if (item.attrStatus) {
+            item.checked = true;
+            arr1.push(item);
+          } else {
+            item.checked = false;
+          }
+        } else {
+          item.checked = false;
+          arr2.push(item);
+        }
+        return item;
+      });
+      arr3 = arr2.filter(function (item) {return !item.attrStatus;});
+      this.cartList.valid = newValid;
+      this.isAllSelect = newValid.length === arr1.length + arr3.length;
+      this.selectValue = value;
+      this.switchSelect();
+    },
+    inArray: function inArray(search, array) {
+      for (var i in array) {
+        if (array[i] == search) {
+          return true;
+        }
+      }
+      return false;
+    },
+    switchSelect: function switchSelect() {
+      var validList = this.cartList.valid;
+      var selectValue = this.selectValue;
+      var selectCountPrice = 0.00;
+      if (selectValue.length < 1) {
+        this.selectCountPrice = selectCountPrice;
+      } else {
+        for (var index in validList) {
+          if (this.inArray(validList[index].id, selectValue)) {
+            selectCountPrice = this.$tool.argAdd(selectCountPrice, this.$tool.argMul(validList[index].cart_num, validList[index].truePrice));
+          }
+        }
+        this.selectCountPrice = selectCountPrice;
+      }
+    },
+    unsetCart: function unsetCart() {var _this7 = this;
+      this.$api.cartDel(this.selectValue).then(function (res) {
+        uni.showToast({
+          title: "删除成功",
+          icon: "none" });
+
+        _this7.getCartlist();
+      }).catch(function (err) {
+        console.log(err);
       });
     } },
 
   onShow: function onShow() {
     this.getCartlist();
   } };exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ }),
 

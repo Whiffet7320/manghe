@@ -7,15 +7,15 @@
 		</view>
 		<view class="nav2">
 			<view class="tit1">
-				<view class="txt1">{{obj.storeInfo.store_name}}</view>
-				<view class="txt2">销量 {{obj.storeInfo.sales}}</view>
+				<view class="txt1">{{obj.storeInfo.store_name||""}}</view>
+				<view class="txt2">销量 {{obj.storeInfo.sales||0}}</view>
 			</view>
 			<view class="tit2">
-				<view class="txt1">¥{{obj.storeInfo.price}}</view>
-				<view class="txt2">¥{{obj.storeInfo.ot_price}}</view>
+				<view class="txt1">¥{{obj.storeInfo.price||0}}</view>
+				<view class="txt2">¥{{obj.storeInfo.ot_price||0}}</view>
 			</view>
 		</view>
-		<view class="nav3">
+		<view class="nav3" @click="skuShow = true">
 			<view class="tit1">
 				<view class="txt1">
 					<view class="txt1-1">选择</view>
@@ -24,7 +24,7 @@
 				<u-icon name="arrow-right" color="#707070" size="24"></u-icon>
 			</view>
 			<view class="tit2">
-				<view class="items" @click="skuShow = true">
+				<view class="items">
 					<image v-for="item in skuArr" :src="item.image" class="i-pic" mode=""></image>
 					<view class="i-txt">{{skuArr.length}}种类型可选</view>
 				</view>
@@ -50,8 +50,7 @@
 		<u-popup v-model="skuShow" z-index='100' mode="bottom" height='900' closeable border-radius='10'>
 			<view class="skuPop">
 				<view class="p-nav1">
-					<image class="pic1" :src="skuImg" mode="">
-					</image>
+					<image class="pic1" :src="skuImg" mode=""></image>
 					<view class="right">
 						<view class="tit1">
 							<view class="txt1">¥{{skuItem.price}}</view>
@@ -136,7 +135,7 @@
 				const res = await this.$api.cartAdd({
 					productId:this.id,
 					cartNum:this.skuNum,
-					uniqueId:this.skuItem.unique,sss
+					uniqueId:this.skuItem.unique
 				})
 				console.log(res)
 				this.skuShow = false;
@@ -155,6 +154,7 @@
 				})
 			},
 			changSku(item,i) {
+				console.log(this.skuItem)
 				this.skuItem = item;
 				this.skuImg = item.image;
 				this.skuIndex = i;

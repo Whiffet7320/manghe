@@ -2,8 +2,8 @@
 	<view class="index">
 		<view class="nav1">
 			<view class="nav1-flex">
-				<image class="pic" :src="userInfo.avatar" mode="aspectFill" v-if="userInfo.avatar" @click="goEdit()"></image>
-				<u-avatar size="184" @click="goLogin()" v-else></u-avatar>
+				<image class="pic" :src="userInfo.avatar" mode="aspectFill" v-if="userInfo.avatar" @click="onSet"></image>
+				<u-avatar size="184" @click="goLogin" v-else></u-avatar>
 				<view class="f-right">
 					<view class="tit1" v-if="userInfo.uid">
 						<view class="txt1">{{userInfo.nickname}}</view>
@@ -11,7 +11,7 @@
 							<image src="/static/image/zu1528.png" class="f-r-pic1" mode="aspectFit"></image>
 						</view>
 					</view>
-					<view @click="goLogin()" v-if="!userInfo.uid">请登录/注册</view>
+					<view @click="goLogin" v-if="!userInfo.uid">请登录/注册</view>
 					<view class="tit2">
 						<view class="item" @click="onFollow">
 							<view class="txt1">{{userInfo.special_doctor_num||0}}</view>
@@ -54,11 +54,15 @@
 						<view class="uc-item-body-item-text">待付尾款</view>
 					</view>
 					<view class="uc-item-body-item" @click='gotoOrder(2)'>
-						<image src="../../static/image/user/yiwancheng.png" mode="aspectFit" style="width: 46rpx;height: 45rpx;"></image>
+						<view class="pic">
+							<image src="../../static/image/user/yiwancheng.png" mode="aspectFit" style="width: 46rpx;height: 45rpx;"></image>
+						</view>
 						<view class="uc-item-body-item-text">已完成</view>
 					</view>
 					<view class="uc-item-body-item" @click='gotoOrder(3)'>
-						<image src="../../static/image/user/yiguanbi.png" mode="aspectFit" style="width: 46rpx;height: 46rpx;"></image>
+						<view class="pic">
+							<image src="../../static/image/user/yiguanbi.png" mode="aspectFit" style="width: 46rpx;height: 46rpx;"></image>
+						</view>
 						<view class="uc-item-body-item-text">已关闭</view>
 					</view>
 				</view>
@@ -156,12 +160,9 @@
 		},
 		methods: {
 			goLogin(){
-				console.log(this.isLogin)
-				if(!this.isLogin){
-					uni.navigateTo({
-						url:"/pages/login/index"
-					})
-				}
+				uni.navigateTo({
+					url:"/pages/login/index"
+				})
 			},
 			jump(url){
 				if(!this.isLogin){
@@ -203,7 +204,7 @@
 			},
 			onCall(){
 				if(this.userInfo.phone==""){
-					this.$u.toast("暂无联系方式");
+					this.$u.toast("暂未绑定手机号");
 					return false;
 				}
 				this.phoneShow = !this.phoneShow;

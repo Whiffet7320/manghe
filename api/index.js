@@ -690,6 +690,22 @@ export default {
 			url: urls.cartlist
 		})
 	},
+	cartDel(id) {
+		return myPost({
+			url: urls.cartDel,
+			data: {
+				ids:id
+			}
+		})
+	},
+	changeCartNum(obj) {
+		return myPost({
+			url: urls.cartNum,
+			data: {
+				...obj
+			}
+		})
+	},
 	upload_pic(file, type) {
 		return new Promise(async (resolve, reject) => {
 			uni.uploadFile({
