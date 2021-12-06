@@ -778,4 +778,12 @@ export default {
 			}
 		})
 	},
+	orderPay(obj) {
+		return myPost({
+			url: urls.orderPay,
+			data: {
+				...obj
+			}
+		})
+	},
 }

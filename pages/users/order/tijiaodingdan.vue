@@ -18,18 +18,18 @@
 		</view>
 		<!-- 无地址 -->
 		<view v-else @click="toAddAddress" class="noAddress">添加收货地址</view>
-		<view class="nav2" v-for="item in 1">
+		<view class="nav2" v-for="item in skuItem" :key='item.id'>
 			<view class="nav2-1">
 				<image src="https://img2.baidu.com/it/u=4006635947,2132087516&fm=26&fmt=auto" class="pic" mode="">
 				</image>
 				<view class="right">
 					<view class="tit1">
-						<view class="txt1">{{shopName}}</view>
-						<view class="txt2">X{{buyNum}}</view>
+						<view class="txt1">{{item.shopName}}</view>
+						<view class="txt2">X{{item.buyNum}}</view>
 					</view>
 					<view class="down">
-						<view class="tit2">{{skuItem?skuItem.suk:''}}</view>
-						<view class="tit3">¥ {{skuItem.price}}</view>
+						<view class="tit2">{{item?item.suk:''}}</view>
+						<view class="tit3">¥ {{item.price}}</view>
 					</view>
 
 				</view>
@@ -37,7 +37,7 @@
 			<view class="nav2-2">
 				<view class="tit1">
 					<view class="txt1">商品金额</view>
-					<view class="txt2">¥ {{skuItem.price}}</view>
+					<view class="txt2">¥ {{item.price}}</view>
 				</view>
 				<view class="tit1">
 					<view class="txt1">运费</view>
@@ -90,8 +90,6 @@
 			if (options.skuItem) {
 				this.skuItem = JSON.parse(options.skuItem);
 				console.log(this.skuItem)
-				this.buyNum = options.buyNum;
-				this.shopName = options.shopName;
 				this.isGWC = options.isGWC;
 				this.cartId = options.cartId;
 			}
@@ -133,7 +131,7 @@
 					console.log(res2)
 					if (res2.status == 200) {
 						uni.navigateTo({
-							url: '/pages/users/order/querendingdan'
+							url: `/pages/users/order/querendingdan?uni=${res2.data.result.orderId}`
 						})
 					}
 				}

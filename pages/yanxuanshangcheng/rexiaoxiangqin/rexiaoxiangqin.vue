@@ -150,8 +150,11 @@
 					new:1
 				})
 				console.log(res)
+				this.skuItem.shopName = this.obj.storeInfo.store_name;
+				this.skuItem.buyNum = this.skuNum;
+				this.skuItem.cartId = res.data.cartId;
 				uni.navigateTo({
-					url: `/pages/users/order/tijiaodingdan?skuItem=${JSON.stringify(this.skuItem)}&shopName=${this.obj.storeInfo.store_name}&buyNum=${this.skuNum}&isGWC=no&cartId=${res.data.cartId}`
+					url: `/pages/users/order/tijiaodingdan?skuItem=${JSON.stringify([this.skuItem])}&isGWC=no&cartId=${res.data.cartId}`
 				})
 			},
 			changSku(item,i) {

@@ -15,7 +15,7 @@
 			</view>
 		</view>
 		<view class="footer">
-			<view class="btn">确认支付</view>
+			<view @click="pay" class="btn">确认支付</view>
 		</view>
 	</view>
 </template>
@@ -27,6 +27,18 @@
 				a:null
 			}
 		},
+		onLoad(options) {
+			this.uni = options.uni;
+		},
+		methods:{
+			async pay(){
+				const res = await this.$api.orderPay({
+					uni:this.uni,
+					from:'routine',
+				})
+				console.log(res)
+			},
+		}
 	}
 </script>
 

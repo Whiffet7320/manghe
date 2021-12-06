@@ -21,4 +21,5 @@ export default {
 	orderConfirm:'/api/order/confirm',//订单确认
 	orderCreate:'/api/order/create',//订单创建
 	orderList:'/api/order/list',//订单列表
+	orderPay:'/api/order/pay',//订单支付
 }
