@@ -17,7 +17,7 @@
 			<u-icon name="arrow-right" color="#999999" size="26"></u-icon>
 		</view>
 		<!-- 无地址 -->
-		<view v-else @click="toAddAddress" class="noAddress">添加收货地址</view>
+		<view v-else @click="toAddAddress" class="noAddress">{{addNum == 'fushu'?'选择默认地址':'添加收货地址'}}</view>
 		<view class="nav2" v-for="item in skuItem" :key='item.id'>
 			<view class="nav2-1">
 				<image :src="item.image" class="pic" mode="">
@@ -75,6 +75,7 @@
 	export default {
 		data() {
 			return {
+				addNum:'',
 				InpNum: 0,
 				addressObj: null,
 				skuItem: null,
@@ -83,9 +84,9 @@
 				isGWC: null,
 				cartId: '',
 				mark: '',
-				orderKey:'',
-				zongPrice:'',
-				pay_postage:''
+				orderKey: '',
+				zongPrice: '',
+				pay_postage: ''
 			}
 		},
 		onLoad(options) {
@@ -107,6 +108,9 @@
 				this.addressObj = res.data.filter(ele => {
 					return ele.is_default == 1
 				})[0]
+				if(!this.addressObj && res.data.length>0){
+					this.addNum = 'fushu'
+				}
 				console.log(this.addressObj)
 				var cartId = '';
 				if (this.isGWC == 'no') {
@@ -119,10 +123,10 @@
 				this.orderKey = res2.data.orderKey;
 				const res3 = await this.$api.orderComputed({
 					addressId: this.addressObj.id,
-					payType : 'weixin',
-					useIntegral:0
+					payType: 'weixin',
+					useIntegral: 0
 				}, this.orderKey)
-				console.log(res3)
+				console.log(res3,'aaaaa')
 				this.zongPrice = res3.data.result.total_price;
 				this.pay_postage = res3.data.result.pay_postage;
 			},
@@ -131,30 +135,25 @@
 				this.InpNum = e.length;
 			},
 			async toQuerenzhifu() {
-				console.log(res)
-				if (res.status == 200) {
-					const res2 = await this.$api.orderCreate({
-						addressId: this.addressObj.id,
-						couponId: '',
-						payType: 'weixin',
-						useIntegral: 0,
-						mark: this.mark,
-						from: 'routine',
-					}, this.orderKey)
-					console.log(res2)
-					if (res2.status == 200) {
-						uni.navigateTo({
-							url: `/pages/users/order/querendingdan?uni=${res2.data.result.orderId}&payObj=${encodeURIComponent(JSON.stringify(res2.data.result.jsConfig))}&price=${this.zongPrice}`
-						})
-					}
+				const res2 = await this.$api.orderCreate({
+					addressId: this.addressObj.id,
+					couponId: '',
+					payType: 'weixin',
+					useIntegral: 0,
+					mark: this.mark,
+					from: 'routine',
+				}, this.orderKey)
+				console.log(res2)
+				if (res2.status == 200) {
+					uni.navigateTo({
+						url: `/pages/users/order/querendingdan?uni=${res2.data.result.orderId}&payObj=${encodeURIComponent(JSON.stringify(res2.data.result.jsConfig))}&price=${this.zongPrice}`
+					})
 				}
-				
-
 			},
 			toAddAddress() {
-				if (this.addressObj) {
+				if (this.addressObj || this.addNum == 'fushu') {
 					uni.navigateTo({
-						url: `/pages/users/address/xinjiandizhi?id=${this.addressObj.id}`
+						url: `/pages/users/address/index`
 					})
 				} else {
 					uni.navigateTo({

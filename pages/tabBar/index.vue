@@ -1,9 +1,9 @@
 <template>
 	<view class="index">
-		<u-select v-model="cityShow" :list="cityList"></u-select>
+		<u-select @confirm='changeCity' v-model="cityShow" :list="cityList"></u-select>
 		<view class="nav1">
 			<view class="tit1">
-				<view @click="cityShow = true" class="txt1">浙江省</view>
+				<view @click="cityShow = true" class="txt1">{{city.label}}</view>
 				<u-icon @click="cityShow = true" name="arrow-down" color="#000000" size="20"></u-icon>
 				<view class="myInp" @click="toSearch">
 					<u-icon @click="toSearch" name="search" color="#000000" size="28"></u-icon>
@@ -16,10 +16,7 @@
 					<view class="txt1-1">热搜榜</view>
 					<image src="/static/image/lujin1732.png" class="pic" mode=""></image>
 				</view>
-				<view class="txt2">肋骨鼻综合</view>
-				<view class="txt2">小眼综合</view>
-				<view class="txt2">胸部整形</view>
-				<view class="txt2">面部抗衰</view>
+				<view v-for="item in searchList" :key='item.id' class="txt2">{{item.keyword}}</view>
 			</view>
 			<view class="tit3">
 				<u-swiper height='320' :list="bannerList"></u-swiper>
@@ -155,6 +152,8 @@
 	export default {
 		data() {
 			return {
+				city:'',
+				searchList:[],
 				cityShow:false,
 				cityList:[{
 						value: '1',
@@ -210,10 +209,22 @@
 				this.zjtdList = res.data;
 				const res2 = await this.$api.xiufu()
 				this.xfzqList = res2.data;
-				console.log(res2)
 				const res3 = await this.$api.productHot()
-				console.log(res3)
 				this.rxList = res3.data;
+				const res4 = await this.$api.searchKeyword()
+				this.searchList = res4.data;
+				const res5 = await this.$api.position()
+				this.cityList = res5.data;
+				this.cityList = JSON.stringify(this.cityList)
+				this.cityList = this.cityList.replace(/city_name/g,'label')
+				this.cityList = this.cityList.replace(/id/g,'value')
+				this.cityList = JSON.parse(this.cityList)
+				console.log(this.cityList)
+				this.city = this.cityList[0]
+			},
+			changeCity(e){
+				console.log(e)
+				this.city = e[0];
 			},
 			toYimeixiangmu(val) {
 				this.$store.commit('from',val)
@@ -333,12 +344,12 @@
 			display: flex;
 			align-items: center;
 			padding: 0 10rpx;
-			justify-content: space-between;
+			// justify-content: space-between;
 
 			.hot {
 				display: flex;
 				align-items: center;
-
+				margin-right: 36rpx;
 				.txt1-1 {
 					font-size: 24rpx;
 					font-weight: bold;

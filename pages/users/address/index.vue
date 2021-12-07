@@ -57,7 +57,7 @@
 					id:val.id,
 					real_name: val.real_name,
 					phone: val.phone,
-					is_default: this.list[index].is_default,
+					is_default: 1,
 					address: {
 						province: val.province,
 						city: val.city,
@@ -129,7 +129,7 @@
 			padding:32rpx 0;
 			background: #FFFFFF;
 			border: 2rpx solid #F4F4F4;
-			border-radius: 0px 20rpx 20rpx 0px;
+			border-radius: 0rpx 20rpx 20rpx 0rpx;
 			height: 252rpx;
 			margin-bottom: 20rpx;
 			.hd{
@@ -233,7 +233,7 @@
 		height: 110rpx;
 		padding: 10rpx 30rpx;
 		background: #FFFFFF;
-		box-shadow: 0px 8px 28px rgba(166, 179, 194, 0.3);
+		box-shadow: 0rpx 16rpx 56rpx rgba(166, 179, 194, 0.3);
 		.btn_primary{
 			width: 100%;
 			height: 84rpx;

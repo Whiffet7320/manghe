@@ -818,4 +818,20 @@ export default {
 			}
 		})
 	},
+	searchKeyword(obj) {
+		return myGet({
+			url: urls.searchKeyword,
+			params: {
+				...obj
+			}
+		})
+	},
+	position(obj) {
+		return myGet({
+			url: urls.position,
+			params: {
+				...obj
+			}
+		})
+	},
 }
