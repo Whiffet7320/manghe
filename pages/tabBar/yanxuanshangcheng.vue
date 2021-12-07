@@ -277,7 +277,7 @@
 				this.getData()
 				setTimeout(() => {
 					this.getCurrentSwiperHeight('.nav5Items')
-				}, 900)
+				}, 500)
 			},
 			// swiper-item左右移动，通知tabs的滑块跟随移动
 			transition(e) {

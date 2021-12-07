@@ -8,9 +8,9 @@
 				<scroll-view scroll-y='true'>
 					<view class="nav5Items">
 						<!-- 全部 -->
-						<template v-if="swiperCurrent == 0">
+						<view v-for="item in orderList" :key='item.id'>
 							<!-- 待付款 -->
-							<view class="item">
+							<view class="item" v-if="item.paid == 0 || item.is_del == 0">
 								<view class="tit1">
 									<view class="left">
 										<view class="txt1-1">剩余支付时间：</view>
@@ -29,7 +29,7 @@
 										src="https://img2.baidu.com/it/u=4006635947,2132087516&fm=26&fmt=auto" mode="">
 									</image>
 									<!-- 未预付款 -->
-									<!-- <view class="box1">
+									<!-- <view class="box1" v-if="product_from == 0">
 										<view class="tit2-1">
 											<view class="txt1">250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一</view>
 											<view class="txt2">X1</view>
@@ -40,7 +40,7 @@
 										</view>
 									</view> -->
 									<!-- 预付款 -->
-									<view class="box1">
+									<view class="box1" v-if="product_from == 1">
 										<view class="tit2-1">
 											<view class="txt1">250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一</view>
 										</view>
@@ -97,7 +97,7 @@
 								</view>
 							</view>
 							<!-- 已完成 -->
-							<view class="item dfwk">
+							<view class="item dfwk" v-if="item.status == 2">
 								<view class="tit1">
 									<view class="left">下单时间：2021-09-24 20:00</view>
 									<view class="right">已完成</view>
@@ -146,7 +146,7 @@
 								</view>
 							</view>
 							<!-- 已关闭 -->
-							<view class="item dfwk">
+							<view class="item dfwk" v-if="item.is_del == 1">
 								<view class="tit1">
 									<view class="left">下单时间：2021-09-24 20:00</view>
 									<view class="right" style="color: #707070;">已关闭</view>
@@ -268,10 +268,9 @@
 									</view>
 								</view>
 							</view>
-
-						</template>
+						</view>
 						<!-- 待付款 -->
-						<template v-if="swiperCurrent == 1">
+						<!-- <template v-if="swiperCurrent == 1">
 							<view class="item">
 								<view class="tit1">
 									<view class="left">
@@ -312,9 +311,9 @@
 									</view>
 								</view>
 							</view>
-						</template>
+						</template> -->
 						<!-- 待付尾款 -->
-						<template v-if="swiperCurrent == 2">
+						<!-- <template v-if="swiperCurrent == 2">
 							<view class="item">
 								<view class="tit1 dfwk">
 									<view class="left">
@@ -355,15 +354,16 @@
 									</view>
 								</view>
 							</view>
-						</template>
+						</template> -->
 						<!-- 已完成 -->
-						<template v-if="swiperCurrent == 3">
+						<!-- <template v-if="swiperCurrent == 3">
 
-						</template>
+						</template> -->
 						<!-- 已关闭 -->
-						<template v-if="swiperCurrent == 4">
+						<!-- <template v-if="swiperCurrent == 4">
 
-						</template>
+						</template> -->
+						<u-loadmore v-if='swiperCurrent == index' :status="status" />
 					</view>
 				</scroll-view>
 
@@ -437,10 +437,9 @@
 					const res = await this.$api.orderList({
 						page: this.dingdanPage,
 						limit: this.dingdanPageSize,
+						type:this.current == 0 ? '' : this.current == 1 ? '0' :this.current == 3 ? '4' : ''  
 					})
-					res.data = res.data.filter(ele => {
-						return ele.spec_type == 1
-					})
+					console.log(res.data)
 					if (res.data.length == 0) {
 						this.status = 'nomore'
 					} else {
@@ -461,19 +460,21 @@
 				this.getData()
 				setTimeout(() => {
 					this.getCurrentSwiperHeight('.nav5Items')
-				}, 200)
+				}, 800)
 			},
 			animationfinish(e) {
 				let current = e.detail.current;
 				this.$refs.uTabs.setFinishCurrent(current);
 				this.swiperCurrent = current;
 				this.current = current;
+				this.tabsChange(this.current)
 			},
 			getCurrentSwiperHeight(element) {
 				let query = uni.createSelectorQuery().in(this);
 				query.selectAll(element).boundingClientRect();
 				query.exec((res) => {
-					this.height = res[0][this.swiperCurrentIndex].height + 50;
+					console.log(res)
+					this.height = res[0][this.swiperCurrentIndex].height;
 				})
 			},
 		}
@@ -492,6 +493,7 @@
 	}
 
 	.nav5Items {
+		padding-bottom: 100rpx;
 		.item {
 			margin-bottom: 20rpx;
 			background: #FFFFFF;

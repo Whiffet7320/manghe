@@ -99,10 +99,10 @@ try {
       return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-navbar/u-navbar */ "node-modules/uview-ui/components/u-navbar/u-navbar").then(__webpack_require__.bind(null, /*! uview-ui/components/u-navbar/u-navbar.vue */ 616))
     },
     uCheckboxGroup: function() {
-      return Promise.all(/*! import() | node-modules/uview-ui/components/u-checkbox-group/u-checkbox-group */[__webpack_require__.e("common/vendor"), __webpack_require__.e("node-modules/uview-ui/components/u-checkbox-group/u-checkbox-group")]).then(__webpack_require__.bind(null, /*! uview-ui/components/u-checkbox-group/u-checkbox-group.vue */ 787))
+      return Promise.all(/*! import() | node-modules/uview-ui/components/u-checkbox-group/u-checkbox-group */[__webpack_require__.e("common/vendor"), __webpack_require__.e("node-modules/uview-ui/components/u-checkbox-group/u-checkbox-group")]).then(__webpack_require__.bind(null, /*! uview-ui/components/u-checkbox-group/u-checkbox-group.vue */ 623))
     },
     uCheckbox: function() {
-      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-checkbox/u-checkbox */ "node-modules/uview-ui/components/u-checkbox/u-checkbox").then(__webpack_require__.bind(null, /*! uview-ui/components/u-checkbox/u-checkbox.vue */ 794))
+      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-checkbox/u-checkbox */ "node-modules/uview-ui/components/u-checkbox/u-checkbox").then(__webpack_require__.bind(null, /*! uview-ui/components/u-checkbox/u-checkbox.vue */ 630))
     },
     uGap: function() {
       return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-gap/u-gap */ "node-modules/uview-ui/components/u-gap/u-gap").then(__webpack_require__.bind(null, /*! uview-ui/components/u-gap/u-gap.vue */ 602))
@@ -163,6 +163,9 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
+
+
+
 
 
 
@@ -317,7 +320,10 @@ var _vuex = __webpack_require__(/*! vuex */ 75); //
 //
 //
 //
-var _default = { data: function data() {return { cartCount: 0, cartList: { valid: [], invalid: [] }, isAllSelect: false, //全选
+//
+//
+//
+var Dialog = function Dialog() {__webpack_require__.e(/*! require.ensure | components/dialog/dialog */ "components/dialog/dialog").then((function () {return resolve(__webpack_require__(/*! @/components/dialog/dialog.vue */ 661));}).bind(null, __webpack_require__)).catch(__webpack_require__.oe);};var _default = { components: { Dialog: Dialog }, data: function data() {return { show: false, cartCount: 0, cartList: { valid: [], invalid: [] }, isAllSelect: false, //全选
       selectValue: [], //选中的数据
       selectCountPrice: 0.00, attr: { cartAttr: false, productAttr: [], productSelect: {} }, productValue: [], //系统属性
       attrValue: '', //已选属性
@@ -325,7 +331,9 @@ var _default = { data: function data() {return { cartCount: 0, cartList: { valid
       //获取当前变动属性
       var productSelect = this.productValue[this.attrValue]; //如果没有属性,赋值给商品默认库存
       if (productSelect === undefined && !this.attr.productAttr.length) productSelect = this.attr.productSelect; //无属性值即库存为0；不存在加减；
-      if (productSelect === undefined) return;var stock = productSelect.stock || 0;var num = this.attr.productSelect;if (changeValue) {num.cart_num++;if (num.cart_num > stock) {this.$set(this.attr.productSelect, "cart_num", stock ? stock : 1);this.$set(this, "cart_num", stock ? stock : 1);}} else {num.cart_num--;if (num.cart_num < 1) {this.$set(this.attr.productSelect, "cart_num", 1);this.$set(this, "cart_num", 1);}}}, subCart: function subCart(index) {var _this2 = this;var status = false;var item = this.cartList.valid[index];item.cart_num = Number(item.cart_num) - 1;if (item.cart_num < 1) status = true;if (item.cart_num <= 1) {item.cart_num = 1;item.numSub = true;} else {item.numSub = false;item.numAdd = false;}if (false == status) {this.$api.changeCartNum({ id: item.id, number: item.cart_num }).then(function (res) {if (res.status == 200) {_this2.cartList.valid[index] = item;_this2.switchSelect();}});}}, addCart: function addCart(index) {var _this3 = this;var item = this.cartList.valid[index];
+      if (productSelect === undefined) return;var stock = productSelect.stock || 0;var num = this.attr.productSelect;if (changeValue) {num.cart_num++;if (num.cart_num > stock) {this.$set(this.attr.productSelect, "cart_num", stock ? stock : 1);this.$set(this, "cart_num", stock ? stock : 1);}} else {num.cart_num--;if (num.cart_num < 1) {this.$set(this.attr.productSelect, "cart_num", 1);this.$set(this, "cart_num", 1);}}}, subCart: function subCart(index) {var _this2 = this;var status = false;var item = this.cartList.valid[index];item.cart_num = Number(item.cart_num) - 1;if (item.cart_num < 1) status = true;if (item.cart_num <= 1) {item.cart_num = 1;item.numSub = true;} else {item.numSub = false;item.numAdd = false;}if (false == status) {this.$api.changeCartNum({ id: item.id, number: item.cart_num }).then(function (res) {if (res.status == 200) {_this2.cartList.valid[index] = item;_this2.switchSelect();}});}},
+    addCart: function addCart(index) {var _this3 = this;
+      var item = this.cartList.valid[index];
       item.cart_num = Number(item.cart_num) + 1;
       var productInfo = item.productInfo;
       if (productInfo.hasOwnProperty('attrInfo') && item.cart_num >= item.productInfo.attrInfo.stock) {
@@ -363,11 +371,18 @@ var _default = { data: function data() {return { cartCount: 0, cartList: { valid
       }
     },
     subOrder: function subOrder() {
+      var narry = [];
+      var val = this.cartList.valid.filter(function (item) {return item.checked;});
+      if (val.length) {
+        val.forEach(function (item) {
+          narry.push(item);
+        });
+      }
       var selectValue = this.selectValue;
       if (selectValue.length > 0) {
-        var skuItem = "";
+        var skuItem = narry;
         uni.navigateTo({
-          url: '/pages/users/order/tijiaodingdan?cartId=' + selectValue.join(',') + "&isGWC=yes" });
+          url: "/pages/users/order/tijiaodingdan?skuItem=".concat(JSON.stringify(skuItem), "&cartId=").concat(selectValue.join(','), "&isGWC=yes") });
 
       } else {
         uni.showToast({
@@ -429,7 +444,7 @@ var _default = { data: function data() {return { cartCount: 0, cartList: { valid
         return item;
       });
       arr3 = arr2.filter(function (item) {return !item.attrStatus;});
-      this.cartList.valid = newValid;
+      console.log(newValid);
       this.isAllSelect = newValid.length === arr1.length + arr3.length;
       this.selectValue = value;
       this.switchSelect();
@@ -457,16 +472,22 @@ var _default = { data: function data() {return { cartCount: 0, cartList: { valid
         this.selectCountPrice = selectCountPrice;
       }
     },
-    unsetCart: function unsetCart() {var _this7 = this;
-      this.$api.cartDel(this.selectValue).then(function (res) {
-        uni.showToast({
-          title: "删除成功",
-          icon: "none" });
+    unsetCart: function unsetCart() {
+      this.show = !this.show;
+    },
+    onClose: function onClose(val) {var _this7 = this;
+      if (val === "confirm") {
+        this.$api.cartDel(this.selectValue).then(function (res) {
+          uni.showToast({
+            title: "删除成功",
+            icon: "none" });
 
-        _this7.getCartlist();
-      }).catch(function (err) {
-        console.log(err);
-      });
+          _this7.getCartlist();
+        }).catch(function (err) {
+          console.log(err);
+        });
+      }
+      this.show = !this.show;
     } },
 
   onShow: function onShow() {

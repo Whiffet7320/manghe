@@ -32,6 +32,9 @@ page {
 .swiper-item.data-v-7021119d {
   margin-top: 20rpx;
 }
+.nav5Items.data-v-7021119d {
+  padding-bottom: 100rpx;
+}
 .nav5Items .item.data-v-7021119d {
   margin-bottom: 20rpx;
   background: #FFFFFF;

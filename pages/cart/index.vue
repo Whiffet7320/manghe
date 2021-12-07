@@ -72,14 +72,22 @@
 				<view class="bar_btn" @click="subOrder">{{isAllSelect?"批量结算":"去结算"}}({{selectValue.length}})</view>
 			</view>
 		</view>
+		<Dialog v-if="show" @close="onClose">
+			<view class="modcontent">确定将购物车全部清空吗</view>
+		</Dialog>
 	</view>
 </template>
 
 <script>
 	import {mapGetters} from "vuex";
+	import Dialog from "@/components/dialog/dialog.vue";
 	export default{
+		components:{
+			Dialog
+		},
 		data(){
 			return{
+				show:false,
 				cartCount: 0,
 				cartList: {
 					valid: [],
@@ -199,11 +207,18 @@
 				}
 			},
 			subOrder(){
+				let narry = [];
+				let val = this.cartList.valid.filter(item=>item.checked);
+				if(val.length){
+					val.forEach(item=>{
+						narry.push(item);
+					})
+				}
 				let selectValue = this.selectValue;
 				if (selectValue.length > 0) {
-					let skuItem = "";
+					let skuItem = narry;
 					uni.navigateTo({
-						url: '/pages/users/order/tijiaodingdan?cartId=' + selectValue.join(',')+"&isGWC=yes"
+						url: `/pages/users/order/tijiaodingdan?skuItem=${JSON.stringify(skuItem)}&cartId=${selectValue.join(',')}&isGWC=yes`
 					});
 				} else {
 					uni.showToast({
@@ -265,7 +280,7 @@
 					return item;
 				});
 				arr3 = arr2.filter(item => !item.attrStatus);
-				this.cartList.valid = newValid;
+				console.log(newValid)
 				this.isAllSelect = newValid.length === arr1.length + arr3.length;
 				this.selectValue = value;
 				this.switchSelect();
@@ -294,15 +309,21 @@
 				}
 			},
 			unsetCart(){
-				this.$api.cartDel(this.selectValue).then(res => {
-					uni.showToast({
-						title:"删除成功",
-						icon:"none"
-					})
-					this.getCartlist();
-				}).catch(err => {
-					console.log(err)
-				});
+				this.show = !this.show;
+			},
+			onClose(val){
+				if(val==="confirm"){
+					this.$api.cartDel(this.selectValue).then(res => {
+						uni.showToast({
+							title:"删除成功",
+							icon:"none"
+						})
+						this.getCartlist();
+					}).catch(err => {
+						console.log(err)
+					});
+				}
+				this.show = !this.show;
 			}
 		},
 		onShow(){
@@ -555,5 +576,9 @@
 			font-size: 28rpx;
 			color:#FFFFFF;
 		}
+	}
+	.modcontent{
+		font-size: 28rpx;
+		color: #707070;
 	}
 </style>

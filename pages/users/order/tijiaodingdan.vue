@@ -18,41 +18,78 @@
 		</view>
 		<!-- 无地址 -->
 		<view v-else @click="toAddAddress" class="noAddress">添加收货地址</view>
-		<view class="nav2" v-for="item in 1">
-			<view class="nav2-1">
-				<image src="https://img2.baidu.com/it/u=4006635947,2132087516&fm=26&fmt=auto" class="pic" mode="">
-				</image>
-				<view class="right">
+		<template v-if="isGWC=='yes'">
+			<view class="nav2" v-for="item in proinfo" :key='item.productInfo.id'>
+				<view class="nav2-1">
+					<image :src="item.productInfo.image" class="pic" mode="aspectFill"></image>
+					<view class="right">
+						<view class="tit1">
+							<view class="txt1">{{item.productInfo.store_name}}</view>
+							<view class="txt2">X{{item.cart_num}}</view>
+						</view>
+						<view class="down">
+							<view class="tit2">{{item.productInfo?item.productInfo.attrInfo.suk:""}}</view>
+							<view class="tit3">¥ {{item.productInfo.price}}</view>
+						</view>
+					</view>
+				</view>
+				<view class="nav2-2">
 					<view class="tit1">
-						<view class="txt1">{{shopName}}</view>
-						<view class="txt2">X{{buyNum}}</view>
+						<view class="txt1">商品金额</view>
+						<view class="txt2">¥ {{item.productInfo.price}}</view>
 					</view>
-					<view class="down">
-						<view class="tit2">{{skuItem?skuItem.suk:''}}</view>
-						<view class="tit3">¥ {{skuItem.price}}</view>
+					<view class="tit1">
+						<view class="txt1">运费</view>
+						<view class="txt2">¥ 0.00</view>
 					</view>
-
+					<view class="tit1">
+						<view class="txt1">优惠券</view>
+						<view class="txt2">- ¥ 0.00</view>
+					</view>
+					<view class="tit1">
+						<view class="txt1">合计</view>
+						<view class="txt2">¥ {{parseFloat($tool.argMul(item.cart_num,item.productInfo.price)).toFixed(2)}}</view>
+					</view>
 				</view>
 			</view>
-			<view class="nav2-2">
-				<view class="tit1">
-					<view class="txt1">商品金额</view>
-					<view class="txt2">¥ {{skuItem.price}}</view>
+		</template>
+		<template v-if="isGWC=='no'">
+			<view class="nav2" v-for="item in skuItem" :key='item.id'>
+				<view class="nav2-1">
+					<image :src="item.image" class="pic" mode=""></image>
+					<view class="right">
+						<view class="tit1">
+							<view class="txt1">{{item.shopName}}</view>
+							<view class="txt2">X{{item.buyNum}}</view>
+						</view>
+						<view class="down">
+							<view class="tit2">{{item?item.suk:''}}</view>
+							<view class="tit3">¥ {{item.price}}</view>
+						</view>
+			
+					</view>
 				</view>
-				<view class="tit1">
-					<view class="txt1">运费</view>
-					<view class="txt2">¥ 0.00</view>
-				</view>
-				<view class="tit1">
-					<view class="txt1">优惠券</view>
-					<view class="txt2">- ¥0.00</view>
-				</view>
-				<view class="tit1">
-					<view class="txt1">合计</view>
-					<view class="txt2">¥ 9.90</view>
+				<view class="nav2-2">
+					<view class="tit1">
+						<view class="txt1">商品金额</view>
+						<view class="txt2">¥ {{item.price}}</view>
+					</view>
+					<view class="tit1">
+						<view class="txt1">运费</view>
+						<view class="txt2">¥ 0.00</view>
+					</view>
+					<view class="tit1">
+						<view class="txt1">优惠券</view>
+						<view class="txt2">- ¥0.00</view>
+					</view>
+					<view class="tit1">
+						<view class="txt1">合计</view>
+						<view class="txt2">¥ 9.90</view>
+					</view>
 				</view>
 			</view>
-		</view>
+		</template>
+		
 		<view class="nav3">
 			<view class="tit1">
 				<view class="txt1">留言</view>
@@ -78,6 +115,7 @@
 				InpNum: 0,
 				addressObj: null,
 				skuItem: null,
+				proinfo:[],
 				buyNum: '',
 				shopName: '',
 				isGWC: null,
@@ -88,10 +126,12 @@
 		onLoad(options) {
 			console.log(options)
 			if (options.skuItem) {
-				this.skuItem = JSON.parse(options.skuItem);
-				console.log(this.skuItem)
-				this.buyNum = options.buyNum;
-				this.shopName = options.shopName;
+				if(options.isGWC=="yes"){
+					this.proinfo = JSON.parse(options.skuItem);
+					console.log(this.proinfo)
+				}else{
+					this.skuItem = JSON.parse(options.skuItem);
+				}
 				this.isGWC = options.isGWC;
 				this.cartId = options.cartId;
 			}
@@ -133,7 +173,7 @@
 					console.log(res2)
 					if (res2.status == 200) {
 						uni.navigateTo({
-							url: '/pages/users/order/querendingdan'
+							url: `/pages/users/order/querendingdan?uni=${res2.data.result.orderId}&payObj=${encodeURIComponent(JSON.stringify(res2.data.result.jsConfig))}`
 						})
 					}
 				}
