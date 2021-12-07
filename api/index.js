@@ -802,4 +802,36 @@ export default {
 			}
 		})
 	},
+	zhuanjia(obj) {
+		return myGet({
+			url: urls.zhuanjia,
+			params: {
+				...obj
+			}
+		})
+	},
+	xiufu(obj) {
+		return myGet({
+			url: urls.xiufu,
+			params: {
+				...obj
+			}
+		})
+	},
+	orderComputed(obj,key) {
+		return myPost({
+			url: `${urls.orderComputed}/${key}`,
+			data: {
+				...obj
+			}
+		})
+	},
+	productHot(obj) {
+		return myGet({
+			url: urls.productHot,
+			params: {
+				...obj
+			}
+		})
+	},
 }

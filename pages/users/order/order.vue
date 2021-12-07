@@ -473,7 +473,6 @@
 				let query = uni.createSelectorQuery().in(this);
 				query.selectAll(element).boundingClientRect();
 				query.exec((res) => {
-					console.log(res)
 					this.height = res[0][this.swiperCurrentIndex].height;
 				})
 			},

@@ -3,7 +3,7 @@
 		<u-toast ref="uToast"></u-toast>
 		<image src="/static/image/zu1840.png" class="kefu" mode=""></image>
 		<view class="nav1">
-			<u-swiper height='602' :list="bannerList"></u-swiper>
+			<u-swiper height='602' :list="bannerList" border-radius="0"></u-swiper>
 		</view>
 		<view class="nav2">
 			<view class="tit1">

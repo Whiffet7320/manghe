@@ -338,7 +338,8 @@
 	}
 
 	.nav1 {
-		background: url(../../static/image/juxin.png);
+		background: url(../../static/image/juxin.png) no-repeat;
+		background-size: 100% 100%;
 		width: 750rpx;
 		height: 300rpx;
 		background-color: #FFFFFF;

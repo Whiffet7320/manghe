@@ -57,7 +57,7 @@
 					id:val.id,
 					real_name: val.real_name,
 					phone: val.phone,
-					is_default: this.list[index].is_default,
+					is_default: 1,
 					address: {
 						province: val.province,
 						city: val.city,
