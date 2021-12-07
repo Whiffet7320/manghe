@@ -1,9 +1,10 @@
 <template>
 	<view class="index">
+		<u-select v-model="cityShow" :list="cityList"></u-select>
 		<view class="nav1">
 			<view class="tit1">
-				<view class="txt1">浙江省</view>
-				<u-icon name="arrow-down" color="#000000" size="20"></u-icon>
+				<view @click="cityShow = true" class="txt1">浙江省</view>
+				<u-icon @click="cityShow = true" name="arrow-down" color="#000000" size="20"></u-icon>
 				<view class="myInp" @click="toSearch">
 					<u-icon @click="toSearch" name="search" color="#000000" size="28"></u-icon>
 					<u-input @click="toSearch" :clearable='false' v-model="searchVal" input-align='center'
@@ -116,7 +117,7 @@
 			<u-tabs-swiper bg-color="#F7F8FA" height='96' font-size="28" gutter="30" inactive-color="#707070"
 				bar-height="4" bar-width="64" active-color="#BD9E81" ref="uTabs" :list="list" :current="current"
 				@change="tabsChange" :is-scroll="false" swiperWidth="750"></u-tabs-swiper>
-			<swiper :style="[{height: height + 'px'}]" :current="swiperCurrent" @transition="transition" @animationfinish="animationfinish">
+			<swiper :style="[{height: height + 'px'}]" :current="swiperCurrent" @animationfinish="animationfinish">
 				<swiper-item class="swiper-item" v-for="(item, index) in list" :key="index">
 					<scroll-view scroll-y='true'>
 						<view class="nav5Items">
@@ -154,6 +155,15 @@
 	export default {
 		data() {
 			return {
+				cityShow:false,
+				cityList:[{
+						value: '1',
+						label: '江'
+					},
+					{
+						value: '2',
+						label: '湖'
+					}],
 				zjtdList:[],
 				xfzqList:[],
 				searchVal: '',
@@ -201,6 +211,9 @@
 				const res2 = await this.$api.xiufu()
 				this.xfzqList = res2.data;
 				console.log(res2)
+				const res3 = await this.$api.productHot()
+				console.log(res3)
+				this.rxList = res3.data;
 			},
 			toYimeixiangmu(val) {
 				this.$store.commit('from',val)

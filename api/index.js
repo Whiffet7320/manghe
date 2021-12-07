@@ -810,4 +810,12 @@ export default {
 			}
 		})
 	},
+	productHot(obj) {
+		return myGet({
+			url: urls.productHot,
+			params: {
+				...obj
+			}
+		})
+	},
 }

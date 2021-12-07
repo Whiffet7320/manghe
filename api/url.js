@@ -25,4 +25,5 @@ export default {
 	zhuanjia:'/api/zhuanjia',//专家列表
 	xiufu:'/api/xiufu',//修复专区
 	orderComputed:'/api/order/computed',//计算订单金额
+	productHot:'/api/product/hot',//热搜
 }
