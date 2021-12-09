@@ -112,7 +112,9 @@
 		data() {
 			return {
 				cartInfo:[],
-				addNum:'',
+				uni: '',
+				isAgain: 'no',
+				addNum: '',
 				InpNum: 0,
 				addressObj: null,
 				skuItem: null,
@@ -136,6 +138,10 @@
 			if(options.cartId){
 				this.cartId = options.cartId;
 				this.isGWC = options.isGWC;
+			}
+			if (options.isAgain) {
+				this.isAgain = options.isAgain
+				this.uni = options.uni
 			}
 		},
 		onShow() {
@@ -165,9 +171,11 @@
 				this.addressObj = res.data.filter(ele => {
 					return ele.is_default == 1
 				})[0]
-				if(!this.addressObj && res.data.length>0){
-					this.addressObj = null;
-					this.addNum = 'fushu';
+
+				console.log(res.data.length)
+				if (!this.addressObj && res.data.length > 0) {
+					this.addressObj = null
+					this.addNum = 'fushu'
 				}
 				console.log(this.addressObj)
 				var cartId = '';
@@ -175,6 +183,14 @@
 					cartId = this.cartId
 				}else{
 					cartId = this.cartId
+				}
+				if (this.isAgain == 'yes') {
+					// 再次购买
+					const res11 = await this.$api.orderAgain({
+						uni: this.uni
+					})
+					console.log(res11)
+					cartId = res11.data.cateId
 				}
 				const res2 = await this.$api.orderConfirm({
 					cartId: cartId,

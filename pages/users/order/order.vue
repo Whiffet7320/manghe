@@ -1,6 +1,7 @@
 <template>
 	<view class="index">
-		<u-tabs-swiper bg-color="#ffffff" height='80' font-size="28" inactive-color="#707070" bar-height="4"
+		<u-toast ref="uToast" />
+		<u-tabs-swiper gutter='80' bg-color="#ffffff" height='80' font-size="28" inactive-color="#707070" bar-height="4"
 			bar-width="64" active-color="#BD9E81" ref="uTabs" :list="list" :current="current" @change="tabsChange"
 			:is-scroll="false" swiperWidth="750"></u-tabs-swiper>
 		<swiper :style="[{height: height + 'px'}]" :current="swiperCurrent" @animationfinish="animationfinish">
@@ -15,32 +16,31 @@
 									<view class="left">
 										<view class="txt1-1">剩余支付时间：</view>
 										<view class="txt1-2">
-											<view class="kuang">21</view>
+											<view class="kuang">{{item.timeObj.h}}</view>
 											<view class="txt1-2-1">：</view>
-											<view class="kuang">15</view>
+											<view class="kuang">{{item.timeObj.m}}</view>
 											<view class="txt1-2-1">：</view>
-											<view class="kuang">18</view>
+											<view class="kuang">{{item.timeObj.s}}</view>
 										</view>
 									</view>
 									<view class="right">待付款</view>
 								</view>
-								<view class="tit2">
-									<image class="pic"
-										src="https://img2.baidu.com/it/u=4006635947,2132087516&fm=26&fmt=auto" mode="">
+								<view class="tit2" v-for="item2 in item.cartInfo" :key='item2.id'>
+									<image class="pic" :src="item2.productInfo.image" mode="">
 									</image>
 									<!-- 未预付款 -->
-									<!-- <view class="box1" v-if="product_from == 0">
+									<view class="box1">
 										<view class="tit2-1">
-											<view class="txt1">250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一</view>
-											<view class="txt2">X1</view>
+											<view class="txt1">{{item2.productInfo.store_name}}</view>
+											<view class="txt2">X{{item2.cart_num}}</view>
 										</view>
 										<view class="down">
-											<view class="tit2-2">250ml</view>
-											<view class="tit2-3">¥9.90</view>
+											<view class="tit2-2">{{item2.productInfo.attrInfo.suk}}</view>
+											<view class="tit2-3">¥{{item2.productInfo.attrInfo.price}}</view>
 										</view>
-									</view> -->
+									</view>
 									<!-- 预付款 -->
-									<view class="box1" v-if="product_from == 1">
+									<!-- <view class="box1" v-if="product_from == 1">
 										<view class="tit2-1">
 											<view class="txt1">250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一</view>
 										</view>
@@ -49,16 +49,16 @@
 										<view class="down">
 											<view class="tit2-3">预付款 ¥2000.00</view>
 										</view>
-									</view>
+									</view> -->
 								</view>
 								<view class="tit3">
 									<view class="box1">
-										<view class="txt1">订单编号:JHS123456123456</view>
+										<view class="txt1">订单编号:{{item.order_id}}</view>
 										<view class="txt2">复制</view>
 									</view>
 									<view class="btns">
-										<view class="btn2">去支付</view>
-										<view class="btn1">取消订单</view>
+										<view class="btn2" @click="tozhifu(item)">去支付</view>
+										<view class="btn1" @click="quxiaodingdan">取消订单</view>
 									</view>
 								</view>
 							</view>
@@ -87,12 +87,155 @@
 								</view>
 								<view class="tit3">
 									<view class="box1">
-										<view class="txt1">订单编号:JHS123456123456</view>
+										<view class="txt1">订单编号:{{item.order_id}}</view>
 										<view class="txt2">复制</view>
 									</view>
 									<view class="btns">
 										<view class="btn2">已面诊</view>
 										<view class="btn1">取消订单</view>
+									</view>
+								</view>
+							</view>
+							<!-- 待发货 -->
+							<view class="item dfwk" v-if="item._status._title == '未发货'">
+								<view class="tit1">
+									<view class="left">下单时间：{{item._add_time}}</view>
+									<view class="right">待发货</view>
+								</view>
+								<view class="tit2" v-for="item2 in item.cartInfo">
+									<image class="pic" :src="item2.productInfo.image" mode="">
+									</image>
+									<!-- 未预付款 -->
+									<view class="box1">
+										<view class="tit2-1">
+											<view class="txt1">{{item2.productInfo.store_name}}</view>
+											<view class="txt2">X{{item2.cart_num}}</view>
+										</view>
+										<view class="down">
+											<view class="tit2-2">{{item2.productInfo.attrInfo.suk}}</view>
+											<view class="tit2-3-1">
+												<view class="tit2-3-1-1">¥{{item2.productInfo.attrInfo.price}}</view>
+												<view class="tit2-3-1-1 red">¥{{item2.productInfo.attrInfo.price}}
+												</view>
+											</view>
+										</view>
+									</view>
+									<!-- 预付款 -->
+									<!-- <view class="box1">
+										<view class="tit2-1">
+											<view class="txt1">{{item2.productInfo.store_name}}</view>
+										</view>
+										<view class="tit2-1-1">预约时间：2021-11-06 下午</view>
+										<view class="tit2-1-2">预约医生：李竞</view>
+										<view class="down dfwk">
+											<view class="tit2-1-2-1">预付款 ¥2000.00</view>
+											<view class="tit2-1-2-2">尾款 ¥1600.00</view>
+										</view>
+									</view> -->
+								</view>
+								<view class="tit3">
+									<view class="box1">
+										<view class="txt1">订单编号:{{item.order_id}}</view>
+										<view class="txt2">复制</view>
+									</view>
+									<view class="btns">
+										<view @click="toBuyagain(item)" class="btn2">再次购买</view>
+										<view class="btn1">取消订单</view>
+									</view>
+								</view>
+							</view>
+							<!-- 待收货 -->
+							<view class="item dfwk" v-if="item._status._title == '待收货'">
+								<view class="tit1">
+									<view class="left">下单时间：{{item._add_time}}</view>
+									<view class="right">待收货</view>
+								</view>
+								<view class="tit2" v-for="item2 in item.cartInfo">
+									<image class="pic" :src="item2.productInfo.image" mode="">
+									</image>
+									<!-- 未预付款 -->
+									<view class="box1">
+										<view class="tit2-1">
+											<view class="txt1">{{item2.productInfo.store_name}}</view>
+											<view class="txt2">X{{item2.cart_num}}</view>
+										</view>
+										<view class="down">
+											<view class="tit2-2">{{item2.productInfo.attrInfo.suk}}</view>
+											<view class="tit2-3-1">
+												<view class="tit2-3-1-1">¥{{item2.productInfo.attrInfo.price}}</view>
+												<view class="tit2-3-1-1 red">¥{{item2.productInfo.attrInfo.price}}
+												</view>
+											</view>
+										</view>
+									</view>
+									<!-- 预付款 -->
+									<!-- <view class="box1">
+										<view class="tit2-1">
+											<view class="txt1">250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一</view>
+										</view>
+										<view class="tit2-1-1">预约时间：2021-11-06 下午</view>
+										<view class="tit2-1-2">预约医生：李竞</view>
+										<view class="down dfwk">
+											<view class="tit2-1-2-1">预付款 ¥2000.00</view>
+											<view class="tit2-1-2-2">尾款 ¥1600.00</view>
+										</view>
+									</view> -->
+								</view>
+								<view class="tit3">
+									<view class="box1">
+										<view class="txt1">订单编号:{{item.order_id}}</view>
+										<view class="txt2">复制</view>
+									</view>
+									<view class="btns">
+										<view @click="querenshouhuo(item.order_id)" class="btn2">确认收货</view>
+										<view class="btn1">取消订单</view>
+									</view>
+								</view>
+							</view>
+							<!-- 待评价 -->
+							<view class="item dfwk" v-if="item._status._title == '待评价'">
+								<view class="tit1">
+									<view class="left">下单时间：{{item._add_time}}</view>
+									<view class="right">待评价</view>
+								</view>
+								<view class="tit2" v-for="item2 in item.cartInfo">
+									<image class="pic" :src="item2.productInfo.image" mode="">
+									</image>
+									<!-- 未预付款 -->
+									<view class="box1">
+										<view class="tit2-1">
+											<view class="txt1">{{item2.productInfo.store_name}}</view>
+											<view class="txt2">X{{item2.cart_num}}</view>
+										</view>
+										<view class="down">
+											<view class="tit2-2">{{item2.productInfo.attrInfo.suk}}</view>
+											<view class="tit2-3-1">
+												<view class="tit2-3-1-1">¥{{item2.productInfo.attrInfo.price}}</view>
+												<view class="tit2-3-1-1 red">¥{{item2.productInfo.attrInfo.price}}
+												</view>
+											</view>
+										</view>
+									</view>
+									<!-- 预付款 -->
+									<!-- <view class="box1">
+										<view class="tit2-1">
+											<view class="txt1">250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一</view>
+										</view>
+										<view class="tit2-1-1">预约时间：2021-11-06 下午</view>
+										<view class="tit2-1-2">预约医生：李竞</view>
+										<view class="down dfwk">
+											<view class="tit2-1-2-1">预付款 ¥2000.00</view>
+											<view class="tit2-1-2-2">尾款 ¥1600.00</view>
+										</view>
+									</view> -->
+								</view>
+								<view class="tit3">
+									<view class="box1">
+										<view class="txt1">订单编号:{{item.order_id}}</view>
+										<view class="txt2">复制</view>
+									</view>
+									<view class="btns">
+										<view @click="qupingjia(item.order_id)" class="btn2">去评价</view>
 									</view>
 								</view>
 							</view>
@@ -135,7 +278,7 @@
 								</view>
 								<view class="tit3">
 									<view class="box1">
-										<view class="txt1">订单编号:JHS123456123456</view>
+										<view class="txt1">订单编号:{{item.order_id}}</view>
 										<view class="txt2">复制</view>
 									</view>
 									<view class="btns">
@@ -177,7 +320,7 @@
 								</view>
 								<view class="tit3">
 									<view class="box1">
-										<view class="txt1">订单编号:JHS123456123456</view>
+										<view class="txt1">订单编号:{{item.order_id}}</view>
 										<view class="txt2">复制</view>
 									</view>
 									<view class="btns">
@@ -216,7 +359,7 @@
 								</view>
 								<view class="tit3">
 									<view class="box1">
-										<view class="txt1">订单编号:JHS123456123456</view>
+										<view class="txt1">订单编号:{{item.order_id}}</view>
 										<view class="txt2">复制</view>
 									</view>
 									<view class="btns">
@@ -245,7 +388,8 @@
 									<!-- 未预付款 -->
 									<view class="box1">
 										<view class="tit2-1">
-											<view class="txt1" style="color: #707070;">250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一</view>
+											<view class="txt1" style="color: #707070;">250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一250ml
+												雅漾补水喷雾赠一</view>
 											<view class="txt2">X1</view>
 										</view>
 										<view class="down">
@@ -263,7 +407,7 @@
 								</view>
 								<view class="tit3">
 									<view class="box1">
-										<view class="txt1">订单编号:JHS123456123456</view>
+										<view class="txt1">订单编号:{{item.order_id}}</view>
 										<view class="txt2">复制</view>
 									</view>
 								</view>
@@ -302,7 +446,7 @@
 								</view>
 								<view class="tit3">
 									<view class="box1">
-										<view class="txt1">订单编号:JHS123456123456</view>
+										<view class="txt1">订单编号:{{item.order_id}}</view>
 										<view class="txt2">复制</view>
 									</view>
 									<view class="btns">
@@ -345,7 +489,7 @@
 								</view>
 								<view class="tit3">
 									<view class="box1">
-										<view class="txt1">订单编号:JHS123456123456</view>
+										<view class="txt1">订单编号:{{item.order_id}}</view>
 										<view class="txt2">复制</view>
 									</view>
 									<view class="btns">
@@ -400,6 +544,12 @@
 				}, {
 					name: '待付款'
 				}, {
+					name: '待发货'
+				}, {
+					name: '待收货'
+				},{
+					name: '待评价'
+				}, {
 					name: '待付尾款'
 				}, {
 					name: '已完成'
@@ -442,7 +592,8 @@
 					const res = await this.$api.orderList({
 						page: this.dingdanPage,
 						limit: this.dingdanPageSize,
-						type:this.current == 0 ? '' : this.current == 1 ? '0' :this.current == 3 ? '4' : ''  
+						type: this.current == 0 ? '' : this.current == 1 ? '0' : this.current ==
+							3 ? '4' : ''
 					})
 					console.log(res.data)
 					if (res.data.length == 0) {
@@ -451,8 +602,111 @@
 						this.status = 'loadmore';
 						this.orderList = this.orderList.concat(res.data)
 					}
+					this.orderList.forEach(ele => {
+						if (ele.stop_time) {
+							var timeObj = this.mygetdate(ele.stop_time)
+							this.$set(ele, 'timeObj', timeObj)
+						}
+					})
 				}, 200)
 				console.log(this.orderList)
+			},
+			async qupingjia(orderId){
+				console.log(orderId)
+			},
+			toBuyagain(item) {
+				if (item.cartInfo.length > 1) {
+					var myId;
+					item.cartInfo.forEach(ele => {
+						myId += ele.id
+					})
+					uni.navigateTo({
+						url: `/pages/users/order/tijiaodingdan?uni=${item.order_id}&id=${myId}&isGWC=yes`
+					})
+				} else {
+					var skuItem = item.cartInfo[0].productInfo;
+					skuItem.shopName = skuItem.store_name;
+					skuItem.buyNum = item.cartInfo[0].cart_num;
+					uni.navigateTo({
+						url: `/pages/users/order/tijiaodingdan?uni=${item.order_id}&skuItem=${JSON.stringify([skuItem])}&isGWC=no&cartId=${item.cart_id[0]}&isAgain=yes`
+					})
+				}
+			},
+			async querenshouhuo(orderId) {
+				const res = await this.$api.orderTake({
+					uni:orderId
+				})
+				console.log(res)
+				if (res.status == 200) {
+					this.$refs.uToast.show({
+						title: '收货成功',
+						type: 'success',
+						callback:()=>{
+							this.orderList = [];
+							this.$store.commit("dingdanPage", 1);
+							this.tabsChange(this.current);
+						}
+					})
+				}
+			},
+			async tozhifu(item) {
+				const res2 = await this.$api.orderPay({
+					uni: item.order_id,
+					paytype: 'yue',
+					from: 'routine',
+				})
+				console.log(res2)
+				if (res2.status == 200) {
+					uni.navigateTo({
+						url: `/pages/users/order/querendingdan?payObj=${encodeURIComponent(JSON.stringify(res2.data.result.jsConfig))}&price=${item.pay_price}`
+					})
+				}
+			},
+			mygetdate(startSellTime) {
+				var date = new Date();
+				var now = date.getTime();
+				var endTime = new Date(startSellTime * 1000); // 结束时间
+				var end = endTime.getTime();
+				var lefttime = end - now;
+				var d, h, m, s;
+				if (lefttime > 0) {
+
+					h = Math.floor(Math.floor(lefttime / 1000 / 60 / 60 / 24) * 24 + (lefttime / 1000 / 60 / 60 % 24))
+					d = Math.floor(h / 24);
+					h = d % 24;
+					m = Math.floor(lefttime / 1000 / 60 % 60)
+					s = Math.floor(lefttime / 1000 % 60)
+					if (s < 10) {
+						s = '0' + s
+					}
+					if (m < 10) {
+						m = '0' + m
+					}
+					if (h < 10) {
+						h = '0' + h
+					}
+				} else {
+					this.h = '00';
+					this.m = '00';
+					this.s = '00';
+					return {
+						h: '00',
+						m: '00',
+						s: '00',
+					}
+					// 清除定时器
+					clearTimeout(timer)
+				}
+				// console.log(d + '天' +h + '时' + m + '分' + s + '秒后开始')
+				var timer = setTimeout(() => {
+					this.mygetdate(startSellTime)
+				}, 1000);
+				return {
+					d,
+					h,
+					m,
+					s,
+				}
 			},
 			// tabs通知swiper切换
 			tabsChange(index) {
@@ -498,6 +752,7 @@
 
 	.nav5Items {
 		padding-bottom: 100rpx;
+
 		.item {
 			margin-bottom: 20rpx;
 			background: #FFFFFF;

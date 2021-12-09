@@ -88,7 +88,8 @@
 												</view>
 												<view class="tit3">哇塞，做出的效果远远大于我的期待值，真的做的超级自然，远看近看都很耐看。</view>
 												<view class="tit4">
-													<image @click.stop="toSeeImg(i,imgArr)" class="picc" v-for="(item,i) in imgArr" :src="item" mode=""></image>
+													<image @click.stop="toSeeImg(i,imgArr)" class="picc"
+														v-for="(item,i) in imgArr" :src="item" mode=""></image>
 												</view>
 											</view>
 										</view>
@@ -102,7 +103,7 @@
 				</swiper-item>
 			</swiper>
 		</view>
-		
+
 		<view class="footer1">
 			<image src="/static/image/zu1840.png" class="kefu" mode=""></image>
 			<view class="txt1">预付款 ¥{{obj.storeInfo.finish_pay_price}}</view>
@@ -126,21 +127,15 @@
 	export default {
 		data() {
 			return {
-				id:'',
-				obj:{},
-				isOnShow:true,
+				id: '',
+				obj: {},
+				isOnShow: true,
 				navTitle: '',
-				bannerList: [{
-						image: 'https://cdn.uviewui.com/uview/swiper/1.jpg',
-					},
-					{
-						image: 'https://cdn.uviewui.com/uview/swiper/2.jpg',
-					},
-					{
-						image: 'https://cdn.uviewui.com/uview/swiper/3.jpg',
-					}
+				bannerList: [],
+				imgArr: ['https://img1.baidu.com/it/u=3303981320,1355171730&fm=26&fmt=auto',
+					'https://img0.baidu.com/it/u=2394303781,1797253216&fm=26&fmt=auto',
+					'https://img0.baidu.com/it/u=3941318376,4022646771&fm=26&fmt=auto'
 				],
-				imgArr:['https://img1.baidu.com/it/u=3303981320,1355171730&fm=26&fmt=auto','https://img0.baidu.com/it/u=2394303781,1797253216&fm=26&fmt=auto','https://img0.baidu.com/it/u=3941318376,4022646771&fm=26&fmt=auto'],
 				//
 				swiperCurrentIndex: 0,
 				height: 0,
@@ -162,7 +157,7 @@
 			this.id = option.id
 		},
 		onShow() {
-			if(!this.isOnShow){
+			if (!this.isOnShow) {
 				return;
 			}
 			this.getData()
@@ -172,14 +167,15 @@
 			this.getCurrentSwiperHeight('.nav5Items')
 		},
 		methods: {
-			async getData(){
+			async getData() {
 				const res = await this.$api.detail(this.id)
 				console.log(res)
 				this.obj = res.data;
-				this.obj.storeInfo.slider_image.forEach((ele,i)=>{
-					this.$set(this.bannerList[i],'image',ele)
+				this.obj.storeInfo.slider_image.forEach((ele, i) => {
+					this.$set(this.bannerList, i, {
+						image: ele
+					})
 				})
-				
 			},
 			toSeeImg(i, imgArr) {
 				this.isOnShow = false;
@@ -198,9 +194,9 @@
 					}
 				});
 			},
-			toQuerendingdan(){
+			toQuerendingdan() {
 				uni.navigateTo({
-					url:`/pages/index/search/querendingdan?obj=${encodeURIComponent(JSON.stringify(this.obj))}`
+					url: `/pages/index/search/querendingdan?obj=${encodeURIComponent(JSON.stringify(this.obj))}`
 				})
 				// uni.navigateTo({
 				// 	url:'/pages/index/search/shouyintai'
@@ -324,6 +320,7 @@
 				font-size: 32rpx;
 				font-weight: 500;
 				color: #BD9E81;
+				width: 600rpx;
 			}
 
 			.txt2 {
@@ -337,7 +334,7 @@
 			display: flex;
 			align-items: center;
 			flex-direction: column;
-			justify-content: space-between;
+			// justify-content: space-between;
 
 			.r-pic {
 				width: 42rpx;
@@ -345,7 +342,7 @@
 			}
 
 			.txt1 {
-				margin-top: 8rpx;
+				margin-top: 14rpx;
 				font-size: 24rpx;
 				font-weight: 400;
 				color: #707070;
@@ -355,6 +352,7 @@
 
 	.nav4 {
 		margin-bottom: 240rpx;
+
 		.swiper-item {
 			// background: #FFFFFF;
 		}
@@ -475,10 +473,12 @@
 									color: #707070;
 								}
 							}
-							.tit2{
+
+							.tit2 {
 								display: flex;
 								align-items: center;
-								.txt2{
+
+								.txt2 {
 									margin-top: 4rpx;
 									margin-left: 8rpx;
 									font-size: 20rpx;
@@ -486,15 +486,18 @@
 									color: #707070;
 								}
 							}
-							.tit3{
+
+							.tit3 {
 								margin-top: 10rpx;
 								font-size: 24rpx;
 								font-weight: 400;
 								color: #707070;
 							}
-							.tit4{
+
+							.tit4 {
 								margin-top: 20rpx;
-								.picc{
+
+								.picc {
 									border-radius: 8rpx;
 									margin-right: 16rpx;
 									width: 150rpx;
@@ -508,8 +511,8 @@
 			}
 		}
 	}
-	
-	.footer1{
+
+	.footer1 {
 		position: fixed;
 		bottom: 140rpx;
 		width: 100%;
@@ -519,27 +522,31 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		.kefu{
+
+		.kefu {
 			position: absolute;
 			bottom: 14rpx;
 			right: 8rpx;
 			width: 172rpx;
 			height: 172rpx;
 		}
-		.txt1{
+
+		.txt1 {
 			font-size: 24rpx;
 			font-family: PingFang SC;
 			line-height: 34rpx;
 			color: #BD9E81;
 		}
-		.txt2{
+
+		.txt2 {
 			font-size: 24rpx;
 			font-family: PingFang SC;
 			line-height: 34rpx;
 			color: #BD9E81;
 		}
 	}
-	.footer2{
+
+	.footer2 {
 		position: fixed;
 		bottom: 0;
 		width: 100%;
@@ -548,32 +555,38 @@
 		box-shadow: 0rpx 8rpx 28rpx rgba(166, 179, 194, 0.3);
 		display: flex;
 		padding: 0 50rpx;
-		.item{
+
+		.item {
 			margin-top: 12rpx;
 			height: 80rpx;
 			display: flex;
 			flex-direction: column;
 			align-items: center;
 			justify-content: space-between;
-			.pic{
+
+			.pic {
 				width: 50rpx;
 				height: 50rpx;
 			}
-			.txt{
+
+			.txt {
 				font-size: 24rpx;
 				font-weight: 400;
 				color: #707070;
 			}
-			.pic2{
+
+			.pic2 {
 				margin-top: 4rpx;
 				width: 40rpx;
 				height: 40rpx;
 			}
 		}
-		.item2{
+
+		.item2 {
 			margin-left: 76rpx;
 		}
-		.btn{
+
+		.btn {
 			border-radius: 40rpx;
 			margin-left: 70rpx;
 			margin-top: 12rpx;

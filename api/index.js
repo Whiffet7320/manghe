@@ -874,4 +874,57 @@ export default {
 			}
 		})
 	},
+	banner(obj) {
+		return myGet({
+			url: urls.banner,
+			params: {
+				...obj
+			}
+		})
+	},
+	store_integralList(obj) {
+		return myGet({
+			url: urls.store_integralList,
+			params: {
+				...obj
+			}
+		})
+	},
+	yanxuan_index(obj) {
+		return myGet({
+			url: urls.yanxuan_index,
+			params: {
+				...obj
+			}
+		})
+	},
+	combinationDetail(id) {
+		return myGet({
+			url: `${urls.combinationDetail}/${id}`,
+		})
+	},
+	replyList(obj,id) {
+		return myGet({
+			url: `${urls.replyList}/${id}`,
+			params:{
+				...obj
+			}
+		})
+	},
+	orderAgain(obj) {
+		return myPost({
+			url: urls.orderAgain,
+			data: {
+				...obj
+			}
+		})
+	},
+	orderTake(obj) {
+		return myPost({
+			url: `${urls.orderTake}`,
+			data:{
+				...obj
+			}
+		})
+	},
 }

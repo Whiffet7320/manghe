@@ -26,7 +26,7 @@
 			</view>
 		</view>
 		<view class="nav3">
-			<view class="item" v-for="item in list" :key='item.id' @click="toSousuoXiangqin(item.id)">
+			<view class="item" v-for="item in list" :key='item.id' @click="toSousuoXiangqin(item)">
 				<image :src="item.image" class="pic" mode=""></image>
 				<view class="right">
 					<view class="txt1">{{item.store_name}}</view>
@@ -50,6 +50,8 @@
 				RadIndex: 1,
 				sid:'',
 				list:[],
+				type:'',
+				keyword:'',
 				// 加载
 				status: 'loadmore',
 				iconType: 'flower',
@@ -74,6 +76,8 @@
 		},
 		onLoad(options) {
 			this.sid = options.sid;
+			options.type ? this.type = options.type : ''
+			options.keyword ? this.keyword = options.keyword : ''
 			this.list = [];
 			this.$store.commit("shopPage", 1);
 			this.getData();
@@ -92,6 +96,8 @@
 						sid:this.sid,
 						page: this.shopPage,
 						limit: this.shopPageSize,
+						keyword:this.keyword,
+						type:this.type
 					})
 					if (res.data.length == 0) {
 						this.status = 'nomore'
@@ -118,9 +124,9 @@
 					delta: 1
 				})
 			},
-			toSousuoXiangqin(id){
+			toSousuoXiangqin(item){
 				uni.navigateTo({
-					url:`/pages/index/search/xiangqin?title=肋骨鼻综合(活动特价)&id=${id}`
+					url:`/pages/index/search/xiangqin?title=${item.store_name}&id=${item.id}`
 				})
 			},
 		}
@@ -133,6 +139,10 @@
 	}
 </style>
 <style lang="scss" scoped>
+	/deep/ .u-load-more-wrap {
+		width: 686rpx;
+		height: 100rpx !important;
+	}
 	.index {}
 
 	.nav1 {

@@ -18,37 +18,37 @@
 		</view>
 		<view class="nav2">
 			<view class="items">
-				<view class="item">
+				<view class="item" @click="toSearchResult(35)">
 					<image src="/static/image/tu01.png" class="pic-item" mode=""></image>
 					<view class="txt-item">美容护肤</view>
 				</view>
-				<view class="item">
+				<view class="item" @click="toSearchResult(36)">
 					<image src="/static/image/tu02.png" class="pic-item" mode=""></image>
 					<view class="txt-item">光电美肤</view>
 				</view>
-				<view class="item">
+				<view class="item" @click="toSearchResult(38)">
 					<image src="/static/image/tu03.png" class="pic-item" mode=""></image>
 					<view class="txt-item">注射美肤</view>
 				</view>
-				<view class="item">
+				<view class="item" @click="toSearchResult(39)">
 					<image src="/static/image/tu04.png" class="pic-item" mode=""></image>
 					<view class="txt-item">个护清洁</view>
 				</view>
 			</view>
 			<view class="items items2">
-				<view class="item">
+				<view class="item" @click="toSearchResult(40)">
 					<image src="/static/image/tu05.png" class="pic-item" mode=""></image>
 					<view class="txt-item">彩妆</view>
 				</view>
-				<view class="item">
+				<view class="item" @click="toSearchResult(41)">
 					<image src="/static/image/tu06.png" class="pic-item" mode=""></image>
 					<view class="txt-item">香水</view>
 				</view>
-				<view class="item">
+				<view class="item" @click="toSearchResult(42)">
 					<image src="/static/image/tu07.png" class="pic-item" mode=""></image>
 					<view class="txt-item">轻奢</view>
 				</view>
-				<view class="item">
+				<view class="item" @click="toSearchResult(43)">
 					<image src="/static/image/tu08.png" class="pic-item" mode=""></image>
 					<view class="txt-item">其他</view>
 				</view>
@@ -73,21 +73,21 @@
 					<view class="item2" @click="toZhuanjiatuandui">
 						<view class="txt1">每日特惠</view>
 						<view class="i2-items2">
-							<view class="i2-item" v-for="item in imgArr">
-								<image :src="item" class="item2-pic" mode=""></image>
-								<view class="btn">¥19.80</view>
+							<view class="i2-item" v-for="item in dijiaList" :key='item.id'>
+								<image :src="item.image" class="item2-pic" mode=""></image>
+								<view class="btn">¥{{item.price}}</view>
 							</view>
 						</view>
 
 					</view>
-					<view class="item item3" @click="toDijiapintuan">
+					<view class="item item3">
 						<image src="/static/image/zu1897.png" class="pic" mode=""></image>
 						<view class="txt1">低价拼团</view>
 						<view class="txt2">专属拼团价</view>
 						<view class="i2-items2">
-							<view class="i2-item" v-for="item in imgArr">
-								<image :src="item" class="item2-pic" mode=""></image>
-								<view class="btns">¥19.80</view>
+							<view class="i2-item"  @click="toDijiapintuan(item.id)" v-for="item in pintuanList" :key='item.id'>
+								<image :src="item.image" class="item2-pic" mode=""></image>
+								<view class="btns">¥{{item.price}}</view>
 							</view>
 						</view>
 					</view>
@@ -99,7 +99,7 @@
 				bar-height="4" bar-width="64" active-color="#BD9E81" ref="uTabs" :list="list" :current="current"
 				@change="tabsChange" :is-scroll="false" swiperWidth="750"></u-tabs-swiper>
 			<swiper :style="[{height: height + 'px'}]" :current="swiperCurrent" :vertical='false'
-				@transition="transition" @animationfinish="animationfinish">
+				 @animationfinish="animationfinish">
 				<!-- @touchmove.stop -->
 				<swiper-item class="swiper-item" v-for="(item, index) in list" :key="index">
 					<scroll-view scroll-y='true'>
@@ -107,7 +107,7 @@
 							<!-- {{item.name}} -->
 							<!-- 热销 -->
 							<template v-if="swiperCurrent == 0">
-								<view class="item" @click="toRexiaoxiangqin(item.id)" v-for="item in shopList"
+								<view class="item" @click="toRexiaoxiangqin(item)" v-for="item in shopList"
 									:key='item.id'>
 									<image :src="item.image" class="pic" mode=""></image>
 									<view class="right">
@@ -161,16 +161,18 @@
 		},
 		data() {
 			return {
+				dijiaList:[],
+				pintuanList:[],
 				shopList: [],
 				searchVal: '',
 				bannerList: [{
-						image: 'https://cdn.uviewui.com/uview/swiper/1.jpg',
+						image: '',
 					},
 					{
-						image: 'https://cdn.uviewui.com/uview/swiper/2.jpg',
+						image: '',
 					},
 					{
-						image: 'https://cdn.uviewui.com/uview/swiper/3.jpg',
+						image: '',
 					}
 				],
 				imgArr: ['https://img0.baidu.com/it/u=2394303781,1797253216&fm=26&fmt=auto',
@@ -202,21 +204,43 @@
 			}
 		},
 		onLoad(options) {
-			this.shopList = [];
-			this.$store.commit("shopPage", 1);
-			// this.getData();
-			// this.tabsChange(this.current);
+			// this.shopList = [];
+			// this.$store.commit("shopPage", 1);
 		},
 		onReachBottom() {
 			this.$store.commit("shopPage", this.shopPage + 1);
 		},
 		onShow() {
+			this.getBanner()
+			this.getData()
+			this.getData2()
+			this.shopList = [];
+			this.$store.commit("shopPage", 1);
 			this.tabsChange(this.current);
 		},
 		mounted() {
 			this.getCurrentSwiperHeight('.nav5Items')
 		},
 		methods: {
+			async getData2(){
+				const res = await this.$api.yanxuan_index({
+					page:1,
+					limit:2
+				})
+				console.log(res)
+				this.dijiaList = res.data.day;
+				this.pintuanList = res.data.tuan;
+			},
+			async getBanner(){
+				const res = await this.$api.banner({
+					position:0
+				})
+				console.log(res)
+				this.bannerList = res.data;
+				this.bannerList.forEach(ele=>{
+					ele.image = ele.image_url;
+				})
+			},
 			async getData() {
 				this.status = 'loading';
 				setTimeout(async () => {
@@ -236,9 +260,14 @@
 				}, 200)
 				console.log(this.shopList)
 			},
-			toRexiaoxiangqin(id) {
+			toSearchResult(val) {
 				uni.navigateTo({
-					url: `/pages/yanxuanshangcheng/rexiaoxiangqin/rexiaoxiangqin?id=${id}`
+					url: `/pages/search/searchResult?sid=${val}`
+				})
+			},
+			toRexiaoxiangqin(item) {
+				uni.navigateTo({
+					url: `/pages/yanxuanshangcheng/rexiaoxiangqin/rexiaoxiangqin?id=${item.id}&title=${item.title}`
 				})
 			},
 			toJifenchanpin() {
@@ -246,9 +275,9 @@
 					url: '/pages/yanxuanshangcheng/jifenchanpin/liebiao'
 				})
 			},
-			toDijiapintuan() {
+			toDijiapintuan(id) {
 				uni.navigateTo({
-					url: '/pages/yanxuanshangcheng/dijiapintuan/dijiapintuan'
+					url: `/pages/yanxuanshangcheng/dijiapintuan/dijiapintuan?id=${id}`
 				})
 			},
 			toZhuanjiatuandui() {
@@ -263,7 +292,7 @@
 			},
 			toSearch() {
 				uni.navigateTo({
-					url: '/pages/search/search'
+					url: '/pages/search/search?type=0'
 				})
 			},
 			// tabs通知swiper切换
@@ -277,7 +306,7 @@
 				this.getData()
 				setTimeout(() => {
 					this.getCurrentSwiperHeight('.nav5Items')
-				}, 500)
+				}, 900)
 			},
 			// swiper-item左右移动，通知tabs的滑块跟随移动
 			transition(e) {

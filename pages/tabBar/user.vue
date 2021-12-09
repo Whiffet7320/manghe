@@ -34,7 +34,7 @@
 		
 		<view class="uc">
 			<view class="uc-item">
-				<view class="uc-item-title" @click="gotoOrder(0)">
+				<view class="uc-item-title" @click="gotoOrder()">
 					<view class="uc-item-title-text">我的订单</view>
 					<image class="uc-item-title-icon" src="../../static/image/user/jiantou.png"></image>
 				</view>
