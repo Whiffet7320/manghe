@@ -13,41 +13,91 @@
 			</view>
 		</view>
 		<view class="nav2">
-			<view class="item" v-for="item in 6">
-				<image class="pic" src="https://img2.baidu.com/it/u=4006635947,2132087516&fm=26&fmt=auto" mode="">
+			<view class="item" v-for="item in shopList" :key='item.id'>
+				<image class="pic" :src="item.image" mode="">
 				</image>
 				<view class="right">
 					<view class="up">
-						<view class="txt1">SOO行李箱男万向轮拉杆箱耐磨抗摔26英的武器大全完全单位签订无情的寸A330旅行箱密码箱女商务</view>
+						<view class="txt1">{{item.title}}</view>
 						<view class="txt2">规格：20寸</view>
 					</view>
 					<view class="down">
 						<view class="d-left">
 							<image class="d-pic" src="/static/image/zu1577.png" mode=""></image>
-							<view class="d-txt">520积分</view>
+							<view class="d-txt">{{item.price}}积分</view>
 						</view>
 						<view @click="toDuihuan" class="d-right">立即兑换</view>
 					</view>
 				</view>
 			</view>
+			<u-loadmore :status="status" />
 		</view>
 	</view>
 </template>
 
 <script>
+	import {
+		mapState
+	} from "vuex";
 	export default {
+		computed: {
+			...mapState(["jifenShopPage", "jifenShopPageSize"]),
+		},
+		watch: {
+			jifenShopPage: function(page) {
+				console.log('ddpage')
+				this.$store.commit("jifenShopPage", page);
+				if (this.jifenShopPage != 1) {
+					this.getShopData();
+				}
+			},
+		},
 		data() {
 			return {
 				RadIndex: 1,
+				shopList:[],
+				// 加载
+				status: 'loadmore',
+				iconType: 'flower',
+				loadText: {
+					loadmore: '上拉加载更多',
+					loading: '正在加载...',
+					nomore: '没有了更多了'
+				},
 			}
 		},
+		onLoad() {
+			this.shopList = [];
+			this.$store.commit("jifenShopPage", 1);
+			this.getData()
+		},
+		onReachBottom() {
+			this.$store.commit("jifenShopPage", this.jifenShopPage + 1);
+		},
 		methods: {
+			async getData() {
+				this.status = 'loading';
+				setTimeout(async () => {
+					const res = await this.$api.store_integralList({
+						page:this.jifenShopPage,
+						limit:this.jifenShopPageSize
+					})
+					console.log(res.data)
+					if (res.data.length == 0) {
+						this.status = 'nomore'
+					} else {
+						this.status = 'loadmore';
+						this.shopList = this.shopList.concat(res.data)
+					}
+				}, 200)
+				console.log(this.shopList)
+			},
 			changeRad(val) {
 				this.RadIndex = val;
 			},
-			toDuihuan(){
+			toDuihuan() {
 				uni.navigateTo({
-					url:'/pages/yanxuanshangcheng/jifenchanpin/chanpin'
+					url: '/pages/yanxuanshangcheng/jifenchanpin/chanpin'
 				})
 			},
 		}
@@ -60,6 +110,10 @@
 	}
 </style>
 <style lang="scss" scoped>
+	/deep/ .u-load-more-wrap {
+		width: 686rpx;
+		height: 100rpx !important;
+	}
 	.index {}
 
 	.nav1 {
@@ -100,6 +154,7 @@
 			align-items: center;
 			padding: 0 40rpx 0 36rpx;
 			margin-bottom: 20rpx;
+
 			.pic {
 				width: 186rpx;
 				height: 186rpx;
@@ -113,6 +168,7 @@
 				display: flex;
 				flex-direction: column;
 				justify-content: space-between;
+
 				.up {
 					.txt1 {
 						font-size: 28rpx;
@@ -139,13 +195,16 @@
 					display: flex;
 					align-items: center;
 					justify-content: space-between;
+
 					.d-left {
 						display: flex;
 						align-items: center;
+
 						.d-pic {
 							width: 32rpx;
 							height: 32rpx;
 						}
+
 						.d-txt {
 							margin-left: 6rpx;
 							font-size: 32rpx;
@@ -153,7 +212,8 @@
 							color: #FA8677;
 						}
 					}
-					.d-right{
+
+					.d-right {
 						width: 160rpx;
 						height: 60rpx;
 						background: #CAB19A;

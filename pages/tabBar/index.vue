@@ -120,25 +120,26 @@
 						<view class="nav5Items">
 							<!-- {{item.name}} -->
 							<!-- 热销 -->
-							<template v-if="swiperCurrent == 0">
-								<view class="item" @click="toXianqgin" v-for="item in 3">
-									<image src="https://img1.baidu.com/it/u=1217556490,2247340394&fm=26&fmt=auto"
+							<!-- <template v-if="swiperCurrent == 0"> -->
+								<view class="item" @click="toXianqgin(item)" v-for="item in shopList" :key='item.product_id'>
+									<image :src="item.image"
 										class="pic" mode=""></image>
-									<view class="txt">超光子美白嫩肤一次（活动 特价）</view>
+									<view class="txt">{{item.store_name}}</view>
 								</view>
-							</template>
+								<u-loadmore v-if='swiperCurrent == index' :status="status" />
+							<!-- </template> -->
 							<!-- 推荐 -->
-							<template v-if="swiperCurrent == 1">
+							<!-- <template v-if="swiperCurrent == 1">
 
-							</template>
+							</template> -->
 							<!-- 口碑 -->
-							<template v-if="swiperCurrent == 2">
+							<!-- <template v-if="swiperCurrent == 2">
 
-							</template>
+							</template> -->
 							<!-- 精选 -->
-							<template v-if="swiperCurrent == 3">
+							<!-- <template v-if="swiperCurrent == 3">
 
-							</template>
+							</template> -->
 						</view>
 					</scroll-view>
 
@@ -149,9 +150,25 @@
 </template>
 
 <script>
+	import {
+		mapState
+	} from "vuex";
 	export default {
+		computed: {
+			...mapState(["IndexshopPage", "IndexshopPageSize"]),
+		},
+		watch: {
+			IndexshopPage: function(page) {
+				console.log('ddpage')
+				this.$store.commit("IndexshopPage", page);
+				if (this.IndexshopPage != 1) {
+					this.getShopData();
+				}
+			},
+		},
 		data() {
 			return {
+				shopList:[],
 				city:'',
 				searchList:[],
 				cityShow:false,
@@ -194,16 +211,40 @@
 				// 因为内部的滑动机制限制，请将tabs组件和swiper组件的current用不同变量赋值
 				current: 0, // tabs组件的current值，表示当前活动的tab选项
 				swiperCurrent: 0, // swiper组件的current值，表示当前那个swiper-item是活动的
+				// 加载
+				status: 'loadmore',
+				iconType: 'flower',
+				loadText: {
+					loadmore: '上拉加载更多',
+					loading: '正在加载...',
+					nomore: '没有了更多了'
+				},
 			}
 		},
 		onShow() {
-			this.tabsChange(this.current);
+			this.getBanner()
 			this.getData()
+			this.shopList = [];
+			this.$store.commit("IndexshopPage", 1);
+			this.tabsChange(this.current);
 		},
 		mounted() {
 			this.getCurrentSwiperHeight('.nav5Items')
 		},
+		onReachBottom() {
+			this.$store.commit("IndexshopPage", this.IndexshopPage + 1);
+		},
 		methods: {
+			async getBanner(){
+				const res = await this.$api.banner({
+					position:1
+				})
+				console.log(res)
+				this.bannerList = res.data;
+				this.bannerList.forEach(ele=>{
+					ele.image = ele.image_url;
+				})
+			},
 			async getData(){
 				const res = await this.$api.zhuanjia()
 				this.zjtdList = res.data;
@@ -219,8 +260,28 @@
 				this.cityList = this.cityList.replace(/city_name/g,'label')
 				this.cityList = this.cityList.replace(/id/g,'value')
 				this.cityList = JSON.parse(this.cityList)
-				console.log(this.cityList)
-				this.city = this.cityList[0]
+				this.city = this.cityList[0];
+			},
+			async getShopData(){
+				this.status = 'loading';
+				setTimeout(async () => {
+					const res = await this.$api.productHot({
+						page: this.IndexshopPage,
+						limit: this.IndexshopPageSize,
+						product_from:1,
+						is_best:this.current == 3 ? 1 : '',
+						is_good:this.current == 1 ? 1 : '',
+						is_comment:this.current == 2 ? 1 : '',
+					})
+					console.log(res.data)
+					if (res.data.length == 0) {
+						this.status = 'nomore'
+					} else {
+						this.status = 'loadmore';
+						this.shopList = this.shopList.concat(res.data)
+					}
+				}, 200)
+				console.log(this.shopList)
 			},
 			changeCity(e){
 				console.log(e)
@@ -237,9 +298,9 @@
 					url: '/pages/search/searchResult'
 				})
 			},
-			toXianqgin() {
+			toXianqgin(item) {
 				uni.navigateTo({
-					url: '/pages/index/search/xiangqin'
+					url: `/pages/index/search/xiangqin?title=${item.store_name}&id=${item.product_id}`
 				})
 			},
 			toZhuanjiatuandui() {
@@ -254,7 +315,7 @@
 			},
 			toSearch() {
 				uni.navigateTo({
-					url: '/pages/search/search'
+					url: '/pages/search/search?type=1'
 				})
 			},
 			// tabs通知swiper切换
@@ -263,26 +324,27 @@
 				this.swiperCurrent = index;
 				this.current = index;
 				this.swiperCurrentIndex = index;
+				this.shopList = [];
+				this.$store.commit("IndexshopPage", 1);
+				this.getShopData()
 				setTimeout(() => {
+					console.log(11111111)
 					this.getCurrentSwiperHeight('.nav5Items')
-				}, 200)
-			},
-			// swiper-item左右移动，通知tabs的滑块跟随移动
-			transition(e) {
-				let dx = e.detail.dx;
-				this.$refs.uTabs.setDx(dx);
+				}, 800)
 			},
 			animationfinish(e) {
 				let current = e.detail.current;
 				this.$refs.uTabs.setFinishCurrent(current);
 				this.swiperCurrent = current;
 				this.current = current;
+				this.tabsChange(this.current)
 			},
 			getCurrentSwiperHeight(element) {
 				let query = uni.createSelectorQuery().in(this);
 				query.selectAll(element).boundingClientRect();
 				query.exec((res) => {
 					this.height = res[0][this.swiperCurrentIndex].height;
+					console.log(this.height)
 				})
 			},
 		}
@@ -295,6 +357,10 @@
 	}
 </style>
 <style lang="scss" scoped>
+	/deep/ .u-load-more-wrap {
+		width: 686rpx;
+		height: 100rpx !important;
+	}
 	.index {}
 
 	.nav1 {
@@ -369,6 +435,7 @@
 				font-weight: 400;
 				line-height: 34rpx;
 				color: #122106;
+				margin-left: 20rpx;
 			}
 		}
 
@@ -624,6 +691,11 @@
 					font-size: 28rpx;
 					font-weight: 500;
 					color: #BD9E81;
+					display:-webkit-box; //将对象作为弹性伸缩盒子模型显示。
+					-webkit-box-orient:vertical; //从上到下垂直排列子元素（设置伸缩盒子的子元素排列方式）
+					-webkit-line-clamp:2; 
+					overflow:hidden; 
+					text-overflow:ellipsis;
 				}
 			}
 		}

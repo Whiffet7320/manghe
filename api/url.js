@@ -25,7 +25,14 @@ export default {
 	zhuanjia:'/api/zhuanjia',//专家列表
 	xiufu:'/api/xiufu',//修复专区
 	orderComputed:'/api/order/computed',//计算订单金额
-	productHot:'/api/product/hot',//热搜
+	productHot:'/api/product/hot',//首页商品
 	searchKeyword:'/api/search/keyword',//热搜词
 	position:'/api/position',//首页城市列表
+	banner:'/api/banner',//首页轮播图
+	store_integralList:'/api/store_integral/list',//积分商品
+	yanxuan_index:'/api/yanxuan_index',//严选商城首页-促销商品和团购商品
+	combinationDetail:'/api/combination/detail',//拼团产品详情
+	replyList:'/api/reply/list',//获取商品评论
+	orderAgain:'/api/order/again',//再次购买
+	orderTake:'/api/order/take',//订单收货
 }

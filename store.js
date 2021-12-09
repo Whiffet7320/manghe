@@ -6,8 +6,14 @@ export default new Vuex.Store({
 	state: {
 		shopPage:1,
 		shopPageSize: 15,//商品列表
+		IndexshopPage:1,
+		IndexshopPageSize: 15,//首页商品列表
 		dingdanPage:1,
 		dingdanPageSize: 15,//订单列表
+		jifenShopPage:1,
+		jifenShopPageSize: 15,//积分商品列表
+		pinlunPage:1,
+		pinlunPageSize: 15,//评论列表
 		from:21,
 		token:uni.getStorageSync("token")||"",
 		userInfo: {},
@@ -20,8 +26,17 @@ export default new Vuex.Store({
 		shopPage(state, str) {
 			state.shopPage = str;
 		},
+		IndexshopPage(state, str) {
+			state.IndexshopPage = str;
+		},
 		dingdanPage(state, str) {
 			state.dingdanPage = str;
+		},
+		jifenShopPage(state, str) {
+			state.jifenShopPage = str;
+		},
+		pinlunPage(state, str) {
+			state.pinlunPage = str;
 		},
 		// 
 		Login(state, opt) {

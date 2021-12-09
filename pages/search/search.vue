@@ -5,7 +5,7 @@
 			<view class="myInp">
 				<u-icon name="search" color="#C7C7C7" size="28"></u-icon>
 				<u-input :clearable='false' v-model="searchVal" placeholder='搜索专家/项目/关键词'
-					placeholder-style='color: #C7C7C7;' type="text" height="60rpx" />
+					placeholder-style='color: #C7C7C7;' type="text" height="60rpx" @confirm='toSearchResult' />
 			</view>
 		</view>
 		<view class="tit1">搜索发现</view>
@@ -32,13 +32,22 @@
 	export default {
 		data() {
 			return {
+				type:'',
 				searchVal: '',
 			}
+		},
+		onLoad(option) {
+			this.type = option.type;
 		},
 		methods:{
 			toBack(){
 				uni.navigateBack({
 					delta:1
+				})
+			},
+			toSearchResult(){
+				uni.navigateTo({
+					url:`/pages/search/searchResult?keyword=${this.searchVal}&type=${this.type}`
 				})
 			},
 		}

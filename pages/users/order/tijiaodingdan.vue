@@ -75,7 +75,9 @@
 	export default {
 		data() {
 			return {
-				addNum:'',
+				uni: '',
+				isAgain: 'no',
+				addNum: '',
 				InpNum: 0,
 				addressObj: null,
 				skuItem: null,
@@ -97,6 +99,10 @@
 				this.isGWC = options.isGWC;
 				this.cartId = options.cartId;
 			}
+			if (options.isAgain) {
+				this.isAgain = options.isAgain
+				this.uni = options.uni
+			}
 		},
 		onShow() {
 			this.getData()
@@ -108,13 +114,23 @@
 				this.addressObj = res.data.filter(ele => {
 					return ele.is_default == 1
 				})[0]
-				if(!this.addressObj && res.data.length>0){
+				console.log(res.data.length)
+				if (!this.addressObj && res.data.length > 0) {
+					this.addressObj = null
 					this.addNum = 'fushu'
 				}
 				console.log(this.addressObj)
 				var cartId = '';
 				if (this.isGWC == 'no') {
 					cartId = this.cartId
+				}
+				if (this.isAgain == 'yes') {
+					// 再次购买
+					const res11 = await this.$api.orderAgain({
+						uni: this.uni
+					})
+					console.log(res11)
+					cartId = res11.data.cateId
 				}
 				const res2 = await this.$api.orderConfirm({
 					cartId: cartId,
@@ -126,7 +142,7 @@
 					payType: 'weixin',
 					useIntegral: 0
 				}, this.orderKey)
-				console.log(res3,'aaaaa')
+				console.log(res3, 'aaaaa')
 				this.zongPrice = res3.data.result.total_price;
 				this.pay_postage = res3.data.result.pay_postage;
 			},
