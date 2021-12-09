@@ -34,32 +34,32 @@
 		
 		<view class="uc">
 			<view class="uc-item">
-				<view class="uc-item-title" @click="gotoOrder">
+				<view class="uc-item-title" @click="gotoOrder(0)">
 					<view class="uc-item-title-text">我的订单</view>
 					<image class="uc-item-title-icon" src="../../static/image/user/jiantou.png"></image>
 				</view>
 				<view class="uc-item-body">
-					<view class="uc-item-body-item" @click='gotoOrder(0)'>
+					<view class="uc-item-body-item" @click='gotoOrder(1)'>
 						<view class="pic">
 							<image src="../../static/image/user/daifukuan.png" mode="aspectFit" style="width: 46rpx;height: 45rpx;"></image>
 							<u-badge bgColor="#BD9E81" :count="userInfo.orderStatusNum.unpaid_count" :offset="[-12,-16]" v-if="userInfo.orderStatusNum"></u-badge>
 						</view>
 						<view class="uc-item-body-item-text">待付款</view>
 					</view>
-					<view class="uc-item-body-item" @click='gotoOrder(1)'>
+					<view class="uc-item-body-item" @click='gotoOrder(2)'>
 						<view class="pic">
 							<image src="../../static/image/user/daifuweikuan.png" mode="aspectFit" style="width: 46rpx;height: 45rpx;"></image>
 							<u-badge bgColor="#BD9E81" :count="userInfo.weikuan_num" :offset="[-12,-16]" v-if="userInfo.weikuan_num"></u-badge>
 						</view>
 						<view class="uc-item-body-item-text">待付尾款</view>
 					</view>
-					<view class="uc-item-body-item" @click='gotoOrder(2)'>
+					<view class="uc-item-body-item" @click='gotoOrder(3)'>
 						<view class="pic">
 							<image src="../../static/image/user/yiwancheng.png" mode="aspectFit" style="width: 46rpx;height: 45rpx;"></image>
 						</view>
 						<view class="uc-item-body-item-text">已完成</view>
 					</view>
-					<view class="uc-item-body-item" @click='gotoOrder(3)'>
+					<view class="uc-item-body-item" @click='gotoOrder(4)'>
 						<view class="pic">
 							<image src="../../static/image/user/yiguanbi.png" mode="aspectFit" style="width: 46rpx;height: 46rpx;"></image>
 						</view>
@@ -225,8 +225,8 @@
 					}
 				})
 			},
-			gotoOrder(){
-				this.jump("/pages/users/order/order");
+			gotoOrder(index){
+				this.jump("/pages/users/order/order?type="+index);
 			},
 			goAddress(){
 				this.jump("/pages/users/address/index");

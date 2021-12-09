@@ -255,7 +255,8 @@
 				"style": {
 					"navigationBarTitleText": "我的关注",
 					"navigationBarTextStyle": "black",
-					"navigationBarBackgroundColor": "#FECF05"
+					"navigationBarBackgroundColor": "#FECF05",
+					"enablePullDownRefresh":true
 				}
 			}
 		]

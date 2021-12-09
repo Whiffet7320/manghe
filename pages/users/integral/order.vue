@@ -1,16 +1,17 @@
 <template>
 	<view>
 		<view class="navbar">
-			<view class="navbar_item">
+			<view class="navbar_item" :class="{'on':current==0}" @click="tabChange(0)">
 				<text class="text">全部</text>
 			</view>
-			<view class="navbar_item">
+			<view class="navbar_item" :class="{'on':current==1}" @click="tabChange(1)">
 				<text class="text">待付款</text>
 				<u-badge type="error" count="2" :offset="[10,20]" class="badge"></u-badge>
 			</view>
-			<view class="navbar_item"><text class="text">已完成</text></view>
-			<view class="navbar_item"><text class="text">已关闭</text></view>
+			<view class="navbar_item" :class="{'on':current==2}" @click="tabChange(2)"><text class="text">已完成</text></view>
+			<view class="navbar_item" :class="{'on':current==3}" @click="tabChange(3)"><text class="text">已关闭</text></view>
 		</view>
+		<u-gap height="88"></u-gap>
 		<view class="orderlist">
 			<view class="order_item">
 				<view class="hd">
@@ -50,7 +51,12 @@
 	export default{
 		data(){
 			return{
-				
+				current:0
+			}
+		},
+		methods:{
+			tabChange(index){
+				this.current = index;
 			}
 		}
 	}
@@ -65,9 +71,13 @@
 		width: 100%;
 		height: 80rpx;
 		background-color: #FFFFFF;
+		margin-top:2rpx;
 		display: flex;
 		align-items: center;
-		margin-top: 2rpx;
+		position: fixed;
+		top:0;
+		left:0;
+		z-index: 50;
 		.navbar_item{
 			flex:1;
 			font-size: 28rpx;

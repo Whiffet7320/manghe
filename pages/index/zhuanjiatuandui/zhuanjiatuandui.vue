@@ -5,11 +5,15 @@
 				<u-icon name="arrow-left" color="#000000" size="34"></u-icon>
 			</view>
 			<view class="position-icon">
-				<!-- 未收藏 -->
-				<!-- <u-icon name="star" color="#000000" size="48"></u-icon> -->
-				<!-- 已收藏 -->
-				<u-icon name="star-fill" color="#000000" size="48"></u-icon>
-				<u-icon name="zhuanfa" style='margin-left: 40rpx;' color="#000000" size="50"></u-icon>
+				<view @click="collect">
+					<!-- 未收藏 -->
+					<!-- <u-icon name="star" color="#000000" size="48"></u-icon> -->
+					<!-- 已收藏 -->
+					<u-icon name="star-fill" color="#000000" size="48"></u-icon>
+				</view>
+				<button class="btnshare u-reset-button" open-type="share">
+					<u-icon name="zhuanfa" style='margin-left: 40rpx;' color="#000000" size="50"></u-icon>
+				</button>
 			</view>
 			<view class="nav1-flex">
 				<image class="pic" src="https://img0.baidu.com/it/u=3941318376,4022646771&fm=26&fmt=auto" mode="">
@@ -131,6 +135,7 @@
 	export default {
 		data() {
 			return {
+				id:0,
 				isOnShow:true,
 				contentShow:false,
 				imgArr:['https://img1.baidu.com/it/u=3303981320,1355171730&fm=26&fmt=auto','https://img0.baidu.com/it/u=2394303781,1797253216&fm=26&fmt=auto','https://img0.baidu.com/it/u=3941318376,4022646771&fm=26&fmt=auto'],
@@ -145,8 +150,13 @@
 					name: '评价'
 				}],
 				// 因为内部的滑动机制限制，请将tabs组件和swiper组件的current用不同变量赋值
-				current: 2, // tabs组件的current值，表示当前活动的tab选项
+				current: 0, // tabs组件的current值，表示当前活动的tab选项
 				swiperCurrent: 0, // swiper组件的current值，表示当前那个swiper-item是活动的
+			}
+		},
+		onLoad(options){
+			if(options.id){
+				this.id = options.id;
 			}
 		},
 		onShow() {
@@ -159,6 +169,13 @@
 			this.getCurrentSwiperHeight('.nav5Items')
 		},
 		methods:{
+			collect(){
+				this.$api.collectDoctor(this.id).then((res)=>{
+					if(res.status==200){
+						this.$u.toast("收藏成功");
+					}
+				})
+			},
 			handleContact(e) {
 				console.log(e.detail.path)
 				console.log(e.detail.query)
@@ -202,6 +219,15 @@
 					this.height = res[0][this.swiperCurrentIndex].height;
 				})
 			},
+		},
+		onShareAppMessage(res) {
+		    if (res.from === 'button') {
+		      console.log(res.target)
+		    }
+		    return {
+				title: '医美',
+				path: '/pages/index/zhuanjiatuandui/zhuanjiatuandui?id='+this.id
+		    }
 		}
 	}
 </script>
@@ -231,6 +257,8 @@
 			position: absolute;
 			top: 202rpx;
 			right: 46rpx;
+			display: flex;
+			align-items: center;
 		}
 
 		.nav1-flex {

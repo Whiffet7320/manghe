@@ -706,6 +706,30 @@ export default {
 			}
 		})
 	},
+	collectDoctor(id) {
+		return myPost({
+			url: urls.collectDoctor,
+			data: {
+				doctor_id:id
+			}
+		})
+	},
+	collectDoctorlist(obj) {
+		return myGet({
+			url: urls.collectDoctorlist,
+			params: {
+				...obj
+			}
+		})
+	},
+	spreadBanner(type) {
+		return myGet({
+			url: urls.spreadBanner,
+			params:{
+				type:type
+			}
+		})
+	},
 	upload_pic(file, type) {
 		return new Promise(async (resolve, reject) => {
 			uni.uploadFile({
@@ -829,6 +853,22 @@ export default {
 	productHot(obj) {
 		return myGet({
 			url: urls.productHot,
+			params: {
+				...obj
+			}
+		})
+	},
+	searchKeyword(obj) {
+		return myGet({
+			url: urls.searchKeyword,
+			params: {
+				...obj
+			}
+		})
+	},
+	position(obj) {
+		return myGet({
+			url: urls.position,
 			params: {
 				...obj
 			}

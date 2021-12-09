@@ -143,5 +143,17 @@ export default{
 		} catch (e) {}
 		return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m);
 	},
-	
+	onCopy(str){
+		if(str!=""){
+			uni.setClipboardData({
+				data: str.toString(),
+				success: () => {
+					uni.showToast({
+						title:"已复制到剪切板",
+						icon:"none"
+					})
+				}
+			})
+		}
+	}
 }

@@ -14,6 +14,9 @@ export default {
 	cartlist:"/api/cart/list",
 	cartDel:"/api/cart/del",
 	cartNum:"/api/cart/num",
+	collectDoctor:"/api/collect/doctor",
+	collectDoctorlist:"/api/collect/doctor/list",
+	spreadBanner:"/api/spread/banner",
 	// 
 	loginWechat: '/api/login/wechat',
 	category: '/api/category', //商品分类
@@ -28,4 +31,6 @@ export default {
 	xiufu:'/api/xiufu',//修复专区
 	orderComputed:'/api/order/computed',//计算订单金额
 	productHot:'/api/product/hot',//热搜
+	searchKeyword:'/api/search/keyword',//热搜词
+	position:'/api/position',//首页城市列表
 }

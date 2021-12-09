@@ -2,6 +2,12 @@
 	<view>
 		<view class="celllist">
 			<view class="cell">
+				<view class="left">原手机号</view>
+				<view class="right">
+					<input type="number" v-model="phone" class="ipt" placeholder="请输入" />
+				</view>
+			</view>
+			<view class="cell">
 				<view class="left">换绑手机号</view>
 				<view class="right">
 					<input type="number" v-model="nphone" class="ipt" placeholder="请输入" maxlength="11" />
@@ -13,14 +19,6 @@
 					<input type="number" v-model="code" class="ipt" placeholder="请输入" />
 					<view class="light" v-if="isSend" @click="getVerifyCode">发送验证码</view>
 					<view class="reset" v-else>{{verifyText}}</view>
-				</view>
-			</view>
-		</view>
-		<view class="celllist">
-			<view class="cell">
-				<view class="left">原手机号</view>
-				<view class="right">
-					<input type="number" v-model="phone" class="ipt" placeholder="请输入" />
 				</view>
 			</view>
 		</view>

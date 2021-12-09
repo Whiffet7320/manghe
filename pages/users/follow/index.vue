@@ -1,15 +1,16 @@
 <template>
 	<view>
 		<view class="follow_list">
-			<view class="follow_item" v-for="(item,index) in list" :key="index" @click="goDetail(item)">
-				<image :src="item.avatar" mode="aspectFill" class="avatar"></image>
-				<view class="name">{{item.name}}</view>
+			<view class="follow_item" v-for="(item,index) in list" :key="index" @click="goDetail(item.doctor_id)">
+				<image :src="item.doctor_info.doctor_img" mode="aspectFill" class="avatar"></image>
+				<view class="name">{{item.doctor_info.doctor_name}}</view>
 				<view class="right" @click.stop="onCancel(item,index)">
 					<image src="/static/image/user/icon_follow.png" mode="aspectFit" class="icon"></image>
 					<text>取消关注</text>
 				</view>
 			</view>
 		</view>
+		<u-loadmore v-show="!isEmpty" height="80rpx" font-size="20" :status="loadStatus" icon-type="flower" color="#ccc" />
 		<Dialog v-if="show" @close="onClose">
 			<view class="modcontent">确定取消关注“{{name}}”吗</view>
 		</Dialog>
@@ -24,36 +25,68 @@
 		},
 		data(){
 			return{
+				isEmpty: false,
 				name:"",
 				id:0,
 				cindex:0,
 				show:false,
-				list:[
-					{
-						avatar:"",
-						name:"王力宏"
-					},
-					{
-						avatar:"",
-						name:"王力宏2"
-					}
-				]
+				list:[],
+				reload: true,
+				loadStatus: 'loadmore',
+				currentPage: 1,
+				lastPage: 1
 			}
 		},
 		methods:{
+			getlist(){
+				let list = [];
+				this.loadStatus = 'loading';
+				this.$api.collectDoctorlist({page:this.currentPage,limit:10}).then((res)=>{
+					if(res.status==200){
+						list = res.data;
+						this.list = [...this.list, ...list];
+						this.isEmpty = !this.list.length;
+						this.lastPage = res.data.last_page;
+						this.loadStatus = this.currentPage < res.data.last_page ? 'loadmore' : 'nomore';
+					}
+				})
+			},
 			onCancel(val,index){
 				this.show = !this.show;
-				this.id = val.id;
+				this.id = val.doctor_id;
 				this.cindex = index;
-				this.name = val.name;
+				this.name = val.doctor_info.doctor_name;
 			},
 			onClose(val){
 				if(val==="confirm"){
-					this.$u.toast("取消成功");
-					this.list.splice(this.cindex,1);
+					this.$api.collectDoctor(this.id).then((res)=>{
+						if(res.status==200){
+							this.$u.toast("取消成功");
+							this.list.splice(this.cindex,1);
+						}else{
+							this.$u.toast(res.message);
+						}
+					})
 				}
 				this.show = !this.show;
+			},
+			goDetail(id){
+				uni.navigateTo({
+					url:"/pages/index/zhuanjiatuandui/zhuanjiatuandui?id="+id
+				})
 			}
+		},
+		onLoad() {
+			this.getlist();
+		},
+		onReachBottom() {
+			if (this.currentPage < this.lastPage) {
+				this.currentPage += 1;
+				this.getlist();
+			}
+		},
+		onPullDownRefresh() {
+			uni.stopPullDownRefresh();
 		}
 	}
 </script>

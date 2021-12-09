@@ -391,8 +391,8 @@ var _vuex = __webpack_require__(/*! vuex */ 77);function ownKeys(object, enumera
         } });
 
     },
-    gotoOrder: function gotoOrder() {
-      this.jump("/pages/users/order/order");
+    gotoOrder: function gotoOrder(index) {
+      this.jump("/pages/users/order/order?type=" + index);
     },
     goAddress: function goAddress() {
       this.jump("/pages/users/address/index");

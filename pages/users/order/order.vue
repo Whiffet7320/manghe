@@ -419,6 +419,11 @@
 				},
 			}
 		},
+		onLoad(options){
+			if(options.type){
+				this.current = options.type;
+			}
+		},
 		onShow() {
 			this.orderList = [];
 			this.$store.commit("dingdanPage", 1);

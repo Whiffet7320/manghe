@@ -941,7 +941,7 @@ function initData(vueOptions, context) {
     try {
       data = data.call(context); // 支持 Vue.prototype 上挂的数据
     } catch (e) {
-      if (Object({"NODE_ENV":"development","VUE_APP_NAME":"yimei","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG) {
+      if (Object({"VUE_APP_NAME":"yimei","VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG) {
         console.warn('根据 Vue 的 data 函数初始化小程序 data 失败，请尽量确保 data 函数中不访问 vm 对象，否则可能影响首次数据渲染速度。', data);
       }
     }
@@ -13413,7 +13413,7 @@ function type(obj) {
 
 function flushCallbacks$1(vm) {
     if (vm.__next_tick_callbacks && vm.__next_tick_callbacks.length) {
-        if (Object({"NODE_ENV":"development","VUE_APP_NAME":"yimei","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG) {
+        if (Object({"VUE_APP_NAME":"yimei","VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG) {
             var mpInstance = vm.$scope;
             console.log('[' + (+new Date) + '][' + (mpInstance.is || mpInstance.route) + '][' + vm._uid +
                 ']:flushCallbacks[' + vm.__next_tick_callbacks.length + ']');
@@ -13434,14 +13434,14 @@ function nextTick$1(vm, cb) {
     //1.nextTick 之前 已 setData 且 setData 还未回调完成
     //2.nextTick 之前存在 render watcher
     if (!vm.__next_tick_pending && !hasRenderWatcher(vm)) {
-        if(Object({"NODE_ENV":"development","VUE_APP_NAME":"yimei","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG){
+        if(Object({"VUE_APP_NAME":"yimei","VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG){
             var mpInstance = vm.$scope;
             console.log('[' + (+new Date) + '][' + (mpInstance.is || mpInstance.route) + '][' + vm._uid +
                 ']:nextVueTick');
         }
         return nextTick(cb, vm)
     }else{
-        if(Object({"NODE_ENV":"development","VUE_APP_NAME":"yimei","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG){
+        if(Object({"VUE_APP_NAME":"yimei","VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG){
             var mpInstance$1 = vm.$scope;
             console.log('[' + (+new Date) + '][' + (mpInstance$1.is || mpInstance$1.route) + '][' + vm._uid +
                 ']:nextMPTick');
@@ -13527,7 +13527,7 @@ var patch = function(oldVnode, vnode) {
     });
     var diffData = this.$shouldDiffData === false ? data : diff(data, mpData);
     if (Object.keys(diffData).length) {
-      if (Object({"NODE_ENV":"development","VUE_APP_NAME":"yimei","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG) {
+      if (Object({"VUE_APP_NAME":"yimei","VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG) {
         console.log('[' + (+new Date) + '][' + (mpInstance.is || mpInstance.route) + '][' + this._uid +
           ']差量更新',
           JSON.stringify(diffData));
@@ -15445,6 +15445,30 @@ dzpMyGet.interceptors.response.use(function (response) {
 
 
   },
+  collectDoctor: function collectDoctor(id) {
+    return myPost({
+      url: _url.default.collectDoctor,
+      data: {
+        doctor_id: id } });
+
+
+  },
+  collectDoctorlist: function collectDoctorlist(obj) {
+    return myGet({
+      url: _url.default.collectDoctorlist,
+      params: _objectSpread({},
+      obj) });
+
+
+  },
+  spreadBanner: function spreadBanner(type) {
+    return myGet({
+      url: _url.default.spreadBanner,
+      params: {
+        type: type } });
+
+
+  },
   upload_pic: function upload_pic(file, type) {
     return new Promise( /*#__PURE__*/function () {var _ref = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee(resolve, reject) {return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
                 uni.uploadFile({
@@ -15568,6 +15592,22 @@ dzpMyGet.interceptors.response.use(function (response) {
   productHot: function productHot(obj) {
     return myGet({
       url: _url.default.productHot,
+      params: _objectSpread({},
+      obj) });
+
+
+  },
+  searchKeyword: function searchKeyword(obj) {
+    return myGet({
+      url: _url.default.searchKeyword,
+      params: _objectSpread({},
+      obj) });
+
+
+  },
+  position: function position(obj) {
+    return myGet({
+      url: _url.default.position,
       params: _objectSpread({},
       obj) });
 
@@ -18294,6 +18334,9 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
   cartlist: "/api/cart/list",
   cartDel: "/api/cart/del",
   cartNum: "/api/cart/num",
+  collectDoctor: "/api/collect/doctor",
+  collectDoctorlist: "/api/collect/doctor/list",
+  spreadBanner: "/api/spread/banner",
   // 
   loginWechat: '/api/login/wechat',
   category: '/api/category', //商品分类
@@ -18307,7 +18350,9 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
   zhuanjia: '/api/zhuanjia', //专家列表
   xiufu: '/api/xiufu', //修复专区
   orderComputed: '/api/order/computed', //计算订单金额
-  productHot: '/api/product/hot' //热搜
+  productHot: '/api/product/hot', //热搜
+  searchKeyword: '/api/search/keyword', //热搜词
+  position: '/api/position' //首页城市列表
 };exports.default = _default;
 
 /***/ }),
@@ -19812,6 +19857,19 @@ module.exports = index_cjs;
       m += s2.split(".")[1].length;
     } catch (e) {}
     return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m);
+  },
+  onCopy: function onCopy(str) {
+    if (str != "") {
+      uni.setClipboardData({
+        data: str.toString(),
+        success: function success() {
+          uni.showToast({
+            title: "已复制到剪切板",
+            icon: "none" });
+
+        } });
+
+    }
   } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
