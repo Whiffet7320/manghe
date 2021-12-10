@@ -1,5 +1,5 @@
 export default {
-	baseUrl: 'http://192.168.50.142:8098', // http://192.168.50.142:8098
+	baseUrl: 'http://192.168.50.142:8098', // http://192.168.50.142:8098  //https://ceshi.xingmangkeji.cn
 	silence_auth: "/api/v2/wechat/silence_auth_login",
 	user: "/api/user",
 	user_update: "/api/v2/user/user_update",
@@ -41,4 +41,5 @@ export default {
 	orderTake:'/api/order/take',//订单收货
 	spreadBanner:'/api/spread/banner',//推广分销二维码海报生成
 	combinationPink:'/api/combination/pink',//拼团 开团
+	store_integralDetail:'/api/store_integral/detail',//积分商品详情
 }
