@@ -932,4 +932,9 @@ export default {
 			url: `${urls.combinationPink}/${id}`,
 		})
 	},
+	store_integralDetail(id) {
+		return myGet({
+			url: `${urls.store_integralDetail}/${id}`,
+		})
+	},
 }

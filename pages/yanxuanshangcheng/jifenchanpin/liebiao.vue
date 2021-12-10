@@ -26,7 +26,7 @@
 							<image class="d-pic" src="/static/image/zu1577.png" mode=""></image>
 							<view class="d-txt">{{item.price}}积分</view>
 						</view>
-						<view @click="toDuihuan" class="d-right">立即兑换</view>
+						<view @click="toDuihuan(item)" class="d-right">立即兑换</view>
 					</view>
 				</view>
 			</view>
@@ -95,9 +95,9 @@
 			changeRad(val) {
 				this.RadIndex = val;
 			},
-			toDuihuan() {
+			toDuihuan(item) {
 				uni.navigateTo({
-					url: '/pages/yanxuanshangcheng/jifenchanpin/chanpin'
+					url: `/pages/yanxuanshangcheng/jifenchanpin/chanpin?id=${item.id}`
 				})
 			},
 		}

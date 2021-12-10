@@ -11,7 +11,7 @@
 						<!-- 全部 -->
 						<view v-for="item in orderList" :key='item.id'>
 							<!-- 待付款 -->
-							<view class="item" v-if="item.paid == 0 || item.is_del == 0">
+							<view class="item" v-if="item._status._title == '未付款'">
 								<view class="tit1">
 									<view class="left">
 										<view class="txt1-1">剩余支付时间：</view>
@@ -604,8 +604,7 @@
 					}
 					this.orderList.forEach(ele => {
 						if (ele.stop_time) {
-							var timeObj = this.mygetdate(ele.stop_time)
-							this.$set(ele, 'timeObj', timeObj)
+							this.mygetdate(ele.stop_time,ele)
 						}
 					})
 				}, 200)
@@ -662,7 +661,7 @@
 					})
 				}
 			},
-			mygetdate(startSellTime) {
+			mygetdate(startSellTime,ele) {
 				var date = new Date();
 				var now = date.getTime();
 				var endTime = new Date(startSellTime * 1000); // 结束时间
@@ -689,24 +688,35 @@
 					this.h = '00';
 					this.m = '00';
 					this.s = '00';
-					return {
+					this.$set(ele, 'timeObj', {
 						h: '00',
 						m: '00',
 						s: '00',
-					}
+					})
+					// return {
+					// 	h: '00',
+					// 	m: '00',
+					// 	s: '00',
+					// }
 					// 清除定时器
 					clearTimeout(timer)
 				}
 				// console.log(d + '天' +h + '时' + m + '分' + s + '秒后开始')
 				var timer = setTimeout(() => {
-					this.mygetdate(startSellTime)
+					this.mygetdate(startSellTime,ele)
 				}, 1000);
-				return {
+				this.$set(ele, 'timeObj', {
 					d,
 					h,
 					m,
 					s,
-				}
+				})
+				// return {
+				// 	d,
+				// 	h,
+				// 	m,
+				// 	s,
+				// }
 			},
 			// tabs通知swiper切换
 			tabsChange(index) {

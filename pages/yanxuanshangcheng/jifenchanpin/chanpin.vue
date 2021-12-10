@@ -7,14 +7,15 @@
 			<view class="tit1">
 				<view class="left">
 					<image src="/static/image/zu1577.png" class="pic1" mode=""></image>
-					<view class="txt1">520积分</view>
+					<view class="txt1">{{obj.storeInfo.price}}积分</view>
 				</view>
-				<view class="right">规格：20寸</view>
+				<view class="right">规格：{{obj.storeInfo.unit_name}}</view>
 			</view>
-			<view class="tit2">SOO行李箱男万向轮拉杆箱耐磨抗摔26英寸A330旅行箱密码箱女商务黑色商务人群</view>
+			<view class="tit2">{{obj.storeInfo.title}}</view>
 		</view>
 		<view class="nav3">
 			<view class="tit1">商品详情</view>
+			<u-parse :html="obj.storeInfo.description"></u-parse>
 		</view>
 		<view class="footer">
 			<view class="btn">立即兑换</view>
@@ -26,33 +27,38 @@
 	export default {
 		data() {
 			return {
+				obj:{},
+				id:'',
 				isOnShow: true,
 				navTitle: '',
-				bannerList: [{
-						image: 'https://cdn.uviewui.com/uview/swiper/1.jpg',
-						title: '昨夜星辰昨夜风，画楼西畔桂堂东'
-					},
-					{
-						image: 'https://cdn.uviewui.com/uview/swiper/2.jpg',
-						title: '身无彩凤双飞翼，心有灵犀一点通'
-					},
-					{
-						image: 'https://cdn.uviewui.com/uview/swiper/3.jpg',
-						title: '谁念西风独自凉，萧萧黄叶闭疏窗，沉思往事立残阳'
-					}
-				],
+				bannerList: [],
 			}
 		},
 		onLoad(option) {
 			console.log(option)
 			this.navTitle = option.title;
+			this.id = option.id;
 		},
 		onShow() {
 			if (!this.isOnShow) {
 				return;
 			}
+			this.getData()
 		},
 		methods: {
+			async getData(){
+				this.bannerList = [];
+				const res = await this.$api.store_integralDetail(this.id)
+				console.log(res)
+				this.obj = res.data;
+				this.obj.storeInfo.images.forEach(ele=>{
+					this.bannerList.push({
+						image:ele
+					})
+				})
+				
+				
+			},
 			toSeeImg(i, imgArr) {
 				this.isOnShow = false;
 				uni.previewImage({
@@ -138,6 +144,7 @@
 		padding: 28rpx 26rpx;
 		border-radius: 10rpx;
 		.tit1{
+			margin-bottom: 16rpx;
 			font-size: 28rpx;
 			font-weight: 500;
 			color: #BD9E81;
