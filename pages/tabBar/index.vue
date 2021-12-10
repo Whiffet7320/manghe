@@ -394,6 +394,9 @@
 			display: flex;
 			align-items: center;
 			padding: 0 10rpx;
+			flex-wrap: wrap;
+			height: 34rpx;
+			overflow: hidden;
 			// justify-content: space-between;
 
 			.hot {

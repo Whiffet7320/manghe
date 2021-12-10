@@ -2,7 +2,7 @@
 	<view class="index">
 		<u-toast ref="uToast" />
 		<view class="nav1">
-			<u-swiper height='602' :list="bannerList"></u-swiper>
+			<u-swiper height='602' :list="bannerList" border-radius="0"></u-swiper>
 		</view>
 		<view class="nav3">
 			<view class="pic2">
@@ -124,8 +124,11 @@
 			</view>
 			<view @click="toShouyintai" class="btn">立即购买</view>
 		</view> -->
-		<view class="footer">
+		<view class="footer" v-if="attribute.productSelect.product_stock>0&&attribute.productSelect.quota>0">
 			<view @click="kaituan" class="btn">我要开团</view>
+		</view>
+		<view class="footer" v-if='attribute.productSelect.quota <= 0 || attribute.productSelect.product_stock <= 0'>
+			<view class="btn gray">已售罄</view>
 		</view>
 	</view>
 </template>
@@ -194,10 +197,15 @@
 					loading: '正在加载...',
 					nomore: '没有了更多了'
 				},
+				attribute: {
+					cartAttr: false,
+					productAttr: [],
+					productSelect: {}
+				},
+				productValue: []
 			}
 		},
 		onLoad(option) {
-			console.log(option)
 			this.navTitle = option.title;
 			this.id = option.id
 		},
@@ -220,15 +228,19 @@
 			async getData2() {
 				this.bannerList = [];
 				const res = await this.$api.combinationDetail(this.id)
-				console.log(res)
+				uni.setNavigationBarTitle({
+					title:res.data.storeInfo.title.substring(0, 16)
+				})
 				this.obj = res.data;
 				this.obj.storeInfo.images.forEach(ele => {
 					this.bannerList.push({
 						image: ele
 					})
 				})
-				this.mygetdate(this.obj.storeInfo.stop_time)
-
+				this.attribute.productAttr = res.data.productAttr;
+				this.productValue = res.data.productValue;
+				this.mygetdate(this.obj.storeInfo.stop_time);
+				this.DefaultSelect();
 			},
 			async getPinlunData() {
 				this.status = 'loading';
@@ -237,7 +249,6 @@
 						page: this.pinlunPage,
 						limit: this.pinlunPageSize,
 					}, this.id)
-					console.log(res.data)
 					if (res.data.length == 0) {
 						this.status = 'nomore'
 					} else {
@@ -245,17 +256,49 @@
 						this.shopList = this.shopList.concat(res.data)
 					}
 				}, 200)
-				console.log(this.shopList)
+			},
+			//默认选中
+			DefaultSelect() {
+				let productAttr = this.attribute.productAttr;
+				let value = [];
+				for (var key in this.productValue) {
+					if (this.productValue[key].quota > 0) {
+						value = this.attribute.productAttr.length ? key.split(",") : [];
+						break;
+					}
+				}
+				let productSelect = this.productValue[value.join(",")];
+				if (productSelect && productAttr.length) {
+					this.attrValue = value.join(",");
+					this.attribute.productSelect.quota = productSelect.quota;
+					this.attribute.productSelect.product_stock = productSelect.product_stock;
+				} else if (!productSelect && productAttr.length) {
+					this.attribute.productSelect.quota = 0;
+					this.attribute.productSelect.product_stock = 0;
+				} else if (!productSelect && !productAttr.length){
+					this.attribute.productSelect.quota = 0;
+					this.attribute.productSelect.product_stock = 0;
+				}
 			},
 			async kaituan() {
-				const res = await this.$api.combinationPink(this.id)
+				let productSelect = this.productValue[this.attrValue];
+				let data = {
+					bargainId:0,
+					productId:this.id,
+					cartNum:1,
+					combinationId:this.obj.storeInfo.combination,
+					is_new:1,
+					secKillId:0,
+					uniqueId:productSelect !== undefined ? productSelect.unique : ''
+				}
+				const res2 = await this.$api.cartAdd(data);
+				const res = await this.$api.combinationPink(this.id);
 				console.log(res)
 				if (res.status == 200) {
 					uni.navigateTo({
 						url:`/pages/users/order/tijiaodingdan`
 					})
 				}
-
 			},
 			mygetdate(startSellTime) {
 				var date = new Date();
@@ -324,7 +367,6 @@
 			},
 			// tabs通知swiper切换
 			tabsChange(index) {
-				console.log(index);
 				this.swiperCurrent = index;
 				this.current = index;
 				this.swiperCurrentIndex = index;
@@ -807,6 +849,9 @@
 			text-align: center;
 			color: #FFFFFF;
 			background: #BD9E81;
+			&.gray{
+				background: #bbb;
+			}
 		}
 	}
 

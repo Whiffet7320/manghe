@@ -128,10 +128,8 @@
 		"pages": [{
 			"path": "dijiapintuan",
 			"style": {
-				// "navigationStyle": "custom",
-				"navigationBarTextStyle": "black"
-				// "navigationBarTitleText": "积分产品列表"
-				// "navigationBarBackgroundColor": "#FECF05"
+				"navigationBarTextStyle": "black",
+				"navigationBarTitleText": ""
 			}
 		}]
 	}, {

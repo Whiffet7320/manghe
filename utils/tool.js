@@ -155,5 +155,26 @@ export default{
 				}
 			})
 		}
-	}
+	},
+	getUrlParams(param, k, p) {
+		if (typeof param != 'string') return {};
+		k = k ? k : '&'; //整体参数分隔符
+		p = p ? p : '='; //单个参数分隔符
+		var value = {};
+		if (param.indexOf(k) !== -1) {
+			param = param.split(k);
+			for (var val in param) {
+				if (param[val].indexOf(p) !== -1) {
+					var item = param[val].split(p);
+					value[item[0]] = item[1];
+				}
+			}
+		} else if (param.indexOf(p) !== -1) {
+			var item = param.split(p);
+			value[item[0]] = item[1];
+		} else {
+			return param;
+		}
+		return value;
+	},
 }
