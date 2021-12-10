@@ -35,6 +35,7 @@
 				<view class="shu"></view>
 				<view class="t-txt">修复专区</view>
 			</view>
+			<u-parse :html="obj.storeInfo.description"></u-parse>
 		</view>
 		<view class="footer">
 			<view class="left">
@@ -328,6 +329,9 @@
 				font-weight: bold;
 				color: #BD9E81;
 			}
+		}
+		.content{
+			width: 100%;
 		}
 	}
 

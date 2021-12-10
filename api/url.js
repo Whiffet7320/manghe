@@ -16,7 +16,6 @@ export default {
 	cartNum:"/api/cart/num",
 	collectDoctor:"/api/collect/doctor",
 	collectDoctorlist:"/api/collect/doctor/list",
-	spreadBanner:"/api/spread/banner",
 	// 
 	loginWechat: '/api/login/wechat',
 	category: '/api/category', //商品分类
@@ -40,4 +39,6 @@ export default {
 	replyList:'/api/reply/list',//获取商品评论
 	orderAgain:'/api/order/again',//再次购买
 	orderTake:'/api/order/take',//订单收货
+	spreadBanner:'/api/spread/banner',//推广分销二维码海报生成
+	combinationPink:'/api/combination/pink',//拼团 开团
 }

@@ -165,6 +165,14 @@
 					this.getShopData();
 				}
 			},
+			current:function(){
+				this.shopList = [];
+				this.$store.commit("IndexshopPage", 1);
+				this.getShopData()
+				setTimeout(() => {
+					this.getCurrentSwiperHeight('.nav5Items')
+				}, 800)
+			},
 		},
 		data() {
 			return {
@@ -203,6 +211,7 @@
 			}
 		},
 		onShow() {
+			this.getShopData()
 			this.getBanner()
 			this.getData()
 			this.shopList = [];
@@ -210,7 +219,9 @@
 			this.tabsChange(this.current);
 		},
 		mounted() {
-			this.getCurrentSwiperHeight('.nav5Items')
+			setTimeout(()=>{
+				this.getCurrentSwiperHeight('.nav5Items')
+			},900)
 		},
 		onReachBottom() {
 			this.$store.commit("IndexshopPage", this.IndexshopPage + 1);
@@ -304,29 +315,20 @@
 			tabsChange(index) {
 				console.log(index);
 				this.swiperCurrent = index;
-				this.current = index;
 				this.swiperCurrentIndex = index;
-				this.shopList = [];
-				this.$store.commit("IndexshopPage", 1);
-				this.getShopData()
-				setTimeout(() => {
-					console.log(11111111)
-					this.getCurrentSwiperHeight('.nav5Items')
-				}, 800)
+				this.current = index;
 			},
 			animationfinish(e) {
 				let current = e.detail.current;
 				this.$refs.uTabs.setFinishCurrent(current);
 				this.swiperCurrent = current;
 				this.current = current;
-				this.tabsChange(this.current)
 			},
 			getCurrentSwiperHeight(element) {
 				let query = uni.createSelectorQuery().in(this);
 				query.selectAll(element).boundingClientRect();
 				query.exec((res) => {
 					this.height = res[0][this.swiperCurrentIndex].height;
-					console.log(this.height)
 				})
 			},
 		}

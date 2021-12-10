@@ -70,10 +70,10 @@
 						<view class="txt2">星品限时1086积分</view>
 						<view class="btn">点击进入 >></view>
 					</view>
-					<view class="item2" @click="toZhuanjiatuandui">
+					<view class="item2">
 						<view class="txt1">每日特惠</view>
 						<view class="i2-items2">
-							<view class="i2-item" v-for="item in dijiaList" :key='item.id'>
+							<view class="i2-item" @click="toRexiaoxiangqin(item)" v-for="item in dijiaList" :key='item.id'>
 								<image :src="item.image" class="item2-pic" mode=""></image>
 								<view class="btn">¥{{item.price}}</view>
 							</view>
@@ -106,9 +106,9 @@
 						<view class="nav5Items">
 							<!-- {{item.name}} -->
 							<!-- 热销 -->
-							<template v-if="swiperCurrent == 0">
+							<!-- <template v-if="swiperCurrent == 0"> -->
 								<view class="item" @click="toRexiaoxiangqin(item)" v-for="item in shopList"
-									:key='item.id'>
+									:key='item.product_id'>
 									<image :src="item.image" class="pic" mode=""></image>
 									<view class="right">
 										<view class="up">
@@ -122,19 +122,19 @@
 									</view>
 								</view>
 
-							</template>
+							<!-- </template> -->
 							<!-- 推荐 -->
-							<template v-if="swiperCurrent == 1">
+							<!-- <template v-if="swiperCurrent == 1">
 								123
-							</template>
+							</template> -->
 							<!-- 口碑 -->
-							<template v-if="swiperCurrent == 2">
+							<!-- <template v-if="swiperCurrent == 2">
 								456
-							</template>
+							</template> -->
 							<!-- 精选 -->
-							<template v-if="swiperCurrent == 3">
+							<!-- <template v-if="swiperCurrent == 3">
 								789
-							</template>
+							</template> -->
 							<u-loadmore v-if='swiperCurrent == index' :status="status" />
 						</view>
 					</scroll-view>
@@ -158,9 +158,18 @@
 					this.getData();
 				}
 			},
+			current:function(){
+				this.shopList = [];
+				this.$store.commit("shopPage", 1);
+				this.getData()
+				setTimeout(() => {
+					this.getCurrentSwiperHeight('.nav5Items')
+				}, 900)
+			},
 		},
 		data() {
 			return {
+				noChange:false,
 				dijiaList:[],
 				pintuanList:[],
 				shopList: [],
@@ -219,7 +228,9 @@
 			this.tabsChange(this.current);
 		},
 		mounted() {
-			this.getCurrentSwiperHeight('.nav5Items')
+			setTimeout(()=>{
+				this.getCurrentSwiperHeight('.nav5Items')
+			},900)
 		},
 		methods: {
 			async getData2(){
@@ -244,12 +255,20 @@
 			async getData() {
 				this.status = 'loading';
 				setTimeout(async () => {
-					const res = await this.$api.products({
+					// const res = await this.$api.products({
+					// 	page: this.shopPage,
+					// 	limit: this.shopPageSize,
+					// })
+					// res.data = res.data.filter(ele => {
+					// 	return ele.spec_type == 1
+					// })
+					const res = await this.$api.productHot({
 						page: this.shopPage,
 						limit: this.shopPageSize,
-					})
-					res.data = res.data.filter(ele => {
-						return ele.spec_type == 1
+						product_from:0,
+						is_best:this.current == 3 ? 1 : '',
+						is_good:this.current == 1 ? 1 : '',
+						is_comment:this.current == 2 ? 1 : '',
 					})
 					if (res.data.length == 0) {
 						this.status = 'nomore'
@@ -266,8 +285,9 @@
 				})
 			},
 			toRexiaoxiangqin(item) {
+				console.log(item)
 				uni.navigateTo({
-					url: `/pages/yanxuanshangcheng/rexiaoxiangqin/rexiaoxiangqin?id=${item.id}&title=${item.title}`
+					url: `/pages/yanxuanshangcheng/rexiaoxiangqin/rexiaoxiangqin?id=${item.product_id}&title=${item.title}`
 				})
 			},
 			toJifenchanpin() {
@@ -299,14 +319,14 @@
 			tabsChange(index) {
 				console.log(index);
 				this.swiperCurrent = index;
-				this.current = index;
 				this.swiperCurrentIndex = index;
-				this.shopList = [];
-				this.$store.commit("shopPage", 1);
-				this.getData()
-				setTimeout(() => {
-					this.getCurrentSwiperHeight('.nav5Items')
-				}, 900)
+				this.current = index;
+				// this.shopList = [];
+				// this.$store.commit("shopPage", 1);
+				// this.getData()
+				// setTimeout(() => {
+				// 	this.getCurrentSwiperHeight('.nav5Items')
+				// }, 900)
 			},
 			// swiper-item左右移动，通知tabs的滑块跟随移动
 			transition(e) {
@@ -318,12 +338,13 @@
 				this.$refs.uTabs.setFinishCurrent(current);
 				this.swiperCurrent = current;
 				this.current = current;
+				// this.tabsChange(this.current)
 			},
 			getCurrentSwiperHeight(element) {
 				let query = uni.createSelectorQuery().in(this);
 				query.selectAll(element).boundingClientRect();
 				query.exec((res) => {
-					this.height = res[0][this.swiperCurrentIndex].height;
+					this.height = res[0][this.swiperCurrentIndex].height ;
 				})
 			},
 			goCart(){

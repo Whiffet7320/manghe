@@ -26,11 +26,9 @@
 			}
 		},
 		methods:{
-			getBanner(){
-				this.$api.spreadBanner(1).then((res)=>{
-					console.log(res)
-					this.info = res.data[0];
-				})
+			async getBanner(){
+				const res = await this.$api.spreadBanner(1)
+				console.log(res)
 			}
 		},
 		onLoad(){

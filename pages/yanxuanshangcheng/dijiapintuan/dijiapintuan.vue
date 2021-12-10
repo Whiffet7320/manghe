@@ -1,5 +1,6 @@
 <template>
 	<view class="index">
+		<u-toast ref="uToast" />
 		<view class="nav1">
 			<u-swiper height='602' :list="bannerList"></u-swiper>
 		</view>
@@ -93,7 +94,7 @@
 														v-for="(item,i) in imgArr" :src="item" mode=""></image>
 												</view>
 											</view>
-											
+
 										</view>
 										<u-loadmore :status="status" />
 									</view>
@@ -124,7 +125,7 @@
 			<view @click="toShouyintai" class="btn">立即购买</view>
 		</view> -->
 		<view class="footer">
-			<view class="btn">我要开团</view>
+			<view @click="kaituan" class="btn">我要开团</view>
 		</view>
 	</view>
 </template>
@@ -148,12 +149,13 @@
 		},
 		data() {
 			return {
-				pinlunList:[],
+				id: '',
+				pinlunList: [],
 				obj: {},
-				d:'0',
-				h:'00',
-				m:'00',
-				s:'00',
+				d: '0',
+				h: '00',
+				m: '00',
+				s: '00',
 				isOnShow: true,
 				navTitle: '',
 				bannerList: [{
@@ -226,15 +228,15 @@
 					})
 				})
 				this.mygetdate(this.obj.storeInfo.stop_time)
-				
+
 			},
-			async getPinlunData(){
+			async getPinlunData() {
 				this.status = 'loading';
 				setTimeout(async () => {
 					const res = await this.$api.replyList({
 						page: this.pinlunPage,
 						limit: this.pinlunPageSize,
-					},this.id)
+					}, this.id)
 					console.log(res.data)
 					if (res.data.length == 0) {
 						this.status = 'nomore'
@@ -245,16 +247,26 @@
 				}, 200)
 				console.log(this.shopList)
 			},
+			async kaituan() {
+				const res = await this.$api.combinationPink(this.id)
+				console.log(res)
+				if (res.status == 200) {
+					uni.navigateTo({
+						url:`/pages/users/order/tijiaodingdan`
+					})
+				}
+
+			},
 			mygetdate(startSellTime) {
 				var date = new Date();
 				var now = date.getTime();
-				var endTime = new Date(startSellTime*1000); // 结束时间
+				var endTime = new Date(startSellTime * 1000); // 结束时间
 				var end = endTime.getTime();
 				var lefttime = end - now;
 				var d, h, m, s;
 				if (lefttime > 0) {
-					
-					h = Math.floor(Math.floor(lefttime / 1000 / 60 / 60 / 24) * 24 + (lefttime / 1000 / 60 / 60 % 24))	
+
+					h = Math.floor(Math.floor(lefttime / 1000 / 60 / 60 / 24) * 24 + (lefttime / 1000 / 60 / 60 % 24))
 					d = Math.floor(h / 24);
 					h = d % 24;
 					m = Math.floor(lefttime / 1000 / 60 % 60)
@@ -316,12 +328,12 @@
 				this.swiperCurrent = index;
 				this.current = index;
 				this.swiperCurrentIndex = index;
-				if(index == 1){
+				if (index == 1) {
 					this.getPinlunData()
 				}
 				setTimeout(() => {
 					this.getCurrentSwiperHeight('.nav5Items')
-				}, 500)
+				}, 800)
 			},
 			animationfinish(e) {
 				let current = e.detail.current;
@@ -351,6 +363,7 @@
 		width: 686rpx;
 		height: 100rpx !important;
 	}
+
 	.index {
 		position: relative;
 	}
