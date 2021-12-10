@@ -214,7 +214,7 @@
 				const res2 = await this.$api.orderCreate({
 					addressId: this.addressObj.id,
 					couponId: '',
-					payType: 'weixin',
+					payType: 'yue',
 					useIntegral: 0,
 					mark: this.mark,
 					from: 'routine',

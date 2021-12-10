@@ -927,4 +927,9 @@ export default {
 			}
 		})
 	},
+	combinationPink(id) {
+		return myGet({
+			url: `${urls.combinationPink}/${id}`,
+		})
+	},
 }

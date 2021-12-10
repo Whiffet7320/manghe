@@ -140,7 +140,7 @@
 </style>
 <style lang="scss" scoped>
 	/deep/ .u-load-more-wrap {
-		width: 686rpx;
+		// width: 686rpx;
 		height: 100rpx !important;
 	}
 	.index {}
