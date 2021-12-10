@@ -10,7 +10,7 @@
 				</view>
 			</view>
 		</view>
-		<u-loadmore v-show="!isEmpty" height="80rpx" font-size="20" :status="loadStatus" icon-type="flower" color="#ccc" />
+		<u-loadmore v-show="!isEmpty" height="80rpx" font-size="20" :status="loadStatus" icon-type="flower" color="#707070" />
 		<Dialog v-if="show" @close="onClose">
 			<view class="modcontent">确定取消关注“{{name}}”吗</view>
 		</Dialog>

@@ -10,7 +10,7 @@
 			<block v-for="(item,index) in tabbar" :key="index">
 				<scroll-view class="rightbox" scroll-y v-if="current==index">
 					<view class="pageview">
-						<image src="" mode="aspectFit" class="banner"></image>
+						<image :src="item.bgpic" mode="aspectFit" class="banner"></image>
 						<view class="list">
 							<view class="thumb_item" v-for="(item1, index1) in item.children" :key="index1">
 								<view class="thumb_box" @click="toSearchResult(item1.id)">

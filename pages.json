@@ -99,9 +99,9 @@
 		"pages": [{
 			"path": "zhuanjiatuandui",
 			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTextStyle": "black"
-				// "navigationBarBackgroundColor": "#FECF05"
+				"navigationBarTitleText":"",
+				"navigationBarTextStyle": "black",
+				"navigationBarBackgroundColor": "#FECF05"
 			}
 		}]
 	}, {

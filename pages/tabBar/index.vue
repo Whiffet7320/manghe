@@ -91,14 +91,14 @@
 			</view>
 			<scroll-view class="scroll-view" scroll-x style="width: 100%;white-space:nowrap;">
 				<view class="itemss">
-					<view class="item" @click="toZhuanjiatuandui(item.id)" v-for="item in zjtdList" :key='item.id'>
+					<view class="item" @click="toZhuanjiatuandui(item)" v-for="item in zjtdList" :key='item.id'>
 						<image :src="item.doctor_img" class="pic" mode=""></image>
 						<view class="right">
 							<view class="txt1">
 								{{item.doctor_name}}<text class="small">{{item.doctor_titles}}</text>
 							</view>
-							<view class="txt2">{{item.doctor_sub_titles}}</view>
-							<view class="txt2">{{item.doctor_content}}</view>
+							<view class="txt2" v-if="item.doctor_sub_titles">{{item.doctor_sub_titles}}</view>
+							<view class="txt2" v-if="item.doctor_content">{{item.doctor_content}}</view>
 							<view class="btn">
 								<image src="/static/image/lujin1758.png" class="btn-img" mode=""></image>
 								<view class="btn-txt">点击预约</view>
@@ -172,30 +172,11 @@
 				city:'',
 				searchList:[],
 				cityShow:false,
-				cityList:[{
-						value: '1',
-						label: '江'
-					},
-					{
-						value: '2',
-						label: '湖'
-					}],
+				cityList:[],
 				zjtdList:[],
 				xfzqList:[],
 				searchVal: '',
-				bannerList: [{
-						image: 'https://cdn.uviewui.com/uview/swiper/1.jpg',
-						title: '昨夜星辰昨夜风，画楼西畔桂堂东'
-					},
-					{
-						image: 'https://cdn.uviewui.com/uview/swiper/2.jpg',
-						title: '身无彩凤双飞翼，心有灵犀一点通'
-					},
-					{
-						image: 'https://cdn.uviewui.com/uview/swiper/3.jpg',
-						title: '谁念西风独自凉，萧萧黄叶闭疏窗，沉思往事立残阳'
-					}
-				],
+				bannerList: [],
 				//
 				swiperCurrentIndex: 0,
 				height: 0,
@@ -303,9 +284,10 @@
 					url: `/pages/index/search/xiangqin?title=${item.store_name}&id=${item.product_id}`
 				})
 			},
-			toZhuanjiatuandui(id) {
+			toZhuanjiatuandui(val) {
+				this.$store.commit("setDoctor",val);
 				uni.navigateTo({
-					url: '/pages/index/zhuanjiatuandui/zhuanjiatuandui?id='+id
+					url: '/pages/index/zhuanjiatuandui/zhuanjiatuandui?id='+val.id
 				})
 			},
 			toXiufu(val,img) {
