@@ -1,24 +1,25 @@
 <template>
 	<view class="index">
+		<u-toast ref="uToast" />
 		<view class="nav1">
-			<image class="pic" src="https://img0.baidu.com/it/u=3941318376,4022646771&fm=26&fmt=auto" mode=""></image>
+			<image class="pic" v-if="obj" :src="obj.doctor_img" mode=""></image>
 			<view class="right">
-				<view class="txt1">主治医生：李竞</view>
+				<view class="txt1">主治医生：{{obj.doctor_name}}</view>
 				<view class="bottom">
-					<view class="txt2">已选择：肋骨鼻综合</view>
-					<view class="txt3">预付款：¥2000.00</view>
+					<view class="txt2">已选择：{{obj.store_name}}</view>
+					<view class="txt3">预付款：¥{{obj.yuprice}}</view>
 				</view>
 			</view>
 		</view>
 		<view class="nav2">
 			<view class="item">
 				<view class="txt1">手术医生</view>
-				<view class="txt1">李竞</view>
+				<view class="txt1">{{obj.doctor_name}}</view>
 			</view>
 			<view class="item">
 				<view class="txt1">预约时间</view>
 				<view class="i-right" @click="changTime">
-					<view class="txt2">选择时间</view>
+					<view class="txt2">{{startTime != '' ? startTime : '选择时间'}}</view>
 					<u-icon name="arrow-right" color="#707070" size="24"></u-icon>
 				</view>
 			</view>
@@ -48,8 +49,8 @@
 		</view>
 		<view class="footer1">
 			<!-- <image src="/static/image/zu1840.png" class="kefu" mode=""></image> -->
-			<view class="txt1">预付款 ¥2000</view>
-			<view class="txt2">尾款 ¥1600面诊后支付</view>
+			<view class="txt1">预付款 ¥{{obj.yuprice}}</view>
+			<view class="txt2">尾款 ¥{{obj.weiPrice}}面诊后支付</view>
 		</view>
 		<view class="footer2">
 			<view class="item">
@@ -72,7 +73,7 @@
 	export default {
 		data() {
 			return {
-				obj:{},
+				obj: {},
 				beizhu: '',
 				timeShow: false,
 				multiSelector: [
@@ -84,9 +85,9 @@
 			}
 		},
 		onLoad(option) {
-			if(option.obj){
+			if (option.obj) {
 				this.obj = JSON.parse(decodeURIComponent(option.obj));
-				console.log(this.obj.storeInfo)
+				console.log(this.obj)
 			}
 		},
 		onShow() {
@@ -105,26 +106,43 @@
 			this.multiSelector[1].push(`晚上`)
 		},
 		methods: {
-			async toShouyintai(){
-				const res = await this.$api.cartAdd({
-					productId:this.obj.storeInfo.id,
-					cartNum:1,
-					new:1,
-					appointment_time:this.startTime,
-					mark:this.beizhu
-				})
+			async toShouyintai() {
+				const res = await this.$api.orderCreate({
+					addressId: 0,
+					couponId: '',
+					payType: 'weixin',
+					useIntegral: 0,
+					from: 'routine',
+					appointment_time: this.startTime,
+					mark: this.beizhu,
+					shipping_type:0
+				},this.obj.orderKey)
 				console.log(res)
-				
-				uni.navigateTo({
-					url:'/pages/index/search/shouyintai'
-				})
+				if (res.status == 200) {
+					var obj = {
+						doctor_name:this.obj.doctor_name,
+						time:this.startTime,
+						yuPrice:this.obj.yuprice,
+						...res.data.result,
+					}
+					uni.navigateTo({
+						url: `/pages/index/search/shouyintai?obj=${encodeURIComponent(JSON.stringify(obj))}`
+					})
+				}else{
+					this.$refs.uToast.show({
+						title: res.msg,
+						type: 'warning',
+					})
+				}
+
+
 			},
 			changTime() {
 				this.timeShow = true;
 			},
 			confirmTime(e) {
 				this.startTime =
-					`${this.multiSelector[0][e[0]].substring(0, this.multiSelector[0][e[0]].length - 4)} ${this.multiSelector[1][e[1]].substring(0,5)}:00`;
+					`${this.multiSelector[0][e[0]].substring(0, this.multiSelector[0][e[0]].length - 4)} ${this.multiSelector[1][e[1]].substring(0,5)}`;
 				this.endTime =
 					`${this.multiSelector[0][e[0]].substring(0, this.multiSelector[0][e[0]].length - 4)} ${this.multiSelector[1][e[1]].substring(6,this.multiSelector[1][e[1]].length)}:00`;
 				this.showTimeVal = `${this.multiSelector[0][e[0]]} ${this.multiSelector[1][e[1]]}`

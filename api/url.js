@@ -39,7 +39,9 @@ export default {
 	replyList:'/api/reply/list',//获取商品评论
 	orderAgain:'/api/order/again',//再次购买
 	orderTake:'/api/order/take',//订单收货
-	spreadBanner:'/api/spread/banner',//推广分销二维码海报生成
+	spread_info:'/api/user/spread_info',//推广分销二维码海报生成
 	combinationPink:'/api/combination/pink',//拼团 开团
 	store_integralDetail:'/api/store_integral/detail',//积分商品详情
+	store_integralOrderConfirm:'/api/store_integral/order/confirm',//积分兑换确认页
+	store_integralOrderCreate:'/api/store_integral/order/create',//积分兑换订单创建
 }

@@ -1,5 +1,6 @@
 <template>
 	<view class="index">
+		<u-toast ref="uToast" />
 		<u-navbar back-icon-size='30' title-size='24' :title="navTitle"></u-navbar>
 		<view class="nav1">
 			<u-swiper height='602' :list="bannerList"></u-swiper>
@@ -74,9 +75,7 @@
 									</view>
 									<view class="i3-items">
 										<view class="i3-item" v-for="item in pinglunList">
-											<image class="ava"
-												:src="item.avatar"
-												mode=""></image>
+											<image class="ava" :src="item.avatar" mode=""></image>
 											<view class="right">
 												<view class="tit1">
 													<view class="txt1">{{item.nickname}}</view>
@@ -106,8 +105,8 @@
 
 		<view class="footer1">
 			<image src="/static/image/zu1840.png" class="kefu" mode=""></image>
-			<view class="txt1">预付款 ¥{{obj.storeInfo.finish_pay_price}}</view>
-			<view class="txt2">尾款 ¥{{Number(obj.storeInfo.price) - Number(obj.storeInfo.finish_pay_price)}}面诊后支付</view>
+			<view class="txt1">预付款 ¥{{obj.storeInfo.price}}</view>
+			<view class="txt2">尾款 ¥{{obj.storeInfo.finish_pay_price}}面诊后支付</view>
 		</view>
 		<view class="footer2">
 			<view class="item">
@@ -136,13 +135,13 @@
 				console.log('ddpage')
 				this.$store.commit("IndexshopPage", page);
 				if (this.IndexshopPage != 1) {
-					this.getShopData();
+					this.getPinglunData();
 				}
 			},
-			current:function(){
+			current: function() {
 				this.pinglunList = [];
 				this.$store.commit("IndexshopPage", 1);
-				this.getShopData()
+				this.getPinglunData()
 				setTimeout(() => {
 					this.getCurrentSwiperHeight('.nav5Items')
 				}, 800)
@@ -150,7 +149,7 @@
 		},
 		data() {
 			return {
-				pinglunList:[],
+				pinglunList: [],
 				id: '',
 				obj: {},
 				isOnShow: true,
@@ -207,10 +206,10 @@
 			this.$store.commit("IndexshopPage", this.IndexshopPage + 1);
 		},
 		methods: {
-			async getPinglunData(type){
+			async getPinglunData(type) {
 				this.status = 'loading';
 				setTimeout(async () => {
-					const res = await this.$api.replyList({},this.id)
+					const res = await this.$api.replyList({}, this.id)
 					console.log(res.data)
 					if (res.data.length == 0) {
 						this.status = 'nomore'
@@ -248,13 +247,41 @@
 					}
 				});
 			},
-			toQuerendingdan() {
-				uni.navigateTo({
-					url: `/pages/index/search/querendingdan?obj=${encodeURIComponent(JSON.stringify(this.obj))}`
+			async toQuerendingdan() {
+				const res = await this.$api.cartAdd({
+					productId: this.id,
+					cartNum: 1,
+					new: 1
 				})
-				// uni.navigateTo({
-				// 	url:'/pages/index/search/shouyintai'
-				// })
+				console.log(res)
+				if (res.status == 200) {
+					const res2 = await this.$api.orderConfirm({
+						cartId: res.data.cartId,
+						new: 1,
+					})
+					if (res2.status == 200) {
+						var obj = {
+							...this.obj.doctor_info,
+							yuprice:res2.data.cartInfo[0].sum_price,
+							weiPrice:this.obj.storeInfo.finish_pay_price,
+							store_name:res2.data.cartInfo[0].productInfo.store_name,
+							orderKey:res2.data.orderKey,
+						}
+						uni.navigateTo({
+							url: `/pages/index/search/querendingdan?obj=${encodeURIComponent(JSON.stringify(obj))}&cartId=${res.data.cartId}`
+						})
+					} else {
+						this.$refs.uToast.show({
+							title: res2.msg,
+							type: 'warning',
+						})
+					}
+				} else {
+					this.$refs.uToast.show({
+						title: res.msg,
+						type: 'warning',
+					})
+				}
 			},
 			// tabs通知swiper切换
 			tabsChange(index) {

@@ -63,8 +63,13 @@
 				</view>
 				<view class="p-nav2">规格</view>
 				<view class="p-nav3">
-					<view v-for="(item,i) in skuArr" :key='i' @click="changSku(item,i)" :class="{'p-item':true,'active':skuIndex == i}">
-						{{item.suk}}</view>
+					<view v-for="(item,i) in obj.productAttr" :key='item.id'>
+						<view class="p-tit">{{item.attr_name}}:</view>
+						<view v-for="(item2,i2) in item.attr_value" :key='i2' @click="changSku(item2,i,i2)"
+							:class="{'p-item':true,'active':item2.check}">
+							{{item2.attr}}
+						</view>
+					</view>
 				</view>
 				<view class="p-nav4">
 					<view class="left">购买数量</view>
@@ -97,7 +102,7 @@
 	export default {
 		data() {
 			return {
-				skuItem:'',
+				skuItem: '',
 				id: '',
 				obj: {},
 				skuNum: 1,
@@ -106,7 +111,8 @@
 				skuShow: false,
 				bannerList: [],
 				skuArr: [],
-				skuImg:'',
+				skuImg: '',
+				skuArr2: [],
 			}
 		},
 		onLoad(option) {
@@ -123,20 +129,24 @@
 					this.$set(this.bannerList, i, {})
 					this.$set(this.bannerList[i], 'image', ele)
 				})
+				this.obj.productAttr.forEach(() => {
+					this.skuArr2.push('')
+				})
 				for (let key in this.obj.productValue) {
 					this.skuArr.push(this.obj.productValue[key])
 				}
-				// this.skuImg = this.skuArr[0].image;
-				this.changSku(this.skuArr[0],0)
+				this.obj.productAttr.forEach((ele,i)=>{
+					this.changSku(ele.attr_value[0], i, 0)
+				})
 			},
-			clickGwc(){
+			clickGwc() {
 				this.skuShow = true;
 			},
 			async addGwc() {
 				const res = await this.$api.cartAdd({
-					productId:this.id,
-					cartNum:this.skuNum,
-					uniqueId:this.skuItem.unique
+					productId: this.id,
+					cartNum: this.skuNum,
+					uniqueId: this.skuItem.unique
 				})
 				console.log(res)
 				this.skuShow = false;
@@ -144,10 +154,10 @@
 			},
 			async toTijiaodingdan() {
 				const res = await this.$api.cartAdd({
-					productId:this.id,
-					cartNum:this.skuNum,
-					uniqueId:this.skuItem.unique,
-					new:1
+					productId: this.id,
+					cartNum: this.skuNum,
+					uniqueId: this.skuItem.unique,
+					new: 1
 				})
 				console.log(res)
 				this.skuItem.shopName = this.obj.storeInfo.store_name;
@@ -157,11 +167,37 @@
 					url: `/pages/users/order/tijiaodingdan?skuItem=${JSON.stringify([this.skuItem])}&isGWC=no&cartId=${res.data.cartId}`
 				})
 			},
-			changSku(item,i) {
-				console.log(this.skuItem)
-				this.skuItem = item;
-				this.skuImg = item.image;
-				this.skuIndex = i;
+			changSku(item2, i, i2) {
+				this.obj.productAttr[i].attr_value.forEach(ele2 => {
+					ele2.check = false;
+				})
+				item2.check = true;
+				var flag = false;
+				var skuArr2Txt = '';
+				this.$set(this.skuArr2, i, item2.attr)
+				console.log(this.skuArr2)
+				this.skuArr2.forEach((ele, i) => {
+					if (ele == '') {
+						flag = true;
+						return
+					} else {
+						if (i == 0) {
+							skuArr2Txt += `${ele}`
+						} else {
+							skuArr2Txt += `,${ele}`
+						}
+						flag = false;
+						console.log(skuArr2Txt)
+					}
+				})
+				if (!flag) {
+					this.skuArr.forEach(ele => {
+						if (ele.suk == skuArr2Txt) {
+							this.skuItem = ele;
+							this.skuImg = ele.image;
+						}
+					})
+				}
 			},
 			jia() {
 				this.skuNum++
@@ -330,7 +366,8 @@
 				color: #BD9E81;
 			}
 		}
-		.content{
+
+		.content {
 			width: 100%;
 		}
 	}
@@ -400,10 +437,12 @@
 	/deep/ .u-drawer-content {
 		overflow: initial !important;
 	}
-	/deep/ .u-close{
+
+	/deep/ .u-close {
 		position: fixed !important;
 		z-index: 99999 !important;
 	}
+
 	.skuPop {
 		position: relative;
 		padding: 0 40rpx;
@@ -415,6 +454,7 @@
 		.p-nav1 {
 			display: flex;
 			width: 628rpx;
+
 			.pic1 {
 				width: 182rpx;
 				height: 182rpx;
@@ -479,6 +519,13 @@
 			margin-top: 28rpx;
 			height: 262rpx;
 			overflow: auto;
+
+			.p-tit {
+				margin-bottom: 16rpx;
+				font-size: 28rpx;
+				font-weight: 500;
+				color: #BD9E81;
+			}
 
 			.p-item {
 				display: inline-block;

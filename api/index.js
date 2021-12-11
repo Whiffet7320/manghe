@@ -937,4 +937,25 @@ export default {
 			url: `${urls.store_integralDetail}/${id}`,
 		})
 	},
+	spread_info() {
+		return myGet({
+			url: `${urls.spread_info}`,
+		})
+	},
+	store_integralOrderConfirm(obj) {
+		return myPost({
+			url: `${urls.store_integralOrderConfirm}`,
+			data:{
+				...obj
+			}
+		})
+	},
+	store_integralOrderCreate(obj) {
+		return myPost({
+			url: `${urls.store_integralOrderCreate}`,
+			data:{
+				...obj
+			}
+		})
+	},
 }

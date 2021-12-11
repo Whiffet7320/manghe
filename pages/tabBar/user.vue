@@ -191,7 +191,9 @@
 				this.jump("/pages/users/team/index");
 			},
 			onShare(){
-				this.jump("/pages/users/share/index");
+				uni.navigateTo({
+					url:`/pages/users/share/index?code=${this.userInfo.spread_code}`
+				})
 			},
 			onMeet(){
 				this.jump("/pages/users/subscribe/index");

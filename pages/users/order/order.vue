@@ -532,6 +532,14 @@
 					this.getData();
 				}
 			},
+			current:function(){
+				this.orderList = [];
+				this.$store.commit("dingdanPage", 1);
+				this.getData()
+				setTimeout(() => {
+					this.getCurrentSwiperHeight('.nav5Items')
+				}, 900)
+			},
 		},
 		data() {
 			return {
@@ -572,12 +580,21 @@
 		onLoad(options){
 			if(options.type){
 				this.current = options.type;
+				if(this.current == 0){
+					this.orderList = [];
+					this.$store.commit("dingdanPage", 1);
+					this.getData()
+					setTimeout(() => {
+						this.getCurrentSwiperHeight('.nav5Items')
+					}, 900)
+				}
 			}
 		},
 		onShow() {
+			// this.getData()
 			this.orderList = [];
 			this.$store.commit("dingdanPage", 1);
-			this.tabsChange(this.current);
+			// this.tabsChange(this.current);
 		},
 		onReachBottom() {
 			this.$store.commit("dingdanPage", this.dingdanPage + 1);
@@ -722,21 +739,14 @@
 			tabsChange(index) {
 				console.log(index);
 				this.swiperCurrent = index;
-				this.current = index;
 				this.swiperCurrentIndex = index;
-				this.orderList = [];
-				this.$store.commit("dingdanPage", 1);
-				this.getData()
-				setTimeout(() => {
-					this.getCurrentSwiperHeight('.nav5Items')
-				}, 800)
+				this.current = index;
 			},
 			animationfinish(e) {
 				let current = e.detail.current;
 				this.$refs.uTabs.setFinishCurrent(current);
 				this.swiperCurrent = current;
 				this.current = current;
-				this.tabsChange(this.current)
 			},
 			getCurrentSwiperHeight(element) {
 				let query = uni.createSelectorQuery().in(this);

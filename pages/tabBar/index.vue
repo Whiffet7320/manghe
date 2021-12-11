@@ -91,7 +91,7 @@
 			</view>
 			<scroll-view class="scroll-view" scroll-x style="width: 100%;white-space:nowrap;">
 				<view class="itemss">
-					<view class="item" @click="toZhuanjiatuandui(item.id)" v-for="item in zjtdList" :key='item.id'>
+					<view class="item" v-for="item in zjtdList" :key='item.id'>
 						<image :src="item.doctor_img" class="pic" mode=""></image>
 						<view class="right">
 							<view class="txt1">
@@ -99,7 +99,7 @@
 							</view>
 							<view class="txt2">{{item.doctor_sub_titles}}</view>
 							<view class="txt2">{{item.doctor_content}}</view>
-							<view class="btn">
+							<view class="btn" @click="toZhuanjiatuandui(item)">
 								<image src="/static/image/lujin1758.png" class="btn-img" mode=""></image>
 								<view class="btn-txt">点击预约</view>
 							</view>
@@ -314,9 +314,9 @@
 					url: `/pages/index/search/xiangqin?title=${item.store_name}&id=${item.product_id}`
 				})
 			},
-			toZhuanjiatuandui(id) {
+			toZhuanjiatuandui(item) {
 				uni.navigateTo({
-					url: '/pages/index/zhuanjiatuandui/zhuanjiatuandui?id='+id
+					url: `/pages/index/zhuanjiatuandui/zhuanjiatuandui?obj=${encodeURIComponent(JSON.stringify(item))}`
 				})
 			},
 			toXiufu(val,img) {

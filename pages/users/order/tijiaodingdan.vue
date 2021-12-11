@@ -1,5 +1,6 @@
 <template>
 	<view class="index">
+		<u-toast ref="uToast" />
 		<!-- 有地址 -->
 		<view v-if="addressObj" class="nav1" @click="toAddAddress">
 			<view class="left">
@@ -48,7 +49,9 @@
 					</view>
 					<view class="tit1">
 						<view class="txt1">合计</view>
-						<view class="txt2">¥ {{parseFloat($tool.argMul(item.cart_num,item.productInfo.price)).toFixed(2)}}</view>
+						<view class="txt2">¥
+							{{parseFloat($tool.argMul(item.cart_num,item.productInfo.price)).toFixed(2)}}
+						</view>
 					</view>
 				</view>
 			</view>
@@ -88,7 +91,42 @@
 				</view>
 			</view>
 		</template>
-		
+		<template v-if="isJifenShop=='yes'">
+			<view class="nav2" v-for="item in skuItem" :key='item.storeInfo.id'>
+				<view class="nav2-1">
+					<image :src="item.storeInfo.image" class="pic" mode=""></image>
+					<view class="right">
+						<view class="tit1">
+							<view class="txt1">{{item.storeInfo.title}}</view>
+							<view class="txt2">X1</view>
+						</view>
+						<view class="down">
+							<view class="tit2">{{item?item.storeInfo.unit_name:''}}</view>
+							<view class="tit3">¥ {{item.storeInfo.price}}</view>
+						</view>
+					</view>
+				</view>
+				<view class="nav2-2">
+					<view class="tit1">
+						<view class="txt1">商品金额</view>
+						<view class="txt2">¥ {{item.storeInfo.price}}</view>
+					</view>
+					<view class="tit1">
+						<view class="txt1">运费</view>
+						<view class="txt2">¥ 0.00</view>
+					</view>
+					<view class="tit1">
+						<view class="txt1">优惠券</view>
+						<view class="txt2">- ¥ 0.00</view>
+					</view>
+					<view class="tit1">
+						<view class="txt1">合计</view>
+						<view class="txt2">¥ {{item.storeInfo.price}}</view>
+					</view>
+				</view>
+			</view>
+		</template>
+
 		<view class="nav3">
 			<view class="tit1">
 				<view class="txt1">留言</view>
@@ -100,7 +138,7 @@
 		<view class="footer">
 			<view class="left">
 				<view class="txt1">合计¥{{zongPrice}}</view>
-				<view class="txt2">(共{{total}}件)</view>
+				<view class="txt2">(共{{isJifenShop == 'yes'? 1 : total}}件)</view>
 			</view>
 			<view @click="toQuerenzhifu" class="btn">立即支付</view>
 		</view>
@@ -111,7 +149,8 @@
 	export default {
 		data() {
 			return {
-				cartInfo:[],
+				isJifenShop: null,
+				cartInfo: [],
 				uni: '',
 				isAgain: 'no',
 				addNum: '',
@@ -132,10 +171,14 @@
 			console.log(options)
 			if (options.skuItem) {
 				this.skuItem = JSON.parse(options.skuItem);
-				this.isGWC = options.isGWC;
-				this.cartId = options.cartId;
+				if (options.isJifenShop == 'yes') {
+					this.isJifenShop = options.isJifenShop
+				} else {
+					this.isGWC = options.isGWC;
+					this.cartId = options.cartId;
+				}
 			}
-			if(options.cartId){
+			if (options.cartId) {
 				this.cartId = options.cartId;
 				this.isGWC = options.isGWC;
 			}
@@ -147,17 +190,17 @@
 		onShow() {
 			this.getData()
 		},
-		computed:{
-			total(){
-				if(this.isGWC==="yes"){
+		computed: {
+			total() {
+				if (this.isGWC === "yes") {
 					let sum = 0;
-					this.cartInfo.forEach((item)=>{
+					this.cartInfo.forEach((item) => {
 						sum += item.cart_num;
 					})
 					return sum;
-				}else if(this.isGWC==="no"){
+				} else if (this.isGWC === "no") {
 					let sum = 0;
-					this.skuItem.forEach((item)=>{
+					this.skuItem.forEach((item) => {
 						sum += item.buyNum;
 					})
 					return sum;
@@ -181,7 +224,7 @@
 				var cartId = '';
 				if (this.isGWC == 'no') {
 					cartId = this.cartId
-				}else{
+				} else {
 					cartId = this.cartId
 				}
 				if (this.isAgain == 'yes') {
@@ -192,38 +235,70 @@
 					console.log(res11)
 					cartId = res11.data.cateId
 				}
-				const res2 = await this.$api.orderConfirm({
-					cartId: cartId,
-					new: this.isGWC == 'no' ? 1 : 0,
-				})
-				this.cartInfo = res2.data.cartInfo;
-				this.orderKey = res2.data.orderKey;
-				const res3 = await this.$api.orderComputed({
-					addressId: this.addressObj.id,
-					payType: 'weixin',
-					useIntegral: 0
-				}, this.orderKey)
-				this.zongPrice = res3.data.result.total_price;
-				this.pay_postage = res3.data.result.pay_postage;
+				if (this.isJifenShop == 'yes') {
+					const res2 = await this.$api.store_integralOrderConfirm({
+						num: 1,
+						unique: this.skuItem[0].productValue['默认'].unique
+					})
+					console.log(res2)
+					this.zongPrice = res2.data.total_price
+				} else {
+					const res2 = await this.$api.orderConfirm({
+						cartId: cartId,
+						new: this.isGWC == 'no' ? 1 : 0,
+					})
+					this.cartInfo = res2.data.cartInfo;
+					this.orderKey = res2.data.orderKey;
+					const res3 = await this.$api.orderComputed({
+						addressId: this.addressObj.id,
+						payType: 'weixin',
+						useIntegral: 0
+					}, this.orderKey)
+					this.zongPrice = res3.data.result.total_price;
+					this.pay_postage = res3.data.result.pay_postage;
+				}
+
 			},
 			changInp(e) {
 				console.log(e.length)
 				this.InpNum = e.length;
 			},
 			async toQuerenzhifu() {
-				const res2 = await this.$api.orderCreate({
-					addressId: this.addressObj.id,
-					couponId: '',
-					payType: 'yue',
-					useIntegral: 0,
-					mark: this.mark,
-					from: 'routine',
-				}, this.orderKey)
-				if (res2.status == 200) {
-					uni.redirectTo({
-						url: `/pages/users/order/querendingdan?uni=${res2.data.result.orderId}&payObj=${encodeURIComponent(JSON.stringify(res2.data.result.jsConfig))}&price=${this.zongPrice}`
+				if (this.isJifenShop == 'yes') {
+					const res2 = await this.$api.store_integralOrderCreate({
+						addressId: this.addressObj.id,
+						num: 1,
+						mark: this.mark,
+						unique: this.skuItem[0].productValue['默认'].unique
 					})
+					if (res2.status == 200) {
+						this.$refs.uToast.show({
+							title: '支付成功',
+							type: 'success',
+							url: '/pages/users/integral/order'
+						})
+					}else{
+						this.$refs.uToast.show({
+							title: res2.msg,
+							type: 'warning',
+						})
+					}
+				} else {
+					const res2 = await this.$api.orderCreate({
+						addressId: this.addressObj.id,
+						couponId: '',
+						payType: 'weixin',
+						useIntegral: 0,
+						mark: this.mark,
+						from: 'routine',
+					}, this.orderKey)
+					if (res2.status == 200) {
+						uni.redirectTo({
+							url: `/pages/users/order/querendingdan?uni=${res2.data.result.orderId}&payObj=${encodeURIComponent(JSON.stringify(res2.data.result.jsConfig))}&price=${this.zongPrice}`
+						})
+					}
 				}
+
 			},
 			toAddAddress() {
 				if (this.addressObj || this.addNum == 'fushu') {
