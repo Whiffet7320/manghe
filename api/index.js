@@ -650,7 +650,7 @@ export default {
 	},
 	registerVerify(obj) {
 		return myPost({
-			url: urls.user_update,
+			url: urls.registerVerify,
 			data: {
 				...obj
 			}
@@ -730,6 +730,59 @@ export default {
 			}
 		})
 	},
+	orderComment(obj) {
+		return myPost({
+			url: urls.orderComment,
+			data: {
+				...obj
+			}
+		})
+	},
+	integralList(obj) {
+		return myGet({
+			url: urls.integralList,
+			params: {
+				...obj
+			}
+		})
+	},
+	getOrderDetail(uni, cart_id){
+		return myGet({
+			url: urls.orderDetail +"/"+ uni + `${cart_id ? `/${cart_id}`:''}`
+		})
+	},
+	collectAdd(id) {
+		return myPost({
+			url: urls.collectAdd,
+			data: {
+				id
+			}
+		})
+	},
+	collectDel(id) {
+		return myPost({
+			url: urls.collectDel,
+			data: {
+				id
+			}
+		})
+	},
+	userCollect(obj) {
+		return myGet({
+			url: urls.userCollect,
+			params: {
+				...obj
+			}
+		})
+	},
+	orderDel(uni) {
+		return myPost({
+			url: urls.orderDel,
+			data: {
+				uni
+			}
+		})
+	},
 	upload_pic(file, type) {
 		return new Promise(async (resolve, reject) => {
 			uni.uploadFile({
@@ -792,6 +845,14 @@ export default {
 	cityList() {
 		return myGet({
 			url: urls.city_list
+		})
+	},
+	orderCancel(id) {
+		return myPost({
+			url: urls.orderCancel,
+			data: {
+				id
+			}
 		})
 	},
 	orderConfirm(obj) {
@@ -930,6 +991,14 @@ export default {
 	combinationPink(id) {
 		return myGet({
 			url: `${urls.combinationPink}/${id}`,
+		})
+	},
+	combinationRemove(obj) {
+		return myPost({
+			url: urls.combinationRemove,
+			data: {
+				...obj
+			}
 		})
 	},
 	store_integralDetail(id) {

@@ -17,23 +17,21 @@
 				<view class="combtn default">再来一单</view>
 			</view>
 		</view>
+		<view v-if="list.length==0">
+			<page-empty></page-empty>
+		</view>
 	</view>
 </template>
 
 <script>
+	import pageEmpty from "@/components/page-empty/page-empty";
 	export default{
+		components:{
+			pageEmpty
+		},
 		data(){
 			return{
-				list:[
-					{
-						id:1,
-						image:"",
-						name:"微针一年（不限次数）",
-						status:0,
-						price:1180.00,
-						number:1
-					}
-				]
+				list:[]
 			}
 		},
 		filters:{

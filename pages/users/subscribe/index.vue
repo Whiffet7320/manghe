@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<view class="scribelist">
-			<view class="scribe_item">
+			<view class="scribe_item" v-for="(item,index) in list" :key="index">
 				<view class="time">
 					<image src="/static/image/user/icon_time.png" mode="aspectFit" class="icon"></image>
 					<text>预约时间：2021-09-24 20:00</text>
@@ -34,7 +34,9 @@
 <script>
 	export default{
 		data(){
-			return{}
+			return{
+				list:[]
+			}
 		}
 	}
 </script>

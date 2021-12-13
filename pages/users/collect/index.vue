@@ -4,11 +4,11 @@
 			<view class="collect_item" v-for="(item,index) in list" :key="index" @click="goDetail(item)">
 				<image :src="item.image" mode="aspectFill" class="img"></image>
 				<view class="left">
-					<view class="name">{{item.name}}</view>
+					<view class="name">{{item.store_name}}</view>
 					<view class="sname">{{item.desc}}</view>
 					<view class="ft">
-						<view class="price">¥{{item.price}}</view>
-						<view class="sprice">¥{{item.sprice}}</view>
+						<view class="price">¥{{item.ot_price}}</view>
+						<view class="sprice">¥{{item.price}}</view>
 					</view>
 				</view>
 				<view class="right" @click.stop="onCancel(item,index)">
@@ -16,6 +16,7 @@
 				</view>
 			</view>
 		</view>
+		<u-loadmore v-if="!empty" height="80rpx" font-size="20" :status="loadStatus" icon-type="flower" color="#707070" />
 		<Dialog v-if="show" @close="onClose">
 			<view class="modcontent">确定取消收藏“{{name}}”吗</view>
 		</Dialog>
@@ -30,43 +31,73 @@
 		},
 		data(){
 			return{
+				empty:false,
 				name:"",
 				id:0,
 				cindex:0,
 				show:false,
-				list:[
-					{
-						image:"",
-						name:"肋骨鼻综合",
-						desc:"肋骨鼻综合",
-						price:3600.00,
-						sprice:1800.00
-					},
-					{
-						image:"",
-						name:"肋骨鼻综合",
-						desc:"肋骨鼻综合",
-						price:3600.00,
-						sprice:1800.00
-					}
-				]
+				list:[],
+				loadStatus: 'loadmore',
+				currentPage: 1
 			}
 		},
 		methods:{
+			getlist(){
+				let list = [];
+				this.loadStatus = 'loading';
+				this.$api.userCollect({page:this.currentPage,limit:10}).then((res)=>{
+					if(res.status==200){
+						if (res.data.length == 0) {
+							this.loadStatus = 'nomore';
+						} else {
+							if(this.currentPage==1 && res.data.length<=10){
+								this.loadStatus = 'nomore';
+							}else{
+								this.loadStatus = 'loadmore';
+							}
+							this.currentPage++;
+							this.list = this.list.concat(res.data);
+						}
+					}
+				}).catch((err)=>{
+					this.$u.toast(err);
+				})
+			},
 			onCancel(val,index){
 				this.show = !this.show;
-				this.id = val.id;
+				this.id = val.product_id;
 				this.cindex = index;
-				this.name = val.name;
+				this.name = val.store_name;
 			},
 			onClose(val){
 				if(val==="confirm"){
-					this.$u.toast("取消成功");
-					this.list.splice(this.cindex,1);
+					this.$api.collectDel(this.id).then((res)=>{
+						if(res.status==200){
+							this.$u.toast("取消成功");
+							this.list.splice(this.cindex,1);
+						}else{
+							this.$u.toast(res.msg);
+						}
+					}).catch((err)=>{
+						this.$u.toast(err);
+					})
 				}
 				this.show = !this.show;
 			},
-			goDetail(val){}
+			goDetail(val){
+				uni.navigateTo({
+					url:`/pages/index/search/xiangqin?title=${val.store_name}&id=${val.product_id}`
+				})
+			}
+		},
+		onLoad(){
+			this.getlist();
+		},
+		onReachBottom() {
+			this.getlist();
+		},
+		onPullDownRefresh() {
+			uni.stopPullDownRefresh();
 		}
 	}
 </script>

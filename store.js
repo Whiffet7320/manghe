@@ -18,7 +18,9 @@ export default new Vuex.Store({
 		token:uni.getStorageSync("token")||"",
 		userInfo: {},
 		uid:uni.getStorageSync("uid") || 0,
-		doctorInfo:{}
+		doctorInfo:{},
+		comentInfo:[],
+		onResh:false
 	},
 	mutations: {
 		from(state, str) {
@@ -53,7 +55,13 @@ export default new Vuex.Store({
 		},
 		setDoctor(state,data){
 			state.doctorInfo = data;
-		}
+		},
+		setComent(state,data){
+			state.comentInfo = data;
+		},
+		setResh(state,data){
+			state.onResh = data;
+		},
 	},
 	getters:{
 		token: state => state.token,

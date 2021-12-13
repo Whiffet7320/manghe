@@ -154,7 +154,7 @@
 	}, {
 		"root": "pages/users/order",
 		"pages": [{
-			"path": "order",
+			"path": "list",
 			"style": {
 				"navigationBarTitleText": "我的订单",
 				"navigationBarBackgroundColor": "#FECF05",
@@ -180,9 +180,21 @@
 				"navigationBarTitleText": "订单评价"
 			}
 		},{
+			"path": "Detail",
+			"style": {
+				"navigationBarTitleText": "订单详情",
+				"navigationBarBackgroundColor": "#FECF05"
+			}
+		},{
 			"path": "wkorderDetail",
 			"style": {
 				"navigationBarTitleText": "等待买家支付尾款"
+			}
+		},{
+			"path": "combinationStatus",
+			"style": {
+				"navigationBarTitleText": "拼团详情",
+				"navigationBarBackgroundColor": "#FECF05"
 			}
 		}]
 	},{
@@ -300,7 +312,8 @@
 			{
 				"path": "index",
 				"style": {
-					"navigationBarTitleText": "我的积分"
+					"navigationBarTitleText": "我的积分",
+					"enablePullDownRefresh":true
 				}
 			},
 			{

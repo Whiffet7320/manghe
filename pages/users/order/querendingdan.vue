@@ -25,6 +25,8 @@
 	export default {
 		data() {
 			return {
+				id:0,
+				paytype:"yue",//weixin
 				a: null,
 				payObj: null,
 				price: 0,
@@ -32,9 +34,18 @@
 			}
 		},
 		onLoad(options) {
-			this.uni = options.uni;
-			this.payObj = JSON.parse(decodeURIComponent(options.payObj));
-			this.price = options.price;
+			if(options.id){
+				this.id = options.id;
+			}
+			if(options.uni){
+				this.uni = options.uni;
+			}
+			if(options.payObj&&options.payObj!=='undefined'){
+				this.payObj = JSON.parse(decodeURIComponent(options.payObj));
+			}
+			if(options.price){
+				this.price = options.price;
+			}
 			console.log(this.payObj)
 			var date = new Date();
 			var min = date.getMinutes();
@@ -84,24 +95,54 @@
 				// 	from:'routine',
 				// })
 				// console.log(res)
-				uni.requestPayment({
-					provider: 'wxpay',
-					timeStamp: this.payObj.timestamp,
-					nonceStr: this.payObj.nonceStr,
-					package: this.payObj.package,
-					signType: this.payObj.signType,
-					paySign: this.payObj.paySign,
-					success: function(res) {
-						this.$refs.uToast.show({
-							title: '支付成功',
-							type: 'success',
-							url: '/pages/users/order/order',
-						})
-					},
-					fail: function(err) {
-						console.log('fail:' + JSON.stringify(err));
+				this.$api.orderPay({
+					uni: this.id,
+					paytype: this.paytype,
+					from: 'routine'
+				}).then((res)=>{
+					if (res.status == 200) {
+						let jsConfig = res.data.result.jsConfig;
+						switch (this.paytype) {
+							case 'yue':
+								uni.hideLoading();
+								this.$refs.uToast.show({
+									title: res.msg,
+									type: 'success',
+									url: '/pages/users/order/order',
+								})
+							break;
+							case 'weixin':
+								uni.requestPayment({
+									provider: 'wxpay',
+									timeStamp: this.payObj.timestamp,
+									nonceStr: this.payObj.nonceStr,
+									package: this.payObj.package,
+									signType: this.payObj.signType,
+									paySign: this.payObj.paySign,
+									success: function(res) {
+										uni.hideLoading();
+										this.$refs.uToast.show({
+											title: '支付成功',
+											type: 'success',
+											url: '/pages/users/order/order',
+										})
+									},
+									fail: function(err) {
+										uni.hideLoading();
+										console.log('fail:' + JSON.stringify(err));
+										this.$u.toast("取消支付");
+									},
+									complete: function(e) {
+										uni.hideLoading();
+										if (e.errMsg == 'requestPayment:cancel'){
+											this.$u.toast("取消支付");
+										}
+									}
+								});
+							break;
+						}
 					}
-				});
+				})
 			},
 		}
 	}

@@ -218,7 +218,7 @@
 				if (selectValue.length > 0) {
 					let skuItem = narry;
 					uni.navigateTo({
-						url: `/pages/users/order/tijiaodingdan?cartId=${selectValue.join(',')}&isGWC=yes`
+						url: `/pages/users/order/tijiaodingdan?cartId=${selectValue.join(',')}&new=1`
 					});
 				} else {
 					uni.showToast({

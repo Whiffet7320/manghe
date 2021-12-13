@@ -33,6 +33,29 @@
 				<view class="txt2">{{obj.storeInfo.num}}{{obj.storeInfo.unit_name}}</view>
 			</view>
 		</view>
+		<view class='assemble'>
+			<view class='item' v-for='(item,index) in pink' :key='index' v-if="index < AllIndex">
+				<view class='pictxt'>
+					<view class='pictrue'>
+						<image :src='item.avatar'></image>
+					</view>
+					<view class='text u-line-1'>{{item.nickname}}</view>
+				</view>
+				<view class='right'>
+					<view>
+						<view class='lack'>还差<text class='font-num'>{{item.count}}</text>人成团</view>
+						<view class='time'>
+							<count-down :is-day="false" :tip-text="' '" :day-text="' '" :hour-text="':'" :minute-text="':'" :second-text="' '" :datatime="item.stop_time"></count-down>
+						</view>
+					</view>
+					<view class='spellBnt' @click="goPink(item.id)">去拼单</view>
+				</view>
+			</view>
+			<template v-if="pink.length">
+				<view class='more' @tap='showAll' v-if="pink.length > AllIndex">查看更多</view>
+				<view class='more' @tap='hideAll' v-else-if="pink.length === AllIndex && pink.length !== AllIndexDefault">收起</view>
+			</template>
+		</view>
 		<view class="nav4">
 			<u-tabs-swiper bg-color="#ffffff" height='80' font-size="28" gutter="30" inactive-color="#707070"
 				bar-height="4" bar-width="84" active-color="#BD9E81" ref="uTabs" :list="list" :current="current"
@@ -134,10 +157,12 @@
 </template>
 
 <script>
-	import {
-		mapState
-	} from "vuex";
+	import {mapState} from "vuex";
+	import countDown from '@/components/countDown/index.vue';
 	export default {
+		components:{
+			countDown
+		},
 		computed: {
 			...mapState(["pinlunPage", "pinlunPageSize"]),
 		},
@@ -202,7 +227,10 @@
 					productAttr: [],
 					productSelect: {}
 				},
-				productValue: []
+				productValue: [],
+				pink:[],
+				AllIndex: 2,
+				AllIndexDefault: 0,
 			}
 		},
 		onLoad(option) {
@@ -225,6 +253,13 @@
 			this.$store.commit("pinlunPage", this.pinlunPage + 1);
 		},
 		methods: {
+			showAll() {
+				this.AllIndexDefault = this.AllIndex;
+				this.AllIndex = this.pink.length;
+			},
+			hideAll() {
+				this.AllIndex = this.AllIndexDefault;
+			},
 			async getData2() {
 				this.bannerList = [];
 				const res = await this.$api.combinationDetail(this.id)
@@ -239,6 +274,7 @@
 				})
 				this.attribute.productAttr = res.data.productAttr;
 				this.productValue = res.data.productValue;
+				this.pink = res.data.pink;
 				this.mygetdate(this.obj.storeInfo.stop_time);
 				this.DefaultSelect();
 			},
@@ -283,21 +319,19 @@
 			async kaituan() {
 				let productSelect = this.productValue[this.attrValue];
 				let data = {
-					bargainId:0,
-					productId:this.id,
 					cartNum:1,
 					combinationId:this.obj.storeInfo.combination,
-					is_new:1,
-					secKillId:0,
+					new:1,
+					productId:this.id,
 					uniqueId:productSelect !== undefined ? productSelect.unique : ''
 				}
-				const res2 = await this.$api.cartAdd(data);
-				const res = await this.$api.combinationPink(this.id);
-				console.log(res)
-				if (res.status == 200) {
+				const res = await this.$api.cartAdd(data);
+				if(res.status==200){
 					uni.navigateTo({
-						url:`/pages/users/order/tijiaodingdan`
+						url:`/pages/users/order/tijiaodingdan?cartId=${res.data.cartId}&new=1`
 					})
+				}else{
+					this.$u.toast(res.msg);
 				}
 			},
 			mygetdate(startSellTime) {
@@ -876,5 +910,72 @@
 			color: #FFFFFF;
 			text-align: center;
 		}
+	}
+	.assemble {
+	  background-color: #fff;
+	  margin-bottom: 20rpx;
+	  .item {
+	    padding-right: 30rpx;
+	    margin-left: 30rpx;
+	    border-bottom: 1rpx solid #f0f0f0;
+	    height: 132rpx;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		.pictxt {
+		  width: 295rpx;
+		  display: flex;
+		  align-items: center;
+		  .text {
+		    width: 194rpx;
+		  }
+		  .pictrue {
+		    width: 80rpx;
+		    height: 80rpx;
+			image {
+			  width: 100%;
+			  height: 100%;
+			  border-radius: 50%;
+			  background-color: #eee;
+			}
+		  }
+		}
+		.right{
+			display: flex;
+			align-items: center;
+			.lack {
+			  font-size: 24rpx;
+			  color: #333333;
+			  .font-num{
+			  	color: #fc0000;
+			  }
+			}
+			.time {
+			  position: relative;
+			  left: -10rpx;
+			  font-size: 22rpx;
+			  color: #82848f;
+			  margin-top: 5rpx;
+			}
+			.spellBnt {
+			  font-size: 24rpx;
+			  color: #fff;
+			  width: 140rpx;
+			  height: 50rpx;
+			  border-radius: 50rpx;
+			  text-align: center;
+			  line-height: 50rpx;
+			  background-color: #BD9E81;
+			  margin-left: 30rpx;
+			}
+		}
+	  }
+	  .more {
+	    font-size: 24rpx;
+	    color: #282828;
+	    text-align: center;
+	    height: 90rpx;
+	    line-height: 90rpx;
+	  }
 	}
 </style>

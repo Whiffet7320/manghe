@@ -18,7 +18,7 @@
 		</view>
 		<!-- 无地址 -->
 		<view v-else @click="toAddAddress" class="noAddress">{{addNum == 'fushu'?'选择默认地址':'添加收货地址'}}</view>
-		<template v-if="isGWC=='yes'">
+		<template v-if="isNew=='1'">
 			<view class="nav2" v-for="(item,index) in cartInfo" :key='index'>
 				<view class="nav2-1">
 					<image :src="item.productInfo.image" class="pic" mode="aspectFill"></image>
@@ -111,7 +111,9 @@
 	export default {
 		data() {
 			return {
+				combinationId: 0,
 				cartInfo:[],
+				isNew:"",
 				uni: '',
 				isAgain: 'no',
 				addNum: '',
@@ -125,11 +127,16 @@
 				mark: '',
 				orderKey: '',
 				zongPrice: '',
-				pay_postage: ''
+				pay_postage: '',
+				pinkId:0
 			}
 		},
 		onLoad(options) {
 			console.log(options)
+			if(options.new){
+				this.isNew = options.new
+			}
+			this.pinkId = options.pinkId ? parseInt(options.pinkId) : 0;
 			if (options.skuItem) {
 				this.skuItem = JSON.parse(options.skuItem);
 				this.isGWC = options.isGWC;
@@ -140,16 +147,19 @@
 				this.isGWC = options.isGWC;
 			}
 			if (options.isAgain) {
-				this.isAgain = options.isAgain
-				this.uni = options.uni
+				this.isAgain = options.isAgain;
+				this.uni = options.uni;
+			}
+			if(options.uni){
+				this.uni = options.uni;
 			}
 		},
 		onShow() {
-			this.getData()
+			this.getData();
 		},
 		computed:{
 			total(){
-				if(this.isGWC==="yes"){
+				if(this.isNew==="1"){
 					let sum = 0;
 					this.cartInfo.forEach((item)=>{
 						sum += item.cart_num;
@@ -165,7 +175,23 @@
 			}
 		},
 		methods: {
+			/*
+			 * 提取砍价和拼团id
+			 */
+			getBargainId() {
+				let cartINfo = this.cartInfo;
+				let BargainId = 0;
+				let combinationId = 0;
+				cartINfo.forEach(function(value, index, cartINfo) {
+					combinationId = cartINfo[index].combination_id
+				})
+				this.combinationId = parseInt(combinationId);
+			},
 			async getData() {
+				uni.showLoading({
+					title: '加载中',
+					mask: true
+				});
 				this.zongPrice2 = 0;
 				const res = await this.$api.addressList()
 				this.addressObj = res.data.filter(ele => {
@@ -194,17 +220,22 @@
 				}
 				const res2 = await this.$api.orderConfirm({
 					cartId: cartId,
-					new: this.isGWC == 'no' ? 1 : 0,
+					new: 1,
 				})
 				this.cartInfo = res2.data.cartInfo;
 				this.orderKey = res2.data.orderKey;
-				const res3 = await this.$api.orderComputed({
-					addressId: this.addressObj.id,
-					payType: 'weixin',
-					useIntegral: 0
-				}, this.orderKey)
-				this.zongPrice = res3.data.result.total_price;
-				this.pay_postage = res3.data.result.pay_postage;
+				this.getBargainId();
+				if(this.addressObj.id){
+					const res3 = await this.$api.orderComputed({
+						addressId: this.addressObj.id,
+						couponId:0,
+						payType: 'weixin',
+						useIntegral: 0
+					}, this.orderKey)
+					this.zongPrice = res3.data.result.total_price;
+					this.pay_postage = res3.data.result.pay_postage;
+				}
+				uni.hideLoading();
 			},
 			changInp(e) {
 				console.log(e.length)
@@ -213,11 +244,13 @@
 			async toQuerenzhifu() {
 				const res2 = await this.$api.orderCreate({
 					addressId: this.addressObj.id,
-					couponId: '',
-					payType: 'yue',
+					couponId: 0,
+					combinationId:this.combinationId,
+					payType: 'weixin',
 					useIntegral: 0,
 					mark: this.mark,
 					from: 'routine',
+					new:1
 				}, this.orderKey)
 				if (res2.status == 200) {
 					uni.redirectTo({

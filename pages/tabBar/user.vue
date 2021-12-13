@@ -34,7 +34,7 @@
 		
 		<view class="uc">
 			<view class="uc-item">
-				<view class="uc-item-title" @click="gotoOrder()">
+				<view class="uc-item-title" @click="gotoOrder('')">
 					<view class="uc-item-title-text">我的订单</view>
 					<image class="uc-item-title-icon" src="../../static/image/user/jiantou.png"></image>
 				</view>
@@ -226,7 +226,7 @@
 				})
 			},
 			gotoOrder(index){
-				this.jump("/pages/users/order/order?type="+index);
+				this.jump("/pages/users/order/list?type="+index);
 			},
 			goAddress(){
 				this.jump("/pages/users/address/index");
@@ -241,6 +241,7 @@
 				this.$api.getUserInfo().then(res => {
 					if(res.status==200){
 						this.userInfo = res.data;
+						this.$store.commit("UpdateUserinfo",res.data);
 						this.$store.commit('SetUid', res.data.uid);
 					}
 				});

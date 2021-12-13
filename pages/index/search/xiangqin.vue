@@ -110,11 +110,11 @@
 			<view class="txt2">尾款 ¥{{Number(obj.storeInfo.price) - Number(obj.storeInfo.finish_pay_price)}}面诊后支付</view>
 		</view>
 		<view class="footer2">
-			<view class="item">
+			<view class="item" @click="toHome">
 				<image src="/static/tabBar/sy-active.png" class="pic" mode=""></image>
 				<view class="txt">首页</view>
 			</view>
-			<view class="item item2">
+			<view class="item item2" @click="toCollect">
 				<image src="/static/image/lujin2228.png" class="pic2" mode=""></image>
 				<view class="txt">收藏</view>
 			</view>
@@ -270,6 +270,20 @@
 					this.height = res[0][this.swiperCurrentIndex].height;
 				})
 			},
+			toHome(){
+				uni.switchTab({
+					url:"/pages/tabBar/index"
+				})
+			},
+			toCollect(){
+				this.$api.collectAdd(this.id).then((res)=>{
+					if(res.status==200){
+						this.$u.toast(res.msg);
+					}
+				}).catch((err)=>{
+					this.$u.toast(err);
+				})
+			}
 		}
 	}
 </script>

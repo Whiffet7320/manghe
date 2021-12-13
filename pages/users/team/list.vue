@@ -2,7 +2,7 @@
 	<view class="u-relative">
 		<view class="bg"><image src="/static/image/user/bg.jpg" mode="aspectFill" class="img"></image></view>
 		<view class="total">
-			<text class="text">直推人数</text>
+			<text class="text">{{title}}人数</text>
 			<text class="number">{{total||0}}</text>
 		</view>
 		<view class="ulist">
@@ -21,19 +21,10 @@
 	export default{
 		data(){
 			return{
+				title:"直推",
 				type:"list",
-				list:[
-					{
-						avatar:"",
-						name:"建国",
-						time:"2021-07-06 10:55:30"
-					},
-					{
-						avatar:"",
-						name:"建军",
-						time:"2021-07-06 10:55:30"
-					}
-				]
+				total:0,
+				list:[]
 			}
 		},
 		methods:{
@@ -43,6 +34,7 @@
 						title:"我的直推"
 					})
 				}else if(type==="user"){
+					this.title = "合伙";
 					uni.setNavigationBarTitle({
 						title:"我的合伙人"
 					})
