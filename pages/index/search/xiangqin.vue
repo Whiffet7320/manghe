@@ -96,6 +96,7 @@
 									<u-loadmore :status="status" />
 								</view>
 							</template>
+						
 						</view>
 					</scroll-view>
 
@@ -210,7 +211,10 @@
 			async getPinglunData(type) {
 				this.status = 'loading';
 				setTimeout(async () => {
-					const res = await this.$api.replyList({}, this.id)
+					const res = await this.$api.replyList({
+						page:this.IndexshopPage,
+						limit:this.IndexshopPageSize
+					}, this.id)
 					console.log(res.data)
 					this.pingjiaObj = res.data.comment;
 					if (res.data.list.length == 0) {
