@@ -17,6 +17,7 @@
 				<view class="combtn default">再来一单</view>
 			</view>
 		</view>
+		<u-loadmore height="80rpx" font-size="20" :status="loadStatus" icon-type="flower" color="#707070" />
 		<view v-if="list.length==0">
 			<page-empty></page-empty>
 		</view>
@@ -31,7 +32,9 @@
 		},
 		data(){
 			return{
-				list:[]
+				list:[],
+				loadStatus: 'loadmore',
+				currentPage: 1
 			}
 		},
 		filters:{
@@ -44,11 +47,39 @@
 			}
 		},
 		methods:{
+			getlist(){
+				let list = [];
+				this.loadStatus = 'loading';
+				this.$api.myCommentList({page:this.currentPage,limit:10}).then((res)=>{
+					if(res.status==200){
+						if (res.data.length == 0) {
+							this.loadStatus = 'nomore';
+						} else {
+							if(this.currentPage==1 && res.data.length<=10){
+								this.loadStatus = 'nomore';
+							}else{
+								this.loadStatus = 'loadmore';
+							}
+							this.currentPage++;
+							this.list = this.list.concat(res.data);
+						}
+					}
+				})
+			},
 			goDetail(val){
 				uni.navigateTo({
 					url:"/pages/users/comment/detail?id="+val.id
 				})
 			}
+		},
+		onLoad(){
+			this.getlist();
+		},
+		onReachBottom() {
+			this.getlist();
+		},
+		onPullDownRefresh() {
+			uni.stopPullDownRefresh();
 		}
 	}
 </script>

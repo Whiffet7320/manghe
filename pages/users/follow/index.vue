@@ -32,8 +32,7 @@
 				list:[],
 				reload: true,
 				loadStatus: 'loadmore',
-				currentPage: 1,
-				lastPage: 1
+				currentPage: 1
 			}
 		},
 		methods:{

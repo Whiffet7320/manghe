@@ -783,6 +783,14 @@ export default {
 			}
 		})
 	},
+	myCommentList(obj) {
+		return myGet({
+			url: urls.myCommentList,
+			params: {
+				...obj
+			}
+		})
+	},
 	upload_pic(file, type) {
 		return new Promise(async (resolve, reject) => {
 			uni.uploadFile({
@@ -1004,6 +1012,48 @@ export default {
 	store_integralDetail(id) {
 		return myGet({
 			url: `${urls.store_integralDetail}/${id}`,
+		})
+	},
+	spread_info() {
+		return myGet({
+			url: `${urls.spread_info}`,
+		})
+	},
+	store_integralOrderConfirm(obj) {
+		return myPost({
+			url: `${urls.store_integralOrderConfirm}`,
+			data:{
+				...obj
+			}
+		})
+	},
+	store_integralOrderCreate(obj) {
+		return myPost({
+			url: `${urls.store_integralOrderCreate}`,
+			data:{
+				...obj
+			}
+		})
+	},
+	store_integralOrderList(obj) {
+		return myGet({
+			url: `${urls.store_integralOrderList}`,
+			params:{
+				...obj
+			}
+		})
+	},
+	store_integralOrderTake(obj) {
+		return myPost({
+			url: `${urls.store_integralOrderTake}`,
+			data:{
+				...obj
+			}
+		})
+	},
+	store_integralOrderCount_num() {
+		return myGet({
+			url: `${urls.store_integralOrderCount_num}`,
 		})
 	},
 }

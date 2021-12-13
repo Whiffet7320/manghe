@@ -1,5 +1,6 @@
 <template>
 	<view class="index">
+		<u-toast ref="uToast" />
 		<u-navbar back-icon-size='30' title-size='24' :title="navTitle"></u-navbar>
 		<view class="nav1">
 			<u-swiper height='602' :list="bannerList"></u-swiper>
@@ -37,13 +38,13 @@
 							<!-- 产品介绍 -->
 							<template v-if="swiperCurrent == 0">
 								<view class="i1">
-
+									<u-parse :html="obj.storeInfo.description"></u-parse>
 								</view>
 							</template>
 							<!-- 医生描述 -->
 							<template v-if="swiperCurrent == 1">
-								<view class="i2">
-
+								<view class="i2" style="width: 100%;">
+									<image :src="obj.doctor_info.doctor_big_img" mode="widthFix" style="width: 100%;"></image>
 								</view>
 							</template>
 							<!-- 产品评价 -->
@@ -53,30 +54,28 @@
 										<view class="tit1">
 											<view class="tit1-1">
 												<view class="txt1">产品评价</view>
-												<view class="txt2">（好评度93%）</view>
+												<view class="txt2">（好评度{{pingjiaObj.reply_chance}}%）</view>
 											</view>
-											<view class="tit1-2">共62条评论</view>
+											<view class="tit1-2">共{{pingjiaObj.sum_count}}条评论</view>
 										</view>
 										<view class="tit2">
 											<view class="item">
 												<view class="txt1">有图</view>
-												<view class="txt2">43</view>
+												<view class="txt2">{{pingjiaObj.pics_count}}</view>
 											</view>
 											<view class="item" @click="getPinglunData">
 												<u-icon name="thumb-up-fill" color="#BD9E81" size="22"></u-icon>
-												<view class="txt2">43</view>
+												<view class="txt2">{{pingjiaObj.good_count}}</view>
 											</view>
 											<view class="item bed">
 												<u-icon name="thumb-down-fill" color="#D9D9D9" size="22"></u-icon>
-												<view class="txt2">3</view>
+												<view class="txt2">{{pingjiaObj.poor_count}}</view>
 											</view>
 										</view>
 									</view>
 									<view class="i3-items">
 										<view class="i3-item" v-for="item in pinglunList">
-											<image class="ava"
-												:src="item.avatar"
-												mode=""></image>
+											<image class="ava" :src="item.avatar" mode=""></image>
 											<view class="right">
 												<view class="tit1">
 													<view class="txt1">{{item.nickname}}</view>
@@ -94,7 +93,7 @@
 											</view>
 										</view>
 									</view>
-
+									<u-loadmore :status="status" />
 								</view>
 							</template>
 						</view>
@@ -106,8 +105,8 @@
 
 		<view class="footer1">
 			<image src="/static/image/zu1840.png" class="kefu" mode=""></image>
-			<view class="txt1">预付款 ¥{{obj.storeInfo.finish_pay_price}}</view>
-			<view class="txt2">尾款 ¥{{Number(obj.storeInfo.price) - Number(obj.storeInfo.finish_pay_price)}}面诊后支付</view>
+			<view class="txt1">预付款 ¥{{obj.storeInfo.price}}</view>
+			<view class="txt2">尾款 ¥{{obj.storeInfo.finish_pay_price}}面诊后支付</view>
 		</view>
 		<view class="footer2">
 			<view class="item" @click="toHome">
@@ -136,13 +135,13 @@
 				console.log('ddpage')
 				this.$store.commit("IndexshopPage", page);
 				if (this.IndexshopPage != 1) {
-					this.getShopData();
+					this.getPinglunData();
 				}
 			},
-			current:function(){
+			current: function() {
 				this.pinglunList = [];
 				this.$store.commit("IndexshopPage", 1);
-				this.getShopData()
+				this.getPinglunData()
 				setTimeout(() => {
 					this.getCurrentSwiperHeight('.nav5Items')
 				}, 800)
@@ -150,7 +149,8 @@
 		},
 		data() {
 			return {
-				pinglunList:[],
+				pingjiaObj:{},
+				pinglunList: [],
 				id: '',
 				obj: {},
 				isOnShow: true,
@@ -207,16 +207,17 @@
 			this.$store.commit("IndexshopPage", this.IndexshopPage + 1);
 		},
 		methods: {
-			async getPinglunData(type){
+			async getPinglunData(type) {
 				this.status = 'loading';
 				setTimeout(async () => {
-					const res = await this.$api.replyList({},this.id)
+					const res = await this.$api.replyList({}, this.id)
 					console.log(res.data)
-					if (res.data.length == 0) {
+					this.pingjiaObj = res.data.comment;
+					if (res.data.list.length == 0) {
 						this.status = 'nomore'
 					} else {
 						this.status = 'loadmore';
-						this.pinglunList = this.pinglunList.concat(res.data)
+						this.pinglunList = this.pinglunList.concat(res.data.list)
 					}
 				}, 200)
 				console.log(this.pinglunList)
@@ -248,13 +249,41 @@
 					}
 				});
 			},
-			toQuerendingdan() {
-				uni.navigateTo({
-					url: `/pages/index/search/querendingdan?obj=${encodeURIComponent(JSON.stringify(this.obj))}`
+			async toQuerendingdan() {
+				const res = await this.$api.cartAdd({
+					productId: this.id,
+					cartNum: 1,
+					new: 1
 				})
-				// uni.navigateTo({
-				// 	url:'/pages/index/search/shouyintai'
-				// })
+				console.log(res)
+				if (res.status == 200) {
+					const res2 = await this.$api.orderConfirm({
+						cartId: res.data.cartId,
+						new: 1,
+					})
+					if (res2.status == 200) {
+						var obj = {
+							...this.obj.doctor_info,
+							yuprice:res2.data.cartInfo[0].sum_price,
+							weiPrice:this.obj.storeInfo.finish_pay_price,
+							store_name:res2.data.cartInfo[0].productInfo.store_name,
+							orderKey:res2.data.orderKey,
+						}
+						uni.navigateTo({
+							url: `/pages/index/search/querendingdan?obj=${encodeURIComponent(JSON.stringify(obj))}&cartId=${res.data.cartId}`
+						})
+					} else {
+						this.$refs.uToast.show({
+							title: res2.msg,
+							type: 'warning',
+						})
+					}
+				} else {
+					this.$refs.uToast.show({
+						title: res.msg,
+						type: 'warning',
+					})
+				}
 			},
 			// tabs通知swiper切换
 			tabsChange(index) {
@@ -294,6 +323,9 @@
 	}
 </style>
 <style lang="scss" scoped>
+	/deep/ .u-load-more-wrap {
+		height: 100rpx !important;
+	}
 	.index {
 		position: relative;
 	}
@@ -435,7 +467,7 @@
 
 			.i3 {
 				width: 100%;
-
+				background: #FFFFFF;
 				.i3-nav1 {
 					background: #FFFFFF;
 					padding: 24rpx;

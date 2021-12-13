@@ -11,23 +11,23 @@
 			</view>
 			<view class="item">
 				<view class="txt1">订单编号</view>
-				<view class="txt1">29047824561823552</view>
+				<view class="txt1">{{obj.orderId}}</view>
 			</view>
 			<view class="item">
 				<view class="txt1">手术医生</view>
-				<view class="txt1">李竞</view>
+				<view class="txt1">{{obj.doctor_name}}</view>
 			</view>
 			<view class="item">
 				<view class="txt1">预约时间</view>
-				<view class="txt1">2021-11-06 下午</view>
+				<view class="txt1">{{obj.time}}</view>
 			</view>
 		</view>
 		<view class="nav3">
-			<view class="txt1">预付金<text class="n4-txt">¥2000.00</text></view>
+			<view class="txt1">预付金<text class="n4-txt">¥{{obj.yuPrice}}</text></view>
 			<u-icon name="checkmark-circle-fill" color="#BD9E81" size="40"></u-icon>
 		</view>
 		<view class="footer">
-			<view class="btn">专家会诊团预约</view>
+			<view @click="toPay" class="btn">支付¥{{obj.yuPrice}}</view>
 		</view>
 	</view>
 </template>
@@ -35,8 +35,38 @@
 <script>
 	export default {
 		data() {
-			return {}
+			return {
+				obj:{},
+			}
 		},
+		onLoad(options) {
+			if(options.obj){
+				this.obj = JSON.parse(decodeURIComponent(options.obj))
+				console.log(this.obj)
+			}
+		},
+		methods:{
+			toPay(){
+				uni.requestPayment({
+					provider: 'wxpay',
+					timeStamp: this.obj.jsConfig.timestamp,
+					nonceStr: this.obj.jsConfig.nonceStr,
+					package: this.obj.jsConfig.package,
+					signType: this.obj.jsConfig.signType,
+					paySign: this.obj.jsConfig.paySign,
+					success: function(res) {
+						this.$refs.uToast.show({
+							title: '支付成功',
+							type: 'success',
+							url: '/pages/users/order/order',
+						})
+					},
+					fail: function(err) {
+						console.log('fail:' + JSON.stringify(err));
+					}
+				});
+			},
+		}
 	}
 </script>
 

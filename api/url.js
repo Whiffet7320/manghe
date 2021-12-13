@@ -22,6 +22,7 @@ export default {
 	collectAdd:"/api/collect/add",//商品收藏
 	collectDel:"/api/collect/del",//商品取消收藏
 	userCollect:"/api/collect/user",//商品收藏列表
+	myCommentList:"/api/comment/my_comment_list",//我的评论
 	// 
 	loginWechat: '/api/login/wechat',
 	category: '/api/category', //商品分类
@@ -47,8 +48,13 @@ export default {
 	replyList:'/api/reply/list',//获取商品评论
 	orderAgain:'/api/order/again',//再次购买
 	orderTake:'/api/order/take',//订单收货
-	spreadBanner:'/api/spread/banner',//推广分销二维码海报生成
+	spread_info:'/api/user/spread_info',//推广分销二维码海报生成
 	combinationPink:'/api/combination/pink',//拼团 开团
 	combinationRemove:"/api/combination/remove",//拼团取消
 	store_integralDetail:'/api/store_integral/detail',//积分商品详情
+	store_integralOrderConfirm:'/api/store_integral/order/confirm',//积分兑换确认页
+	store_integralOrderCreate:'/api/store_integral/order/create',//积分兑换订单创建
+	store_integralOrderList:'/api/store_integral/order/list',//积分订单
+	store_integralOrderTake:'/api/store_integral/order/take',//积分商品订单收货
+	store_integralOrderCount_num:'/api/store_integral/order/count_num',//
 }

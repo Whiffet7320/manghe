@@ -4,6 +4,7 @@ import Vuex from "vuex";
 Vue.use(Vuex);
 export default new Vuex.Store({
 	state: {
+		searchList: [],
 		shopPage:1,
 		shopPageSize: 15,//商品列表
 		IndexshopPage:1,
@@ -23,6 +24,14 @@ export default new Vuex.Store({
 		onResh:false
 	},
 	mutations: {
+		searchList(state, str) {
+			if (str != '') {
+				state.searchList.push(str);
+			}
+			if (state.searchList.length > 10) {
+				state.searchList.pop()
+			}
+		},
 		from(state, str) {
 			state.from = str;
 		},

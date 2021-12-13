@@ -3,7 +3,7 @@
 		<image src="/static/image/user/shabg.jpg" class="bg"></image>
 		<u-gap height="718"></u-gap>
 		<view class="ewm">
-			<image v-if="info" :src="info.poster" mode="aspectFit"></image>
+			<image v-if="obj" :src="obj.spread[0].pic" mode="aspectFit"></image>
 		</view>
 		<view class="sharecon">
 			<image src="/static/image/user/shabg2.png" class="sbg"></image>
@@ -21,17 +21,19 @@
 	export default{
 		data(){
 			return{
-				code:"0020",
-				info:{}
+				code:"",
+				obj:{},
 			}
 		},
 		methods:{
 			async getBanner(){
-				const res = await this.$api.spreadBanner(1)
+				const res = await this.$api.spread_info(1)
 				console.log(res)
+				this.obj = res.data;
 			}
 		},
-		onLoad(){
+		onLoad(option){
+			this.code = option.code;
 			this.getBanner();
 		}
 	}

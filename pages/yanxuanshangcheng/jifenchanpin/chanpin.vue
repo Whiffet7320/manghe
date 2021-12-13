@@ -18,7 +18,7 @@
 			<u-parse :html="obj.storeInfo.description"></u-parse>
 		</view>
 		<view class="footer">
-			<view class="btn">立即兑换</view>
+			<view @click="toTijiaodingdan" class="btn">立即兑换</view>
 		</view>
 	</view>
 </template>
@@ -75,6 +75,11 @@
 						}
 					}
 				});
+			},
+			toTijiaodingdan(){
+				uni.navigateTo({
+					url:`/pages/users/order/tijiaodingdan?skuItem=${JSON.stringify([this.obj])}&isJifenShop=yes`
+				})
 			},
 			toShouyintai() {
 				uni.navigateTo({
