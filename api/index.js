@@ -958,4 +958,25 @@ export default {
 			}
 		})
 	},
+	store_integralOrderList(obj) {
+		return myGet({
+			url: `${urls.store_integralOrderList}`,
+			params:{
+				...obj
+			}
+		})
+	},
+	store_integralOrderTake(obj) {
+		return myPost({
+			url: `${urls.store_integralOrderTake}`,
+			data:{
+				...obj
+			}
+		})
+	},
+	store_integralOrderCount_num() {
+		return myGet({
+			url: `${urls.store_integralOrderCount_num}`,
+		})
+	},
 }

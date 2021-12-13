@@ -18,26 +18,30 @@
 		</view>
 		<view class="flex">
 			<view class="tit1">历史搜索</view>
-			<image src="/static/image/zu1527.png" class="f-pic" mode=""></image>
+			<image src="/static/image/zu1527.png" @click="onDel" class="f-pic" mode=""></image>
 		</view>
 		<view class="items1">
-			<view class="item">小眼综合</view>
-			<view class="item">私密</view>
-			<view class="item">肋骨鼻综合</view>
+			<view class="item" v-for="(item,index) in searchList" :key="index" @click="ontag(item)">{{item}}</view>
 		</view>
 	</view>
 </template>
 
 <script>
+	import {mapState} from 'vuex';
 	export default {
+		computed: {
+			...mapState(['searchList'])
+		},
 		data() {
 			return {
+				hislist:[],
 				type:'',
 				searchVal: '',
 			}
 		},
 		onLoad(option) {
 			this.type = option.type;
+			this.searchVal = option.keyword;
 		},
 		methods:{
 			toBack(){
@@ -46,10 +50,20 @@
 				})
 			},
 			toSearchResult(){
+				this.$store.commit("searchList",this.searchVal);
 				uni.navigateTo({
 					url:`/pages/search/searchResult?keyword=${this.searchVal}&type=${this.type}`
 				})
 			},
+			onDel(){
+				this.hislist = [];
+				this.$store.commit("clearSearchList",'clear');
+			},
+			ontag(item){
+				uni.navigateTo({
+					url:`/pages/search/searchResult?keyword=${item}&type=${this.type}`
+				})
+			}
 		}
 	}
 </script>

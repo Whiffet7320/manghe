@@ -102,14 +102,14 @@
 						</view>
 						<view class="down">
 							<view class="tit2">{{item?item.storeInfo.unit_name:''}}</view>
-							<view class="tit3">¥ {{item.storeInfo.price}}</view>
+							<view class="tit3">¥ {{item.storeInfo.price}}{{isJifenShop=='yes'?'积分':''}}</view>
 						</view>
 					</view>
 				</view>
 				<view class="nav2-2">
 					<view class="tit1">
 						<view class="txt1">商品金额</view>
-						<view class="txt2">¥ {{item.storeInfo.price}}</view>
+						<view class="txt2">¥ {{item.storeInfo.price}}{{isJifenShop=='yes'?'积分':''}}</view>
 					</view>
 					<view class="tit1">
 						<view class="txt1">运费</view>
@@ -121,7 +121,7 @@
 					</view>
 					<view class="tit1">
 						<view class="txt1">合计</view>
-						<view class="txt2">¥ {{item.storeInfo.price}}</view>
+						<view class="txt2">¥ {{item.storeInfo.price}}{{isJifenShop=='yes'?'积分':''}}</view>
 					</view>
 				</view>
 			</view>
@@ -137,7 +137,7 @@
 		</view>
 		<view class="footer">
 			<view class="left">
-				<view class="txt1">合计¥{{zongPrice}}</view>
+				<view class="txt1">合计¥{{zongPrice}}{{isJifenShop=='yes'?'积分':''}}</view>
 				<view class="txt2">(共{{isJifenShop == 'yes'? 1 : total}}件)</view>
 			</view>
 			<view @click="toQuerenzhifu" class="btn">立即支付</view>

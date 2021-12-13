@@ -38,13 +38,13 @@
 							<!-- 产品介绍 -->
 							<template v-if="swiperCurrent == 0">
 								<view class="i1">
-
+									<u-parse :html="obj.storeInfo.description"></u-parse>
 								</view>
 							</template>
 							<!-- 医生描述 -->
 							<template v-if="swiperCurrent == 1">
-								<view class="i2">
-
+								<view class="i2" style="width: 100%;">
+									<image :src="obj.doctor_info.doctor_big_img" mode="widthFix" style="width: 100%;"></image>
 								</view>
 							</template>
 							<!-- 产品评价 -->
@@ -54,22 +54,22 @@
 										<view class="tit1">
 											<view class="tit1-1">
 												<view class="txt1">产品评价</view>
-												<view class="txt2">（好评度93%）</view>
+												<view class="txt2">（好评度{{pingjiaObj.reply_chance}}%）</view>
 											</view>
-											<view class="tit1-2">共62条评论</view>
+											<view class="tit1-2">共{{pingjiaObj.sum_count}}条评论</view>
 										</view>
 										<view class="tit2">
 											<view class="item">
 												<view class="txt1">有图</view>
-												<view class="txt2">43</view>
+												<view class="txt2">{{pingjiaObj.pics_count}}</view>
 											</view>
 											<view class="item" @click="getPinglunData">
 												<u-icon name="thumb-up-fill" color="#BD9E81" size="22"></u-icon>
-												<view class="txt2">43</view>
+												<view class="txt2">{{pingjiaObj.good_count}}</view>
 											</view>
 											<view class="item bed">
 												<u-icon name="thumb-down-fill" color="#D9D9D9" size="22"></u-icon>
-												<view class="txt2">3</view>
+												<view class="txt2">{{pingjiaObj.poor_count}}</view>
 											</view>
 										</view>
 									</view>
@@ -93,7 +93,7 @@
 											</view>
 										</view>
 									</view>
-
+									<u-loadmore :status="status" />
 								</view>
 							</template>
 						</view>
@@ -149,6 +149,7 @@
 		},
 		data() {
 			return {
+				pingjiaObj:{},
 				pinglunList: [],
 				id: '',
 				obj: {},
@@ -211,11 +212,12 @@
 				setTimeout(async () => {
 					const res = await this.$api.replyList({}, this.id)
 					console.log(res.data)
-					if (res.data.length == 0) {
+					this.pingjiaObj = res.data.comment;
+					if (res.data.list.length == 0) {
 						this.status = 'nomore'
 					} else {
 						this.status = 'loadmore';
-						this.pinglunList = this.pinglunList.concat(res.data)
+						this.pinglunList = this.pinglunList.concat(res.data.list)
 					}
 				}, 200)
 				console.log(this.pinglunList)
@@ -307,6 +309,9 @@
 	}
 </style>
 <style lang="scss" scoped>
+	/deep/ .u-load-more-wrap {
+		height: 100rpx !important;
+	}
 	.index {
 		position: relative;
 	}
@@ -448,7 +453,7 @@
 
 			.i3 {
 				width: 100%;
-
+				background: #FFFFFF;
 				.i3-nav1 {
 					background: #FFFFFF;
 					padding: 24rpx;

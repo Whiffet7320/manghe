@@ -54,7 +54,7 @@
 								<view class="tit3">
 									<view class="box1">
 										<view class="txt1">订单编号:{{item.order_id}}</view>
-										<view class="txt2">复制</view>
+										<view class="txt2" @click='fuzhi(item.order_id)'>复制</view>
 									</view>
 									<view class="btns">
 										<view class="btn2" @click="tozhifu(item)">去支付</view>
@@ -88,7 +88,7 @@
 								<view class="tit3">
 									<view class="box1">
 										<view class="txt1">订单编号:{{item.order_id}}</view>
-										<view class="txt2">复制</view>
+										<view class="txt2" @click='fuzhi(item.order_id)'>复制</view>
 									</view>
 									<view class="btns">
 										<view class="btn2">已面诊</view>
@@ -136,7 +136,7 @@
 								<view class="tit3">
 									<view class="box1">
 										<view class="txt1">订单编号:{{item.order_id}}</view>
-										<view class="txt2">复制</view>
+										<view class="txt2" @click='fuzhi(item.order_id)'>复制</view>
 									</view>
 									<view class="btns">
 										<view @click="toBuyagain(item)" class="btn2">再次购买</view>
@@ -184,7 +184,7 @@
 								<view class="tit3">
 									<view class="box1">
 										<view class="txt1">订单编号:{{item.order_id}}</view>
-										<view class="txt2">复制</view>
+										<view class="txt2" @click='fuzhi(item.order_id)'>复制</view>
 									</view>
 									<view class="btns">
 										<view @click="querenshouhuo(item.order_id)" class="btn2">确认收货</view>
@@ -232,7 +232,7 @@
 								<view class="tit3">
 									<view class="box1">
 										<view class="txt1">订单编号:{{item.order_id}}</view>
-										<view class="txt2">复制</view>
+										<view class="txt2" @click='fuzhi(item.order_id)'>复制</view>
 									</view>
 									<view class="btns">
 										<view @click="qupingjia(item.order_id)" class="btn2">去评价</view>
@@ -279,7 +279,7 @@
 								<view class="tit3">
 									<view class="box1">
 										<view class="txt1">订单编号:{{item.order_id}}</view>
-										<view class="txt2">复制</view>
+										<view class="txt2" @click='fuzhi(item.order_id)'>复制</view>
 									</view>
 									<view class="btns">
 										<view class="btn2">再次购买</view>
@@ -321,7 +321,7 @@
 								<view class="tit3">
 									<view class="box1">
 										<view class="txt1">订单编号:{{item.order_id}}</view>
-										<view class="txt2">复制</view>
+										<view class="txt2" @click='fuzhi(item.order_id)'>复制</view>
 									</view>
 									<view class="btns">
 										<view class="btn2">再次购买</view>
@@ -360,7 +360,7 @@
 								<view class="tit3">
 									<view class="box1">
 										<view class="txt1">订单编号:{{item.order_id}}</view>
-										<view class="txt2">复制</view>
+										<view class="txt2" @click='fuzhi(item.order_id)'>复制</view>
 									</view>
 									<view class="btns">
 										<view class="b-left">
@@ -408,7 +408,7 @@
 								<view class="tit3">
 									<view class="box1">
 										<view class="txt1">订单编号:{{item.order_id}}</view>
-										<view class="txt2">复制</view>
+										<view class="txt2" @click='fuzhi(item.order_id)'>复制</view>
 									</view>
 								</view>
 							</view>
@@ -447,7 +447,7 @@
 								<view class="tit3">
 									<view class="box1">
 										<view class="txt1">订单编号:{{item.order_id}}</view>
-										<view class="txt2">复制</view>
+										<view class="txt2" @click='fuzhi(item.order_id)'>复制</view>
 									</view>
 									<view class="btns">
 										<view class="btn2">去支付</view>
@@ -490,7 +490,7 @@
 								<view class="tit3">
 									<view class="box1">
 										<view class="txt1">订单编号:{{item.order_id}}</view>
-										<view class="txt2">复制</view>
+										<view class="txt2" @click='fuzhi(item.order_id)'>复制</view>
 									</view>
 									<view class="btns">
 										<view class="btn2">去支付</view>
@@ -626,6 +626,11 @@
 					})
 				}, 200)
 				console.log(this.orderList)
+			},
+			fuzhi(e) {
+				uni.setClipboardData({
+					data: e,
+				});
 			},
 			async qupingjia(orderId){
 				console.log(orderId)
@@ -764,6 +769,9 @@
 	}
 </style>
 <style lang="scss" scoped>
+	// /deep/ .u-load-more-wrap {
+	// 	height: 100rpx !important;
+	// }
 	.index {}
 
 	.swiper-item {

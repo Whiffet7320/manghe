@@ -16,7 +16,10 @@
 					<view class="txt1-1">热搜榜</view>
 					<image src="/static/image/lujin1732.png" class="pic" mode=""></image>
 				</view>
-				<view v-for="item in searchList" :key='item.id' class="txt2">{{item.keyword}}</view>
+				<view class="right">
+					<view @click="toSearchResult(item.keyword)" v-for="item in searchList" :key='item.id' class="txt2">{{item.keyword}}</view>
+				</view>
+
 			</view>
 			<view class="tit3">
 				<u-swiper height='320' :list="bannerList"></u-swiper>
@@ -78,7 +81,8 @@
 				<view class="t-txt">修复专区</view>
 			</view>
 			<view class="items">
-				<view class="item" v-for="item in xfzqList" :key='item.id' @click="toXiufu(item.xiufu_name,item.xiufu_big_img)">
+				<view class="item" v-for="item in xfzqList" :key='item.id'
+					@click="toXiufu(item.xiufu_name,item.xiufu_big_img)">
 					<image :src="item.xiufu_img" class="pic" mode=""></image>
 					<view class="txt">{{item.xiufu_name}}</view>
 				</view>
@@ -121,12 +125,12 @@
 							<!-- {{item.name}} -->
 							<!-- 热销 -->
 							<!-- <template v-if="swiperCurrent == 0"> -->
-								<view class="item" @click="toXianqgin(item)" v-for="item in shopList" :key='item.product_id'>
-									<image :src="item.image"
-										class="pic" mode=""></image>
-									<view class="txt">{{item.store_name}}</view>
-								</view>
-								<u-loadmore v-if='swiperCurrent == index' :status="status" />
+							<view class="item" @click="toXianqgin(item)" v-for="item in shopList"
+								:key='item.product_id'>
+								<image :src="item.image" class="pic" mode=""></image>
+								<view class="txt">{{item.store_name}}</view>
+							</view>
+							<u-loadmore v-if='swiperCurrent == index' :status="status" />
 							<!-- </template> -->
 							<!-- 推荐 -->
 							<!-- <template v-if="swiperCurrent == 1">
@@ -165,7 +169,7 @@
 					this.getShopData();
 				}
 			},
-			current:function(){
+			current: function() {
 				this.shopList = [];
 				this.$store.commit("IndexshopPage", 1);
 				this.getShopData()
@@ -176,20 +180,21 @@
 		},
 		data() {
 			return {
-				shopList:[],
-				city:'',
-				searchList:[],
-				cityShow:false,
-				cityList:[{
+				shopList: [],
+				city: '',
+				searchList: [],
+				cityShow: false,
+				cityList: [{
 						value: '1',
 						label: '江'
 					},
 					{
 						value: '2',
 						label: '湖'
-					}],
-				zjtdList:[],
-				xfzqList:[],
+					}
+				],
+				zjtdList: [],
+				xfzqList: [],
 				searchVal: '',
 				bannerList: [{
 						image: 'https://cdn.uviewui.com/uview/swiper/1.jpg',
@@ -238,25 +243,25 @@
 			this.tabsChange(this.current);
 		},
 		mounted() {
-			setTimeout(()=>{
+			setTimeout(() => {
 				this.getCurrentSwiperHeight('.nav5Items')
-			},900)
+			}, 900)
 		},
 		onReachBottom() {
 			this.$store.commit("IndexshopPage", this.IndexshopPage + 1);
 		},
 		methods: {
-			async getBanner(){
+			async getBanner() {
 				const res = await this.$api.banner({
-					position:1
+					position: 1
 				})
 				console.log(res)
 				this.bannerList = res.data;
-				this.bannerList.forEach(ele=>{
+				this.bannerList.forEach(ele => {
 					ele.image = ele.image_url;
 				})
 			},
-			async getData(){
+			async getData() {
 				const res = await this.$api.zhuanjia()
 				this.zjtdList = res.data;
 				const res2 = await this.$api.xiufu()
@@ -268,21 +273,21 @@
 				const res5 = await this.$api.position()
 				this.cityList = res5.data;
 				this.cityList = JSON.stringify(this.cityList)
-				this.cityList = this.cityList.replace(/city_name/g,'label')
-				this.cityList = this.cityList.replace(/id/g,'value')
+				this.cityList = this.cityList.replace(/city_name/g, 'label')
+				this.cityList = this.cityList.replace(/id/g, 'value')
 				this.cityList = JSON.parse(this.cityList)
 				this.city = this.cityList[0];
 			},
-			async getShopData(){
+			async getShopData() {
 				this.status = 'loading';
 				setTimeout(async () => {
 					const res = await this.$api.productHot({
 						page: this.IndexshopPage,
 						limit: this.IndexshopPageSize,
-						product_from:1,
-						is_best:this.current == 3 ? 1 : '',
-						is_good:this.current == 1 ? 1 : '',
-						is_comment:this.current == 2 ? 1 : '',
+						product_from: 1,
+						is_best: this.current == 3 ? 1 : '',
+						is_good: this.current == 1 ? 1 : '',
+						is_comment: this.current == 2 ? 1 : '',
 					})
 					console.log(res.data)
 					if (res.data.length == 0) {
@@ -294,19 +299,19 @@
 				}, 200)
 				console.log(this.shopList)
 			},
-			changeCity(e){
+			changeCity(e) {
 				console.log(e)
 				this.city = e[0];
 			},
 			toYimeixiangmu(val) {
-				this.$store.commit('from',val)
+				this.$store.commit('from', val)
 				uni.switchTab({
 					url: `/pages/tabBar/yimeixiangmu`
 				})
 			},
-			toSearchResult() {
+			toSearchResult(val='') {
 				uni.navigateTo({
-					url: '/pages/search/searchResult'
+					url: `/pages/search/searchResult?keyword=${val}&type=1`
 				})
 			},
 			toXianqgin(item) {
@@ -319,14 +324,14 @@
 					url: `/pages/index/zhuanjiatuandui/zhuanjiatuandui?obj=${encodeURIComponent(JSON.stringify(item))}`
 				})
 			},
-			toXiufu(val,img) {
+			toXiufu(val, img) {
 				uni.navigateTo({
 					url: `/pages/index/xiufu/xiufu?index=${val}&bigImg=${img}`
 				})
 			},
 			toSearch() {
 				uni.navigateTo({
-					url: '/pages/search/search?type=1'
+					url: `/pages/search/search?type=1`
 				})
 			},
 			// tabs通知swiper切换
@@ -353,16 +358,18 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
 	page {
 		background: #F7F8FA;
 	}
+	
 </style>
 <style lang="scss" scoped>
 	/deep/ .u-load-more-wrap {
 		width: 686rpx;
 		height: 100rpx !important;
 	}
+
 	.index {}
 
 	.nav1 {
@@ -418,6 +425,7 @@
 				display: flex;
 				align-items: center;
 				margin-right: 36rpx;
+
 				.txt1-1 {
 					font-size: 24rpx;
 					font-weight: bold;
@@ -431,14 +439,24 @@
 					height: 22rpx;
 				}
 			}
-
-			.txt2 {
-				font-size: 24rpx;
-				font-weight: 400;
-				line-height: 34rpx;
-				color: #122106;
-				margin-left: 20rpx;
+			
+			.right {
+				// display: flex;
+				align-items: center;
+				width: 522rpx;
+				overflow:hidden; 
+				text-overflow:ellipsis;
+				display:-webkit-box; 
+				.txt2 {
+					font-size: 24rpx;
+					font-weight: 400;
+					line-height: 34rpx;
+					color: #122106;
+					margin-left: 20rpx;
+				}
 			}
+
+
 		}
 
 		.tit3 {
@@ -449,7 +467,7 @@
 
 	.nav2 {
 		background: #FFFFFF;
-		padding: 232rpx 38rpx 0 38rpx;
+		padding: 266rpx 38rpx 0 38rpx;
 
 		.items {
 			display: flex;
@@ -693,11 +711,11 @@
 					font-size: 28rpx;
 					font-weight: 500;
 					color: #BD9E81;
-					display:-webkit-box; //将对象作为弹性伸缩盒子模型显示。
-					-webkit-box-orient:vertical; //从上到下垂直排列子元素（设置伸缩盒子的子元素排列方式）
-					-webkit-line-clamp:2; 
-					overflow:hidden; 
-					text-overflow:ellipsis;
+					display: -webkit-box; //将对象作为弹性伸缩盒子模型显示。
+					-webkit-box-orient: vertical; //从上到下垂直排列子元素（设置伸缩盒子的子元素排列方式）
+					-webkit-line-clamp: 2;
+					overflow: hidden;
+					text-overflow: ellipsis;
 				}
 			}
 		}

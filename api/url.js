@@ -44,4 +44,7 @@ export default {
 	store_integralDetail:'/api/store_integral/detail',//积分商品详情
 	store_integralOrderConfirm:'/api/store_integral/order/confirm',//积分兑换确认页
 	store_integralOrderCreate:'/api/store_integral/order/create',//积分兑换订单创建
+	store_integralOrderList:'/api/store_integral/order/list',//积分订单
+	store_integralOrderTake:'/api/store_integral/order/take',//积分商品订单收货
+	store_integralOrderCount_num:'/api/store_integral/order/count_num',//
 }
