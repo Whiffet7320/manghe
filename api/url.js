@@ -60,4 +60,6 @@ export default {
 	store_integralOrderList:'/api/store_integral/order/list',//积分订单
 	store_integralOrderTake:'/api/store_integral/order/take',//积分商品订单收货
 	store_integralOrderCount_num:'/api/store_integral/order/count_num',//
+	spreadBanner:'/api/spread/banner',//
+	userRoutine_code:'/api/user/routine_code',//我的推广小程序码
 }

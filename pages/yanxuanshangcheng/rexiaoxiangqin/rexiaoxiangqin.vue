@@ -38,7 +38,7 @@
 			<u-parse :html="obj.storeInfo.description"></u-parse>
 		</view>
 		<view class="footer">
-			<view class="left">
+			<view class="left" @click="toShouye">
 				<image src="/static/tabBar/sy-active.png" class="pic" mode=""></image>
 				<view class="txt">首页</view>
 			</view>
@@ -137,6 +137,11 @@
 				}
 				this.obj.productAttr.forEach((ele,i)=>{
 					this.changSku(ele.attr_value[0], i, 0)
+				})
+			},
+			toShouye(){
+				uni.switchTab({
+					url:'/pages/tabBar/index'
 				})
 			},
 			clickGwc() {

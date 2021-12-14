@@ -1080,4 +1080,9 @@ export default {
 			url: `${urls.store_integralOrderCount_num}`,
 		})
 	},
+	userRoutine_code() {
+		return myGet({
+			url: `${urls.userRoutine_code}`,
+		})
+	},
 }
