@@ -196,7 +196,6 @@
 			if (!this.isOnShow) {
 				return;
 			}
-			this.getData()
 			this.getPinglunData()
 			this.pinglunList = [];
 			this.$store.commit("IndexshopPage", 1);
