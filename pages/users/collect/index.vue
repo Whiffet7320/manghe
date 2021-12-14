@@ -133,6 +133,7 @@
 					padding:10rpx 0 8rpx 0;
 					font-size: 24rpx;
 					color: #707070;
+					height: 34rpx;
 				}
 				.ft{
 					display: flex;

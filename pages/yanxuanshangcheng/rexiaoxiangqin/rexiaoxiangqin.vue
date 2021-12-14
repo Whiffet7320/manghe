@@ -61,10 +61,10 @@
 						<view class="tit3">{{skuItem.suk}}</view>
 					</view>
 				</view>
-				<view class="p-nav2">规格</view>
+				<!-- <view class="p-nav2">规格</view> -->
 				<view class="p-nav3">
 					<view v-for="(item,i) in obj.productAttr" :key='item.id'>
-						<view class="p-tit">{{item.attr_name}}:</view>
+						<view class="p-tit">{{item.attr_name}}</view>
 						<view v-for="(item2,i2) in item.attr_value" :key='i2' @click="changSku(item2,i,i2)"
 							:class="{'p-item':true,'active':item2.check}">
 							{{item2.attr}}
@@ -124,6 +124,9 @@
 				this.imgArr = [];
 				const res = await this.$api.detail(this.id)
 				console.log(res)
+				uni.setNavigationBarTitle({
+					title:res.data.storeInfo.store_name.substring(0, 16)
+				})
 				this.obj = res.data;
 				this.obj.storeInfo.slider_image.forEach((ele, i) => {
 					this.$set(this.bannerList, i, {})
@@ -329,6 +332,7 @@
 					margin-right: 20rpx;
 					border-radius: 4rpx;
 					margin-bottom: 20rpx;
+					background-color: #eee;
 				}
 
 				.i-txt {

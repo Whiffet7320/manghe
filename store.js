@@ -22,6 +22,7 @@ export default new Vuex.Store({
 		doctorInfo:{},
 		comentInfo:[],
 		proComentInfo:[],
+		wkorder:{},
 		onResh:false
 	},
 	mutations: {
@@ -71,6 +72,9 @@ export default new Vuex.Store({
 		},
 		setproComent(state,data){
 			state.proComentInfo = data;
+		},
+		setwkorder(state,data){
+			state.wkorder = data;
 		},
 		setResh(state,data){
 			state.onResh = data;

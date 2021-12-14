@@ -113,7 +113,7 @@
 									<view class="right">
 										<view class="up">
 											<view class="txt1">{{item.store_name}}</view>
-											<view class="txt2">美容护肤｜水之谜积雪草舒缓面膜</view>
+											<view class="txt2"></view>
 										</view>
 										<view class="down">
 											<view class="d-t1">¥{{item.price}}</view>

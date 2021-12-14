@@ -49,8 +49,8 @@
 					</view>
 					<view class="tit1">
 						<view class="txt1">合计</view>
-						<view class="txt2">¥
-							{{parseFloat($tool.argMul(item.cart_num,item.productInfo.price)).toFixed(2)}}
+						<view class="txt2">
+							¥{{parseFloat($tool.argMul(item.cart_num,item.productInfo.price)).toFixed(2)}}
 						</view>
 					</view>
 				</view>
@@ -59,7 +59,7 @@
 		<template v-if="isGWC=='no'">
 			<view class="nav2" v-for="item in skuItem" :key='item.id'>
 				<view class="nav2-1">
-					<image :src="item.image" class="pic" mode=""></image>
+					<image :src="item.image" class="pic" mode="aspectFill"></image>
 					<view class="right">
 						<view class="tit1">
 							<view class="txt1">{{item.shopName}}</view>
@@ -94,7 +94,7 @@
 		<template v-if="isJifenShop=='yes'">
 			<view class="nav2" v-for="item in skuItem" :key='item.storeInfo.id'>
 				<view class="nav2-1">
-					<image :src="item.storeInfo.image" class="pic" mode=""></image>
+					<image :src="item.storeInfo.image" class="pic" mode="aspectFill"></image>
 					<view class="right">
 						<view class="tit1">
 							<view class="txt1">{{item.storeInfo.title}}</view>
@@ -191,7 +191,6 @@
 			}
 			if (options.isAgain) {
 				this.isAgain = options.isAgain;
-				this.uni = options.uni;
 			}
 			if(options.uni){
 				this.uni = options.uni;
@@ -256,7 +255,7 @@
 				if (this.isAgain == 'yes') {
 					// 再次购买
 					const res11 = await this.$api.orderAgain({
-						uni: this.uni
+						uni: this.uni||this.cartId
 					})
 					console.log(res11)
 					cartId = res11.data.cateId
@@ -323,8 +322,11 @@
 					}, this.orderKey)
 					if (res2.status == 200) {
 						uni.redirectTo({
-							url: `/pages/users/order/querendingdan?uni=${res2.data.result.orderId}&payObj=${encodeURIComponent(JSON.stringify(res2.data.result.jsConfig))}&price=${this.zongPrice}`
+							url: `/pages/users/order/querendingdan?id=${res2.data.result.orderId}&price=${this.zongPrice}`
 						})
+						// uni.redirectTo({
+						// 	url: `/pages/users/order/querendingdan?uni=${res2.data.result.orderId}&payObj=${encodeURIComponent(JSON.stringify(res2.data.result.jsConfig))}&price=${this.zongPrice}`
+						// })
 					}
 				}
 			},

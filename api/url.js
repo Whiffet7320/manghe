@@ -25,7 +25,7 @@ export default {
 	myCommentList:"/api/comment/my_comment_list",//我的评论
 	myCommentDel:"/api/comment/my_comment_del", //评论删除
 	myAppointmentlist:"/api/order/my_appointment_list", //我的预约
-	orderWaitpay:"/api/order/order_wait_pay",
+	orderWaitpay:"/api/order/order_wait_pay", //支付尾款
 	// 
 	loginWechat: '/api/login/wechat',
 	category: '/api/category', //商品分类

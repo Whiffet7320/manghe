@@ -6,8 +6,8 @@
 		<swiper :current="tabCurrentIndex" style="height: calc(100% - 80rpx)" duration="300" @change="changeTab">
 			<swiper-item class="swiper-item" v-for="(item, index) in navList" :key="index">
 				<scroll-view class="list_scroll" scroll-y @scrolltolower="loadData">
-					<view class="order_item" v-for="(order, okey) in orderList" :key="order.id" @click="goDetail(order.order_id)">
-						<view class="item" :class="[order._status._type == 6?'dfwk':'']">
+					<view class="order_item" v-for="(order, okey) in orderList" :key="order.id" @click="goDetail(order)">
+						<view class="item">
 							<view class="tit1">
 								<view class="left" v-if="order._status._type == 0&&order.stop_time">
 									<view class="txt1-1">剩余支付时间：</view>
@@ -23,37 +23,29 @@
 									<text class="time">下单时间：{{order._add_time}}</text>
 								</view>
 								<view class="right">
-									<text v-if="order._status._type == -1||order._status._type == -2">{{order._status._title}}</text>
+									<text v-if="order.finish_pay_status==1">已完成</text>
+									<text v-else>{{order._status._title}}</text>
+									<!-- <text v-if="order._status._type == -1||order._status._type == -2">{{order._status._title}}</text>
 									<text v-else-if="order._status._type == 0">待付款</text>
 									<text v-else-if="order.combination_id != 0 && order._status._type == 1">拼团中</text>
 									<text v-else-if="order._status._type == 6 && order.shipping_type == 0">待付尾款</text>
 									<text v-else-if="order._status._type == 1 && order.shipping_type == 1">待发货</text>
 									<text v-else-if="order._status._type == 2 && order.shipping_type == 1">待收货</text>
 									<text v-else-if="order._status._type == 3 && order.shipping_type == 1">待评价</text>
-									<text v-else-if="order._status._type == 4 && order.shipping_type == 1">已完成</text>
+									<text v-else-if="order._status._type == 4 && order.shipping_type == 1">已完成</text> -->
 								</view>
 							</view>
 							<view class="tit2" v-for="item2 in order.cartInfo" :key='item2.id'>
 								<image class="pic" :src="item2.productInfo.image" mode="aspectFill"></image>
-								<view class="box1" v-if="order._status._type==6 && order.shipping_type==0">
+								<view class="box1 dfwk" v-if="Number(order.finish_pay_price)>0 && order.finish_pay_status>=0">
 									<view class="tit2-1">
 										<view class="txt1">{{item2.productInfo.store_name}}</view>
 									</view>
 									<view class="tit2-1-1">预约时间：{{order.appointment_time}}</view>
 									<view class="tit2-1-2">预约医生：{{item2.productInfo.doctor_name}}</view>
-									<view class="down dfwk">
+									<view class="down">
 										<view class="tit2-1-2-1">预付款 ￥{{item2.productInfo.price}}</view>
 										<view class="tit2-1-2-2 red">尾款 ￥{{item2.productInfo.finish_pay_price}}</view>
-									</view>
-								</view>
-								<view class="box1" v-else-if="order._status._type==0 && order.shipping_type==0">
-									<view class="tit2-1">
-										<view class="txt1">{{item2.productInfo.store_name}}</view>
-									</view>
-									<view class="tit2-1-1">预约时间：{{order.appointment_time}}</view>
-									<view class="tit2-1-2">预约医生：{{item2.productInfo.doctor_name}}</view>
-									<view class="down dfwk">
-										<view class="tit2-1-2-1">预付款 ￥{{item2.productInfo.price}}</view>
 									</view>
 								</view>
 								<view class="box1" v-else>
@@ -83,7 +75,7 @@
 									</view>
 									<view class="b-right">
 										<view class="btn1" v-if="order._status._type == 0 || order._status._type == 9" @click.stop="cancelOrder(okey, order.order_id)">取消订单</view>
-										<view class="btn2" v-if="order._status._type == 0" @click.stop="goPay(order)">去支付</view>
+										<view class="btn2" v-if="order._status._type == 0 || order._status._type == 6" @click.stop="goPay(order)">去支付</view>
 										<view class="btn2" v-else-if="order._status._type == 2" @click.stop="confirmOrder(order.order_id)">确认收货</view>
 										<view class="btn1" v-else-if="order._status._type == 3" @click.stop="goOrderComment(order)">去评论</view>
 										<view class="btn2" v-else-if="order.combination_id < 1 && order._status._type == 4" @click.stop="toBuyagain(order)">再次购买</view>
@@ -153,16 +145,25 @@
 			if (options.type !== "") {
 				this.tabCurrentIndex = + parseInt(options.type);
 			}
+			this.getUserInfo();
 			this.loadData();
 		},
 		onShow(){
 			if(this.onResh){
 				this.loadStatus = "loadmore";
 				this.current_page = 1;
+				this.getUserInfo();
 				this.loadData();
 			}
 		},
 		methods:{
+			getUserInfo(){
+				this.$api.getUserInfo().then(res => {
+					if(res.status==200){
+						this.navList[2].count = res.data.weikuan_num;
+					}
+				});
+			},
 			//获取订单列表
 			loadData(source) {
 				//这里是将订单挂载到tab列表下
@@ -253,9 +254,15 @@
 				})
 			},
 			goPay(item) {
-				uni.navigateTo({
-					url: `/pages/users/order/querendingdan?id=${item.order_id}&price=${item.pay_price}`
-				})
+				if(item.finish_pay_order_num!=="" && item.finish_pay_order_num!==null){
+					uni.navigateTo({
+						url: `/pages/users/order/querendingdan?wid=${item.finish_pay_order_num}&price=${item.pay_price}`
+					})
+				}else{
+					uni.navigateTo({
+						url: `/pages/users/order/querendingdan?id=${item.order_id}&price=${item.pay_price}`
+					})
+				}
 			},
 			toBuyagain(item) {
 				if (item.cartInfo.length > 1) {
@@ -264,21 +271,28 @@
 						myId += ele.id
 					})
 					uni.navigateTo({
-						url: `/pages/users/order/tijiaodingdan?uni=${item.order_id}&id=${myId}&isGWC=yes`
+						url: `/pages/users/order/tijiaodingdan?cartId=${item.order_id}&new=1&isAgain=yes`
 					})
 				} else {
 					var skuItem = item.cartInfo[0].productInfo;
 					skuItem.shopName = skuItem.store_name;
 					skuItem.buyNum = item.cartInfo[0].cart_num;
 					uni.navigateTo({
-						url: `/pages/users/order/tijiaodingdan?uni=${item.order_id}&skuItem=${JSON.stringify([skuItem])}&isGWC=no&cartId=${item.cart_id[0]}&isAgain=yes`
+						url: `/pages/users/order/tijiaodingdan?cartId=${item.order_id}&new=1&isAgain=yes`
 					})
 				}
 			},
-			goDetail(id){
-				uni.navigateTo({
-					url:"/pages/users/order/Detail?order_id="+id
-				})
+			goDetail(val){
+				if(Number(val.finish_pay_price)>0 && val.finish_pay_status>=0){
+					this.$store.commit("setwkorder",val);
+					uni.navigateTo({
+						url:"/pages/users/order/wkorderDetail?order_id="+val.order_id
+					})
+				}else{
+					uni.navigateTo({
+						url:"/pages/users/order/Detail?order_id="+val.order_id
+					})
+				}
 			},
 			//swiper 切换
 			changeTab(e) {
@@ -486,6 +500,30 @@
 							font-size: 28rpx;
 							font-weight: bold;
 							color: #707070;
+						}
+					}
+				}
+				.dfwk {
+					.down{
+						margin-top: 6rpx;
+						display: flex;
+						align-items: center;
+						justify-content: space-between;
+										
+						.tit2-1-2-1 {
+							font-size: 24rpx;
+							color: #707070;
+							font-weight: 500;
+						}
+										
+						.tit2-1-2-2 {
+							font-size: 24rpx;
+							font-weight: 500;
+							color: #707070;
+						}
+										
+						.tit2-1-2-2.red {
+							color: #FA8677;
 						}
 					}
 				}

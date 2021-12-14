@@ -1,6 +1,5 @@
 <template>
 	<view class="index">
-		<u-toast ref="uToast" />
 		<view class="nav1">
 			<image class="pic" v-if="obj" :src="obj.doctor_img" mode=""></image>
 			<view class="right">
@@ -57,14 +56,16 @@
 				<image src="/static/tabBar/sy-active.png" class="pic" mode=""></image>
 				<view class="txt">首页</view>
 			</view>
-			<view class="item item2">
+			<view class="item item2" @click="toCollect">
 				<image src="/static/image/lujin2228.png" class="pic2" mode=""></image>
-				<view class="txt">收藏</view>
+				<view class="txt" v-if="storeInfo.userCollect">收藏</view>
+				<view class="txt" v-else>取消收藏</view>
 			</view>
 			<view @click="toShouyintai" class="btn">立即购买</view>
 		</view>
 		<!-- 选择时间 -->
-		<u-picker v-model="timeShow" confirm-color="" @confirm='confirmTime' mode="multiSelector" :default-selector='[0, 1]' :range="multiSelector"></u-picker>
+		<u-picker v-model="timeShow" confirm-color="#BD9E81" @confirm='confirmTime' mode="multiSelector" :default-selector='[0, 1]' :range="multiSelector"></u-picker>
+		<u-toast ref="uToast" />
 	</view>
 </template>
 
@@ -72,6 +73,7 @@
 	export default {
 		data() {
 			return {
+				storeInfo:{},
 				obj: {},
 				beizhu: '',
 				timeShow: false,
@@ -87,6 +89,9 @@
 			if (option.obj) {
 				this.obj = JSON.parse(decodeURIComponent(option.obj));
 				console.log(this.obj)
+			}
+			if (option.storeInfo) {
+				this.storeInfo = JSON.parse(decodeURIComponent(option.storeInfo));
 			}
 		},
 		onShow() {
@@ -137,8 +142,6 @@
 						type: 'warning',
 					})
 				}
-
-
 			},
 			changTime() {
 				this.timeShow = true;
@@ -169,6 +172,31 @@
 				}
 				return m;
 			},
+			toCollect(){
+				if (this.storeInfo.userCollect) {
+					this.$api.collectDel(this.storeInfo.id).then((res)=>{
+						if(res.status==200){
+							this.$u.toast("取消成功");
+							this.storeInfo.userCollect = true;
+						}else{
+							this.$u.toast(res.msg);
+						}
+					}).catch((err)=>{
+						this.$u.toast(err);
+					})
+				}else{
+					this.$api.collectAdd(this.storeInfo.id).then((res)=>{
+						if(res.status==200){
+							this.$u.toast(res.msg);
+							this.storeInfo.userCollect = false;
+						}else{
+							this.$u.toast(res.msg);
+						}
+					}).catch((err)=>{
+						this.$u.toast(err);
+					})
+				}
+			}
 		}
 	}
 </script>
@@ -374,7 +402,8 @@
 		}
 
 		.item2 {
-			margin-left: 76rpx;
+			margin-left: 25rpx;
+			width: 140rpx;
 		}
 
 		.btn {

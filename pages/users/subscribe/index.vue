@@ -24,8 +24,7 @@
 						<text>订单编号：{{item.order_id}}</text>
 						<view class="light" @click.stop="$tool.onCopy(item.order_id)">复制</view>
 					</view>
-					<view class="btn" v-if="item._status._type!=6 || item._status._type!=0">已面诊</view>
-					<view class="btn" v-else @click="goPay(item.finish_pay_order_num)">支付</view>
+					<view class="btn" v-if="item.finish_pay_status==1">已面诊</view>
 				</view>
 			</view>
 		</view>
@@ -59,13 +58,6 @@
 							this.currentPage++;
 							this.list = this.list.concat(res.data);
 						}
-					}
-				})
-			},
-			goPay(id){
-				this.$api.orderWaitpay(id).then((res)=>{
-					if(res.status==200){
-						console.log(res)
 					}
 				})
 			}

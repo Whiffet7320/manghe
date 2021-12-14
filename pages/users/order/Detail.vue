@@ -72,7 +72,7 @@
 		</view>
 		<u-gap height="120"></u-gap>
 		<view class="footbar safe-area-inset-bottom">
-			<view class="subbtn gray" v-if="status.type == 0 || status.type == -9" @tap="cancelOrder">取消订单</view>
+			<view class="subbtn gray" v-if="status.type == 0 || status.type == 9" @tap="cancelOrder">取消订单</view>
 			<view class="subbtn" v-if="status.type==0" @tap="goPay(orderInfo)">去支付</view>
 			<view class="subbtn" v-if="status.class_status==5" @tap='goOrderConfirm'>再次购买</view>
 			<view class="subbtn" v-if="status.class_status==1" @tap='goJoinPink'>查看拼团</view>

@@ -116,7 +116,8 @@
 			</view>
 			<view class="item item2" @click="toCollect">
 				<image src="/static/image/lujin2228.png" class="pic2" mode=""></image>
-				<view class="txt">收藏</view>
+				<view class="txt" v-if="storeInfo.userCollect">收藏</view>
+				<view class="txt" v-else>取消收藏</view>
 			</view>
 			<view @click="toQuerendingdan" class="btn">立即购买</view>
 		</view>
@@ -155,6 +156,7 @@
 		},
 		data() {
 			return {
+				storeInfo:{},
 				pingjiaObj:{},
 				pinglunList: [],
 				id: '',
@@ -186,10 +188,27 @@
 				},
 			}
 		},
-		onLoad(option) {
-			console.log(option)
-			this.navTitle = option.title;
-			this.id = option.id
+		onLoad(options) {
+			console.log(options)
+			this.navTitle = options.title;
+			
+			//扫码携带参数处理
+			if (options.scene) {
+			  let value = this.$tool.getUrlParams(decodeURIComponent(options.scene));
+			  if (value.id) options.id = value.id;
+			  //记录推广人uid
+			  if (value.pid) getApp().globalData.spid = value.pid;
+			}
+			if (!options.id) {
+			  this.$u.toast("缺少参数无法查看商品");
+			  setTimeout(()=>{
+				  uni.navigateBack();
+			  },1500)
+			} else {
+			  this.id = options.id;
+			}
+			//记录推广人uid
+			if (options.spid) getApp().globalData.spid = options.spid;
 		},
 		onShow() {
 			if (!this.isOnShow) {
@@ -239,6 +258,7 @@
 				const res = await this.$api.detail(this.id)
 				console.log(res)
 				this.obj = res.data;
+				this.storeInfo = res.data.storeInfo;
 				this.navTitle = res.data.storeInfo.store_name;
 				uni.setNavigationBarTitle({
 					title:res.data.storeInfo.store_name.substring(0, 16)
@@ -287,7 +307,7 @@
 							orderKey:res2.data.orderKey,
 						}
 						uni.navigateTo({
-							url: `/pages/index/search/querendingdan?obj=${encodeURIComponent(JSON.stringify(obj))}&cartId=${res.data.cartId}`
+							url: `/pages/index/search/querendingdan?obj=${encodeURIComponent(JSON.stringify(obj))}&cartId=${res.data.cartId}&storeInfo=${encodeURIComponent(JSON.stringify(this.storeInfo))}`
 						})
 					} else {
 						this.$refs.uToast.show({
@@ -322,13 +342,29 @@
 				})
 			},
 			toCollect(){
-				this.$api.collectAdd(this.id).then((res)=>{
-					if(res.status==200){
-						this.$u.toast(res.msg);
-					}
-				}).catch((err)=>{
-					this.$u.toast(err);
-				})
+				if (this.storeInfo.userCollect) {
+					this.$api.collectDel(this.id).then((res)=>{
+						if(res.status==200){
+							this.$u.toast("取消成功");
+							this.storeInfo.userCollect = true;
+						}else{
+							this.$u.toast(res.msg);
+						}
+					}).catch((err)=>{
+						this.$u.toast(err);
+					})
+				}else{
+					this.$api.collectAdd(this.id).then((res)=>{
+						if(res.status==200){
+							this.$u.toast(res.msg);
+							this.storeInfo.userCollect = false;
+						}else{
+							this.$u.toast(res.msg);
+						}
+					}).catch((err)=>{
+						this.$u.toast(err);
+					})
+				}
 			}
 		}
 	}
@@ -697,7 +733,8 @@
 		}
 
 		.item2 {
-			margin-left: 76rpx;
+			margin-left: 25rpx;
+			width: 140rpx;
 		}
 
 		.btn {

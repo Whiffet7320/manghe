@@ -59,7 +59,7 @@
 						</view>
 						<view class="uc-item-body-item-text">已完成</view>
 					</view>
-					<view class="uc-item-body-item" @click='gotoOrder(4)'>
+					<view class="uc-item-body-item" @click='gotoOrder(7)'>
 						<view class="pic">
 							<image src="../../static/image/user/yiguanbi.png" mode="aspectFit" style="width: 46rpx;height: 46rpx;"></image>
 						</view>

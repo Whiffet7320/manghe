@@ -29,6 +29,7 @@
 		<view class="footer">
 			<view @click="toPay" class="btn">支付¥{{obj.yuPrice}}</view>
 		</view>
+		<u-toast ref="uToast" />
 	</view>
 </template>
 
@@ -54,7 +55,7 @@
 					package: this.obj.jsConfig.package,
 					signType: this.obj.jsConfig.signType,
 					paySign: this.obj.jsConfig.paySign,
-					success: function(res) {
+					success: (res)=> {
 						this.$refs.uToast.show({
 							title: '支付成功',
 							type: 'success',
@@ -63,6 +64,7 @@
 					},
 					fail: function(err) {
 						console.log('fail:' + JSON.stringify(err));
+						this.$u.toast(err);
 					}
 				});
 			},

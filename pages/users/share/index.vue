@@ -26,6 +26,7 @@
 </template>
 
 <script>
+	import {mapState} from "vuex";
 	export default {
 		data() {
 			return {
@@ -38,6 +39,9 @@
 				arr: [],
 				xcxImg: '',
 			}
+		},
+		computed:{
+			...mapState(["userInfo"])
 		},
 		methods: {
 			async getBanner() {
@@ -53,24 +57,75 @@
 			czClick(i) {
 				if(i==0){
 					uni.downloadFile({
-					    url: this.arr[1].poster, //仅为示例，并非真实的资源
+					    url: this.arr[1].poster,
 					    success: (res) => {
 					        if (res.statusCode === 200) {
 					            console.log(res.tempFilePath);
-								uni.saveImageToPhotosAlbum({
-									filePath: res.tempFilePath,
-									success: (ress) => {
-										uni.showToast({
-											icon: 'none',
-											title: '保存成功'
-										})
-									},
-									fail: err => {
-										console.log(err)
+								let url = res.tempFilePath;
+								uni.getSetting({
+									success(cres) {
+										if (!cres.authSetting['scope.writePhotosAlbum']) {
+											uni.authorize({
+												scope: 'scope.writePhotosAlbum',
+												success() {
+													uni.showLoading({
+														title: '保存中...',
+														mask: true
+													});
+													uni.saveImageToPhotosAlbum({
+														filePath: url,
+														success: (ress) => {
+															uni.hideLoading();
+															uni.showToast({
+																icon: 'none',
+																title: '保存成功'
+															})
+														},
+														fail: err => {
+															console.log(err)
+															uni.hideLoading();
+															uni.showToast({
+																icon: 'none',
+																title: '保存失败'
+															})
+														}
+													})
+												}
+											});
+										} else {
+											uni.showLoading({
+												title: '保存中...',
+												mask: true
+											});
+											uni.saveImageToPhotosAlbum({
+												filePath: url,
+												success: (ress) => {
+													uni.hideLoading();
+													uni.showToast({
+														icon: 'none',
+														title: '保存成功'
+													})
+												},
+												fail: err => {
+													console.log(err)
+													uni.hideLoading();
+													uni.showToast({
+														icon: 'none',
+														title: '保存失败'
+													})
+												}
+											})
+										}
 									}
 								})
 					        }
-					    }
+					    },
+						fail: (err)=> {
+							uni.showToast({
+								icon: 'none',
+								title: err
+							})
+						}
 					});
 				}
 			},
@@ -82,6 +137,13 @@
 			this.code = option.code;
 			this.getBanner();
 			this.getData()
+		},
+		onShareAppMessage() {
+			return {
+				title: this.userInfo.nickname + '-分销海报',
+				imageUrl: this.arr[1].poster,
+				path: '/pages/tabBar/index?spread=' + this.userInfo.uid
+			};
 		}
 	}
 </script>
