@@ -4,30 +4,32 @@
 			<view class="scribe_item" v-for="(item,index) in list" :key="index">
 				<view class="time">
 					<image src="/static/image/user/icon_time.png" mode="aspectFit" class="icon"></image>
-					<text>预约时间：2021-09-24 20:00</text>
+					<text>预约时间：{{item.appointment_time}}</text>
 				</view>
-				<view class="tip">注：尾款 ¥1600.00需要在2021-11-06 上午面诊后支付</view>
-				<view class="bd">
-					<image src="" mode="aspectFill" class="img"></image>
+				<view class="tip">注：尾款 ￥{{item.finish_pay_price}}需要在{{item.appointment_time}}面诊后支付</view>
+				<view class="bd" v-for="(pitem,pindex) in item.cartInfo" :key="pindex">
+					<image :src="pitem.productInfo.image" mode="aspectFill" class="img"></image>
 					<view class="info">
-						<view class="name">肋骨鼻综合</view>
-						<view class="attr">预约时间：2021-11-06 下午</view>
-						<view class="attr">预约医生：李竞</view>
+						<view class="name">{{pitem.productInfo.store_name}}</view>
+						<view class="attr">预约时间：{{item.appointment_time}}</view>
+						<view class="attr">预约医生：{{pitem.productInfo.doctor_name}}</view>
 						<view class="fnwrap">
-							<view class="price">预付款 ¥2000.00</view>
-							<view class="sprice">尾款 ¥1600.00</view>
+							<view class="price">预付款 ￥{{pitem.productInfo.price}}</view>
+							<view class="sprice">尾款 ￥{{pitem.productInfo.finish_pay_price}}</view>
 						</view>
 					</view>
 				</view>
 				<view class="ft">
 					<view class="no">
-						<text>订单编号:JHS123456123456</text>
-						<view class="light">复制</view>
+						<text>订单编号：{{item.order_id}}</text>
+						<view class="light" @click.stop="$tool.onCopy(item.order_id)">复制</view>
 					</view>
-					<view class="btn">已面诊</view>
+					<view class="btn" v-if="item._status._type!=6 || item._status._type!=0">已面诊</view>
+					<view class="btn" v-else @click="goPay(item.finish_pay_order_num)">支付</view>
 				</view>
 			</view>
 		</view>
+		<u-loadmore height="80rpx" font-size="20" :status="loadStatus" icon-type="flower" color="#707070" />
 	</view>
 </template>
 
@@ -35,8 +37,47 @@
 	export default{
 		data(){
 			return{
-				list:[]
+				list:[],
+				loadStatus: 'loadmore',
+				currentPage: 1
 			}
+		},
+		methods:{
+			getlist(){
+				let list = [];
+				this.loadStatus = 'loading';
+				this.$api.myAppointmentlist({page:this.currentPage,limit:10}).then((res)=>{
+					if(res.status==200){
+						if (res.data.length == 0) {
+							this.loadStatus = 'nomore';
+						} else {
+							if(this.currentPage==1 && res.data.length<=10){
+								this.loadStatus = 'nomore';
+							}else{
+								this.loadStatus = 'loadmore';
+							}
+							this.currentPage++;
+							this.list = this.list.concat(res.data);
+						}
+					}
+				})
+			},
+			goPay(id){
+				this.$api.orderWaitpay(id).then((res)=>{
+					if(res.status==200){
+						console.log(res)
+					}
+				})
+			}
+		},
+		onLoad(){
+			this.getlist();
+		},
+		onReachBottom() {
+			this.getlist();
+		},
+		onPullDownRefresh() {
+			uni.stopPullDownRefresh();
 		}
 	}
 </script>
@@ -50,6 +91,7 @@
 	.scribelist{
 		.scribe_item{
 			background-color: #FFFFFF;
+			margin-bottom: 20rpx;
 			.time{
 				padding-left: 40rpx;
 				height: 88rpx;
@@ -87,7 +129,7 @@
 					.name{
 						font-size: 28rpx;
 						font-family: PingFang SC;
-						font-weight: 500;
+						font-weight: 700;
 						color: #707070;
 						padding-bottom: 12rpx;
 					}
@@ -118,10 +160,10 @@
 			.ft{
 				display: flex;
 				align-items: center;
+				justify-content: space-between;
 				margin-left: 40rpx;
 				padding:20rpx 40rpx 20rpx 0;
 				.no{
-					flex:1;
 					font-size: 24rpx;
 					color: #707070;
 					display: flex;

@@ -19,11 +19,13 @@
 		<view class="nav2">
 			<view class="left">
 				<view class="txt1">{{obj.storeInfo.store_name}}</view>
-				<view class="txt2">肋骨鼻综合</view>
+				<view class="txt2" v-if="obj.storeInfo.cateName.length">{{obj.storeInfo.cateName[0].cate_name}}</view>
 			</view>
 			<view class="right">
-				<image src="/static/image/zu1570.png" class="r-pic" mode=""></image>
-				<view class="txt1">分享</view>
+				<button open-type="share" class="u-reset-button">
+					<image src="/static/image/zu1570.png" class="r-pic" mode=""></image>
+					<view class="txt1">分享</view>
+				</button>
 			</view>
 		</view>
 		<view class="nav4">
@@ -74,8 +76,8 @@
 										</view>
 									</view>
 									<view class="i3-items">
-										<view class="i3-item" v-for="item in pinglunList">
-											<image class="ava" :src="item.avatar" mode=""></image>
+										<view class="i3-item" v-for="(item,indexz) in pinglunList" :key="indexz">
+											<image class="ava" :src="item.avatar" mode="aspectFill"></image>
 											<view class="right">
 												<view class="tit1">
 													<view class="txt1">{{item.nickname}}</view>
@@ -87,8 +89,7 @@
 												</view>
 												<view class="tit3">{{item.comment}}</view>
 												<view class="tit4">
-													<image @click.stop="toSeeImg(i,item.pics)" class="picc"
-														v-for="(pic,i) in item.pics" :src="pic" mode=""></image>
+													<image :src="pic" mode="aspectFill" @click.stop="toSeeImg(i,item.pics)" class="picc"	v-for="(pic,i) in item.pics" :key="i"></image>
 												</view>
 											</view>
 										</view>
@@ -96,6 +97,7 @@
 									<u-loadmore :status="status" />
 								</view>
 							</template>
+						
 						</view>
 					</scroll-view>
 
@@ -104,7 +106,6 @@
 		</view>
 
 		<view class="footer1">
-			<image src="/static/image/zu1840.png" class="kefu" mode=""></image>
 			<view class="txt1">预付款 ¥{{obj.storeInfo.price}}</view>
 			<view class="txt2">尾款 ¥{{obj.storeInfo.finish_pay_price}}面诊后支付</view>
 		</view>
@@ -118,6 +119,11 @@
 				<view class="txt">收藏</view>
 			</view>
 			<view @click="toQuerendingdan" class="btn">立即购买</view>
+		</view>
+		<view>
+			<button open-type="contact" class="u-reset-button">
+				<image src="/static/image/zu1840.png" class="kefu" mode=""></image>
+			</button>
 		</view>
 	</view>
 </template>
@@ -156,10 +162,7 @@
 				isOnShow: true,
 				navTitle: '',
 				bannerList: [],
-				imgArr: ['https://img1.baidu.com/it/u=3303981320,1355171730&fm=26&fmt=auto',
-					'https://img0.baidu.com/it/u=2394303781,1797253216&fm=26&fmt=auto',
-					'https://img0.baidu.com/it/u=3941318376,4022646771&fm=26&fmt=auto'
-				],
+				imgArr: [],
 				//
 				swiperCurrentIndex: 0,
 				height: 0,
@@ -171,7 +174,7 @@
 					name: '产品评价'
 				}],
 				// 因为内部的滑动机制限制，请将tabs组件和swiper组件的current用不同变量赋值
-				current: 2, // tabs组件的current值，表示当前活动的tab选项
+				current: 0, // tabs组件的current值，表示当前活动的tab选项
 				swiperCurrent: 0, // swiper组件的current值，表示当前那个swiper-item是活动的
 				// 加载
 				status: 'loadmore',
@@ -206,11 +209,21 @@
 		onReachBottom() {
 			this.$store.commit("IndexshopPage", this.IndexshopPage + 1);
 		},
+		onShareAppMessage() {
+			return {
+				title: this.navTitle,
+				path: '/pages/index/search/xiangqin?id=' + this.id,
+				imageUrl: this.obj.storeInfo.image
+			}
+		},
 		methods: {
 			async getPinglunData(type) {
 				this.status = 'loading';
 				setTimeout(async () => {
-					const res = await this.$api.replyList({}, this.id)
+					const res = await this.$api.replyList({
+						page:this.IndexshopPage,
+						limit:this.IndexshopPageSize
+					}, this.id)
 					console.log(res.data)
 					this.pingjiaObj = res.data.comment;
 					if (res.data.list.length == 0) {
@@ -226,6 +239,10 @@
 				const res = await this.$api.detail(this.id)
 				console.log(res)
 				this.obj = res.data;
+				this.navTitle = res.data.storeInfo.store_name;
+				uni.setNavigationBarTitle({
+					title:res.data.storeInfo.store_name.substring(0, 16)
+				})
 				this.obj.storeInfo.slider_image.forEach((ele, i) => {
 					this.$set(this.bannerList, i, {
 						image: ele
@@ -608,9 +625,17 @@
 			}
 		}
 	}
-
+	.kefu {
+		position: fixed;
+		bottom: 120rpx;
+		right: 8rpx;
+		width: 172rpx;
+		height: 172rpx;
+		z-index: 100;
+	}
 	.footer1 {
 		position: fixed;
+		z-index: 50;
 		bottom: 140rpx;
 		width: 100%;
 		height: 88rpx;
@@ -619,14 +644,6 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-
-		.kefu {
-			position: absolute;
-			bottom: 14rpx;
-			right: 8rpx;
-			width: 172rpx;
-			height: 172rpx;
-		}
 
 		.txt1 {
 			font-size: 24rpx;

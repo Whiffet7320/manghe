@@ -64,8 +64,7 @@
 			<view @click="toShouyintai" class="btn">立即购买</view>
 		</view>
 		<!-- 选择时间 -->
-		<u-picker @confirm='confirmTime' mode="multiSelector" v-model="timeShow" :default-selector='[0, 1]'
-			:range="multiSelector"></u-picker>
+		<u-picker v-model="timeShow" confirm-color="" @confirm='confirmTime' mode="multiSelector" :default-selector='[0, 1]' :range="multiSelector"></u-picker>
 	</view>
 </template>
 
@@ -107,6 +106,10 @@
 		},
 		methods: {
 			async toShouyintai() {
+				if(this.startTime==""){
+					this.$u.toast("请选择预约时间");
+					return false;
+				}
 				const res = await this.$api.orderCreate({
 					addressId: 0,
 					couponId: '',

@@ -21,6 +21,7 @@ export default new Vuex.Store({
 		uid:uni.getStorageSync("uid") || 0,
 		doctorInfo:{},
 		comentInfo:[],
+		proComentInfo:[],
 		onResh:false
 	},
 	mutations: {
@@ -67,6 +68,9 @@ export default new Vuex.Store({
 		},
 		setComent(state,data){
 			state.comentInfo = data;
+		},
+		setproComent(state,data){
+			state.proComentInfo = data;
 		},
 		setResh(state,data){
 			state.onResh = data;

@@ -61,51 +61,49 @@
 									<view class="i3-nav1">
 										<view class="tit1">
 											<view class="tit1-1">
-												<view class="txt1">评价</view>
-												<view class="txt2">（好评度93%）</view>
+												<view class="txt1">产品评价</view>
+												<view class="txt2">（好评度{{pingjiaObj.reply_chance}}%）</view>
 											</view>
-											<view class="tit1-2">共62条评论</view>
+											<view class="tit1-2">共{{pingjiaObj.sum_count}}条评论</view>
 										</view>
 										<view class="tit2">
 											<view class="item">
 												<view class="txt1">有图</view>
-												<view class="txt2">43</view>
+												<view class="txt2">{{pingjiaObj.pics_count}}</view>
 											</view>
-											<view class="item">
+											<view class="item" @click="getPinglunData">
 												<u-icon name="thumb-up-fill" color="#BD9E81" size="22"></u-icon>
-												<view class="txt2">43</view>
+												<view class="txt2">{{pingjiaObj.good_count}}</view>
 											</view>
 											<view class="item bed">
 												<u-icon name="thumb-down-fill" color="#D9D9D9" size="22"></u-icon>
-												<view class="txt2">3</view>
+												<view class="txt2">{{pingjiaObj.poor_count}}</view>
 											</view>
 										</view>
 									</view>
 									<view class="i3-items">
-										<view class="i3-item" v-for="item in 6">
-											<image class="ava"
-												src="https://img2.baidu.com/it/u=2329181912,1120533725&fm=26&fmt=auto"
-												mode=""></image>
+										<view class="i3-item" v-for="(item,indexz) in pinglunList" :key="indexz">
+											<image class="ava" :src="item.avatar" mode=""></image>
 											<view class="right">
 												<view class="tit1">
-													<view class="txt1">狂野女孩</view>
-													<view class="txt2">2021.10.24</view>
+													<view class="txt1">{{item.nickname}}</view>
+													<view class="txt2">{{item.add_time}}</view>
 												</view>
 												<view class="tit2">
 													<u-icon name="thumb-up-fill" color="#BD9E81" size="22"></u-icon>
 													<view class="txt2">赞了该商品</view>
 												</view>
-												<view class="tit3">哇塞，做出的效果远远大于我的期待值，真的做的超级自然，远看近看都很耐看。</view>
+												<view class="tit3">{{item.comment}}</view>
 												<view class="tit4">
-													<image @click.stop="toSeeImg(i,imgArr)" class="picc"
-														v-for="(item,i) in imgArr" :src="item" mode=""></image>
+													<image :src="pic" mode="aspectFill" @click.stop="toSeeImg(i,item.pics)" class="picc" v-for="(pic,i) in item.pics" :key="i"></image>
 												</view>
 											</view>
 										</view>
 									</view>
-
+									<u-loadmore :status="status" />
 								</view>
 							</template>
+													
 						</view>
 					</scroll-view>
 
@@ -132,16 +130,35 @@
 <script>
 	import { mapState } from 'vuex';
 	export default {
+		computed: {
+			...mapState(["IndexshopPage", "IndexshopPageSize"]),
+		},
+		watch: {
+			IndexshopPage: function(page) {
+				console.log('ddpage')
+				this.$store.commit("IndexshopPage", page);
+				if (this.IndexshopPage != 1) {
+					this.getPinglunData();
+				}
+			},
+			current: function() {
+				this.pinglunList = [];
+				this.$store.commit("IndexshopPage", 1);
+				this.getPinglunData()
+				setTimeout(() => {
+					this.getCurrentSwiperHeight('.nav5Items')
+				}, 800)
+			},
+		},
 		data() {
 			return {
+				pingjiaObj:{},
+				pinglunList: [],
 				obj: {},
 				id: 0,
 				isOnShow: true,
 				contentShow: false,
-				imgArr: ['https://img1.baidu.com/it/u=3303981320,1355171730&fm=26&fmt=auto',
-					'https://img0.baidu.com/it/u=2394303781,1797253216&fm=26&fmt=auto',
-					'https://img0.baidu.com/it/u=3941318376,4022646771&fm=26&fmt=auto'
-				],
+				imgArr: [],
 				//
 				swiperCurrentIndex: 0,
 				height: 0,
@@ -155,6 +172,14 @@
 				// 因为内部的滑动机制限制，请将tabs组件和swiper组件的current用不同变量赋值
 				current: 0, // tabs组件的current值，表示当前活动的tab选项
 				swiperCurrent: 0, // swiper组件的current值，表示当前那个swiper-item是活动的
+				// 加载
+				status: 'loadmore',
+				iconType: 'flower',
+				loadText: {
+					loadmore: '上拉加载更多',
+					loading: '正在加载...',
+					nomore: '没有了更多了'
+				},
 			}
 		},
 		computed:{
@@ -175,12 +200,38 @@
 			if (!this.isOnShow) {
 				return;
 			}
+			this.getPinglunData()
+			this.pinglunList = [];
+			this.$store.commit("IndexshopPage", 1);
 			this.tabsChange(this.current);
 		},
+		onReachBottom() {
+			this.$store.commit("IndexshopPage", this.IndexshopPage + 1);
+		},
 		mounted() {
-			this.getCurrentSwiperHeight('.nav5Items')
+			setTimeout(() => {
+				this.getCurrentSwiperHeight('.nav5Items')
+			}, 900)
 		},
 		methods: {
+			async getPinglunData(type) {
+				this.status = 'loading';
+				setTimeout(async () => {
+					const res = await this.$api.replyList({
+						page:this.IndexshopPage,
+						limit:this.IndexshopPageSize
+					}, this.obj.id)
+					console.log(res.data)
+					this.pingjiaObj = res.data.comment;
+					if (res.data.list.length == 0) {
+						this.status = 'nomore'
+					} else {
+						this.status = 'loadmore';
+						this.pinglunList = this.pinglunList.concat(res.data.list)
+					}
+				}, 200)
+				console.log(this.pinglunList)
+			},
 			collect() {
 				this.$api.collectDoctor(this.id).then((res) => {
 					if (res.status == 200) {
@@ -218,11 +269,8 @@
 			tabsChange(index) {
 				console.log(index);
 				this.swiperCurrent = index;
-				this.current = index;
 				this.swiperCurrentIndex = index;
-				setTimeout(() => {
-					this.getCurrentSwiperHeight('.nav5Items')
-				}, 200)
+				this.current = index;
 			},
 			getCurrentSwiperHeight(element) {
 				let query = uni.createSelectorQuery().in(this);
@@ -250,6 +298,9 @@
 	}
 </style>
 <style lang="scss" scoped>
+	/deep/ .u-load-more-wrap {
+		height: 100rpx !important;
+	}
 	.index {
 		position: relative;
 	}
@@ -367,7 +418,7 @@
 
 			.i3 {
 				width: 100%;
-
+				background: #FFFFFF;
 				.i3-nav1 {
 					background: #FFFFFF;
 					padding: 24rpx;

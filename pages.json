@@ -56,9 +56,7 @@
 			"path": "pages/search/searchResult",
 			"style": {
 				"navigationStyle": "custom",
-				"navigationBarTitleText": "搜索",
-				"navigationBarBackgroundColor": "#FECF05",
-				"navigationBarTextStyle": "black"
+				"navigationBarTitleText": "搜索"
 			}
 		},
 		{
@@ -95,6 +93,19 @@
 			}
 		}]
 	}, {
+		"root": "pages/index/live",
+		"pages": [
+			{
+				"path": "index",
+				"style": {
+					"navigationBarTitleText":"直播",
+					"navigationBarTextStyle": "black",
+					"navigationBarBackgroundColor": "#FECF05"
+				}
+			}
+		]
+	},
+	{
 		"root": "pages/index/zhuanjiatuandui",
 		"pages": [{
 			"path": "zhuanjiatuandui",

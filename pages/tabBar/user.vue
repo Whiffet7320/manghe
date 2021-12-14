@@ -76,32 +76,44 @@
 				
 				<view class="uc-item-body">
 					<view class="uc-item-body-item" @click="goAddress">
-						<image src="../../static/image/user/dizhiguanli.png" mode="aspectFit" style="width:36rpx;height:38rpx;"></image>
+						<view class="pics">
+							<image src="../../static/image/user/dizhiguanli.png" mode="aspectFit" style="width:36rpx;height:38rpx;"></image>
+						</view>
 						<view class="uc-item-body-item-text">地址管理</view>
 					</view>
 					
 					<view class="uc-item-body-item" @click="onShare">
-						<image src="../../static/image/user/fenxiangma.png" mode="aspectFit" style="width:37rpx;height:37rpx;"></image>
+						<view class="pics">
+							<image src="../../static/image/user/fenxiangma.png" mode="aspectFit" style="width:37rpx;height:37rpx;"></image>
+						</view>
 						<view class="uc-item-body-item-text">分享码</view>
 					</view>
 					
 					<view class="uc-item-body-item" @click="onMeet">
-						<image src="../../static/image/user/wodeyuyue.png" mode="aspectFit" style="width:34rpx;height:37rpx;"></image>
+						<view class="pics">
+							<image src="../../static/image/user/wodeyuyue.png" mode="aspectFit" style="width:34rpx;height:37rpx;"></image>
+						</view>
 						<view class="uc-item-body-item-text">我的预约</view>
 					</view>
 					
 					<view class="uc-item-body-item" @click="onPoint">
-						<image src="../../static/image/user/wodejifen.png" mode="aspectFit" style="width:42rpx;height:37rpx;"></image>
+						<view class="pics">
+							<image src="../../static/image/user/wodejifen.png" mode="aspectFit" style="width:42rpx;height:37rpx;"></image>
+						</view>
 						<view class="uc-item-body-item-text">我的积分</view>
 					</view>
 					
 					<view class="uc-item-body-item" @click="onPointOrder">
-						<image src="../../static/image/user/jifendingdan.png" mode="aspectFit" style="width:32rpx;height:37rpx;"></image>
+						<view class="pics">
+							<image src="../../static/image/user/jifendingdan.png" mode="aspectFit" style="width:32rpx;height:37rpx;"></image>
+						</view>
 						<view class="uc-item-body-item-text">积分订单</view>
 					</view>
 					
 					<view class="uc-item-body-item" @click="onTeam">
-						<image src="../../static/image/user/wodetuandui.png" mode="aspectFit" style="width:44rpx;height:37rpx;"></image>
+						<view class="pics">
+							<image src="../../static/image/user/wodetuandui.png" mode="aspectFit" style="width:44rpx;height:37rpx;"></image>
+						</view>
 						<view class="uc-item-body-item-text">我的团队</view>
 					</view>
 					
@@ -309,6 +321,11 @@
 					margin-bottom:28rpx;
 					.pic{
 						position: relative;
+					}
+					.pics{
+						position: relative;
+						width: 44rpx;
+						height: 44rpx;
 					}
 					.uc-item-body-item-text{
 						margin-top: 12rpx;

@@ -1,13 +1,19 @@
 <template>
 	<view class="index">
-		<view class="nav1">
+		<!-- <view class="nav1">
 			<u-icon @click='toBack' name="arrow-left" color="#000000" size="40"></u-icon>
 			<view class="myInp">
 				<u-icon name="search" color="#C7C7C7" size="28"></u-icon>
 				<u-input v-model="keyword" placeholder='搜索专家/项目/关键词' placeholder-style='color: #C7C7C7;' type="text"
 					height="60rpx" />
 			</view>
-		</view>
+		</view> -->
+		<u-navbar>
+			<view class="myInp">
+				<u-icon name="search" color="#C7C7C7" size="28"></u-icon>
+				<u-input v-model="keyword" placeholder='搜索专家/项目/关键词' placeholder-style='color: #C7C7C7;' type="text" height="60rpx" />
+			</view>
+		</u-navbar>
 		<view class="nav2">
 			<view class="item" @click="changeRad(1)">
 				<view :class='{"txt":true,"active":RadIndex==1}'>综合</view>
@@ -30,7 +36,7 @@
 				<image :src="item.image" class="pic" mode=""></image>
 				<view class="right">
 					<view class="txt1">{{item.store_name}}</view>
-					<view class="txt2">肋骨鼻综合</view>
+					<view class="txt2"></view>
 					<view class="txt3">¥{{item.price}}<text class="small" style="margin-left: 10rpx;">¥{{item.ot_price}}</text></view>
 				</view>
 			</view>
@@ -143,7 +149,28 @@
 		// width: 686rpx;
 		height: 100rpx !important;
 	}
-	.index {}
+	.myInp {
+		margin-left: 8rpx;
+		padding: 0 24rpx;
+		width: 436rpx;
+		height: 64rpx;
+		background: rgba(189, 158, 129, 0.05);
+		border: 2rpx solid #BD9E81;
+		display: flex;
+		align-items: center;
+		border-radius: 30rpx;
+	
+		/deep/ .u-input {
+			margin-left: 14rpx;
+			width: 340rpx !important;
+	
+			.u-input__input {
+				font-size: 24rpx;
+				font-weight: 400;
+				line-height: 60rpx;
+			}
+		}
+	}
 
 	.nav1 {
 		background: #FFFFFF !important;
@@ -153,28 +180,7 @@
 		padding-top: 96rpx;
 		padding-left: 30rpx;
 
-		.myInp {
-			margin-left: 8rpx;
-			padding: 0 24rpx;
-			width: 436rpx;
-			height: 64rpx;
-			background: rgba(189, 158, 129, 0.05);
-			border: 2rpx solid #BD9E81;
-			display: flex;
-			align-items: center;
-			border-radius: 30rpx;
-
-			/deep/ .u-input {
-				margin-left: 14rpx;
-				width: 340rpx !important;
-
-				.u-input__input {
-					font-size: 24rpx;
-					font-weight: 400;
-					line-height: 60rpx;
-				}
-			}
-		}
+		
 	}
 
 	.nav2 {

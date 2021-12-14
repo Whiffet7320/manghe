@@ -5,16 +5,16 @@
 				<image :src="item.image" mode="aspectFill" class="img"></image>
 				<view class="info">
 					<view class="fnwrap">
-						<view class="name">{{item.name}}</view>
+						<view class="name">{{item.store_name}}</view>
 						<view class="status">{{item.status|orderStatus}}</view>
 					</view>
-					<view class="price">¥ {{item.price}}</view>
-					<view class="number">共{{item.number}}件</view>
+					<view class="price">￥ {{item.price}}</view>
+					<view class="number">共{{item.number||1}}件</view>
 				</view>
 			</view>
 			<view class="ft">
 				<view class="combtn" @click="goDetail(item)">查看评价</view>
-				<view class="combtn default">再来一单</view>
+				<view class="combtn default" @click="goproDetail(item.product_id)">再来一单</view>
 			</view>
 		</view>
 		<u-loadmore height="80rpx" font-size="20" :status="loadStatus" icon-type="flower" color="#707070" />
@@ -25,6 +25,7 @@
 </template>
 
 <script>
+	import {mapState} from 'vuex';
 	import pageEmpty from "@/components/page-empty/page-empty";
 	export default{
 		components:{
@@ -52,28 +53,41 @@
 				this.loadStatus = 'loading';
 				this.$api.myCommentList({page:this.currentPage,limit:10}).then((res)=>{
 					if(res.status==200){
-						if (res.data.length == 0) {
+						if (res.data.data.list.length == 0) {
 							this.loadStatus = 'nomore';
 						} else {
-							if(this.currentPage==1 && res.data.length<=10){
+							if(this.currentPage==1 && res.data.data.list.length<=10){
 								this.loadStatus = 'nomore';
 							}else{
 								this.loadStatus = 'loadmore';
 							}
 							this.currentPage++;
-							this.list = this.list.concat(res.data);
+							this.list = this.list.concat(res.data.data.list);
 						}
 					}
 				})
 			},
 			goDetail(val){
+				this.$store.commit("setproComent",val);
 				uni.navigateTo({
 					url:"/pages/users/comment/detail?id="+val.id
+				})
+			},
+			goproDetail(id){
+				uni.navigateTo({
+					url:"/pages/yanxuanshangcheng/rexiaoxiangqin/rexiaoxiangqin?id="+id
 				})
 			}
 		},
 		onLoad(){
 			this.getlist();
+		},
+		onShow(){
+			if(this.onResh){
+				this.loadStatus = "loadmore";
+				this.currentPage = 1;
+				this.getlist();
+			}
 		},
 		onReachBottom() {
 			this.getlist();
@@ -103,6 +117,7 @@
 				.img{
 					width: 170rpx;
 					height: 170rpx;
+					background-color: #eee;
 				}
 				.info{
 					flex:1;

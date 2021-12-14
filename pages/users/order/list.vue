@@ -7,7 +7,7 @@
 			<swiper-item class="swiper-item" v-for="(item, index) in navList" :key="index">
 				<scroll-view class="list_scroll" scroll-y @scrolltolower="loadData">
 					<view class="order_item" v-for="(order, okey) in orderList" :key="order.id" @click="goDetail(order.order_id)">
-						<view class="item" :class="[order.combination_id != 0?'dfwk':'']">
+						<view class="item" :class="[order._status._type == 6?'dfwk':'']">
 							<view class="tit1">
 								<view class="left" v-if="order._status._type == 0&&order.stop_time">
 									<view class="txt1-1">剩余支付时间：</view>
@@ -26,6 +26,7 @@
 									<text v-if="order._status._type == -1||order._status._type == -2">{{order._status._title}}</text>
 									<text v-else-if="order._status._type == 0">待付款</text>
 									<text v-else-if="order.combination_id != 0 && order._status._type == 1">拼团中</text>
+									<text v-else-if="order._status._type == 6 && order.shipping_type == 0">待付尾款</text>
 									<text v-else-if="order._status._type == 1 && order.shipping_type == 1">待发货</text>
 									<text v-else-if="order._status._type == 2 && order.shipping_type == 1">待收货</text>
 									<text v-else-if="order._status._type == 3 && order.shipping_type == 1">待评价</text>
@@ -34,7 +35,28 @@
 							</view>
 							<view class="tit2" v-for="item2 in order.cartInfo" :key='item2.id'>
 								<image class="pic" :src="item2.productInfo.image" mode="aspectFill"></image>
-								<view class="box1">
+								<view class="box1" v-if="order._status._type==6 && order.shipping_type==0">
+									<view class="tit2-1">
+										<view class="txt1">{{item2.productInfo.store_name}}</view>
+									</view>
+									<view class="tit2-1-1">预约时间：{{order.appointment_time}}</view>
+									<view class="tit2-1-2">预约医生：{{item2.productInfo.doctor_name}}</view>
+									<view class="down dfwk">
+										<view class="tit2-1-2-1">预付款 ￥{{item2.productInfo.price}}</view>
+										<view class="tit2-1-2-2 red">尾款 ￥{{item2.productInfo.finish_pay_price}}</view>
+									</view>
+								</view>
+								<view class="box1" v-else-if="order._status._type==0 && order.shipping_type==0">
+									<view class="tit2-1">
+										<view class="txt1">{{item2.productInfo.store_name}}</view>
+									</view>
+									<view class="tit2-1-1">预约时间：{{order.appointment_time}}</view>
+									<view class="tit2-1-2">预约医生：{{item2.productInfo.doctor_name}}</view>
+									<view class="down dfwk">
+										<view class="tit2-1-2-1">预付款 ￥{{item2.productInfo.price}}</view>
+									</view>
+								</view>
+								<view class="box1" v-else>
 									<view class="tit2-1">
 										<view class="txt1">{{item2.productInfo.store_name}}</view>
 										<view class="txt2">x{{item2.cart_num}}</view>
@@ -48,7 +70,7 @@
 							</view>
 							<view class="tit3">
 								<view class="box1">
-									<view class="txt1">订单编号:{{order.order_id}}</view>
+									<view class="txt1">订单编号：{{order.order_id}}</view>
 									<view class="txt2" @click.stop="$tool.onCopy(order.order_id)">复制</view>
 								</view>
 								<view class="btns">
@@ -61,7 +83,7 @@
 									</view>
 									<view class="b-right">
 										<view class="btn1" v-if="order._status._type == 0 || order._status._type == 9" @click.stop="cancelOrder(okey, order.order_id)">取消订单</view>
-										<view class="btn2" v-else-if="order._status._type == 0" @click.stop="goPay(order)">去支付</view>
+										<view class="btn2" v-if="order._status._type == 0" @click.stop="goPay(order)">去支付</view>
 										<view class="btn2" v-else-if="order._status._type == 2" @click.stop="confirmOrder(order.order_id)">确认收货</view>
 										<view class="btn1" v-else-if="order._status._type == 3" @click.stop="goOrderComment(order)">去评论</view>
 										<view class="btn2" v-else-if="order.combination_id < 1 && order._status._type == 4" @click.stop="toBuyagain(order)">再次购买</view>
@@ -91,7 +113,7 @@
 						state: "0",
 						name: '待付款'
 					},{
-						state: "5",
+						state: "8",
 						name: '待付尾款'
 					},{
 						state: "1",
@@ -106,7 +128,7 @@
 						state: "4",
 						name: '已完成'
 					},{
-						state: "6",
+						state: "7",
 						name: '已关闭'
 					}
 				],
@@ -529,7 +551,7 @@
 						}
 					}
 					.b-right{
-						
+						display: flex;
 					}
 
 					.btn1 {

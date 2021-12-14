@@ -23,6 +23,9 @@ export default {
 	collectDel:"/api/collect/del",//商品取消收藏
 	userCollect:"/api/collect/user",//商品收藏列表
 	myCommentList:"/api/comment/my_comment_list",//我的评论
+	myCommentDel:"/api/comment/my_comment_del", //评论删除
+	myAppointmentlist:"/api/order/my_appointment_list", //我的预约
+	orderWaitpay:"/api/order/order_wait_pay",
 	// 
 	loginWechat: '/api/login/wechat',
 	category: '/api/category', //商品分类

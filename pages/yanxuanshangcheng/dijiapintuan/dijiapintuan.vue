@@ -78,50 +78,45 @@
 										<view class="tit1">
 											<view class="tit1-1">
 												<view class="txt1">产品评价</view>
-												<view class="txt2">（好评度93%）</view>
+												<view class="txt2">（好评度{{pingjiaObj.reply_chance}}%）</view>
 											</view>
-											<view class="tit1-2">共62条评论</view>
+											<view class="tit1-2">共{{pingjiaObj.sum_count}}条评论</view>
 										</view>
 										<view class="tit2">
 											<view class="item">
 												<view class="txt1">有图</view>
-												<view class="txt2">43</view>
+												<view class="txt2">{{pingjiaObj.pics_count}}</view>
 											</view>
-											<view class="item">
+											<view class="item" @click="getPinglunData">
 												<u-icon name="thumb-up-fill" color="#BD9E81" size="22"></u-icon>
-												<view class="txt2">43</view>
+												<view class="txt2">{{pingjiaObj.good_count}}</view>
 											</view>
 											<view class="item bed">
 												<u-icon name="thumb-down-fill" color="#D9D9D9" size="22"></u-icon>
-												<view class="txt2">3</view>
+												<view class="txt2">{{pingjiaObj.poor_count}}</view>
 											</view>
 										</view>
 									</view>
 									<view class="i3-items">
-										<view class="i3-item" v-for="item in 6">
-											<image class="ava"
-												src="https://img2.baidu.com/it/u=2329181912,1120533725&fm=26&fmt=auto"
-												mode=""></image>
+										<view class="i3-item" v-for="(item,indexz) in pinglunList" :key="indexz">
+											<image class="ava" :src="item.avatar" mode=""></image>
 											<view class="right">
 												<view class="tit1">
-													<view class="txt1">狂野女孩</view>
-													<view class="txt2">2021.10.24</view>
+													<view class="txt1">{{item.nickname}}</view>
+													<view class="txt2">{{item.add_time}}</view>
 												</view>
 												<view class="tit2">
 													<u-icon name="thumb-up-fill" color="#BD9E81" size="22"></u-icon>
 													<view class="txt2">赞了该商品</view>
 												</view>
-												<view class="tit3">哇塞，做出的效果远远大于我的期待值，真的做的超级自然，远看近看都很耐看。</view>
+												<view class="tit3">{{item.comment}}</view>
 												<view class="tit4">
-													<image @click.stop="toSeeImg(i,imgArr)" class="picc"
-														v-for="(item,i) in imgArr" :src="item" mode=""></image>
+													<image :src="pic" mode="aspectFill" @click.stop="toSeeImg(i,item.pics)" class="picc"	v-for="(pic,i) in item.pics" :key="i"></image>
 												</view>
 											</view>
-
 										</view>
-										<u-loadmore :status="status" />
 									</view>
-
+									<u-loadmore :status="status" />
 								</view>
 							</template>
 						</view>
@@ -171,14 +166,23 @@
 				console.log('ddpage')
 				this.$store.commit("pinlunPage", page);
 				if (this.pinlunPage != 1) {
-					this.getPinlunData();
+					this.getPinglunData();
 				}
+			},
+			current: function() {
+				this.pinglunList = [];
+				this.$store.commit("pinlunPage", 1);
+				this.getPinglunData()
+				setTimeout(() => {
+					this.getCurrentSwiperHeight('.nav5Items')
+				}, 800)
 			},
 		},
 		data() {
 			return {
+				pingjiaObj:{},
+				pinglunList: [],
 				id: '',
-				pinlunList: [],
 				obj: {},
 				d: '0',
 				h: '00',
@@ -247,7 +251,9 @@
 			this.tabsChange(this.current);
 		},
 		mounted() {
-			this.getCurrentSwiperHeight('.nav5Items')
+			setTimeout(() => {
+				this.getCurrentSwiperHeight('.nav5Items')
+			}, 900)
 		},
 		onReachBottom() {
 			this.$store.commit("pinlunPage", this.pinlunPage + 1);
@@ -278,18 +284,20 @@
 				this.mygetdate(this.obj.storeInfo.stop_time);
 				this.DefaultSelect();
 			},
-			async getPinlunData() {
+			async getPinglunData(type) {
 				this.status = 'loading';
 				setTimeout(async () => {
 					const res = await this.$api.replyList({
-						page: this.pinlunPage,
-						limit: this.pinlunPageSize,
+						page:this.pinlunPage,
+						limit:this.pinlunPageSize
 					}, this.id)
-					if (res.data.length == 0) {
+					console.log(res.data)
+					this.pingjiaObj = res.data.comment;
+					if (res.data.list.length == 0) {
 						this.status = 'nomore'
 					} else {
 						this.status = 'loadmore';
-						this.shopList = this.shopList.concat(res.data)
+						this.pinglunList = this.pinglunList.concat(res.data.list)
 					}
 				}, 200)
 			},
@@ -315,6 +323,7 @@
 					this.attribute.productSelect.quota = 0;
 					this.attribute.productSelect.product_stock = 0;
 				}
+				console.log(this.pinglunList)
 			},
 			async kaituan() {
 				let productSelect = this.productValue[this.attrValue];
@@ -402,21 +411,14 @@
 			// tabs通知swiper切换
 			tabsChange(index) {
 				this.swiperCurrent = index;
-				this.current = index;
 				this.swiperCurrentIndex = index;
-				if (index == 1) {
-					this.getPinlunData()
-				}
-				setTimeout(() => {
-					this.getCurrentSwiperHeight('.nav5Items')
-				}, 800)
+				this.current = index;
 			},
 			animationfinish(e) {
 				let current = e.detail.current;
 				this.$refs.uTabs.setFinishCurrent(current);
 				this.swiperCurrent = current;
 				this.current = current;
-				this.tabsChange(this.current)
 			},
 			getCurrentSwiperHeight(element) {
 				let query = uni.createSelectorQuery().in(this);
@@ -436,15 +438,12 @@
 </style>
 <style lang="scss" scoped>
 	/deep/ .u-load-more-wrap {
-		width: 686rpx;
 		height: 100rpx !important;
 	}
 
 	.index {
 		position: relative;
 	}
-
-	.nav1 {}
 
 	.nav3 {
 		position: relative;
@@ -655,7 +654,7 @@
 
 			.i3 {
 				width: 100%;
-
+				background: #FFFFFF;
 				.i3-nav1 {
 					background: #FFFFFF;
 					padding: 24rpx;

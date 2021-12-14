@@ -5,10 +5,10 @@
 				<image :src="item.image" mode="aspectFill" class="img"></image>
 				<view class="left">
 					<view class="name">{{item.store_name}}</view>
-					<view class="sname">{{item.desc}}</view>
+					<view class="sname"></view>
 					<view class="ft">
-						<view class="price">¥{{item.ot_price}}</view>
-						<view class="sprice">¥{{item.price}}</view>
+						<view class="price">¥{{item.ot_price||0}}</view>
+						<view class="sprice">¥{{item.price||0}}</view>
 					</view>
 				</view>
 				<view class="right" @click.stop="onCancel(item,index)">

@@ -1,31 +1,30 @@
 <template>
 	<view>
 		<view class="live-wrapper-b">
-			<navigator class="live-item-b" v-for="(item,index) in liveList" :key="index" :url="'plugin-private://wx2b03c6e691cd7370/pages/live-player-plugin?room_id=' + item.room_id"
-				hover-class="none" :style="[{'background':bg},{'box-shadow':`0px 1px 20px ${boxShadow}`}]">
+			<view class="live-item-b" v-for="(item,index) in list" :key="index" @click="goLive(item.room_id)">
 				<view class="img-box">
 					<view class="label bgblue" v-if="item.live_status == 102">
 						<view class="txt">预告</view>
 						<view class="msg">{{item.show_time}}</view>
 					</view>
 					<view class="label bggary" v-if="item.live_status==103">
-						<image src="/static/images/live-02.png" mode="" style="width: 20rpx; height: 20rpx;"></image>
+						<image src="/static/image/live-02.png" mode="" style="width: 20rpx; height: 20rpx;"></image>
 						<text>回放</text>
 					</view>
 					<view class="label bgred" v-if="item.live_status==101">
-						<image src="/static/images/live-01.png" mode="" style="width: 21rpx; height: 22rpx;"></image>
+						<image src="/static/image/live-01.gif" mode="" style="width: 28rpx; height: 28rpx;"></image>
 						<text>进行中</text>
 					</view>
-					<image :src="item.share_img"></image>
+					<image :src="item.share_img" mode="aspectFill"></image>
 				</view>
 				<view class="info">
-					<view class="title line1">{{item.name}}</view>
+					<view class="title u-line-1">{{item.name}}</view>
 					<view class="people">
-						<image :src="item.anchor_img"></image>
+						<image :src="item.anchor_img" mode="aspectFill"></image>
 						<text>{{item.anchor_name}}</text>
 					</view>
 				</view>
-			</navigator>
+			</view>
 		</view>
 		<view class="empty-txt" v-if="!isScroll">到底了~</view>
 	</view>
@@ -36,14 +35,37 @@
 		data() {
 			return {
 				page: 1,
-				limit: 10,
-				listStyle: 1,
 				isScroll: true,
-				liveList: []
+				list: [
+					{
+						live_status:102,
+						show_time:"10:00",
+						share_img:"https://m.360buyimg.com/mobilecms/s160x160_jfs/t1/187972/3/8012/191418/60c5a1a8E3292f715/eddf00d3628c1e5b.jpg!q70.dpg",
+						name:"双十二",
+						anchor_img:"https://m.360buyimg.com/mobilecms/s160x160_jfs/t1/187972/3/8012/191418/60c5a1a8E3292f715/eddf00d3628c1e5b.jpg!q70.dpg",
+						anchor_name:"小美"
+					},
+					{
+						live_status:103,
+						show_time:"10:00",
+						share_img:"https://m.360buyimg.com/mobilecms/s160x160_jfs/t1/187972/3/8012/191418/60c5a1a8E3292f715/eddf00d3628c1e5b.jpg!q70.dpg",
+						name:"双十二",
+						anchor_img:"https://m.360buyimg.com/mobilecms/s160x160_jfs/t1/187972/3/8012/191418/60c5a1a8E3292f715/eddf00d3628c1e5b.jpg!q70.dpg",
+						anchor_name:"小美"
+					},
+					{
+						live_status:101,
+						show_time:"10:00",
+						share_img:"https://m.360buyimg.com/mobilecms/s160x160_jfs/t1/187972/3/8012/191418/60c5a1a8E3292f715/eddf00d3628c1e5b.jpg!q70.dpg",
+						name:"双十二",
+						anchor_img:"https://m.360buyimg.com/mobilecms/s160x160_jfs/t1/187972/3/8012/191418/60c5a1a8E3292f715/eddf00d3628c1e5b.jpg!q70.dpg",
+						anchor_name:"小美"
+					}
+				]
 			}
 		},
 		methods: {
-			getLiveList: function() {
+			getLiveList() {
 				if (!this.isScroll) return
 				this.$api.getLiveList({page:this.page,limit:10}).then(res => {
 					this.isScroll = res.data.length >= this.limit;
@@ -52,10 +74,15 @@
 				}).catch(err => {
 					this.$u.toast(err);
 				});
+			},
+			goLive(id){
+				uni.navigateTo({
+					url:'plugin-private://wx2b03c6e691cd7370/pages/live-player-plugin?room_id='+id
+				})
 			}
 		},
 		onShow() {
-			this.getLiveList();
+			// this.getLiveList();
 		},
 		onReachBottom() {
 			this.getLiveList()

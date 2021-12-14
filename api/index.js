@@ -738,6 +738,14 @@ export default {
 			}
 		})
 	},
+	myCommentDel(id) {
+		return myPost({
+			url: urls.myCommentDel,
+			data: {
+				id
+			}
+		})
+	},
 	integralList(obj) {
 		return myGet({
 			url: urls.integralList,
@@ -788,6 +796,22 @@ export default {
 			url: urls.myCommentList,
 			params: {
 				...obj
+			}
+		})
+	},
+	myAppointmentlist(obj) {
+		return myGet({
+			url: urls.myAppointmentlist,
+			params: {
+				...obj
+			}
+		})
+	},
+	orderWaitpay(uni) {
+		return myPost({
+			url: urls.orderWaitpay,
+			data: {
+				uni
 			}
 		})
 	},
