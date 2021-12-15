@@ -161,13 +161,13 @@
 				this.gwcShow = true;
 			},
 			async toTijiaodingdan() {
+				this.skuShow = false;
 				const res = await this.$api.cartAdd({
 					productId: this.id,
 					cartNum: this.skuNum,
 					uniqueId: this.skuItem.unique,
 					new: 1
 				})
-				console.log(res)
 				this.skuItem.shopName = this.obj.storeInfo.store_name;
 				this.skuItem.buyNum = this.skuNum;
 				this.skuItem.cartId = res.data.cartId;

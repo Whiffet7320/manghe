@@ -815,6 +815,32 @@ export default {
 			}
 		})
 	},
+	spreadPeople(obj) {
+		return myPost({
+			url: urls.spreadPeople,
+			data: {
+				...obj
+			}
+		})
+	},
+	spreadPeopleCount(obj) {
+		return myGet({
+			url: urls.spreadPeopleCount,
+			params: {
+				...obj
+			}
+		})
+	},
+	getRefundOrderDetail(uni, cart_id){
+		return myGet({
+			url: urls.refundOrderDetail +"/" + uni + `${cart_id ? `/${cart_id}`:''}`
+		})
+	},
+	ordeRefundReason() {
+		return myGet({
+			url: urls.ordeRefundReason
+		})
+	},
 	upload_pic(file, type) {
 		return new Promise(async (resolve, reject) => {
 			uni.uploadFile({

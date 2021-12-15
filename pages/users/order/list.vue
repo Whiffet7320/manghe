@@ -23,7 +23,8 @@
 									<text class="time">下单时间：{{order._add_time}}</text>
 								</view>
 								<view class="right">
-									<text v-if="order.finish_pay_status==1">已完成</text>
+									<text v-if="order.finish_pay_status==1 && order._status._type != 3">已完成</text>
+									<text v-else-if="order.finish_pay_status==1 && order._status._type == 3">待评价</text>
 									<text v-else>{{order._status._title}}</text>
 									<!-- <text v-if="order._status._type == -1||order._status._type == -2">{{order._status._title}}</text>
 									<text v-else-if="order._status._type == 0">待付款</text>
@@ -35,33 +36,40 @@
 									<text v-else-if="order._status._type == 4 && order.shipping_type == 1">已完成</text> -->
 								</view>
 							</view>
-							<view class="tit2" v-for="item2 in order.cartInfo" :key='item2.id'>
-								<image class="pic" :src="item2.productInfo.image" mode="aspectFill"></image>
-								<view class="box1 dfwk" v-if="Number(order.finish_pay_price)>0 && order.finish_pay_status>=0">
-									<view class="tit2-1">
-										<view class="txt1">{{item2.productInfo.store_name}}</view>
+							<view v-for="item2 in order.cartInfo" :key='item2.id'>
+								<view class="tip" v-if="Number(order.finish_pay_price)>0 && order.finish_pay_status==0">注：尾款 ￥{{item2.productInfo.finish_pay_price}}需要在{{order.appointment_time}}面诊后支付</view>
+								<view class="tit2">
+									<image class="pic" :src="item2.productInfo.image" mode="aspectFill"></image>
+									<view class="box1 dfwk" v-if="Number(order.finish_pay_price)>0 && order.finish_pay_status>=0">
+										<view class="tit2-1">
+											<view class="txt1">{{item2.productInfo.store_name}}</view>
+										</view>
+										<view class="tit2-1-1">预约时间：{{order.appointment_time}}</view>
+										<view class="tit2-1-2">预约医生：{{item2.productInfo.doctor_name}}</view>
+										<view class="down">
+											<view class="tit2-1-2-1">预付款 ￥{{item2.productInfo.price}}</view>
+											<view class="tit2-1-2-2 red">尾款 ￥{{item2.productInfo.finish_pay_price}}</view>
+										</view>
 									</view>
-									<view class="tit2-1-1">预约时间：{{order.appointment_time}}</view>
-									<view class="tit2-1-2">预约医生：{{item2.productInfo.doctor_name}}</view>
-									<view class="down">
-										<view class="tit2-1-2-1">预付款 ￥{{item2.productInfo.price}}</view>
-										<view class="tit2-1-2-2 red">尾款 ￥{{item2.productInfo.finish_pay_price}}</view>
-									</view>
-								</view>
-								<view class="box1" v-else>
-									<view class="tit2-1">
-										<view class="txt1">{{item2.productInfo.store_name}}</view>
-										<view class="txt2">x{{item2.cart_num}}</view>
-									</view>
-									<view class="down">
-										<view class="tit2-2">{{item2.productInfo.attrInfo.suk}}</view>
-										<view class="tit2-3" v-if="item2.productInfo.attrInfo">￥{{ item2.productInfo.attrInfo.price }}</view>
-										<view class="tit2-3" v-else>￥{{ item2.productInfo.price }}</view>
+									<view class="box1" v-else>
+										<view class="tit2-1">
+											<view class="txt1">{{item2.productInfo.store_name}}</view>
+											<view class="txt2">x{{item2.cart_num}}</view>
+										</view>
+										<view class="down">
+											<view class="tit2-2">{{item2.productInfo.attrInfo.suk}}</view>
+											<view class="tit2-3" v-if="item2.productInfo.attrInfo">￥{{ item2.productInfo.attrInfo.price }}</view>
+											<view class="tit2-3" v-else>￥{{ item2.productInfo.price }}</view>
+										</view>
 									</view>
 								</view>
 							</view>
 							<view class="tit3">
-								<view class="box1">
+								<view class="box1" v-if="Number(order.finish_pay_price)>0 && order.finish_pay_status>=0">
+									<view class="txt1">订单编号：{{order.finish_pay_order_num}}</view>
+									<view class="txt2" @click.stop="$tool.onCopy(order.finish_pay_order_num)">复制</view>
+								</view>
+								<view class="box1" v-else>
 									<view class="txt1">订单编号：{{order.order_id}}</view>
 									<view class="txt2" @click.stop="$tool.onCopy(order.order_id)">复制</view>
 								</view>
@@ -78,7 +86,8 @@
 										<view class="btn2" v-if="order._status._type == 0 || order._status._type == 6" @click.stop="goPay(order)">去支付</view>
 										<view class="btn2" v-else-if="order._status._type == 2" @click.stop="confirmOrder(order.order_id)">确认收货</view>
 										<view class="btn1" v-else-if="order._status._type == 3" @click.stop="goOrderComment(order)">去评论</view>
-										<view class="btn2" v-else-if="order.combination_id < 1 && order._status._type == 4" @click.stop="toBuyagain(order)">再次购买</view>
+										<view class="btn1" v-else-if="order._status._type == 4" @click.stop="goOrderReturn(order.order_id)">申请售后</view>
+										<view class="btn2" v-if="order.combination_id < 1 && order._status._type == 4" @click.stop="toBuyagain(order)">再次购买</view>
 									</view>
 								</view>
 							</view>
@@ -120,7 +129,7 @@
 						state: "4",
 						name: '已完成'
 					},{
-						state: "7",
+						state: "-4",
 						name: '已关闭'
 					}
 				],
@@ -224,7 +233,7 @@
 			confirmOrder(id){
 				uni.showModal({
 				    title: '温馨提示',
-				    content: '是否确认收货',
+				    content: '为保障权益，请收到货确认无误后，再确认收货',
 					confirmColor:"#BD9E81",
 				    success:(res)=> {
 				        if (res.confirm) {
@@ -233,11 +242,13 @@
 							});
 							this.$api.orderTake({uni: id}).then((res)=>{
 								if(res.status==200){
+									uni.hideLoading();
 									this.$u.toast(res.msg);
+									this.loadData();
 								}else{
+									uni.hideLoading();
 									this.$u.toast(res.msg);
 								}
-								uni.hideLoading();
 							}).catch(err=>{
 								uni.hideLoading();
 							})
@@ -285,14 +296,25 @@
 			goDetail(val){
 				if(Number(val.finish_pay_price)>0 && val.finish_pay_status>=0){
 					this.$store.commit("setwkorder",val);
-					uni.navigateTo({
-						url:"/pages/users/order/wkorderDetail?order_id="+val.order_id
-					})
+					if(val.finish_pay_status==1){
+						uni.navigateTo({
+							url:"/pages/users/order/wkorderDetail?order_id="+val.order_id
+						})
+					}else{
+						uni.navigateTo({
+							url:"/pages/users/order/wkorderDetail?order_id="+val.order_id+"&type=1"
+						})
+					}
 				}else{
 					uni.navigateTo({
 						url:"/pages/users/order/Detail?order_id="+val.order_id
 					})
 				}
+			},
+			goOrderReturn(id){
+				uni.navigateTo({
+					url:"/pages/users/sale/index?orderId="+id
+				})
 			},
 			//swiper 切换
 			changeTab(e) {
@@ -428,6 +450,17 @@
 					font-weight: 500;
 					color: #BD9E81;
 				}
+			}
+			.tip{
+				margin-left: -40rpx;
+				margin-right: -40rpx;
+				padding:14rpx 0;
+				background-color: #F2ECE6;
+				text-align: center;
+				font-size: 20rpx;
+				font-family: PingFang SC;
+				font-weight: bold;
+				color: #BD9E81;
 			}
 
 			.tit2 {

@@ -53,7 +53,7 @@
 						</view>
 						<view class="uc-item-body-item-text">待付尾款</view>
 					</view>
-					<view class="uc-item-body-item" @click='gotoOrder(3)'>
+					<view class="uc-item-body-item" @click='gotoOrder(6)'>
 						<view class="pic">
 							<image src="../../static/image/user/yiwancheng.png" mode="aspectFit" style="width: 46rpx;height: 45rpx;"></image>
 						</view>

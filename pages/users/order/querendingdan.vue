@@ -27,7 +27,7 @@
 			return {
 				id:0,
 				wid:0,
-				paytype:"weixin",//weixin
+				paytype:"yue",//weixin
 				a: null,
 				payObj: null,
 				price: 0,
@@ -118,11 +118,15 @@
 				switch (this.paytype) {
 					case 'yue':
 						uni.hideLoading();
-						this.$refs.uToast.show({
-							title: res.msg,
-							type: 'success',
-							url: '/pages/users/order/list',
+						uni.showToast({
+							title:"支付成功",
+							icon:"success"
 						})
+						setTimeout(()=>{
+							uni.redirectTo({
+								url:"/pages/users/order/list"
+							})
+						},1500)
 					break;
 					case 'weixin':
 						uni.requestPayment({
@@ -134,11 +138,15 @@
 							paySign: jsConfig.paySign,
 							success: (res)=> {
 								uni.hideLoading();
-								this.$refs.uToast.show({
-									title: '支付成功',
-									type: 'success',
-									url: '/pages/users/order/list',
+								uni.showToast({
+									title:"支付成功",
+									icon:"success"
 								})
+								setTimeout(()=>{
+									uni.redirectTo({
+										url:"/pages/users/order/list"
+									})
+								},1500)
 							},
 							fail: (err)=> {
 								uni.hideLoading();

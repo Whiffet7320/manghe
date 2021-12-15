@@ -3,13 +3,14 @@
 		<view class="bg"><image src="/static/image/user/bg.jpg" mode="aspectFill" class="img"></image></view>
 		<view class="total">
 			<text class="text">{{title}}人数</text>
-			<text class="number">{{total||0}}</text>
+			<text class="number" v-if="type==0">{{total||0}}</text>
+			<text class="number" v-if="type==1">{{totalLevel||0}}</text>
 		</view>
 		<view class="ulist">
 			<view class="uitem" v-for="(item,index) in list" :key="index">
 				<image :src="item.avatar" mode="aspectFill" class="img"></image>
 				<view class="info">
-					<view class="name">{{item.name}}</view>
+					<view class="name u-line-1">{{item.nickname}}</view>
 					<view class="time">{{item.time}}</view>
 				</view>
 			</view>
@@ -22,30 +23,59 @@
 		data(){
 			return{
 				title:"直推",
-				type:"list",
+				type:0,
 				total:0,
-				list:[]
+				totalLevel:0,
+				list:[],
+				loadStatus: 'loadmore',
+				currentPage: 1
 			}
 		},
 		methods:{
 			setTitle(type){
-				if(type==="list"){
+				if(type==0){
 					uni.setNavigationBarTitle({
 						title:"我的直推"
 					})
-				}else if(type==="user"){
+				}else if(type==1){
 					this.title = "合伙";
 					uni.setNavigationBarTitle({
 						title:"我的合伙人"
 					})
 				}
+			},
+			getlist(){
+				this.$api.spreadPeople({grade:this.type,page:this.currentPage,limit:10}).then((res)=>{
+					if(res.status==200){
+						this.total = res.data.count;
+						this.totalLevel = res.data.totalLevel;
+						if (res.data.list.length == 0) {
+							this.loadStatus = 'nomore';
+						} else {
+							if(this.currentPage==1 && res.data.list.length<=10){
+								this.loadStatus = 'nomore';
+							}else{
+								this.loadStatus = 'loadmore';
+							}
+							this.currentPage++;
+							this.list = this.list.concat(res.data.list);
+						}
+					}
+				});
 			}
 		},
 		onLoad(options){
 			if(options.type){
 				this.type = options.type;
 				this.setTitle(options.type);
+				this.getlist();
 			}
+		},
+		onReachBottom() {
+			this.getlist();
+		},
+		onPullDownRefresh() {
+			uni.stopPullDownRefresh();
 		}
 	}
 </script>

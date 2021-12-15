@@ -26,10 +26,11 @@
 			</view>
 		</view>
 		<view class="sorder">
-			<view class="desc">订单编号：{{orderInfo.order_id}}<view class="copy" @click="$tool.onCopy(orderInfo.order_id)">复制</view></view>
+			<view class="desc">订单编号：{{orderInfo.finish_pay_order_num}}<view class="copy" @click="$tool.onCopy(orderInfo.finish_pay_order_num)">复制</view></view>
 			<view class="desc">创建时间：{{(orderInfo.add_time_y || '') +' '+(orderInfo.add_time_h || 0)}}</view>
 			<view class="desc">预付款支付时间：{{orderInfo._pay_time}}</view>
 			<view class="desc" v-if="orderInfo.finish_pay_time!=null">面诊时间：{{$u.timeFormat(orderInfo.finish_pay_time, 'yyyy-mm-dd hh:MM:ss')}}</view>
+			<view class="desc" v-if="orderInfo.mark">备注：{{orderInfo.mark}}</view>
 		</view>
 		<view class="service">
 			<button class="u-reset-button contactbtn" open-type="contact">
@@ -40,6 +41,7 @@
 		<u-gap height="120"></u-gap>
 		<view class="footbar safe-area-inset-bottom">
 			<!-- <view class="subbtn gray" v-if="status.type == 0 || orderInfo.finish_pay_status==0" @tap="cancelOrder">取消订单</view> -->
+			<view class="btn1 gray" v-if="order._status._type == 3" @click.stop="goOrderComment(orderInfo)">去评论</view>
 			<view class="subbtn" v-if="orderInfo.finish_pay_status==0" @click.stop="goPay(orderInfo)">去支付</view>
 		</view>
 	</view>
@@ -81,10 +83,25 @@
 					})
 				}
 			},
+			goOrderComment(val){
+				this.$store.commit("setComent",val.cartInfo);
+				uni.navigateTo({
+					url:"/pages/users/order/comment?id="+val.id
+				})
+			}
 		},
 		onLoad(options){
 			if(options.order_id){
 				this.order_id = options.order_id;
+			}
+			if(options.type){
+				uni.setNavigationBarTitle({
+					title:"等待买家支付尾款"
+				})
+			}else{
+				uni.setNavigationBarTitle({
+					title:"订单详情"
+				})
 			}
 		},
 		onShow(){
@@ -186,6 +203,7 @@
 		}
 	}
 	.sorder{
+		margin-top: 4rpx;
 		background-color: #FFFFFF;
 		padding:28rpx 40rpx 0;
 		font-size: 24rpx;

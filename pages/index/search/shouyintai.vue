@@ -59,7 +59,7 @@
 						this.$refs.uToast.show({
 							title: '支付成功',
 							type: 'success',
-							url: '/pages/users/order/order',
+							url: '/pages/users/order/list',
 						})
 					},
 					fail: function(err) {

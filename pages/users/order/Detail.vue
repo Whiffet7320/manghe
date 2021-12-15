@@ -64,6 +64,11 @@
 			<view class="desc" v-if="orderInfo.mark">买家留言：{{orderInfo.mark}}</view>
 			<view class="desc" v-if="orderInfo.remark">商家备注：{{orderInfo.remark}}</view>
 		</view>
+		<view class="sorder" v-if='orderInfo.delivery_type=="express"'>
+			<view class="desc">配送方式：发货</view>
+			<view class="desc">快递公司：{{orderInfo.delivery_name || ''}}</view>
+			<view class="desc">快递号：{{orderInfo.delivery_id || ''}}</view>
+		</view>
 		<view class="service">
 			<button class="u-reset-button contactbtn" open-type="contact">
 				<image src="/static/image/user/kefu.png" mode="aspectFit" style="width: 30rpx;height:30rpx;"></image>
@@ -167,7 +172,7 @@
 			confirmOrder(){
 				uni.showModal({
 				    title: '温馨提示',
-				    content: '是否确认收货',
+				    content: '为保障权益，请收到货确认无误后，再确认收货',
 					confirmColor:"#BD9E81",
 				    success:(res)=> {
 				        if (res.confirm) {
@@ -176,11 +181,16 @@
 							});
 							this.$api.orderTake({uni: this.orderInfo.order_id}).then((res)=>{
 								if(res.status==200){
+									uni.hideLoading();
 									this.$u.toast(res.msg);
+									setTimeout(()=>{
+										this.$store.commit("setResh",true);
+										uni.navigateBack();
+									},1500)
 								}else{
+									uni.hideLoading();
 									this.$u.toast(res.msg);
 								}
-								uni.hideLoading();
 							}).catch(err=>{
 								uni.hideLoading();
 							})

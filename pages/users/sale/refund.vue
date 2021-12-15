@@ -2,15 +2,21 @@
 	<view class="salewrap">
 		<view class="prowrap">
 			<view class="tit">退款商品</view>
-			<view class="proinfo">
-				<image src="" mode="aspectFill" class="img"></image>
+			<view class="proinfo" v-for="(item,index) in orderInfo.cartInfo" :key="index">
+				<image :src="item.productInfo.image" mode="aspectFill" class="img"></image>
 				<view class="info">
 					<view class="hd">
-						<view class="name u-line-2">250ml 雅漾补水喷雾赠一</view>
-						<text class="num">X1</text>
+						<view class="name u-line-2">{{item.productInfo.store_name}}</view>
+						<text class="num">x{{item.cart_num}}</text>
 					</view>
-					<view class="sprice">¥89.90</view>
-					<view class="price">¥9.90</view>
+					<view v-if="item.productInfo.attrInfo">
+						<view class="sprice">￥{{item.productInfo.attrInfo.ot_price}}</view>
+						<view class="price">￥{{item.productInfo.attrInfo.price}}</view>
+					</view>
+					<view v-else>
+						<view class="sprice">￥{{item.productInfo.ot_price}}</view>
+						<view class="price">￥{{item.productInfo.price}}</view>
+					</view>
 				</view>
 			</view>
 		</view>
@@ -39,17 +45,20 @@
 			<view class="tkitem">
 				<view class="label">
 					<view>退款金额</view>
-					<view class="desc">可修改，最多 ¥9.90，含发货邮费 ¥0.00</view>
+					<view class="desc" v-if="orderInfo.total_num == 1 || orderInfo.cartInfo.length > 1 || orderInfo.pid > 0">最多 ￥{{orderInfo.pay_price}}，含发货邮费 ¥0.00</view>
+					<view class="desc" v-else>￥{{(one_price * (refund_num || 1)/10000).toFixed(2)}}</view>
 				</view>
-				<view class="price">
-					<input type="digit" v-model="price" class="ipt" />
+				<view class="price" v-if="orderInfo.total_num == 1 || orderInfo.cartInfo.length > 1 || orderInfo.pid > 0">
+					<!-- <input type="digit" v-model="price" class="ipt" /> -->
+					￥{{orderInfo.pay_price}}
 				</view>
+				<view class="price" v-else>￥{{(one_price * (refund_num || 1)/10000).toFixed(2)}}</view>
 			</view>
 		</view>
 		<view class="comment_con">
 			<view class="tit2">详细原因（选填）</view>
 			<view class="textarea">
-				<textarea v-model="textarea" :auto-height="true" maxlength="100" placeholder="请输入" placeholder-style="color:#999" class="mtextarea"></textarea>
+				<textarea v-model="textarea" :auto-height="true" maxlength="100" placeholder="填写备注信息，100字以内" placeholder-style="color:#999" class="mtextarea"></textarea>
 			</view>
 			<view class="upic">
 				<view class="uleft">
@@ -80,7 +89,7 @@
 					</view>
 				</view>
 				<view class="rlist">
-					<view class="radio" v-for="(item,index) in reasonlist" :key="index" @click="reasonChange(item)">
+					<view class="radio" v-for="(item,index) in refundArray" :key="index" @click="reasonChange(item)">
 						<image src="/static/image/user/icon_checked.png" mode="aspectFit" class="icon" v-if="sreason==item"></image>
 						<view class="ick" v-else></view>
 						<text>{{item}}</text>
@@ -100,18 +109,25 @@
 	export default{
 		data(){
 			return{
+				orderInfo:{},
 				show:false,
 				value:"已收货",
 				rlist:["已收货","未收货"],
 				reason:"",
-				price:"￥7.86",
+				price:"￥0.00",
+				one_price:0,
 				textarea:"",
 				imglist:[],
-				reasonlist:["买错/多买","不想要了","其他原因"],
+				refundArray:["买错/多买","不想要了","其他原因"],
 				sreason:"买错/多买"
 			}
 		},
 		methods:{
+			getRefundReason(){
+				this.$api.ordeRefundReason().then(res => {
+					this.refundArray = res.data;
+				})
+			},
 			viewImage(index) {
 				uni.previewImage({
 					urls: this.imglist,

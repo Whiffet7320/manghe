@@ -26,6 +26,10 @@ export default {
 	myCommentDel:"/api/comment/my_comment_del", //评论删除
 	myAppointmentlist:"/api/order/my_appointment_list", //我的预约
 	orderWaitpay:"/api/order/order_wait_pay", //支付尾款
+	spreadPeople:"/api/spread/people", //我的团队列表
+	spreadPeopleCount:"/api/user/spread_people_count", //我的团队
+	refundOrderDetail:"/api/order/refund_detail", //退款订单详情
+	ordeRefundReason:"/api/order/refund/reason", //退款理由
 	// 
 	loginWechat: '/api/login/wechat',
 	category: '/api/category', //商品分类

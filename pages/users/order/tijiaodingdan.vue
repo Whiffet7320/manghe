@@ -300,11 +300,15 @@
 						unique: this.skuItem[0].productValue['默认'].unique
 					})
 					if (res2.status == 200) {
-						this.$refs.uToast.show({
-							title: '支付成功',
-							type: 'success',
-							url: '/pages/users/integral/order'
+						uni.showToast({
+							title:"支付成功",
+							icon:"success"
 						})
+						setTimeout(()=>{
+							uni.redirectTo({
+								url:"/pages/users/integral/order"
+							})
+						},1500)
 					}else{
 						this.$refs.uToast.show({
 							title: res2.msg,

@@ -2,15 +2,21 @@
 	<view class="salewrap">
 		<view class="prowrap">
 			<view class="tit">售后商品</view>
-			<view class="proinfo">
-				<image src="" mode="aspectFill" class="img"></image>
+			<view class="proinfo" v-for="(item,index) in orderInfo.cartInfo" :key="index">
+				<image :src="item.productInfo.image" mode="aspectFill" class="img"></image>
 				<view class="info">
 					<view class="hd">
-						<view class="name u-line-2">250ml 雅漾补水喷雾赠一</view>
-						<text class="num">X1</text>
+						<view class="name u-line-2">{{item.productInfo.store_name}}</view>
+						<text class="num">x{{item.cart_num}}</text>
 					</view>
-					<view class="sprice">¥89.90</view>
-					<view class="price">¥9.90</view>
+					<view v-if="item.productInfo.attrInfo">
+						<view class="sprice">￥{{item.productInfo.attrInfo.ot_price}}</view>
+						<view class="price">￥{{item.productInfo.attrInfo.price}}</view>
+					</view>
+					<view v-else>
+						<view class="sprice">￥{{item.productInfo.ot_price}}</view>
+						<view class="price">￥{{item.productInfo.price}}</view>
+					</view>
 				</view>
 			</view>
 		</view>
@@ -32,14 +38,14 @@
 				</view>
 				<image src="/static/image/user/arrow_right.png" mode="aspectFit" class="icon_right"></image>
 			</view>
-			<view class="servitem" @click="onTh">
+			<!-- <view class="servitem" @click="onTh">
 				<image src="/static/image/user/icon_huan.png" mode="aspectFit" class="icon"></image>
 				<view class="content">
 					<view class="title">换货</view>
 					<view class="desc">商品存在质量问题，联系客服协商换货</view>
 				</view>
 				<image src="/static/image/user/arrow_right.png" mode="aspectFit" class="icon_right"></image>
-			</view>
+			</view> -->
 		</view>
 	</view>
 </template>
@@ -47,7 +53,11 @@
 <script>
 	export default{
 		data(){
-			return{}
+			return{
+				cartId:0,
+				orderId:0,
+				orderInfo:{}
+			}
 		},
 		methods:{
 			onTk(){
@@ -64,7 +74,23 @@
 				uni.navigateTo({
 					url:"/pages/users/sale/exchange"
 				})
+			},
+			getOrderInfo() {
+				this.$api.getRefundOrderDetail(this.orderId, this.cart_id).then(res => {
+					if(res.status==200){
+						this.orderInfo = res.data;
+					}
+				});
 			}
+		},
+		onLoad(options){
+			if (options.cartId){
+				this.cartId = options.cartId;
+			}
+			if(options.orderId){
+				this.orderId = options.orderId;
+			}
+			this.getOrderInfo();
 		}
 	}
 </script>
@@ -75,6 +101,7 @@
 	}
 </style>
 <style lang="scss" scoped>
+	@import "@/common/css/sale.scss";
 	.servlist{
 		margin-top: 20rpx;
 		background-color: #FFFFFF;
