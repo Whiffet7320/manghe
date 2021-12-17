@@ -102,11 +102,13 @@
 					<view class="item" @click="toZhuanjiatuandui(item)" v-for="item in zjtdList" :key='item.id'>
 						<image :src="item.doctor_img" class="pic" mode=""></image>
 						<view class="right">
-							<view class="txt1">
+							<view class="txt1 u-line-1">
 								{{item.doctor_name}}<text class="small">{{item.doctor_titles}}</text>
 							</view>
 							<view class="txt2" v-if="item.doctor_sub_titles">{{item.doctor_sub_titles}}</view>
-							<view class="txt2" v-if="item.doctor_content">{{item.doctor_content}}</view>
+							<view class="txt2">
+								<view class="u-line-2" v-if="item.doctor_content">{{item.doctor_content}}</view>
+							</view>
 							<view class="btn" @click="toZhuanjiatuandui(item)">
 								<image src="/static/image/lujin1758.png" class="btn-img" mode=""></image>
 								<view class="btn-txt">点击预约</view>
@@ -613,8 +615,8 @@
 				}
 
 				.right {
-					width: 192rpx;
-					margin-left: 20rpx;
+					width: 210rpx;
+					padding:0 10rpx 0 20rpx;
 
 					.txt1 {
 						margin-bottom: 16rpx;
@@ -628,19 +630,10 @@
 							font-size: 24rpx;
 						}
 					}
-
-					.txt2::before {
-						content: '· ';
-						position: absolute;
-						left: -14rpx;
-						top: 0;
-						font-weight: 500;
-					}
-
 					.txt2 {
 						position: relative;
 						left: 14rpx;
-						width: 192rpx;
+						width: 100%;
 						margin-top: 10rpx;
 						font-size: 28rpx;
 						font-weight: 500;
@@ -648,6 +641,13 @@
 						word-wrap: break-word;
 						word-break: break-all;
 						white-space: pre-wrap;
+					}
+					.txt2::before {
+						content: '·';
+						position: absolute;
+						left: -14rpx;
+						top: 0;
+						font-weight: 500;
 					}
 
 					.btn {

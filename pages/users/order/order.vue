@@ -673,7 +673,7 @@
 			async tozhifu(item) {
 				const res2 = await this.$api.orderPay({
 					uni: item.order_id,
-					paytype: 'yue',
+					paytype: 'weixin',
 					from: 'routine',
 				})
 				console.log(res2)

@@ -28,7 +28,7 @@
 			return {
 				id:0,
 				wid:0,
-				paytype:"yue",//weixin
+				paytype:"weixin",//weixin
 				a: null,
 				payObj: null,
 				price: 0,

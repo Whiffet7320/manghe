@@ -7,9 +7,9 @@
 			<view class="position-icon">
 				<view @click="collect">
 					<!-- 未收藏 -->
-					<!-- <u-icon name="star" color="#000000" size="48"></u-icon> -->
+					<u-icon name="star" color="#000000" size="48" v-if="obj.is_collect==0"></u-icon>
 					<!-- 已收藏 -->
-					<u-icon name="star-fill" color="#000000" size="48"></u-icon>
+					<u-icon name="star-fill" color="#000000" size="48" v-if="obj.is_collect==1"></u-icon>
 				</view>
 				<button class="btnshare u-reset-button" open-type="share">
 					<u-icon name="zhuanfa" style='margin-left: 40rpx;' color="#000000" size="50"></u-icon>
@@ -35,7 +35,7 @@
 			</view>
 		</view>
 		<view class="nav2">
-			<u-tabs-swiper bg-color="#F7F8FA" height='84' font-size="32" gutter="30" inactive-color="#707070"
+			<u-tabs-swiper bg-color="#FFFFFF" height='84' font-size="32" gutter="30" inactive-color="#707070"
 				bar-height="4" bar-width="64" active-color="#BD9E81" ref="uTabs" :list="list" :current="current"
 				@change="tabsChange" :is-scroll="false" swiperWidth="750"></u-tabs-swiper>
 			<swiper :style="[{height: height + 'px'}]" :current="swiperCurrent">
@@ -46,13 +46,16 @@
 							<!-- 主页 -->
 							<template v-if="swiperCurrent == 0">
 								<view class="i1">
-									<u-parse :html="obj.doctor_big_img"></u-parse>
+									<!-- <u-parse :html="obj.doctor_big_img"></u-parse> -->
+									<image :src="obj.doctor_big_img" mode="widthFix" class="img" v-if="obj.doctor_big_img"></image>
 								</view>
 							</template>
 							<!-- 案例 -->
 							<template v-if="swiperCurrent == 1">
 								<view class="i2">
-									<u-parse :html="obj.doctor_anli"></u-parse>
+									<view class="pic" v-for="(item,index) in imgArr" :key="index" @click="previewImg(index,imgArr)">
+										<image :src="item" mode="aspectFill" class="img"></image>
+									</view>
 								</view>
 							</template>
 							<!-- 评价 -->
@@ -193,6 +196,9 @@
 			}
 			if (options.obj) {
 				this.obj = JSON.parse(decodeURIComponent(options.obj))
+				if(this.obj.doctor_anli){
+					this.imgArr = JSON.parse(this.obj.doctor_anli);
+				}
 				console.log(this.obj)
 			}
 		},
@@ -221,7 +227,6 @@
 						page:this.IndexshopPage,
 						limit:this.IndexshopPageSize
 					}, this.obj.id)
-					console.log(res.data)
 					this.pingjiaObj = res.data.comment;
 					if (res.data.list.length == 0) {
 						this.status = 'nomore'
@@ -230,14 +235,27 @@
 						this.pinglunList = this.pinglunList.concat(res.data.list)
 					}
 				}, 200)
-				console.log(this.pinglunList)
 			},
 			collect() {
-				this.$api.collectDoctor(this.id).then((res) => {
-					if (res.status == 200) {
-						this.$u.toast("收藏成功");
-					}
-				})
+				if(this.obj.is_collect==0){
+					this.$api.collectDoctor(this.id).then((res) => {
+						if (res.status == 200) {
+							this.$u.toast("收藏成功");
+							this.obj.is_collect = 1;
+						}else{
+							this.$u.toast(res.msg);
+						}
+					})
+				}else{
+					this.$api.collectDoctor(this.id).then((res) => {
+						if (res.status == 200) {
+							this.$u.toast("取消收藏");
+							this.obj.is_collect = 0;
+						}else{
+							this.$u.toast(res.msg);
+						}
+					})
+				}
 			},
 			handleContact(e) {
 				console.log(e.detail.path)
@@ -246,6 +264,13 @@
 			toBack() {
 				uni.navigateBack({
 					delta: 1
+				})
+			},
+			previewImg(i, imgArr){
+				this.isOnShow = false;
+				uni.previewImage({
+					current: i,
+					urls: imgArr
 				})
 			},
 			toSeeImg(i, imgArr) {
@@ -411,10 +436,35 @@
 			display: flex;
 			flex-wrap: wrap;
 			justify-content: space-between;
+			margin-top: 20rpx;
 
-			.i1 {}
+			.i1 {
+				background-color: #FFFFFF;
+				width: 100%;
+				.img{
+					width: 100%;
+				}
+			}
 
-			.i2 {}
+			.i2 {
+				background-color: #FFFFFF;
+				width: 100%;
+				padding:28rpx 32rpx;
+				display: flex;
+				flex-wrap: wrap;
+				.pic{
+					width: 50%;
+					margin-bottom: 28rpx;
+					box-sizing: border-box;
+					&:nth-child(even) {
+						padding-left: 18rpx;
+					}
+					.img{
+						width: 100%;
+						height: 238rpx;
+					}
+				}
+			}
 
 			.i3 {
 				width: 100%;
