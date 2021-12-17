@@ -9,7 +9,7 @@
 					<view class="txt2">{{addressObj.phone}}</view>
 				</view>
 				<view class="tit2">
-					<view class="b1">默认</view>
+					<view class="b1" v-if="addressInfo.is_default">默认</view>
 					<view class="txt1">
 						{{addressObj.province}}{{addressObj.province == addressObj.city ? '' : addressObj.city}}{{addressObj.district}}{{addressObj.detail}}
 					</view>
@@ -19,7 +19,7 @@
 		</view>
 		<!-- 无地址 -->
 		<view v-else @click="toAddAddress" class="noAddress">{{addNum == 'fushu'?'选择默认地址':'添加收货地址'}}</view>
-		<template v-if="isGWC=='yes'">
+		<template v-if="isNew==0||isNew==1">
 			<view class="nav2" v-for="(item,index) in cartInfo" :key='index'>
 				<view class="nav2-1">
 					<image :src="item.productInfo.image" class="pic" mode="aspectFill"></image>
@@ -49,8 +49,8 @@
 					</view>
 					<view class="tit1">
 						<view class="txt1">合计</view>
-						<view class="txt2">¥
-							{{parseFloat($tool.argMul(item.cart_num,item.productInfo.price)).toFixed(2)}}
+						<view class="txt2">
+							¥{{parseFloat($tool.argMul(item.cart_num,item.productInfo.price)).toFixed(2)}}
 						</view>
 					</view>
 				</view>
@@ -59,7 +59,7 @@
 		<template v-if="isGWC=='no'">
 			<view class="nav2" v-for="item in skuItem" :key='item.id'>
 				<view class="nav2-1">
-					<image :src="item.image" class="pic" mode=""></image>
+					<image :src="item.image" class="pic" mode="aspectFill"></image>
 					<view class="right">
 						<view class="tit1">
 							<view class="txt1">{{item.shopName}}</view>
@@ -94,7 +94,7 @@
 		<template v-if="isJifenShop=='yes'">
 			<view class="nav2" v-for="item in skuItem" :key='item.storeInfo.id'>
 				<view class="nav2-1">
-					<image :src="item.storeInfo.image" class="pic" mode=""></image>
+					<image :src="item.storeInfo.image" class="pic" mode="aspectFill"></image>
 					<view class="right">
 						<view class="tit1">
 							<view class="txt1">{{item.storeInfo.title}}</view>
@@ -137,10 +137,10 @@
 		</view>
 		<view class="footer">
 			<view class="left">
-				<view class="txt1">合计¥{{zongPrice}}{{isJifenShop=='yes'?'积分':''}}</view>
+				<view class="txt1">合计¥{{zongPrice||0}}{{isJifenShop=='yes'?'积分':''}}</view>
 				<view class="txt2">(共{{isJifenShop == 'yes'? 1 : total}}件)</view>
 			</view>
-			<view @click="toQuerenzhifu" class="btn">立即支付</view>
+			<view class="btn" @click="toQuerenzhifu">立即支付</view>
 		</view>
 	</view>
 </template>
@@ -149,8 +149,10 @@
 	export default {
 		data() {
 			return {
+				combinationId: 0,
+				cartInfo:[],
+				isNew:1,
 				isJifenShop: null,
-				cartInfo: [],
 				uni: '',
 				isAgain: 'no',
 				addNum: '',
@@ -163,16 +165,20 @@
 				cartId: '',
 				mark: '',
 				orderKey: '',
-				zongPrice: '',
-				pay_postage: ''
+				zongPrice: '0',
+				pay_postage: '',
+				pinkId:0
 			}
 		},
 		onLoad(options) {
-			console.log(options)
+			if(options.new){
+				this.isNew = !options.new || options.new === '0' ? 0 : 1;
+			}
+			this.pinkId = options.pinkId ? parseInt(options.pinkId) : 0;
 			if (options.skuItem) {
 				this.skuItem = JSON.parse(options.skuItem);
 				if (options.isJifenShop == 'yes') {
-					this.isJifenShop = options.isJifenShop
+					this.isJifenShop = options.isJifenShop;
 				} else {
 					this.isGWC = options.isGWC;
 					this.cartId = options.cartId;
@@ -183,16 +189,18 @@
 				this.isGWC = options.isGWC;
 			}
 			if (options.isAgain) {
-				this.isAgain = options.isAgain
-				this.uni = options.uni
+				this.isAgain = options.isAgain;
+			}
+			if(options.uni){
+				this.uni = options.uni;
 			}
 		},
 		onShow() {
-			this.getData()
+			this.getData();
 		},
-		computed: {
-			total() {
-				if (this.isGWC === "yes") {
+		computed:{
+			total(){
+				if(this.isNew==0||this.isNew==1){
 					let sum = 0;
 					this.cartInfo.forEach((item) => {
 						sum += item.cart_num;
@@ -208,7 +216,23 @@
 			}
 		},
 		methods: {
+			/*
+			 * 提取砍价和拼团id
+			 */
+			getBargainId() {
+				let cartINfo = this.cartInfo;
+				let BargainId = 0;
+				let combinationId = 0;
+				cartINfo.forEach(function(value, index, cartINfo) {
+					combinationId = cartINfo[index].combination_id
+				})
+				this.combinationId = parseInt(combinationId);
+			},
 			async getData() {
+				uni.showLoading({
+					title: '加载中',
+					mask: true
+				});
 				this.zongPrice2 = 0;
 				const res = await this.$api.addressList()
 				this.addressObj = res.data.filter(ele => {
@@ -230,37 +254,37 @@
 				if (this.isAgain == 'yes') {
 					// 再次购买
 					const res11 = await this.$api.orderAgain({
-						uni: this.uni
+						uni: this.uni||this.cartId
 					})
-					console.log(res11)
 					cartId = res11.data.cateId
 				}
+
 				if (this.isJifenShop == 'yes') {
 					const res2 = await this.$api.store_integralOrderConfirm({
 						num: 1,
 						unique: this.skuItem[0].productValue['默认'].unique
 					})
-					console.log(res2)
-					this.zongPrice = res2.data.total_price
+					this.zongPrice = res2.data.total_price;
 				} else {
 					const res2 = await this.$api.orderConfirm({
 						cartId: cartId,
-						new: this.isGWC == 'no' ? 1 : 0,
+						new: this.isNew
 					})
 					this.cartInfo = res2.data.cartInfo;
 					this.orderKey = res2.data.orderKey;
+					this.getBargainId();
 					const res3 = await this.$api.orderComputed({
 						addressId: this.addressObj.id,
+						couponId:0,
 						payType: 'weixin',
 						useIntegral: 0
 					}, this.orderKey)
 					this.zongPrice = res3.data.result.total_price;
 					this.pay_postage = res3.data.result.pay_postage;
 				}
-
+				uni.hideLoading();
 			},
 			changInp(e) {
-				console.log(e.length)
 				this.InpNum = e.length;
 			},
 			async toQuerenzhifu() {
@@ -272,11 +296,15 @@
 						unique: this.skuItem[0].productValue['默认'].unique
 					})
 					if (res2.status == 200) {
-						this.$refs.uToast.show({
-							title: '支付成功',
-							type: 'success',
-							url: '/pages/users/integral/order'
+						uni.showToast({
+							title:"支付成功",
+							icon:"success"
 						})
+						setTimeout(()=>{
+							uni.redirectTo({
+								url:"/pages/users/integral/order"
+							})
+						},1500)
 					}else{
 						this.$refs.uToast.show({
 							title: res2.msg,
@@ -286,7 +314,7 @@
 				} else {
 					const res2 = await this.$api.orderCreate({
 						addressId: this.addressObj.id,
-						couponId: '',
+						couponId: 0,
 						payType: 'weixin',
 						useIntegral: 0,
 						mark: this.mark,
@@ -294,11 +322,13 @@
 					}, this.orderKey)
 					if (res2.status == 200) {
 						uni.redirectTo({
-							url: `/pages/users/order/querendingdan?uni=${res2.data.result.orderId}&payObj=${encodeURIComponent(JSON.stringify(res2.data.result.jsConfig))}&price=${this.zongPrice}`
+							url: `/pages/users/order/querendingdan?id=${res2.data.result.orderId}&price=${this.zongPrice}`
 						})
+						// uni.redirectTo({
+						// 	url: `/pages/users/order/querendingdan?uni=${res2.data.result.orderId}&payObj=${encodeURIComponent(JSON.stringify(res2.data.result.jsConfig))}&price=${this.zongPrice}`
+						// })
 					}
 				}
-
 			},
 			toAddAddress() {
 				if (this.addressObj || this.addNum == 'fushu') {

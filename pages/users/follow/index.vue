@@ -10,7 +10,7 @@
 				</view>
 			</view>
 		</view>
-		<u-loadmore v-show="!isEmpty" height="80rpx" font-size="20" :status="loadStatus" icon-type="flower" color="#ccc" />
+		<u-loadmore height="80rpx" font-size="20" :status="loadStatus" icon-type="flower" color="#707070" />
 		<Dialog v-if="show" @close="onClose">
 			<view class="modcontent">确定取消关注“{{name}}”吗</view>
 		</Dialog>
@@ -25,7 +25,6 @@
 		},
 		data(){
 			return{
-				isEmpty: false,
 				name:"",
 				id:0,
 				cindex:0,
@@ -33,8 +32,7 @@
 				list:[],
 				reload: true,
 				loadStatus: 'loadmore',
-				currentPage: 1,
-				lastPage: 1
+				currentPage: 1
 			}
 		},
 		methods:{
@@ -43,11 +41,17 @@
 				this.loadStatus = 'loading';
 				this.$api.collectDoctorlist({page:this.currentPage,limit:10}).then((res)=>{
 					if(res.status==200){
-						list = res.data;
-						this.list = [...this.list, ...list];
-						this.isEmpty = !this.list.length;
-						this.lastPage = res.data.last_page;
-						this.loadStatus = this.currentPage < res.data.last_page ? 'loadmore' : 'nomore';
+						if (res.data.length == 0) {
+							this.loadStatus = 'nomore';
+						} else {
+							if(this.currentPage==1 && res.data.length<=10){
+								this.loadStatus = 'nomore';
+							}else{
+								this.loadStatus = 'loadmore';
+							}
+							this.currentPage++;
+							this.list = this.list.concat(res.data);
+						}
 					}
 				})
 			},
@@ -64,7 +68,7 @@
 							this.$u.toast("取消成功");
 							this.list.splice(this.cindex,1);
 						}else{
-							this.$u.toast(res.message);
+							this.$u.toast(res.msg);
 						}
 					})
 				}
@@ -80,10 +84,7 @@
 			this.getlist();
 		},
 		onReachBottom() {
-			if (this.currentPage < this.lastPage) {
-				this.currentPage += 1;
-				this.getlist();
-			}
+			this.getlist();
 		},
 		onPullDownRefresh() {
 			uni.stopPullDownRefresh();

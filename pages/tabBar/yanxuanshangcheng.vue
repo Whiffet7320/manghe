@@ -1,15 +1,16 @@
 <template>
 	<view class="index">
-		<view @click="goCart">
-			<image src="/static/image/zu1842.png" class="fixed-icon" mode=""></image>
-		</view>
-		<image src="/static/image/zu1525.png" class="fixed-icon2" mode=""></image>
 		<view class="nav1">
 			<view class="tit1">
 				<view class="myInp" @click="toSearch">
 					<u-icon @click="toSearch" name="search" color="#000000" size="28"></u-icon>
 					<u-input @click="toSearch" :clearable='false' v-model="searchVal" input-align='center'
 						placeholder='搜索专家/项目/关键词' placeholder-style='color: #122106;' type="text" height="60rpx" />
+				</view>
+				<view class="service">
+					<button open-type="contact" class="u-reset-button">
+						<image src="/static/image/zu1525.png" class="fixed-icon2" mode=""></image>
+					</button>
 				</view>
 			</view>
 			<view class="tit3">
@@ -53,10 +54,6 @@
 					<view class="txt-item">其他</view>
 				</view>
 			</view>
-			<!-- <view class="nav2-1">
-				<image src="/static/image/zu1501.png" class="pic3-1" mode=""></image>
-				<view class="tit3-1">进口玻尿酸限时8.5折～赶紧加购吧～！</view>
-			</view> -->
 		</view>
 		<view class="nav3 nav4">
 			<view class="title">
@@ -74,19 +71,18 @@
 						<view class="txt1">每日特惠</view>
 						<view class="i2-items2">
 							<view class="i2-item" @click="toRexiaoxiangqin(item)" v-for="item in dijiaList" :key='item.id'>
-								<image :src="item.image" class="item2-pic" mode=""></image>
+								<image :src="item.image" class="item2-pic" mode="aspectFill"></image>
 								<view class="btn">¥{{item.price}}</view>
 							</view>
 						</view>
-
 					</view>
 					<view class="item item3">
 						<image src="/static/image/zu1897.png" class="pic" mode=""></image>
 						<view class="txt1">低价拼团</view>
 						<view class="txt2">专属拼团价</view>
 						<view class="i2-items2">
-							<view class="i2-item"  @click="toDijiapintuan(item.id)" v-for="item in pintuanList" :key='item.id'>
-								<image :src="item.image" class="item2-pic" mode=""></image>
+							<view class="i2-item" @click="toDijiapintuan(item.id)" v-for="item in pintuanList" :key='item.id'>
+								<image :src="item.image" class="item2-pic" mode="aspectFill"></image>
 								<view class="btns">¥{{item.price}}</view>
 							</view>
 						</view>
@@ -113,7 +109,7 @@
 									<view class="right">
 										<view class="up">
 											<view class="txt1">{{item.store_name}}</view>
-											<view class="txt2">美容护肤｜水之谜积雪草舒缓面膜</view>
+											<view class="txt2"></view>
 										</view>
 										<view class="down">
 											<view class="d-t1">¥{{item.price}}</view>
@@ -135,11 +131,17 @@
 							<!-- <template v-if="swiperCurrent == 3">
 								789
 							</template> -->
-							<u-loadmore v-if='swiperCurrent == index' :status="status" />
+							<u-loadmore v-if='swiperCurrent == index' :status="status" font-size="22" />
 						</view>
 					</scroll-view>
 				</swiper-item>
 			</swiper>
+		</view>
+		<view class="cart" @click="goCart">
+			<view class="pic">
+				<image src="/static/image/zu1842.png" class="fixed-icon" mode=""></image>
+				<u-badge type="error" :count="cartCount" :offset="[30,30]"></u-badge>
+			</view>
 		</view>
 	</view>
 </template>
@@ -169,6 +171,7 @@
 		},
 		data() {
 			return {
+				cartCount:0,
 				noChange:false,
 				dijiaList:[],
 				pintuanList:[],
@@ -220,9 +223,10 @@
 			this.$store.commit("shopPage", this.shopPage + 1);
 		},
 		onShow() {
-			this.getBanner()
-			this.getData()
-			this.getData2()
+			this.getBanner();
+			this.getCartNum();
+			this.getData();
+			this.getData2();
 			this.shopList = [];
 			this.$store.commit("shopPage", 1);
 			this.tabsChange(this.current);
@@ -252,6 +256,14 @@
 					ele.image = ele.image_url;
 				})
 			},
+			async getCartNum(){
+				await this.$api.getCartCounts().then(res => {
+					if(res.status==200){
+						this.cartCount = res.data.count;
+						this.$store.commit('setCartNum', res.data.count > 99 ? '..' : res.data.count);
+					}
+				});
+			},
 			async getData() {
 				this.status = 'loading';
 				setTimeout(async () => {
@@ -277,7 +289,6 @@
 						this.shopList = this.shopList.concat(res.data)
 					}
 				}, 200)
-				console.log(this.shopList)
 			},
 			toSearchResult(val) {
 				uni.navigateTo({
@@ -367,24 +378,30 @@
 		height: 100rpx !important;
 	}
 
-	.index {}
-
-	.fixed-icon {
-		z-index: 99;
+	.cart {
 		position: fixed;
-		width: 172rpx;
-		height: 172rpx;
 		bottom: 10rpx;
 		right: 10rpx;
+		z-index: 99;
+		.pic{
+			position: relative;
+			.fixed-icon {
+				width: 172rpx;
+				height: 172rpx;
+			}
+		}
 	}
-
-	.fixed-icon2 {
+	.service{
 		z-index: 99;
 		position: absolute;
 		width: 60rpx;
 		height: 60rpx;
 		right: 24rpx;
 		top: 22rpx;
+		.fixed-icon2 {
+			width: 60rpx;
+			height: 60rpx;
+		}
 	}
 
 	.nav1 {
@@ -646,10 +663,10 @@
 						&:nth-child(1) {
 							margin-right: 22rpx;
 						}
-
 						.item2-pic {
 							width: 120rpx;
 							height: 100rpx;
+							background-color: #eee;
 							border-radius: 8rpx;
 						}
 
@@ -665,12 +682,8 @@
 							text-align: center;
 							color: #FA8677;
 						}
-
 					}
-
 				}
-
-
 			}
 
 			.item3.item {
@@ -720,6 +733,7 @@
 						.item2-pic {
 							width: 120rpx;
 							height: 100rpx;
+							background-color: #eee;
 							border-radius: 8rpx;
 						}
 

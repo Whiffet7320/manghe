@@ -19,6 +19,12 @@ export default new Vuex.Store({
 		token:uni.getStorageSync("token")||"",
 		userInfo: {},
 		uid:uni.getStorageSync("uid") || 0,
+		doctorInfo:{},
+		comentInfo:[],
+		proComentInfo:[],
+		wkorder:{},
+		onResh:false,
+		cartNum:0
 	},
 	mutations: {
 		searchList(state, str) {
@@ -59,6 +65,24 @@ export default new Vuex.Store({
 			state.userInfo = userInfo;
 			uni.setStorageSync("userInfo",userInfo);
 		},
+		setDoctor(state,data){
+			state.doctorInfo = data;
+		},
+		setComent(state,data){
+			state.comentInfo = data;
+		},
+		setproComent(state,data){
+			state.proComentInfo = data;
+		},
+		setwkorder(state,data){
+			state.wkorder = data;
+		},
+		setResh(state,data){
+			state.onResh = data;
+		},
+		setCartNum(state, data) {
+			state.cartNum = data;
+		}
 	},
 	getters:{
 		token: state => state.token,

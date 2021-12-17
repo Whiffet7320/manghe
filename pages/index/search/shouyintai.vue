@@ -29,6 +29,7 @@
 		<view class="footer">
 			<view @click="toPay" class="btn">支付¥{{obj.yuPrice}}</view>
 		</view>
+		<u-toast ref="uToast" />
 	</view>
 </template>
 
@@ -47,6 +48,9 @@
 		},
 		methods:{
 			toPay(){
+				uni.showLoading({
+					title:"支付中..."
+				})
 				uni.requestPayment({
 					provider: 'wxpay',
 					timeStamp: this.obj.jsConfig.timestamp,
@@ -54,15 +58,28 @@
 					package: this.obj.jsConfig.package,
 					signType: this.obj.jsConfig.signType,
 					paySign: this.obj.jsConfig.paySign,
-					success: function(res) {
-						this.$refs.uToast.show({
-							title: '支付成功',
-							type: 'success',
-							url: '/pages/users/order/order',
+					success: (res)=> {
+						uni.hideLoading();
+						uni.showToast({
+							title:"支付成功",
+							icon:"success"
 						})
+						setTimeout(()=>{
+							uni.redirectTo({
+								url:"/pages/users/order/list"
+							})
+						},1500)
 					},
-					fail: function(err) {
+					fail:(err)=> {
+						uni.hideLoading();
 						console.log('fail:' + JSON.stringify(err));
+						this.$u.toast(err);
+					},
+					complete: (e)=> {
+						uni.hideLoading();
+						if (e.errMsg == 'requestPayment:cancel'){
+							this.$u.toast("取消支付");
+						}
 					}
 				});
 			},

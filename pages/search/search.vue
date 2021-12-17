@@ -1,13 +1,19 @@
 <template>
 	<view class="index">
-		<view class="nav1">
+		<!-- <view class="nav1">
 			<u-icon @click='toBack' name="arrow-left" color="#000000" size="40"></u-icon>
 			<view class="myInp">
 				<u-icon name="search" color="#C7C7C7" size="28"></u-icon>
 				<u-input :clearable='false' v-model="searchVal" placeholder='搜索专家/项目/关键词'
 					placeholder-style='color: #C7C7C7;' type="text" height="60rpx" @confirm='toSearchResult' />
 			</view>
-		</view>
+		</view> -->
+		<u-navbar>
+			<view class="myInp">
+				<u-icon name="search" color="#C7C7C7" size="28"></u-icon>
+				<u-input :clearable='false' v-model="searchVal" placeholder='搜索专家/项目/关键词' placeholder-style='color: #C7C7C7;' type="text" height="60rpx" @confirm='toSearchResult' />
+			</view>
+		</u-navbar>
 		<view class="tit1">搜索发现</view>
 		<view class="items1">
 			<view class="item">小眼综合</view>
@@ -16,7 +22,7 @@
 			<view class="item">私密</view>
 			<view class="item">肋骨鼻综合</view>
 		</view>
-		<view class="flex">
+		<view class="flex" v-if="searchList.length">
 			<view class="tit1">历史搜索</view>
 			<image src="/static/image/zu1527.png" @click="onDel" class="f-pic" mode=""></image>
 		</view>
@@ -74,34 +80,32 @@
 	}
 </style>
 <style lang="scss" scoped>
-	.index {}
 
 	.nav1 {
 		display: flex;
 		align-items: center;
 		margin-top: 96rpx;
 		padding-left: 30rpx;
-
-		.myInp {
-			margin-left: 8rpx;
-			padding: 0 24rpx;
-			width: 436rpx;
-			height: 64rpx;
-			background: rgba(189, 158, 129, 0.05);
-			border: 2rpx solid #BD9E81;
-			display: flex;
-			align-items: center;
-			border-radius: 30rpx;
-
-			/deep/ .u-input {
-				margin-left: 14rpx;
-				width: 340rpx !important;
-
-				.u-input__input {
-					font-size: 24rpx;
-					font-weight: 400;
-					line-height: 60rpx;
-				}
+	}
+	.myInp {
+		margin-left: 8rpx;
+		padding: 0 24rpx;
+		width: 436rpx;
+		height: 64rpx;
+		background: rgba(189, 158, 129, 0.05);
+		border: 2rpx solid #BD9E81;
+		display: flex;
+		align-items: center;
+		border-radius: 30rpx;
+	
+		/deep/ .u-input {
+			margin-left: 14rpx;
+			width: 340rpx !important;
+	
+			.u-input__input {
+				font-size: 24rpx;
+				font-weight: 400;
+				line-height: 60rpx;
 			}
 		}
 	}

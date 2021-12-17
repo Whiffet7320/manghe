@@ -22,20 +22,51 @@
 </template>
 
 <script>
+	import {mapState} from "vuex";
 	export default {
 		data() {
 			return {
+				id:0,
+				wid:0,
+				paytype:"yue",//weixin
 				a: null,
 				payObj: null,
 				price: 0,
 				sdjTime: 0,
+				order_pay_info:{}
+			}
+		},
+		computed:{
+			...mapState(["isLogin"])
+		},
+		watch: {
+			isLogin: {
+				handler: function(newV, oldV) {
+					if (newV) {
+						this.getOrderPayInfo();
+					}
+				},
+				deep: true
 			}
 		},
 		onLoad(options) {
-			this.uni = options.uni;
-			this.payObj = JSON.parse(decodeURIComponent(options.payObj));
-			this.price = options.price;
+			if(options.wid){
+				this.wid = options.wid;
+			}
+			if(options.id){
+				this.id = options.id;
+			}
+			if(options.uni){
+				this.uni = options.uni;
+			}
+			if(options.payObj&&options.payObj!=='undefined'){
+				this.payObj = JSON.parse(decodeURIComponent(options.payObj));
+			}
+			if(options.price){
+				this.price = options.price;
+			}
 			console.log(this.payObj)
+			
 			var date = new Date();
 			var min = date.getMinutes();
 			date.setMinutes(min + 5);
@@ -78,31 +109,107 @@
 					this.TimeDown(id, endDateStr);
 				}, 1000)
 			},
-			async pay() {
-				// const res = await this.$api.orderPay({
-				// 	uni:this.uni,
-				// 	from:'routine',
-				// })
-				// console.log(res)
-				uni.requestPayment({
-					provider: 'wxpay',
-					timeStamp: this.payObj.timestamp,
-					nonceStr: this.payObj.nonceStr,
-					package: this.payObj.package,
-					signType: this.payObj.signType,
-					paySign: this.payObj.paySign,
-					success: function(res) {
-						this.$refs.uToast.show({
-							title: '支付成功',
-							type: 'success',
-							url: '/pages/users/order/order',
-						})
-					},
-					fail: function(err) {
-						console.log('fail:' + JSON.stringify(err));
-					}
+			getOrderPayInfo(){
+				uni.showLoading({
+					title: '正在加载中'
+				});
+				this.$api.getOrderDetail(this.id).then(res => {
+					uni.hideLoading();
+					this.order_pay_info = res.data;
+				}).catch(err => {
+					uni.hideLoading();
 				});
 			},
+			async pay(){
+				if(this.wid!==0){
+					this.$api.orderWaitpay(this.wid).then((res)=>{
+						if(res.status==200){
+							let jsConfig = res.data.result.jsConfig;
+							this.goPay(jsConfig);
+						}
+					})
+				}else{
+					uni.showLoading({
+						title:"支付中..."
+					})
+					this.$api.orderPay({
+						uni: this.id,
+						paytype: this.paytype,
+						from: 'routine'
+					}).then((res)=>{
+						if (res.status == 200) {
+							let jsConfig = res.data.result.jsConfig;
+							this.goPay(jsConfig);
+						}else{
+							uni.hideLoading();
+						}
+					})
+				}
+			},
+			goPay(jsConfig){
+				switch (this.paytype) {
+					case 'yue':
+						uni.hideLoading();
+						uni.showToast({
+							title:"支付成功",
+							icon:"success"
+						})
+						setTimeout(()=>{
+							if(this.order_pay_info.pink_id){
+								uni.redirectTo({
+									url:"/pages/users/order/combinationStatus?id="+this.order_pay_info.pink_id
+								})
+							}else{
+								uni.redirectTo({
+									url:"/pages/users/order/list"
+								})
+							}
+						},1500)
+					break;
+					case 'weixin':
+						uni.requestPayment({
+							provider: 'wxpay',
+							timeStamp: jsConfig.timestamp,
+							nonceStr: jsConfig.nonceStr,
+							package: jsConfig.package,
+							signType: jsConfig.signType,
+							paySign: jsConfig.paySign,
+							success: (res)=> {
+								uni.hideLoading();
+								uni.showToast({
+									title:"支付成功",
+									icon:"success"
+								})
+								setTimeout(()=>{
+									if(this.order_pay_info.pink_id){
+										uni.redirectTo({
+											url:"/pages/users/order/combinationStatus?id="+this.order_pay_info.pink_id
+										})
+									}else{
+										uni.redirectTo({
+											url:"/pages/users/order/list"
+										})
+									}
+								},1500)
+							},
+							fail: (err)=> {
+								uni.hideLoading();
+								console.log('fail:' + JSON.stringify(err));
+								this.$u.toast("取消支付");
+							},
+							complete: (e)=> {
+								uni.hideLoading();
+								if (e.errMsg == 'requestPayment:cancel'){
+									this.$u.toast("取消支付");
+								}
+							}
+						});
+					break;
+				}
+			}
+		},
+		onShow(){
+			this.getOrderPayInfo();
 		}
 	}
 </script>

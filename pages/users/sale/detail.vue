@@ -2,21 +2,21 @@
 	<view class="saleDetail">
 		<view class="steps">
 			<view class="steps_item" :class="{'finish':index<step}" v-for="(item,index) in steps" :key="index">
-				<view class="step_title" :class="{'active':step==index}">{{item}}</view>
+				<view class="step_title" :class="{'active':index<=step}">{{item}}</view>
 				<view class="step_circle_con">
 					<view class="step_circle" :class="{'active':index<=step}"></view>
 				</view>
 				<view class="step_line"></view>
 			</view>
 		</view>
-		<view class="pinfo" v-if="step==0||step==2">
+		<view class="pinfo" v-if="step==0||step==2 && orderInfo.cartInfo">
 			<view class="tit">退款原因</view>
-			<view class="proinfo">
+			<view class="proinfo" v-for="(item,index) in orderInfo.cartInfo" :key="index">
 				<view class="left">
-					<image src="" mode="aspectFill" class="img"></image>
-					<view class="num">+3</view>
+					<image :src="item.productInfo.image" mode="aspectFill" class="img"></image>
+					<view class="num">+{{orderInfo.total_num}}</view>
 				</view>
-				<view class="desc">东西有使用痕迹不想要！</view>
+				<view class="desc">{{orderInfo.refund_reason_wap}}</view>
 			</view>
 		</view>
 		<view class="jhpro" v-if="step==1">
@@ -27,29 +27,29 @@
 			<view class="express_hd">
 				<view class="hd">
 					<view class="left">
-						<text v-if="expressNum==''">需自己联系快递公司并填写快递单号</text>
-						<text v-else>{{expressNum}}</text>
+						<text v-if="orderInfo.refund_express==''">需自己联系快递公司并填写快递单号</text>
+						<text v-else>{{orderInfo.refund_express}}</text>
 					</view>
-					<view class="copy" @click="onCopy(expressNum)">
+					<view class="copy" @click="onCopy(orderInfo._status.refund_name + orderInfo._status.refund_phone + orderInfo._status.refund_address)">
 						<image src="/static/image/user/icon_copy.png" mode="aspectFit" style="width: 22rpx;height:22rpx;margin-right:8rpx;"></image>
 						<text>复制</text>
 					</view>
 				</view>
-				<view class="bd">
-					<view class="top">退货地址：陈同和百科 15059687878</view>
-					<view>浙江省温州市瓯海区牛山广场写字楼1栋2009室</view>
+				<view class="bd" v-if="orderInfo._status.refund_name">
+					<view class="top">退货地址：{{orderInfo._status.refund_name}} {{orderInfo._status.refund_phone}}</view>
+					<view>{{orderInfo._status.refund_address}}</view>
 				</view>
 			</view>
 			<view class="stit">填写快递单号</view>
 			<view class="express_con">
 				<input type="text" v-model="expressNum" class="inpt" placeholder="请填写退货快递单号" />
-				<view class="right">
+				<view class="right" @click="scanCode">
 					<image src="/static/image/user/icon_photo.png" mode="aspectFit" style="width:41rpx;height:34rpx;margin-bottom:4rpx;"></image>
 					<text>拍摄</text>
 				</view>
 			</view>
-			<view class="stit">退货留言</view>
-			<view class="comment_con">
+			<view class="stit" v-if="rshow">退货留言</view>
+			<view class="comment_con" v-if="rshow">
 				<view class="textarea">
 					<textarea v-model="textarea" :auto-height="true" maxlength="100" placeholder="请详细填写您的退货留言" placeholder-style="color:#999" class="mtextarea"></textarea>
 				</view>
@@ -73,7 +73,7 @@
 		</view>
 		<view class="express" v-if="step==2">
 			<text>快递单号</text>
-			<text class="num">34667218423623716</text>
+			<text class="num">{{orderInfo.refund_express}}</text>
 		</view>
 		<view class="emptywrap" v-if="step==0">
 			<view class="emptybox" v-if="status==0">
@@ -91,7 +91,7 @@
 				</view>
 			</view>
 		</view>
-		<view class="emptywrap" v-if="step==2">
+		<view class="emptywrap" v-if="step==3">
 			<view class="emptybox">
 				<image src="/static/image/user/undraw_shop.png" mode="aspectFit" style="width: 296rpx;height: 236rpx;"></image>
 				<view class="title">
@@ -99,7 +99,7 @@
 				</view>
 			</view>
 		</view>
-		<view class="emptywrap" v-if="step==3">
+		<view class="emptywrap" v-if="step==4">
 			<view class="emptybox">
 				<image src="/static/image/user/undraw_Balloons.png" mode="aspectFit" style="width:320rpx;height: 236rpx;"></image>
 				<view class="title">
@@ -108,15 +108,15 @@
 			</view>
 		</view>
 		<u-gap height="120"></u-gap>
-		<view class="footbar other safe-area-inset-bottom" v-if="step==0||step==2">
+		<!-- <view class="footbar other safe-area-inset-bottom" v-if="step==0||step==2">
 			<view class="subbtn">撤销申请</view>
-		</view>
+		</view> -->
 		<view class="footbar safe-area-inset-bottom" v-if="step==0 && status==1">
-			<view class="subbtns">再次申请</view>
+			<view class="subbtns" @click="ragainRefund">再次申请</view>
 		</view>
 		<view class="footbar other safe-area-inset-bottom" v-if="step==1">
-			<view class="subbtns">提交</view>
-			<view class="subbtn">撤销申请</view>
+			<view class="subbtns" @click="subRefund">提交</view>
+			<!-- <view class="subbtn">撤销申请</view> -->
 		</view>
 	</view>
 </template>
@@ -125,8 +125,12 @@
 	export default{
 		data(){
 			return{
-				status:1,
-				step:1,
+				rshow:false,
+				cartId:0,
+				orderId:0,
+				orderInfo:{},
+				status:0,
+				step:0,
 				steps:["商家处理","寄回商品","商家收货","退款成功"],
 				expressNum:"",
 				textarea:"",
@@ -134,6 +138,42 @@
 			}
 		},
 		methods:{
+			scanCode(){
+				uni.scanCode({
+					success: (res) => {
+						this.expressNum = res.result;
+					}
+				})
+			},
+			getOrderInfo() {
+				this.$api.getRefundOrderDetail(this.orderId, this.cart_id).then(res => {
+					if(res.status==200){
+						this.orderInfo = res.data;
+						this.getStatus(res.data.refund_type);
+					}
+				});
+			},
+			getStatus(status){
+				switch(status){
+					case 1:
+						this.step = 1;
+					break;
+					case 3:
+						this.step = 0;
+						this.status = 1;
+						this.rshow = true;
+					break;
+					case 4:
+						this.step = 1;
+					break;
+					case 5:
+						this.step = 2;
+					break;
+					case 6:
+						this.step = 4;
+					break;
+				}
+			},
 			onCopy(str){
 				if(str==""){
 					return false;
@@ -158,33 +198,57 @@
 				this.imglist.splice(index, 1);
 			},
 			chooseImage(){
-				uni.chooseImage({
-					count: 1, //默认9
-					sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
-					sourceType: ['album'], //从相册选择
-					success: res => {
-						for (let i = 0; i < res.tempFilePaths.length; i++) {
-							// 读取图片宽高
-							uni.getImageInfo({
-								src: res.tempFilePaths[i],
-								success: image => {
-									uni.showLoading({
-										mask:true,
-										title:"上传中..."
-									})
-									uni.hideLoading();
-									this.imglist = this.imglist.concat(image.path);
-								}
-							});
-						}
-					}
+				this.$tool.uploadImageOne('upload/image',(res)=> {
+					this.imglist = this.imglist.concat(res.data.url);
 				});
 			},
+			ragainRefund(){
+				this.$api.orderRefundVerify({
+					refund_reason_wap_explain: this.textarea,
+					refund_reason_wap_img: this.imglist.length?this.imglist.join(','):"",
+					refund_type: 1,
+					uni: this.orderId,
+					cart_id: this.cartId,
+					refund_num: this.orderInfo.total_num
+				}).then(res => {
+					uni.showToast({
+						title:"申请成功",
+						icon:"success"
+					})
+					setTimeout(()=> {
+						uni.reLaunch({
+							url: "/pages/users/order/list"
+						})
+					}, 1500);
+				}).catch(err => {
+					this.$u.toast(err);
+				})
+			},
+			subRefund(){
+				this.$api.refundExpress({express_id: this.expressNum,id:this.orderInfo.id}).then(res => {
+					uni.showToast({
+						title:"操作成功",
+						icon:"success"
+					})
+					setTimeout(()=>{
+						uni.navigateBack();
+					},1500)
+				}).catch(err => {
+					this.$u.toast(err);
+				})
+			}
 		},
 		onLoad(options){
 			if(options.type){
 				this.status = options.type;
 			}
+			if (options.cartId){
+				this.cartId = options.cartId;
+			}
+			if(options.orderId){
+				this.orderId = options.orderId;
+			}
+			this.getOrderInfo();
 		}
 	}
 </script>

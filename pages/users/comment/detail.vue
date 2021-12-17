@@ -2,28 +2,32 @@
 	<view class="detail">
 		<view class="content">
 			<view class="hd">
-				<image src="" mode="aspectFill" class="img"></image>
-				<view class="name">250ml 雅漾补水喷雾赠一</view>
+				<image v-if="info.image" :src="info.image" mode="aspectFill" class="img"></image>
+				<view class="name">{{info.store_name}}</view>
 			</view>
 			<view class="ft">
 				<view class="left">产品体验使用感受</view>
-				<view class="zan">
+				<view class="zan" v-if="info.product_score==5">
 					<u-icon name="thumb-up-fill" size="21" color="#BD9E81"></u-icon>
 					<text class="text">满意</text>
+				</view>
+				<view class="zan" v-if="info.product_score==0">
+					<u-icon name="thumb-down-fill" size="21" color="#BD9E81"></u-icon>
+					<text class="text">不满意</text>
 				</view>
 			</view>
 		</view>
 		<view class="comment_con">
 			<view class="tit">评论内容</view>
 			<view class="comcontent">
-				<view class="con">哇塞，做出的效果远远大于我的期待值，真的做的超级自然，远看近看都很耐看。</view>
+				<view class="con">{{info.comment}}</view>
 				<view class="imglist">
-					<image src="" mode="aspectFill" class="img"></image>
+					<image :src="pitem" mode="aspectFill" class="img" v-for="(pitem,index) in info.pics" :key="index"></image>
 				</view>
 			</view>
-			<view class="tip">已超过7天，无法修改评价</view>
+			<view class="tip" v-if="show">已超过7天，无法修改评价</view>
 		</view>
-		<view class="delete">
+		<view class="delete" @click="onDelete">
 			<image src="/static/image/user/icon_delete.png" mode="aspectFit" style="width: 28rpx;height: 30rpx;"></image>
 			<text class="text">删除该评价</text>
 		</view>
@@ -31,10 +35,56 @@
 </template>
 
 <script>
+	import {mapState} from 'vuex';
 	export default{
 		data(){
 			return{
-				
+				show:false
+			}
+		},
+		computed: {
+			...mapState({
+				info:state=>state.proComentInfo
+			})
+		},
+		methods:{
+			onDelete(){
+				uni.showModal({
+					title: '删除评价',
+					content: '确定删除该评价',
+					confirmColor:"#BD9E81",
+					success: (res)=> {
+						if (res.confirm) {
+							this.$api.myCommentDel(this.info.id).then(res => {
+								if(res.status==200){
+									uni.showToast({
+										title: '删除成功',
+										icon: 'success'
+									})
+									setTimeout(()=>{
+										this.$store.commit("setResh",true);
+										uni.navigateBack();
+									},1500)
+								}
+							}).catch(err => {
+								this.$u.toast(err);
+							});
+						} else if (res.cancel) {
+							this.$u.toast('已取消');
+						}
+					}
+				});
+			}
+		},
+		onLoad(){
+			let time = 604800000;
+			let old = new Date(this.info.add_time.replace(/-/g, '/')).getTime();
+			let now = new Date().getTime();
+			let sum = Number(old) + time;
+			if(Number(now)>Number(sum)){
+				this.show = true;
+			}else{
+				this.show = false;
 			}
 		}
 	}

@@ -34,7 +34,7 @@
 		
 		<view class="uc">
 			<view class="uc-item">
-				<view class="uc-item-title" @click="gotoOrder()">
+				<view class="uc-item-title" @click="gotoOrder('')">
 					<view class="uc-item-title-text">我的订单</view>
 					<image class="uc-item-title-icon" src="../../static/image/user/jiantou.png"></image>
 				</view>
@@ -53,13 +53,13 @@
 						</view>
 						<view class="uc-item-body-item-text">待付尾款</view>
 					</view>
-					<view class="uc-item-body-item" @click='gotoOrder(3)'>
+					<view class="uc-item-body-item" @click='gotoOrder(6)'>
 						<view class="pic">
 							<image src="../../static/image/user/yiwancheng.png" mode="aspectFit" style="width: 46rpx;height: 45rpx;"></image>
 						</view>
 						<view class="uc-item-body-item-text">已完成</view>
 					</view>
-					<view class="uc-item-body-item" @click='gotoOrder(4)'>
+					<view class="uc-item-body-item" @click='gotoOrder(7)'>
 						<view class="pic">
 							<image src="../../static/image/user/yiguanbi.png" mode="aspectFit" style="width: 46rpx;height: 46rpx;"></image>
 						</view>
@@ -76,32 +76,44 @@
 				
 				<view class="uc-item-body">
 					<view class="uc-item-body-item" @click="goAddress">
-						<image src="../../static/image/user/dizhiguanli.png" mode="aspectFit" style="width:36rpx;height:38rpx;"></image>
+						<view class="pics">
+							<image src="../../static/image/user/dizhiguanli.png" mode="aspectFit" style="width:36rpx;height:38rpx;"></image>
+						</view>
 						<view class="uc-item-body-item-text">地址管理</view>
 					</view>
 					
 					<view class="uc-item-body-item" @click="onShare">
-						<image src="../../static/image/user/fenxiangma.png" mode="aspectFit" style="width:37rpx;height:37rpx;"></image>
+						<view class="pics">
+							<image src="../../static/image/user/fenxiangma.png" mode="aspectFit" style="width:37rpx;height:37rpx;"></image>
+						</view>
 						<view class="uc-item-body-item-text">分享码</view>
 					</view>
 					
 					<view class="uc-item-body-item" @click="onMeet">
-						<image src="../../static/image/user/wodeyuyue.png" mode="aspectFit" style="width:34rpx;height:37rpx;"></image>
+						<view class="pics">
+							<image src="../../static/image/user/wodeyuyue.png" mode="aspectFit" style="width:34rpx;height:37rpx;"></image>
+						</view>
 						<view class="uc-item-body-item-text">我的预约</view>
 					</view>
 					
 					<view class="uc-item-body-item" @click="onPoint">
-						<image src="../../static/image/user/wodejifen.png" mode="aspectFit" style="width:42rpx;height:37rpx;"></image>
+						<view class="pics">
+							<image src="../../static/image/user/wodejifen.png" mode="aspectFit" style="width:42rpx;height:37rpx;"></image>
+						</view>
 						<view class="uc-item-body-item-text">我的积分</view>
 					</view>
 					
 					<view class="uc-item-body-item" @click="onPointOrder">
-						<image src="../../static/image/user/jifendingdan.png" mode="aspectFit" style="width:32rpx;height:37rpx;"></image>
+						<view class="pics">
+							<image src="../../static/image/user/jifendingdan.png" mode="aspectFit" style="width:32rpx;height:37rpx;"></image>
+						</view>
 						<view class="uc-item-body-item-text">积分订单</view>
 					</view>
 					
 					<view class="uc-item-body-item" @click="onTeam">
-						<image src="../../static/image/user/wodetuandui.png" mode="aspectFit" style="width:44rpx;height:37rpx;"></image>
+						<view class="pics">
+							<image src="../../static/image/user/wodetuandui.png" mode="aspectFit" style="width:44rpx;height:37rpx;"></image>
+						</view>
 						<view class="uc-item-body-item-text">我的团队</view>
 					</view>
 					
@@ -228,7 +240,7 @@
 				})
 			},
 			gotoOrder(index){
-				this.jump("/pages/users/order/order?type="+index);
+				this.jump("/pages/users/order/list?type="+index);
 			},
 			goAddress(){
 				this.jump("/pages/users/address/index");
@@ -243,6 +255,7 @@
 				this.$api.getUserInfo().then(res => {
 					if(res.status==200){
 						this.userInfo = res.data;
+						this.$store.commit("UpdateUserinfo",res.data);
 						this.$store.commit('SetUid', res.data.uid);
 					}
 				});
@@ -308,6 +321,11 @@
 					margin-bottom:28rpx;
 					.pic{
 						position: relative;
+					}
+					.pics{
+						position: relative;
+						width: 44rpx;
+						height: 44rpx;
 					}
 					.uc-item-body-item-text{
 						margin-top: 12rpx;

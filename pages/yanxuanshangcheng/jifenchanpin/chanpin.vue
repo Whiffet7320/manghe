@@ -7,11 +7,11 @@
 			<view class="tit1">
 				<view class="left">
 					<image src="/static/image/zu1577.png" class="pic1" mode=""></image>
-					<view class="txt1">{{obj.storeInfo.price}}积分</view>
+					<view class="txt1">{{obj.storeInfo.price||0}}积分</view>
 				</view>
-				<view class="right">规格：{{obj.storeInfo.unit_name}}</view>
+				<view class="right" v-if="obj.productAttr">规格：{{obj.productAttr[0].attr_values[0]}}</view>
 			</view>
-			<view class="tit2">{{obj.storeInfo.title}}</view>
+			<view class="tit2">{{obj.storeInfo.title||""}}</view>
 		</view>
 		<view class="nav3">
 			<view class="tit1">商品详情</view>
@@ -28,16 +28,15 @@
 		data() {
 			return {
 				obj:{},
-				id:'',
+				id:0,
 				isOnShow: true,
-				navTitle: '',
 				bannerList: [],
 			}
 		},
-		onLoad(option) {
-			console.log(option)
-			this.navTitle = option.title;
-			this.id = option.id;
+		onLoad(options) {
+			if(options.id){
+				this.id = options.id;
+			}
 		},
 		onShow() {
 			if (!this.isOnShow) {
@@ -48,16 +47,15 @@
 		methods: {
 			async getData(){
 				this.bannerList = [];
-				const res = await this.$api.store_integralDetail(this.id)
-				console.log(res)
-				this.obj = res.data;
-				this.obj.storeInfo.images.forEach(ele=>{
-					this.bannerList.push({
-						image:ele
+				const res = await this.$api.store_integralDetail(this.id);
+				if(res.status==200){
+					this.obj = res.data;
+					this.obj.storeInfo.images.forEach(ele=>{
+						this.bannerList.push({
+							image:ele
+						})
 					})
-				})
-				
-				
+				}
 			},
 			toSeeImg(i, imgArr) {
 				this.isOnShow = false;

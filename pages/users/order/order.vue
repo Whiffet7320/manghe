@@ -11,7 +11,7 @@
 						<!-- 全部 -->
 						<view v-for="item in orderList" :key='item.id'>
 							<!-- 待付款 -->
-							<view class="item" v-if="item._status._title == '未付款'">
+							<view class="item" v-if="item._status._title == '未支付'">
 								<view class="tit1">
 									<view class="left">
 										<view class="txt1-1">剩余支付时间：</view>
@@ -63,7 +63,7 @@
 								</view>
 							</view>
 							<!-- 待付尾款 -->
-							<view class="item dfwk">
+							<!-- <view class="item dfwk">
 								<view class="tit1">
 									<view class="left">下单时间：2021-09-24 20:00</view>
 									<view class="right">待付尾款</view>
@@ -95,7 +95,7 @@
 										<view class="btn1">取消订单</view>
 									</view>
 								</view>
-							</view>
+							</view> -->
 							<!-- 待发货 -->
 							<view class="item dfwk" v-if="item._status._title == '未发货'">
 								<view class="tit1">
@@ -329,7 +329,7 @@
 								</view>
 							</view>
 							<!-- 拼团中 -->
-							<view class="item dfwk ptz">
+							<view class="item dfwk ptz" v-if="item.is_del == 1">
 								<view class="tit1">
 									<view class="left">下单时间：2021-09-24 20:00</view>
 									<view class="right">拼团中</view>
@@ -349,13 +349,13 @@
 										</view>
 									</view>
 									<!-- 预付款 -->
-									<!-- <view class="box1">
+									<view class="box1">
 										<view class="tit2-1">
 											<view class="txt1">250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一250ml 雅漾补水喷雾赠一</view>
 										</view>
 										<view class="tit2-1-1">预约时间：2021-11-06 下午</view>
 										<view class="tit2-1-2">预约医生：李竞</view>
-									</view> -->
+									</view>
 								</view>
 								<view class="tit3">
 									<view class="box1">
@@ -376,7 +376,7 @@
 								</view>
 							</view>
 							<!-- 未成团 -->
-							<view class="item dfwk ptz">
+							<view class="item dfwk ptz" v-if="item.is_del == 1">
 								<view class="tit1">
 									<view class="left">下单时间：2021-09-24 20:00</view>
 									<view class="right" style="color: #707070;">未成团</view>
@@ -552,13 +552,13 @@
 				}, {
 					name: '待付款'
 				}, {
+					name: '待付尾款'
+				}, {
 					name: '待发货'
 				}, {
 					name: '待收货'
 				},{
 					name: '待评价'
-				}, {
-					name: '待付尾款'
 				}, {
 					name: '已完成'
 				}, {

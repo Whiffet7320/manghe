@@ -1,21 +1,42 @@
 export default {
-	baseUrl: 'http://192.168.50.142:8098', // http://192.168.50.142:8098  //https://ceshi.xingmangkeji.cn
-	silence_auth: "/api/v2/wechat/silence_auth_login",
-	user: "/api/user",
-	user_update: "/api/v2/user/user_update",
-	updatePhone:"/api/user/updatePhone",
-	verifyCode:"/api/verify_code",
-	registerVerify:"/api/register/verify",
-	addressList: "/api/address/list",
-	editAddress: "/api/address/edit",
-	delAddress: "/api/address/del",
-	city_list: "/api/city_list",
-	addressDetail: "/api/address/detail",
-	cartlist:"/api/cart/list",
-	cartDel:"/api/cart/del",
-	cartNum:"/api/cart/num",
-	collectDoctor:"/api/collect/doctor",
-	collectDoctorlist:"/api/collect/doctor/list",
+	baseUrl: 'https://ceshi.xingmangkeji.cn', // http://192.168.50.142:8098  //https://ceshi.xingmangkeji.cn
+	silence_auth: "/api/v2/wechat/silence_auth_login", //授权登录
+	user: "/api/user", //用户信息
+	user_update: "/api/v2/user/user_update", //更新用户信息
+	updatePhone:"/api/user/updatePhone", //绑定手机号
+	verifyCode:"/api/verify_code", //获取发送短信的key
+	registerVerify:"/api/register/verify", //发送短信
+	addressList: "/api/address/list", //收货地址
+	editAddress: "/api/address/edit", //编辑收货地址
+	delAddress: "/api/address/del", //删除收货地址
+	city_list: "/api/city_list", //城市列表
+	addressDetail: "/api/address/detail", //收货地址详情
+	cartlist:"/api/cart/list", //购物车列表
+	cartDel:"/api/cart/del", //购物车删除
+	cartNum:"/api/cart/num", //购物车数量修改
+	collectDoctor:"/api/collect/doctor", //关注医生
+	collectDoctorlist:"/api/collect/doctor/list", //专家列表
+	integralList:"/api/integral/list", //积分记录
+	orderComment:"/api/order/comment",//商品评价
+	orderDetail:"/api/order/detail",//商品详情
+	collectAdd:"/api/collect/add",//商品收藏
+	collectDel:"/api/collect/del",//商品取消收藏
+	userCollect:"/api/collect/user",//商品收藏列表
+	myCommentList:"/api/comment/my_comment_list",//我的评论
+	myCommentDel:"/api/comment/my_comment_del", //评论删除
+	myAppointmentlist:"/api/order/my_appointment_list", //我的预约
+	orderWaitpay:"/api/order/order_wait_pay", //支付尾款
+	spreadPeople:"/api/spread/people", //我的团队列表
+	spreadPeopleCount:"/api/user/spread_people_count", //我的团队
+	refundOrderDetail:"/api/order/refund_detail", //退款订单详情
+	ordeRefundReason:"/api/order/refund/reason", //退款理由
+	orderRefundVerify:"/api/order/refund/verify", //订单退款审核
+	refundExpress:"/api/order/refund/express", //退货物流单号
+	getCartCounts:"/api/cart/count", //购物车数量 numType true 购物车数量,false=购物车产品数量
+	newlist:"/api/article/new/list", //新闻
+	articleDetails:"/api/article/details", //文章详情
+	guanggao:"/api/guanggao", //广告
+	wechatLive:"/api/wechat/live", //直播
 	// 
 	loginWechat: '/api/login/wechat',
 	category: '/api/category', //商品分类
@@ -26,6 +47,8 @@ export default {
 	orderCreate:'/api/order/create',//订单创建
 	orderList:'/api/order/list',//订单列表
 	orderPay:'/api/order/pay',//订单支付
+	orderCancel:"/api/order/cancel", //订单取消
+	orderDel:"/api/order/del", //订单删除
 	zhuanjia:'/api/zhuanjia',//专家列表
 	xiufu:'/api/xiufu',//修复专区
 	orderComputed:'/api/order/computed',//计算订单金额
@@ -41,6 +64,7 @@ export default {
 	orderTake:'/api/order/take',//订单收货
 	spread_info:'/api/user/spread_info',//推广分销二维码海报生成
 	combinationPink:'/api/combination/pink',//拼团 开团
+	combinationRemove:"/api/combination/remove",//拼团取消
 	store_integralDetail:'/api/store_integral/detail',//积分商品详情
 	store_integralOrderConfirm:'/api/store_integral/order/confirm',//积分兑换确认页
 	store_integralOrderCreate:'/api/store_integral/order/create',//积分兑换订单创建

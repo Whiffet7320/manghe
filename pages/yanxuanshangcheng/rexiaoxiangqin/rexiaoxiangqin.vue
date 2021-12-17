@@ -1,7 +1,11 @@
 <template>
 	<view class="index">
 		<u-toast ref="uToast"></u-toast>
-		<image src="/static/image/zu1840.png" class="kefu" mode=""></image>
+		<view>
+			<button class="u-reset-button" open-type="contact">
+				<image src="/static/image/zu1840.png" class="kefu" mode=""></image>
+			</button>
+		</view>
 		<view class="nav1">
 			<u-swiper height='602' :list="bannerList" border-radius="0"></u-swiper>
 		</view>
@@ -25,7 +29,7 @@
 			</view>
 			<view class="tit2">
 				<view class="items">
-					<image v-for="item in skuArr" :src="item.image" class="i-pic" mode=""></image>
+					<image v-for="(item,index) in skuArr.slice(0, 4)" :key="index" :src="item.image" class="i-pic" mode=""></image>
 					<view class="i-txt">{{skuArr.length}}种类型可选</view>
 				</view>
 			</view>
@@ -35,7 +39,9 @@
 				<view class="shu"></view>
 				<view class="t-txt">修复专区</view>
 			</view>
-			<u-parse :html="obj.storeInfo.description"></u-parse>
+			<view class="content">
+				<u-parse :html="obj.storeInfo.description"></u-parse>
+			</view>
 		</view>
 		<view class="footer">
 			<view class="left" @click="toShouye">
@@ -61,10 +67,10 @@
 						<view class="tit3">{{skuItem.suk}}</view>
 					</view>
 				</view>
-				<view class="p-nav2">规格</view>
+				<!-- <view class="p-nav2">规格</view> -->
 				<view class="p-nav3">
 					<view v-for="(item,i) in obj.productAttr" :key='item.id'>
-						<view class="p-tit">{{item.attr_name}}:</view>
+						<view class="p-tit">{{item.attr_name}}</view>
 						<view v-for="(item2,i2) in item.attr_value" :key='i2' @click="changSku(item2,i,i2)"
 							:class="{'p-item':true,'active':item2.check}">
 							{{item2.attr}}
@@ -122,22 +128,26 @@
 		methods: {
 			async getData() {
 				this.imgArr = [];
-				const res = await this.$api.detail(this.id)
-				console.log(res)
-				this.obj = res.data;
-				this.obj.storeInfo.slider_image.forEach((ele, i) => {
-					this.$set(this.bannerList, i, {})
-					this.$set(this.bannerList[i], 'image', ele)
-				})
-				this.obj.productAttr.forEach(() => {
-					this.skuArr2.push('')
-				})
-				for (let key in this.obj.productValue) {
-					this.skuArr.push(this.obj.productValue[key])
+				const res = await this.$api.detail(this.id);
+				if(res.status==200){
+					uni.setNavigationBarTitle({
+						title:res.data.storeInfo.store_name.substring(0, 16)
+					})
+					this.obj = res.data;
+					this.obj.storeInfo.slider_image.forEach((ele, i) => {
+						this.$set(this.bannerList, i, {})
+						this.$set(this.bannerList[i], 'image', ele)
+					})
+					this.obj.productAttr.forEach(() => {
+						this.skuArr2.push('')
+					})
+					for (let key in this.obj.productValue) {
+						this.skuArr.push(this.obj.productValue[key])
+					}
+					this.obj.productAttr.forEach((ele,i)=>{
+						this.changSku(ele.attr_value[0], i, 0)
+					})
 				}
-				this.obj.productAttr.forEach((ele,i)=>{
-					this.changSku(ele.attr_value[0], i, 0)
-				})
 			},
 			toShouye(){
 				uni.switchTab({
@@ -148,23 +158,25 @@
 				this.skuShow = true;
 			},
 			async addGwc() {
+				this.skuShow = false;
 				const res = await this.$api.cartAdd({
 					productId: this.id,
 					cartNum: this.skuNum,
-					uniqueId: this.skuItem.unique
+					uniqueId: this.skuItem.unique,
+					new:0
 				})
-				console.log(res)
-				this.skuShow = false;
-				this.gwcShow = true;
+				if(res.status==200){
+					this.gwcShow = true;
+				}
 			},
 			async toTijiaodingdan() {
+				this.skuShow = false;
 				const res = await this.$api.cartAdd({
 					productId: this.id,
 					cartNum: this.skuNum,
 					uniqueId: this.skuItem.unique,
 					new: 1
 				})
-				console.log(res)
 				this.skuItem.shopName = this.obj.storeInfo.store_name;
 				this.skuItem.buyNum = this.skuNum;
 				this.skuItem.cartId = res.data.cartId;
@@ -179,8 +191,7 @@
 				item2.check = true;
 				var flag = false;
 				var skuArr2Txt = '';
-				this.$set(this.skuArr2, i, item2.attr)
-				console.log(this.skuArr2)
+				this.$set(this.skuArr2, i, item2.attr);
 				this.skuArr2.forEach((ele, i) => {
 					if (ele == '') {
 						flag = true;
@@ -240,8 +251,6 @@
 		bottom: 150rpx;
 		right: 10rpx;
 	}
-
-	.nav1 {}
 
 	.nav2 {
 		background: #FFFFFF;
@@ -331,6 +340,7 @@
 					margin-right: 20rpx;
 					border-radius: 4rpx;
 					margin-bottom: 20rpx;
+					background-color: #eee;
 				}
 
 				.i-txt {
@@ -374,6 +384,7 @@
 
 		.content {
 			width: 100%;
+			padding: 0 24rpx;
 		}
 	}
 

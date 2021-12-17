@@ -3,39 +3,74 @@
 		<view class="bg"><image src="/static/image/user/bg.jpg" mode="aspectFill" class="img"></image></view>
 		<view class="total">
 			<text class="text">我的积分</text>
-			<text class="number">{{point||0}}</text>
+			<text class="number">{{userInfo.integral||0}}</text>
 		</view>
 		<view class="tit"></view>
 		<view class="pointlist">
 			<view class="point_item" v-for="(item,index) in list" :key="index">
 				<view class="left">
-					<view class="name">{{item.name}}</view>
-					<view class="time">{{item.time}}</view>
+					<view class="name">{{item.mark}}</view>
+					<view class="time">{{item.item.add_time}}</view>
 				</view>
-				<view class="number">{{item.number}}</view>
+				<view class="number" v-if="item.pm">+{{item.number}}</view>
+				<view class="number gray" v-else>-{{item.number}}</view>
 			</view>
 		</view>
+		<u-loadmore height="80rpx" font-size="20" :status="loadStatus" icon-type="flower" color="#707070" />
 	</view>
 </template>
 
 <script>
+	import {mapState} from "vuex";
 	export default{
 		data(){
 			return{
-				point:0,
-				list:[
-					{
-						name:"成功邀请1名好友",
-						time:"2021-07-06 10:55:30",
-						number:"+10"
-					},
-					{
-						name:"成功邀请1名好友",
-						time:"2021-07-06 10:55:30",
-						number:"+10"
-					}
-				]
+				userInfo:{},
+				list:[],
+				loadStatus: 'loadmore',
+				currentPage: 1,
+				loadText: {
+					loadmore: '上拉加载更多',
+					loading: '正在加载...',
+					nomore: '没有更多了'
+				},
 			}
+		},
+		methods:{
+			getUserInfo(){
+				this.$api.getUserInfo().then((res)=>{
+					if(res.status==200){
+						this.userInfo = res.data;
+					}
+				})
+			},
+			getIntegralList(){
+				this.$api.integralList({page:this.currentPage,limit:10}).then((res)=>{
+					if(res.status==200){
+						if (res.data.length == 0) {
+							this.loadStatus = 'nomore';
+						} else {
+							if(this.currentPage==1 && res.data.length<=10){
+								this.loadStatus = 'nomore';
+							}else{
+								this.loadStatus = 'loadmore';
+							}
+							this.currentPage++;
+							this.list = this.list.concat(res.data);
+						}
+					}
+				})
+			}
+		},
+		onLoad(){
+			this.getUserInfo();
+			this.getIntegralList();
+		},
+		onReachBottom() {
+			this.getIntegralList();
+		},
+		onPullDownRefresh() {
+			uni.stopPullDownRefresh();
 		}
 	}
 </script>
@@ -115,6 +150,10 @@
 				font-size: 24rpx;
 				color: #FA8677;
 				font-weight: bold;
+				.gray{
+					color: #707070;
+					font-weight: normal;
+				}
 			}
 		}
 	}

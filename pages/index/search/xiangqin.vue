@@ -19,11 +19,13 @@
 		<view class="nav2">
 			<view class="left">
 				<view class="txt1">{{obj.storeInfo.store_name}}</view>
-				<view class="txt2">肋骨鼻综合</view>
+				<view class="txt2" v-if="obj.storeInfo.cateName.length">{{obj.storeInfo.cateName[0].cate_name}}</view>
 			</view>
 			<view class="right">
-				<image src="/static/image/zu1570.png" class="r-pic" mode=""></image>
-				<view class="txt1">分享</view>
+				<button open-type="share" class="u-reset-button">
+					<image src="/static/image/zu1570.png" class="r-pic" mode=""></image>
+					<view class="txt1">分享</view>
+				</button>
 			</view>
 		</view>
 		<view class="nav4">
@@ -74,8 +76,8 @@
 										</view>
 									</view>
 									<view class="i3-items">
-										<view class="i3-item" v-for="item in pinglunList">
-											<image class="ava" :src="item.avatar" mode=""></image>
+										<view class="i3-item" v-for="(item,indexz) in pinglunList" :key="indexz">
+											<image class="ava" :src="item.avatar" mode="aspectFill"></image>
 											<view class="right">
 												<view class="tit1">
 													<view class="txt1">{{item.nickname}}</view>
@@ -87,8 +89,7 @@
 												</view>
 												<view class="tit3">{{item.comment}}</view>
 												<view class="tit4">
-													<image @click.stop="toSeeImg(i,item.pics)" class="picc"
-														v-for="(pic,i) in item.pics" :src="pic" mode=""></image>
+													<image :src="pic" mode="aspectFill" @click.stop="toSeeImg(i,item.pics)" class="picc" v-for="(pic,i) in item.pics" :key="i"></image>
 												</view>
 											</view>
 										</view>
@@ -105,28 +106,31 @@
 		</view>
 
 		<view class="footer1">
-			<image src="/static/image/zu1840.png" class="kefu" mode=""></image>
 			<view class="txt1">预付款 ¥{{obj.storeInfo.price}}</view>
 			<view class="txt2">尾款 ¥{{obj.storeInfo.finish_pay_price}}面诊后支付</view>
 		</view>
 		<view class="footer2">
-			<view class="item">
+			<view class="item" @click="toHome">
 				<image src="/static/tabBar/sy-active.png" class="pic" mode=""></image>
 				<view class="txt">首页</view>
 			</view>
-			<view class="item item2">
+			<view class="item item2" @click="toCollect">
 				<image src="/static/image/lujin2228.png" class="pic2" mode=""></image>
-				<view class="txt">收藏</view>
+				<view class="txt" v-if="storeInfo.userCollect">收藏</view>
+				<view class="txt" v-else>取消收藏</view>
 			</view>
 			<view @click="toQuerendingdan" class="btn">立即购买</view>
+		</view>
+		<view>
+			<button open-type="contact" class="u-reset-button">
+				<image src="/static/image/zu1840.png" class="kefu" mode=""></image>
+			</button>
 		</view>
 	</view>
 </template>
 
 <script>
-	import {
-		mapState
-	} from "vuex";
+	import {mapState} from "vuex";
 	export default {
 		computed: {
 			...mapState(["IndexshopPage", "IndexshopPageSize"]),
@@ -150,6 +154,7 @@
 		},
 		data() {
 			return {
+				storeInfo:{},
 				pingjiaObj:{},
 				pinglunList: [],
 				id: '',
@@ -157,10 +162,7 @@
 				isOnShow: true,
 				navTitle: '',
 				bannerList: [],
-				imgArr: ['https://img1.baidu.com/it/u=3303981320,1355171730&fm=26&fmt=auto',
-					'https://img0.baidu.com/it/u=2394303781,1797253216&fm=26&fmt=auto',
-					'https://img0.baidu.com/it/u=3941318376,4022646771&fm=26&fmt=auto'
-				],
+				imgArr: [],
 				//
 				swiperCurrentIndex: 0,
 				height: 0,
@@ -172,7 +174,7 @@
 					name: '产品评价'
 				}],
 				// 因为内部的滑动机制限制，请将tabs组件和swiper组件的current用不同变量赋值
-				current: 2, // tabs组件的current值，表示当前活动的tab选项
+				current: 0, // tabs组件的current值，表示当前活动的tab选项
 				swiperCurrent: 0, // swiper组件的current值，表示当前那个swiper-item是活动的
 				// 加载
 				status: 'loadmore',
@@ -184,10 +186,27 @@
 				},
 			}
 		},
-		onLoad(option) {
-			console.log(option)
-			this.navTitle = option.title;
-			this.id = option.id
+		onLoad(options) {
+			console.log(options)
+			this.navTitle = options.title;
+			
+			//扫码携带参数处理
+			if (options.scene) {
+			  let value = this.$tool.getUrlParams(decodeURIComponent(options.scene));
+			  if (value.id) options.id = value.id;
+			  //记录推广人uid
+			  if (value.pid) getApp().globalData.spid = value.pid;
+			}
+			if (!options.id) {
+			  this.$u.toast("缺少参数无法查看商品");
+			  setTimeout(()=>{
+				  uni.navigateBack();
+			  },1500)
+			} else {
+			  this.id = options.id;
+			}
+			//记录推广人uid
+			if (options.spid) getApp().globalData.spid = options.spid;
 		},
 		onShow() {
 			if (!this.isOnShow) {
@@ -206,6 +225,13 @@
 		},
 		onReachBottom() {
 			this.$store.commit("IndexshopPage", this.IndexshopPage + 1);
+		},
+		onShareAppMessage() {
+			return {
+				title: this.navTitle,
+				path: '/pages/index/search/xiangqin?id=' + this.id,
+				imageUrl: this.obj.storeInfo.image
+			}
 		},
 		methods: {
 			async getPinglunData(type) {
@@ -230,6 +256,11 @@
 				const res = await this.$api.detail(this.id)
 				console.log(res)
 				this.obj = res.data;
+				this.storeInfo = res.data.storeInfo;
+				this.navTitle = res.data.storeInfo.store_name;
+				uni.setNavigationBarTitle({
+					title:res.data.storeInfo.store_name.substring(0, 16)
+				})
 				this.obj.storeInfo.slider_image.forEach((ele, i) => {
 					this.$set(this.bannerList, i, {
 						image: ele
@@ -274,7 +305,7 @@
 							orderKey:res2.data.orderKey,
 						}
 						uni.navigateTo({
-							url: `/pages/index/search/querendingdan?obj=${encodeURIComponent(JSON.stringify(obj))}&cartId=${res.data.cartId}`
+							url: `/pages/index/search/querendingdan?obj=${encodeURIComponent(JSON.stringify(obj))}&cartId=${res.data.cartId}&storeInfo=${encodeURIComponent(JSON.stringify(this.storeInfo))}`
 						})
 					} else {
 						this.$refs.uToast.show({
@@ -303,6 +334,36 @@
 					this.height = res[0][this.swiperCurrentIndex].height;
 				})
 			},
+			toHome(){
+				uni.switchTab({
+					url:"/pages/tabBar/index"
+				})
+			},
+			toCollect(){
+				if (this.storeInfo.userCollect) {
+					this.$api.collectDel(this.id).then((res)=>{
+						if(res.status==200){
+							this.$u.toast("取消成功");
+							this.storeInfo.userCollect = true;
+						}else{
+							this.$u.toast(res.msg);
+						}
+					}).catch((err)=>{
+						this.$u.toast(err);
+					})
+				}else{
+					this.$api.collectAdd(this.id).then((res)=>{
+						if(res.status==200){
+							this.$u.toast(res.msg);
+							this.storeInfo.userCollect = false;
+						}else{
+							this.$u.toast(res.msg);
+						}
+					}).catch((err)=>{
+						this.$u.toast(err);
+					})
+				}
+			}
 		}
 	}
 </script>
@@ -598,9 +659,17 @@
 			}
 		}
 	}
-
+	.kefu {
+		position: fixed;
+		bottom: 120rpx;
+		right: 8rpx;
+		width: 172rpx;
+		height: 172rpx;
+		z-index: 100;
+	}
 	.footer1 {
 		position: fixed;
+		z-index: 50;
 		bottom: 140rpx;
 		width: 100%;
 		height: 88rpx;
@@ -609,14 +678,6 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-
-		.kefu {
-			position: absolute;
-			bottom: 14rpx;
-			right: 8rpx;
-			width: 172rpx;
-			height: 172rpx;
-		}
 
 		.txt1 {
 			font-size: 24rpx;
@@ -670,7 +731,8 @@
 		}
 
 		.item2 {
-			margin-left: 76rpx;
+			margin-left: 25rpx;
+			width: 140rpx;
 		}
 
 		.btn {

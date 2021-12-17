@@ -3,32 +3,34 @@
 		<view class="tip">已到店面诊，定金不予退还，可根据个人意愿联系客服改为其他项目</view>
 		<view class="address_info">
 			<view class="hd">
-				<text>周一二</text>
-				<text class="phone">15059585958</text>
+				<text>{{orderInfo.real_name}}</text>
+				<text class="phone">{{orderInfo.user_phone}}</text>
 			</view>
-			<view class="detail">
+			<view class="detail" v-if="orderInfo.user_address!=''">
 				<view class="mo">默认</view>
-				<view>浙江省温州市永嘉县梧田街道哼哈大厦1d1001室</view>
+				<view>{{orderInfo.user_address}}</view>
 			</view>
 			<image src="/static/image/user/arrow_right.png" mode="aspectFit" class="icon"></image>
 		</view>
-		<view class="order">
-			<image src="" mode="aspectFill" class="img"></image>
+		<view class="order" v-for="(item,index) in cartInfo" :key="index">
+			<image :src='item.productInfo.attrInfo.image' v-if="item.productInfo.attrInfo" mode="aspectFill" class="img"></image>
+			<image :src='item.productInfo.image' mode="aspectFill" class="img" v-else></image>
 			<view class="info">
-				<view class="name">肋骨鼻综合</view>
-				<view class="attr">预约时间：2021-11-06 下午</view>
-				<view class="attr">预约医生：李竞</view>
+				<view class="name">{{item.productInfo.store_name}}</view>
+				<view class="attr">预约时间：{{wkorder.appointment_time||""}}</view>
+				<view class="attr">预约医生：{{item.productInfo.doctor_name||""}}</view>
 				<view class="fnwrap">
-					<view class="price">预付款 ¥2000.00</view>
-					<view class="sprice">尾款 ¥1600.00</view>
+					<view class="price">预付款 ￥{{item.productInfo.price}}</view>
+					<view class="sprice">尾款 ￥{{item.productInfo.finish_pay_price}}</view>
 				</view>
 			</view>
 		</view>
 		<view class="sorder">
-			<view class="desc">订单编号：JHS123456123456<view class="copy">复制</view></view>
-			<view class="desc">创建时间：2021-09-24 20:00</view>
-			<view class="desc">预付款支付时间：2021-09-24 20:00</view>
-			<view class="desc">面诊时间：2021-09-24 15:30</view>
+			<view class="desc">订单编号：{{orderInfo.finish_pay_order_num}}<view class="copy" @click="$tool.onCopy(orderInfo.finish_pay_order_num)">复制</view></view>
+			<view class="desc">创建时间：{{(orderInfo.add_time_y || '') +' '+(orderInfo.add_time_h || 0)}}</view>
+			<view class="desc">预付款支付时间：{{orderInfo._pay_time}}</view>
+			<view class="desc" v-if="orderInfo.finish_pay_time!=null">面诊时间：{{$u.timeFormat(orderInfo.finish_pay_time, 'yyyy-mm-dd hh:MM:ss')}}</view>
+			<view class="desc" v-if="orderInfo.mark">备注：{{orderInfo.mark}}</view>
 		</view>
 		<view class="service">
 			<button class="u-reset-button contactbtn" open-type="contact">
@@ -38,15 +40,72 @@
 		</view>
 		<u-gap height="120"></u-gap>
 		<view class="footbar safe-area-inset-bottom">
-			<view class="subbtn">去支付</view>
+			<!-- <view class="subbtn gray" v-if="status.type == 0 || orderInfo.finish_pay_status==0" @tap="cancelOrder">取消订单</view> -->
+			<view class="btn1 gray" v-if="order._status._type == 3" @click.stop="goOrderComment(orderInfo)">去评论</view>
+			<view class="subbtn" v-if="orderInfo.finish_pay_status==0" @click.stop="goPay(orderInfo)">去支付</view>
 		</view>
 	</view>
 </template>
 
 <script>
+	import {mapState} from "vuex";
 	export default{
 		data(){
-			return{}
+			return{
+				order_id: '',
+				cartInfo: [],
+				orderInfo: {}
+			}
+		},
+		computed:{
+			...mapState(["wkorder"])
+		},
+		methods:{
+			getOrderInfo() {
+				uni.showLoading({
+					title: "正在加载中"
+				});
+				this.$api.getOrderDetail(this.order_id).then(res => {
+					if(res.status==200){
+						this.orderInfo = res.data;
+						this.cartInfo = this.wkorder.cartInfo;
+					}
+					uni.hideLoading();
+				}).catch(err => {
+					uni.hideLoading();
+					this.$u.toast(err)
+				});
+			},
+			goPay(item) {
+				if(item.finish_pay_order_num!=="" && item.finish_pay_order_num!==null){
+					uni.navigateTo({
+						url: `/pages/users/order/querendingdan?wid=${item.finish_pay_order_num}&price=${item.pay_price}`
+					})
+				}
+			},
+			goOrderComment(val){
+				this.$store.commit("setComent",val.cartInfo);
+				uni.navigateTo({
+					url:"/pages/users/order/comment?id="+val.id
+				})
+			}
+		},
+		onLoad(options){
+			if(options.order_id){
+				this.order_id = options.order_id;
+			}
+			if(options.type){
+				uni.setNavigationBarTitle({
+					title:"等待买家支付尾款"
+				})
+			}else{
+				uni.setNavigationBarTitle({
+					title:"订单详情"
+				})
+			}
+		},
+		onShow(){
+			this.getOrderInfo();
 		}
 	}
 </script>
@@ -144,6 +203,7 @@
 		}
 	}
 	.sorder{
+		margin-top: 4rpx;
 		background-color: #FFFFFF;
 		padding:28rpx 40rpx 0;
 		font-size: 24rpx;
@@ -192,14 +252,21 @@
 		align-items: center;
 		justify-content: flex-end;
 		.subbtn{
+			margin-left: 20rpx;
 			width: 152rpx;
 			height: 60rpx;
 			line-height: 60rpx;
 			background: #BD9E81;
+			border:2rpx #BD9E81 solid;
 			border-radius:10rpx;
 			text-align: center;
 			font-size: 24rpx;
 			color: #FFFFFF;
+			&.gray{
+				background: #FFFFFF;
+				border:2rpx #666666 solid;
+				color: #707070;
+			}
 		}
 	}
 </style>

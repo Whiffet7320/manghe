@@ -12,12 +12,12 @@
 			</view>
 		</view>
 		<view class="team_menu">
-			<view class="item" @click="goDetail('list')">
+			<view class="item" @click="goDetail(0)">
 				<image src="/static/image/user/icon_user.png" mode="aspectFit" style="width: 38rpx;height: 33rpx;"></image>
 				<text class="text">我的直推</text>
 				<image src="/static/image/user/icon_right.png" mode="aspectFit" class="icon"></image>
 			</view>
-			<view class="item" @click="goDetail('user')">
+			<view class="item" @click="goDetail(1)">
 				<image src="/static/image/user/icon_hh.png" mode="aspectFit" style="width: 38rpx;height: 27rpx;"></image>
 				<text class="text">合伙人</text>
 				<image src="/static/image/user/icon_right.png" mode="aspectFit" class="icon"></image>
@@ -35,11 +35,22 @@
 			}
 		},
 		methods:{
+			getNum(){
+				this.$api.spreadPeopleCount().then((res)=>{
+					if(res.status==200){
+						this.total = res.data.children_count;
+						this.count = res.data.todayadd_count;
+					}
+				})
+			},
 			goDetail(val){
 				uni.navigateTo({
 					url:"/pages/users/team/list?type="+val
 				})
 			}
+		},
+		onShow(){
+			this.getNum();
 		}
 	}
 </script>

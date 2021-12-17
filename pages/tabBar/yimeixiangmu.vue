@@ -10,7 +10,7 @@
 			<block v-for="(item,index) in tabbar" :key="index">
 				<scroll-view class="rightbox" scroll-y v-if="current==index">
 					<view class="pageview">
-						<image src="" mode="aspectFit" class="banner"></image>
+						<image :src="item.big_pic" mode="aspectFit" class="banner" v-if="item.big_pic"></image>
 						<view class="list">
 							<view class="thumb_item" v-for="(item1, index1) in item.children" :key="index1">
 								<view class="thumb_box" @click="toSearchResult(item1.id)">
@@ -27,46 +27,36 @@
 </template>
 
 <script>
-	import {
-		mapState
-	} from "vuex";
+	import {mapState} from "vuex";
 	export default {
 		data() {
 			return {
 				tabIndex:'',
-				tabbar: [{
-						name: "眼部"
-					},
-				],
+				tabbar:[],
 				scrollTop: 0,
 				current: 0,
 				menuHeight: 0,
 				menuItemHeight: 0,
-				list: [{
-						icon: "",
-						name: "鼻综合韩式"
-					},
-				]
+				list:[]
 			}
 		},
 		computed: {
 			...mapState(["from"]),
 		},
 		onShow() {
-			this.getData()
+			this.getData();
 		},
 		methods: {
-			async getData() {
-				console.log(this.from)
-				const res = await this.$api.category()
-				console.log(res)
-				this.tabbar = res.data;
-				this.tabbar.forEach((ele,i)=>{
-					if(ele.id == this.from){
-						// this.tabIndex = i
-						this.swichMenu(i)
-					}
-				})
+			async getData(){
+				const res = await this.$api.category();
+				if(res.status==200){
+					this.tabbar = res.data;
+					this.tabbar.forEach((ele,i)=>{
+						if(ele.id == this.from){
+							this.swichMenu(i)
+						}
+					})
+				}
 			},
 			toSearchResult(id){
 				uni.navigateTo({
@@ -181,7 +171,7 @@
 					box-shadow: 0rpx 12rpx 40rpx rgba(0, 0, 0, 0.05);
 					border-radius: 8rpx;
 					.image{
-						width: 256rpx;
+						width: 100%;
 						height: 256rpx;
 					}
 					.name{

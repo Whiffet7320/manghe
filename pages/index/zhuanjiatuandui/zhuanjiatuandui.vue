@@ -1,9 +1,9 @@
 <template>
 	<view class="index">
 		<view class="nav1">
-			<view class="icon" @click="toBack">
+			<!-- <view class="icon" @click="toBack">
 				<u-icon name="arrow-left" color="#000000" size="34"></u-icon>
-			</view>
+			</view> -->
 			<view class="position-icon">
 				<view @click="collect">
 					<!-- 未收藏 -->
@@ -16,8 +16,7 @@
 				</button>
 			</view>
 			<view class="nav1-flex">
-				<image class="pic" :src="obj.doctor_img" mode="">
-				</image>
+				<image class="pic" :src="obj.doctor_img" mode=""></image>
 				<view class="f-right">
 					<view class="txt1">{{obj.doctor_name}}</view>
 					<view class="f-bottom">
@@ -27,8 +26,8 @@
 				</view>
 			</view>
 			<view class="tit1">
-				<view class="titBtn">
-					<view class="txt1" @click="contentShow=!contentShow">详情</view>
+				<view class="titBtn" @click="contentShow=!contentShow">
+					<view class="txt1">详情</view>
 					<u-icon v-if="!contentShow" name="arrow-down" color="#000000" size="26"></u-icon>
 					<u-icon v-else name="arrow-up" color="#000000" size="26"></u-icon>
 				</view>
@@ -83,7 +82,7 @@
 										</view>
 									</view>
 									<view class="i3-items">
-										<view class="i3-item" v-for="item in pinglunList">
+										<view class="i3-item" v-for="(item,indexz) in pinglunList" :key="indexz">
 											<image class="ava" :src="item.avatar" mode=""></image>
 											<view class="right">
 												<view class="tit1">
@@ -96,8 +95,7 @@
 												</view>
 												<view class="tit3">{{item.comment}}</view>
 												<view class="tit4">
-													<image @click.stop="toSeeImg(i,item.pics)" class="picc"
-														v-for="(pic,i) in item.pics" :src="pic" mode=""></image>
+													<image :src="pic" mode="aspectFill" @click.stop="toSeeImg(i,item.pics)" class="picc" v-for="(pic,i) in item.pics" :key="i"></image>
 												</view>
 											</view>
 										</view>
@@ -130,9 +128,7 @@
 </template>
 
 <script>
-	import {
-		mapState
-	} from "vuex";
+	import { mapState } from 'vuex';
 	export default {
 		computed: {
 			...mapState(["IndexshopPage", "IndexshopPageSize"]),
@@ -186,7 +182,15 @@
 				},
 			}
 		},
-		onLoad(options) {
+		computed:{
+			...mapState({
+				info: state => state.info
+			})
+		},
+		onLoad(options){
+			if(options.id){
+				this.id = options.id;
+			}
 			if (options.obj) {
 				this.obj = JSON.parse(decodeURIComponent(options.obj))
 				console.log(this.obj)
@@ -304,7 +308,8 @@
 	.nav1 {
 		width: 750rpx;
 		// height: 494rpx;
-		padding: 114rpx 40rpx 30rpx 40rpx;
+		// padding: 114rpx 40rpx 30rpx 40rpx;
+		padding: 40rpx 40rpx 30rpx 40rpx;
 		background: #FECF05;
 		position: relative;
 
@@ -314,14 +319,15 @@
 
 		.position-icon {
 			position: absolute;
-			top: 202rpx;
+			// top: 202rpx;
+			top:40rpx;
 			right: 46rpx;
 			display: flex;
 			align-items: center;
 		}
 
 		.nav1-flex {
-			margin-top: 74rpx;
+			// margin-top: 74rpx;
 			display: flex;
 			align-items: center;
 
