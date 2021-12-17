@@ -22,7 +22,7 @@
 		</view>
 		<view class="servlist">
 			<view class="tit">选择服务类型</view>
-			<view class="servitem" @click="onTk">
+			<view class="servitem" v-if="show" @click="onTk">
 				<image src="/static/image/user/icon_money.png" mode="aspectFit" class="icon"></image>
 				<view class="content">
 					<view class="title">我要退款（无需退货）</view>
@@ -30,7 +30,7 @@
 				</view>
 				<image src="/static/image/user/arrow_right.png" mode="aspectFit" class="icon_right"></image>
 			</view>
-			<view class="servitem" @click="onThk">
+			<view class="servitem" v-if="show" @click="onThk">
 				<image src="/static/image/user/icon_tk.png" mode="aspectFit" class="icon"></image>
 				<view class="content">
 					<view class="title">我要退货退款</view>
@@ -38,14 +38,14 @@
 				</view>
 				<image src="/static/image/user/arrow_right.png" mode="aspectFit" class="icon_right"></image>
 			</view>
-			<!-- <view class="servitem" @click="onTh">
+			<view class="servitem" v-if="!show" @click="onTh">
 				<image src="/static/image/user/icon_huan.png" mode="aspectFit" class="icon"></image>
 				<view class="content">
 					<view class="title">换货</view>
 					<view class="desc">商品存在质量问题，联系客服协商换货</view>
 				</view>
 				<image src="/static/image/user/arrow_right.png" mode="aspectFit" class="icon_right"></image>
-			</view> -->
+			</view>
 		</view>
 	</view>
 </template>
@@ -54,6 +54,7 @@
 	export default{
 		data(){
 			return{
+				show:true,
 				cartId:0,
 				orderId:0,
 				orderInfo:{}
@@ -62,23 +63,28 @@
 		methods:{
 			onTk(){
 				uni.navigateTo({
-					url:"/pages/users/sale/refund"
+					url:"/pages/users/sale/refund?orderId="+this.orderId
 				})
 			},
 			onThk(){
 				uni.navigateTo({
-					url:"/pages/users/sale/refundPro"
+					url:"/pages/users/sale/refundPro?orderId="+this.orderId
 				})
 			},
 			onTh(){
 				uni.navigateTo({
-					url:"/pages/users/sale/exchange"
+					url:"/pages/users/sale/exchange?orderId="+this.orderId
 				})
 			},
 			getOrderInfo() {
 				this.$api.getRefundOrderDetail(this.orderId, this.cart_id).then(res => {
 					if(res.status==200){
 						this.orderInfo = res.data;
+						if(res.data._status && res.data._status._type !== 1 && res.data.delivery_type !== 'fictitious' && res.data.virtual_type <= 0){
+							this.show = true;
+						}else{
+							this.show = false;
+						}
 					}
 				});
 			}

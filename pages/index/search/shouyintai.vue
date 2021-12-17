@@ -48,6 +48,9 @@
 		},
 		methods:{
 			toPay(){
+				uni.showLoading({
+					title:"支付中..."
+				})
 				uni.requestPayment({
 					provider: 'wxpay',
 					timeStamp: this.obj.jsConfig.timestamp,
@@ -56,15 +59,27 @@
 					signType: this.obj.jsConfig.signType,
 					paySign: this.obj.jsConfig.paySign,
 					success: (res)=> {
-						this.$refs.uToast.show({
-							title: '支付成功',
-							type: 'success',
-							url: '/pages/users/order/list',
+						uni.hideLoading();
+						uni.showToast({
+							title:"支付成功",
+							icon:"success"
 						})
+						setTimeout(()=>{
+							uni.redirectTo({
+								url:"/pages/users/order/list"
+							})
+						},1500)
 					},
-					fail: function(err) {
+					fail:(err)=> {
+						uni.hideLoading();
 						console.log('fail:' + JSON.stringify(err));
 						this.$u.toast(err);
+					},
+					complete: (e)=> {
+						uni.hideLoading();
+						if (e.errMsg == 'requestPayment:cancel'){
+							this.$u.toast("取消支付");
+						}
 					}
 				});
 			},

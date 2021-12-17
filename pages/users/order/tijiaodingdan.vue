@@ -9,7 +9,7 @@
 					<view class="txt2">{{addressObj.phone}}</view>
 				</view>
 				<view class="tit2">
-					<view class="b1">默认</view>
+					<view class="b1" v-if="addressInfo.is_default">默认</view>
 					<view class="txt1">
 						{{addressObj.province}}{{addressObj.province == addressObj.city ? '' : addressObj.city}}{{addressObj.district}}{{addressObj.detail}}
 					</view>
@@ -19,7 +19,7 @@
 		</view>
 		<!-- 无地址 -->
 		<view v-else @click="toAddAddress" class="noAddress">{{addNum == 'fushu'?'选择默认地址':'添加收货地址'}}</view>
-		<template v-if="isNew=='1'">
+		<template v-if="isNew==0||isNew==1">
 			<view class="nav2" v-for="(item,index) in cartInfo" :key='index'>
 				<view class="nav2-1">
 					<image :src="item.productInfo.image" class="pic" mode="aspectFill"></image>
@@ -137,10 +137,10 @@
 		</view>
 		<view class="footer">
 			<view class="left">
-				<view class="txt1">合计¥{{zongPrice}}{{isJifenShop=='yes'?'积分':''}}</view>
+				<view class="txt1">合计¥{{zongPrice||0}}{{isJifenShop=='yes'?'积分':''}}</view>
 				<view class="txt2">(共{{isJifenShop == 'yes'? 1 : total}}件)</view>
 			</view>
-			<view @click="toQuerenzhifu" class="btn">立即支付</view>
+			<view class="btn" @click="toQuerenzhifu">立即支付</view>
 		</view>
 	</view>
 </template>
@@ -151,7 +151,7 @@
 			return {
 				combinationId: 0,
 				cartInfo:[],
-				isNew:"",
+				isNew:1,
 				isJifenShop: null,
 				uni: '',
 				isAgain: 'no',
@@ -165,21 +165,20 @@
 				cartId: '',
 				mark: '',
 				orderKey: '',
-				zongPrice: '',
+				zongPrice: '0',
 				pay_postage: '',
 				pinkId:0
 			}
 		},
 		onLoad(options) {
-			console.log(options)
 			if(options.new){
-				this.isNew = options.new
+				this.isNew = !options.new || options.new === '0' ? 0 : 1;
 			}
 			this.pinkId = options.pinkId ? parseInt(options.pinkId) : 0;
 			if (options.skuItem) {
 				this.skuItem = JSON.parse(options.skuItem);
 				if (options.isJifenShop == 'yes') {
-					this.isJifenShop = options.isJifenShop
+					this.isJifenShop = options.isJifenShop;
 				} else {
 					this.isGWC = options.isGWC;
 					this.cartId = options.cartId;
@@ -201,7 +200,7 @@
 		},
 		computed:{
 			total(){
-				if(this.isNew==="1"){
+				if(this.isNew==0||this.isNew==1){
 					let sum = 0;
 					this.cartInfo.forEach((item) => {
 						sum += item.cart_num;
@@ -257,7 +256,6 @@
 					const res11 = await this.$api.orderAgain({
 						uni: this.uni||this.cartId
 					})
-					console.log(res11)
 					cartId = res11.data.cateId
 				}
 
@@ -266,12 +264,11 @@
 						num: 1,
 						unique: this.skuItem[0].productValue['默认'].unique
 					})
-					console.log(res2)
-					this.zongPrice = res2.data.total_price
+					this.zongPrice = res2.data.total_price;
 				} else {
 					const res2 = await this.$api.orderConfirm({
 						cartId: cartId,
-						new: 1,
+						new: this.isNew
 					})
 					this.cartInfo = res2.data.cartInfo;
 					this.orderKey = res2.data.orderKey;
@@ -288,7 +285,6 @@
 				uni.hideLoading();
 			},
 			changInp(e) {
-				console.log(e.length)
 				this.InpNum = e.length;
 			},
 			async toQuerenzhifu() {
@@ -318,7 +314,7 @@
 				} else {
 					const res2 = await this.$api.orderCreate({
 						addressId: this.addressObj.id,
-						couponId: '',
+						couponId: 0,
 						payType: 'weixin',
 						useIntegral: 0,
 						mark: this.mark,

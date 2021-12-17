@@ -313,7 +313,7 @@ myPut.interceptors.response.use(response => {
 myPost.interceptors.response.use(response => {
 	// console.log(response)
 	if (response.status === 200) {
-		if (response.data.code == 401) {
+		if (response.data.code == 410001) {
 			uni.navigateTo({
 				url: '/pages/login/index'
 			})
@@ -340,7 +340,7 @@ myPost.interceptors.response.use(response => {
 		if (error.response.data.info != '参数错误') {
 			vue.$message.error(error.response.data.info);
 		}
-	} else if (error.response.status === 401) {
+	} else if (error.response.status === 410001) {
 		sessionStorage.setItem("isLogin", false);
 		console.log(sessionStorage.getItem("isLogin"));
 		// router.push({ path: "/" })
@@ -364,7 +364,7 @@ myPost.interceptors.response.use(response => {
 })
 myGet.interceptors.response.use(response => {
 	if (response.status === 200) {
-		if (response.data.code == 401) {
+		if (response.data.code == 410001) {
 			uni.navigateTo({
 				url: '/pages/login/index'
 			})
@@ -390,7 +390,7 @@ myGet.interceptors.response.use(response => {
 		if (error.response.data.info != '参数错误') {
 			vue.$message.error(error.response.data.info);
 		}
-	} else if (error.response.status === 401) {
+	} else if (error.response.status === 410001) {
 		sessionStorage.setItem("isLogin", false);
 		console.log(sessionStorage.getItem("isLogin"));
 		// router.push({ path: "/" })
@@ -839,6 +839,50 @@ export default {
 	ordeRefundReason() {
 		return myGet({
 			url: urls.ordeRefundReason
+		})
+	},
+	orderRefundVerify(obj) {
+		return myPost({
+			url: urls.orderRefundVerify,
+			data: {
+				...obj
+			}
+		})
+	},
+	refundExpress(obj) {
+		return myPost({
+			url: urls.refundExpress,
+			data: {
+				...obj
+			}
+		})
+	},
+	getCartCounts(numType) {
+		return myGet({
+			url: urls.getCartCounts,
+			params: {
+				numType: numType === undefined ? 0 : numType
+			}
+		})
+	},
+	newlist(){
+		return myGet({
+			url: urls.newlist
+		})
+	},
+	guanggao(){
+		return myGet({
+			url: urls.guanggao
+		})
+	},
+	getArticleDetails(id){
+		return myGet({
+			url: urls.articleDetails+"/"+id
+		})
+	},
+	getLiveList(){
+		return myGet({
+			url: urls.wechatLive
 		})
 	},
 	upload_pic(file, type) {

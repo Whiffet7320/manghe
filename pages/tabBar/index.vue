@@ -19,7 +19,6 @@
 				<view class="right">
 					<view @click="toSearchResult(item.keyword)" v-for="item in searchList" :key='item.id' class="txt2">{{item.keyword}}</view>
 				</view>
-
 			</view>
 			<view class="tit3">
 				<u-swiper height='320' :list="bannerList"></u-swiper>
@@ -72,7 +71,13 @@
 			</view>
 			<view class="nav2-1">
 				<image src="/static/image/zu1501.png" class="pic3-1" mode=""></image>
-				<view class="tit3-1">进口玻尿酸限时8.5折～赶紧加购吧～！</view>
+				<view class="tit3-1">
+					<swiper :autoplay="true" :vertical="true" :interval="3000">
+						<swiper-item v-for="(item,index) in newslist" :key="index" @click="goArticle(item.id)">
+							<view>{{item.title}}</view>
+						</swiper-item>
+					</swiper>
+				</view>
 			</view>
 		</view>
 		<view class="nav3">
@@ -81,8 +86,7 @@
 				<view class="t-txt">修复专区</view>
 			</view>
 			<view class="items">
-				<view class="item" v-for="item in xfzqList" :key='item.id'
-					@click="toXiufu(item.xiufu_name,item.xiufu_big_img)">
+				<view class="item" v-for="item in xfzqList" :key='item.id' @click="toXiufu(item.xiufu_name,item.xiufu_big_img)">
 					<image :src="item.xiufu_img" class="pic" mode=""></image>
 					<view class="txt">{{item.xiufu_name}}</view>
 				</view>
@@ -103,7 +107,6 @@
 							</view>
 							<view class="txt2" v-if="item.doctor_sub_titles">{{item.doctor_sub_titles}}</view>
 							<view class="txt2" v-if="item.doctor_content">{{item.doctor_content}}</view>
-
 							<view class="btn" @click="toZhuanjiatuandui(item)">
 								<image src="/static/image/lujin1758.png" class="btn-img" mode=""></image>
 								<view class="btn-txt">点击预约</view>
@@ -113,7 +116,9 @@
 				</view>
 			</scroll-view>
 			<image class="picc" src="/static/image/zu1872.png" mode=""></image>
-			<image class="picc2" src="https://cdn.uviewui.com/uview/swiper/2.jpg" mode=""></image>
+			<view @click="goShop">
+				<image class="picc2" :src="advImg" mode=""></image>
+			</view>
 		</view>
 		<view class="nav5">
 			<u-tabs-swiper bg-color="#F7F8FA" height='96' font-size="28" gutter="30" inactive-color="#707070"
@@ -131,7 +136,7 @@
 								<image :src="item.image" class="pic" mode=""></image>
 								<view class="txt">{{item.store_name}}</view>
 							</view>
-							<u-loadmore v-if='swiperCurrent == index' :status="status" />
+							<u-loadmore v-if='swiperCurrent == index' :status="status" font-size="22" />
 							<!-- </template> -->
 							<!-- 推荐 -->
 							<!-- <template v-if="swiperCurrent == 1">
@@ -155,9 +160,7 @@
 </template>
 
 <script>
-	import {
-		mapState
-	} from "vuex";
+	import {mapState} from "vuex";
 	export default {
 		computed: {
 			...mapState(["IndexshopPage", "IndexshopPageSize"]),
@@ -190,6 +193,8 @@
 				xfzqList:[],
 				searchVal: '',
 				bannerList: [],
+				newslist:[],
+				advImg:"",
 				//
 				swiperCurrentIndex: 0,
 				height: 0,
@@ -258,6 +263,14 @@
 				this.cityList = this.cityList.replace(/id/g, 'value')
 				this.cityList = JSON.parse(this.cityList)
 				this.city = this.cityList[0];
+				const resnews = await this.$api.newlist();
+				if(resnews.status==200){
+					this.newslist = resnews.data;
+				}
+				const resgg = await this.$api.guanggao();
+				if(resnews.status==200){
+					this.advImg = resgg.data.img;
+				}
 			},
 			async getShopData() {
 				this.status = 'loading';
@@ -278,7 +291,6 @@
 						this.shopList = this.shopList.concat(res.data)
 					}
 				}, 200)
-				console.log(this.shopList)
 			},
 			changeCity(e) {
 				console.log(e)
@@ -288,6 +300,11 @@
 				this.$store.commit('from', val)
 				uni.switchTab({
 					url: `/pages/tabBar/yimeixiangmu`
+				})
+			},
+			goArticle(id){
+				uni.navigateTo({
+					url:"/pages/index/article/index?id="+id
 				})
 			},
 			toSearchResult(val='') {
@@ -315,6 +332,15 @@
 				uni.navigateTo({
 					url: `/pages/search/search?type=1`
 				})
+			},
+			//广告跳转
+			goShop(){
+				uni.navigateTo({
+					url:"/pages/index/live/index"
+				})
+				// uni.switchTab({
+				// 	url:"/pages/tabBar/yanxuanshangcheng"
+				// })
 			},
 			// tabs通知swiper切换
 			tabsChange(index) {
@@ -344,15 +370,12 @@
 	page {
 		background: #F7F8FA;
 	}
-	
 </style>
 <style lang="scss" scoped>
 	/deep/ .u-load-more-wrap {
 		width: 686rpx;
 		height: 100rpx !important;
 	}
-
-	.index {}
 
 	.nav1 {
 		width: 750rpx;
@@ -507,6 +530,9 @@
 				font-weight: 500;
 				color: #FF7C5E;
 				line-height: 60rpx;
+				/deep/swiper{
+					height: 60rpx;
+				}
 			}
 		}
 	}

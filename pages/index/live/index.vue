@@ -26,7 +26,7 @@
 				</view>
 			</view>
 		</view>
-		<view class="empty-txt" v-if="!isScroll">到底了~</view>
+		<view class="empty-txt" v-if="!isScroll">没有更多了~</view>
 	</view>
 </template>
 
@@ -36,35 +36,7 @@
 			return {
 				page: 1,
 				isScroll: true,
-				list: [
-					{
-						room_id:1,
-						live_status:102,
-						show_time:"10:00",
-						share_img:"https://m.360buyimg.com/mobilecms/s160x160_jfs/t1/187972/3/8012/191418/60c5a1a8E3292f715/eddf00d3628c1e5b.jpg!q70.dpg",
-						name:"双十二",
-						anchor_img:"https://m.360buyimg.com/mobilecms/s160x160_jfs/t1/187972/3/8012/191418/60c5a1a8E3292f715/eddf00d3628c1e5b.jpg!q70.dpg",
-						anchor_name:"小美"
-					},
-					{
-						room_id:2,
-						live_status:103,
-						show_time:"10:00",
-						share_img:"https://m.360buyimg.com/mobilecms/s160x160_jfs/t1/187972/3/8012/191418/60c5a1a8E3292f715/eddf00d3628c1e5b.jpg!q70.dpg",
-						name:"双十二",
-						anchor_img:"https://m.360buyimg.com/mobilecms/s160x160_jfs/t1/187972/3/8012/191418/60c5a1a8E3292f715/eddf00d3628c1e5b.jpg!q70.dpg",
-						anchor_name:"小美"
-					},
-					{
-						room_id:3,
-						live_status:101,
-						show_time:"10:00",
-						share_img:"https://m.360buyimg.com/mobilecms/s160x160_jfs/t1/187972/3/8012/191418/60c5a1a8E3292f715/eddf00d3628c1e5b.jpg!q70.dpg",
-						name:"双十二",
-						anchor_img:"https://m.360buyimg.com/mobilecms/s160x160_jfs/t1/187972/3/8012/191418/60c5a1a8E3292f715/eddf00d3628c1e5b.jpg!q70.dpg",
-						anchor_name:"小美"
-					}
-				]
+				list: []
 			}
 		},
 		methods: {
@@ -73,7 +45,7 @@
 				this.$api.getLiveList({page:this.page,limit:10}).then(res => {
 					this.isScroll = res.data.length >= this.limit;
 					this.page++;
-					this.liveList = this.liveList.concat(res.data);
+					this.list = this.list.concat(res.data);
 				}).catch(err => {
 					this.$u.toast(err);
 				});
@@ -85,7 +57,7 @@
 			}
 		},
 		onShow() {
-			// this.getLiveList();
+			this.getLiveList();
 		},
 		onReachBottom() {
 			this.getLiveList()

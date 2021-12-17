@@ -52,7 +52,7 @@
 			<view class="txt2">尾款 ¥{{obj.weiPrice}}面诊后支付</view>
 		</view>
 		<view class="footer2">
-			<view class="item">
+			<view class="item" @click="toHome">
 				<image src="/static/tabBar/sy-active.png" class="pic" mode=""></image>
 				<view class="txt">首页</view>
 			</view>
@@ -125,7 +125,6 @@
 					mark: this.beizhu,
 					shipping_type:0
 				},this.obj.orderKey)
-				console.log(res)
 				if (res.status == 200) {
 					var obj = {
 						doctor_name:this.obj.doctor_name,
@@ -133,7 +132,7 @@
 						yuPrice:this.obj.yuprice,
 						...res.data.result,
 					}
-					uni.navigateTo({
+					uni.redirectTo({
 						url: `/pages/index/search/shouyintai?obj=${encodeURIComponent(JSON.stringify(obj))}`
 					})
 				}else{
@@ -171,6 +170,11 @@
 					m = "0" + month;
 				}
 				return m;
+			},
+			toHome(){
+				uni.switchTab({
+					url:"/pages/tabBar/index"
+				})
 			},
 			toCollect(){
 				if (this.storeInfo.userCollect) {

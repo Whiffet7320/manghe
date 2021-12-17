@@ -89,7 +89,7 @@
 												</view>
 												<view class="tit3">{{item.comment}}</view>
 												<view class="tit4">
-													<image :src="pic" mode="aspectFill" @click.stop="toSeeImg(i,item.pics)" class="picc"	v-for="(pic,i) in item.pics" :key="i"></image>
+													<image :src="pic" mode="aspectFill" @click.stop="toSeeImg(i,item.pics)" class="picc" v-for="(pic,i) in item.pics" :key="i"></image>
 												</view>
 											</view>
 										</view>
@@ -130,9 +130,7 @@
 </template>
 
 <script>
-	import {
-		mapState
-	} from "vuex";
+	import {mapState} from "vuex";
 	export default {
 		computed: {
 			...mapState(["IndexshopPage", "IndexshopPageSize"]),

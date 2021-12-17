@@ -65,7 +65,7 @@
 			<view class="desc" v-if="orderInfo.remark">商家备注：{{orderInfo.remark}}</view>
 		</view>
 		<view class="sorder" v-if='orderInfo.delivery_type=="express"'>
-			<view class="desc">配送方式：发货</view>
+			<view class="desc">配送方式：快递</view>
 			<view class="desc">快递公司：{{orderInfo.delivery_name || ''}}</view>
 			<view class="desc">快递号：{{orderInfo.delivery_id || ''}}</view>
 		</view>
@@ -79,6 +79,8 @@
 		<view class="footbar safe-area-inset-bottom">
 			<view class="subbtn gray" v-if="status.type == 0 || status.type == 9" @tap="cancelOrder">取消订单</view>
 			<view class="subbtn" v-if="status.type==0" @tap="goPay(orderInfo)">去支付</view>
+			<view class="subbtn gray" v-else-if="orderInfo.is_apply_refund && [0,3].includes(orderInfo.refund_status)" @tap="goOrderReturn">申请售后</view>
+			<view class="subbtn gray" v-else-if="orderInfo.refund_type>0" @tap="goOrderReturnDetail">进度查询</view>
 			<view class="subbtn" v-if="status.class_status==5" @tap='goOrderConfirm'>再次购买</view>
 			<view class="subbtn" v-if="status.class_status==1" @tap='goJoinPink'>查看拼团</view>
 			<view class="subbtn" v-if="status.class_status==3 && !split.length" @click='confirmOrder'>确认收货</view>
@@ -235,6 +237,21 @@
 						}
 					}
 				});
+			},
+			goOrderReturn(){
+				uni.navigateTo({
+					url:"/pages/users/sale/index?orderId="+this.orderInfo.order_id
+				})
+			},
+			goOrderReturnDetail(){
+				uni.navigateTo({
+					url:"/pages/users/sale/detail?orderId="+this.orderInfo.order_id
+				})
+			},
+			goOrderReturnStatus(){
+				uni.navigateTo({
+					url:"/pages/users/sale/restep?orderId="+this.orderInfo.order_id
+				})
 			}
 		},
 		onLoad(options) {

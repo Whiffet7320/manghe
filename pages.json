@@ -104,6 +104,18 @@
 				}
 			}
 		]
+	}, {
+		"root": "pages/index/article",
+		"pages": [
+			{
+				"path": "index",
+				"style": {
+					"navigationBarTitleText":"详情",
+					"navigationBarTextStyle": "black",
+					"navigationBarBackgroundColor": "#FECF05"
+				}
+			}
+		]
 	},
 	{
 		"root": "pages/index/zhuanjiatuandui",
@@ -421,7 +433,7 @@
 	}],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
+		"navigationBarTitleText": "医美",
 		"navigationBarBackgroundColor": "#ffffff",
 		"backgroundColor": "#282828"
 	},

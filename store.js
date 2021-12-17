@@ -23,7 +23,8 @@ export default new Vuex.Store({
 		comentInfo:[],
 		proComentInfo:[],
 		wkorder:{},
-		onResh:false
+		onResh:false,
+		cartNum:0
 	},
 	mutations: {
 		searchList(state, str) {
@@ -79,6 +80,9 @@ export default new Vuex.Store({
 		setResh(state,data){
 			state.onResh = data;
 		},
+		setCartNum(state, data) {
+			state.cartNum = data;
+		}
 	},
 	getters:{
 		token: state => state.token,

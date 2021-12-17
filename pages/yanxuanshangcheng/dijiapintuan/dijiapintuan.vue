@@ -111,7 +111,7 @@
 												</view>
 												<view class="tit3">{{item.comment}}</view>
 												<view class="tit4">
-													<image :src="pic" mode="aspectFill" @click.stop="toSeeImg(i,item.pics)" class="picc"	v-for="(pic,i) in item.pics" :key="i"></image>
+													<image :src="pic" mode="aspectFill" @click.stop="toSeeImg(i,item.pics)" class="picc" v-for="(pic,i) in item.pics" :key="i"></image>
 												</view>
 											</view>
 										</view>
@@ -125,27 +125,11 @@
 				</swiper-item>
 			</swiper>
 		</view>
-
-		<!-- <view class="footer1">
-			<image src="/static/image/zu1840.png" class="kefu" mode=""></image>
-			<view class="txt1">预付款 ¥2000</view>
-			<view class="txt2">尾款 ¥1600面诊后支付</view>
-		</view> -->
-		<!-- <view class="footer2">
-			<view class="item">
-				<image src="/static/tabBar/sy-active.png" class="pic" mode=""></image>
-				<view class="txt">首页</view>
-			</view>
-			<view class="item item2">
-				<image src="/static/image/lujin2228.png" class="pic2" mode=""></image>
-				<view class="txt">收藏</view>
-			</view>
-			<view @click="toShouyintai" class="btn">立即购买</view>
-		</view> -->
+		<product-sku :attr='attribute' :limitNum='1' @myevent="onMyEvent" @ChangeAttr="ChangeAttr" @ChangeCartNum="ChangeCartNum" @iptCartNum="iptCartNum" @attrVal="attrVal" @getImg="showImg"></product-sku>
 		<view class="footer" v-if="attribute.productSelect.product_stock>0&&attribute.productSelect.quota>0">
 			<view @click="kaituan" class="btn">我要开团</view>
 		</view>
-		<view class="footer" v-if='attribute.productSelect.quota <= 0 || attribute.productSelect.product_stock <= 0'>
+		<view class="footer" v-if="attribute.productSelect.quota <= 0 || attribute.productSelect.product_stock <= 0">
 			<view class="btn gray">已售罄</view>
 		</view>
 	</view>
@@ -154,9 +138,11 @@
 <script>
 	import {mapState} from "vuex";
 	import countDown from '@/components/countDown/index.vue';
+	import ProductSku from '@/components/productSku';
 	export default {
 		components:{
-			countDown
+			countDown,
+			ProductSku
 		},
 		computed: {
 			...mapState(["pinlunPage", "pinlunPageSize"]),
@@ -190,23 +176,8 @@
 				s: '00',
 				isOnShow: true,
 				navTitle: '',
-				bannerList: [{
-						image: 'https://cdn.uviewui.com/uview/swiper/1.jpg',
-						title: '昨夜星辰昨夜风，画楼西畔桂堂东'
-					},
-					{
-						image: 'https://cdn.uviewui.com/uview/swiper/2.jpg',
-						title: '身无彩凤双飞翼，心有灵犀一点通'
-					},
-					{
-						image: 'https://cdn.uviewui.com/uview/swiper/3.jpg',
-						title: '谁念西风独自凉，萧萧黄叶闭疏窗，沉思往事立残阳'
-					}
-				],
-				imgArr: ['https://img1.baidu.com/it/u=3303981320,1355171730&fm=26&fmt=auto',
-					'https://img0.baidu.com/it/u=2394303781,1797253216&fm=26&fmt=auto',
-					'https://img0.baidu.com/it/u=3941318376,4022646771&fm=26&fmt=auto'
-				],
+				bannerList: [],
+				imgArr: [],
 				//
 				swiperCurrentIndex: 0,
 				height: 0,
@@ -226,20 +197,29 @@
 					loading: '正在加载...',
 					nomore: '没有了更多了'
 				},
+				storeInfo:{},
 				attribute: {
 					cartAttr: false,
 					productAttr: [],
 					productSelect: {}
 				},
 				productValue: [],
+				isOpen: false,
+				attr: '请选择',
+				attrValue: '',
 				pink:[],
 				AllIndex: 2,
 				AllIndexDefault: 0,
+				attrTxt: '',
+				cart_num: '',
+				skuArr: [],
+				selectSku: {}
 			}
 		},
-		onLoad(option) {
-			this.navTitle = option.title;
-			this.id = option.id
+		onLoad(options) {
+			if(options.id){
+				this.id = options.id;
+			}
 		},
 		onShow() {
 			if (!this.isOnShow) {
@@ -272,8 +252,9 @@
 				uni.setNavigationBarTitle({
 					title:res.data.storeInfo.title.substring(0, 16)
 				})
+				this.storeInfo = res.data.storeInfo;
 				this.obj = res.data;
-				this.obj.storeInfo.images.forEach(ele => {
+				this.storeInfo.images.forEach(ele => {
 					this.bannerList.push({
 						image: ele
 					})
@@ -291,7 +272,6 @@
 						page:this.pinlunPage,
 						limit:this.pinlunPageSize
 					}, this.id)
-					console.log(res.data)
 					this.pingjiaObj = res.data.comment;
 					if (res.data.list.length == 0) {
 						this.status = 'nomore'
@@ -300,6 +280,104 @@
 						this.pinglunList = this.pinglunList.concat(res.data.list)
 					}
 				}, 200)
+			},
+			/**
+			 * 购物车手动填写
+			 * 
+			 */
+			iptCartNum(e) {
+				this.$set(this.attribute.productSelect, 'cart_num', e);
+				this.$set(this, "cart_num", e);
+			},
+			selecAttr() {
+				this.attribute.cartAttr = true;
+			},
+			onMyEvent() {
+				this.$set(this.attribute, 'cartAttr', false);
+				this.$set(this, 'isOpen', false);
+			},
+			/**
+			 * 购物车数量加和数量减
+			 * 
+			 */
+			ChangeCartNum(changeValue) {
+				//changeValue:是否 加|减
+				//获取当前变动属性
+				let productSelect = this.productValue[this.attrValue];
+				if (this.cart_num) {
+					productSelect.cart_num = this.cart_num;
+					this.attribute.productSelect.cart_num = this.cart_num;
+				}
+				//如果没有属性,赋值给商品默认库存
+				if (productSelect === undefined && !this.attribute.productAttr.length)
+					productSelect = this.attribute.productSelect;
+				//无属性值即库存为0；不存在加减；
+				if (productSelect === undefined) return;
+				let stock = productSelect.stock || 0;
+				let quotaShow = productSelect.quota_show || 0;
+				let quota = productSelect.quota || 0;
+				let productStock = productSelect.product_stock || 0;
+				let num = this.attribute.productSelect;
+				let nums = this.storeInfo.num || 0;
+				//设置默认数据
+				if (productSelect.cart_num == undefined) productSelect.cart_num = 1;
+				if (changeValue) {
+					num.cart_num++;
+					let arrMin = [];
+					arrMin.push(nums);
+					arrMin.push(quota);
+					arrMin.push(productStock);
+					let minN = Math.min.apply(null, arrMin);
+					if (num.cart_num >= minN) {
+						this.$set(this.attribute.productSelect, "cart_num", minN ? minN : 1);
+						this.$set(this, "cart_num", minN ? minN : 1);
+					}
+					this.$set(this, "cart_num", num.cart_num);
+					this.$set(this.attribute.productSelect, "cart_num", num.cart_num);
+				} else {
+					num.cart_num--;
+					if (num.cart_num < 1) {
+						this.$set(this.attribute.productSelect, "cart_num", 1);
+						this.$set(this, "cart_num", 1);
+					}
+					this.$set(this, "cart_num", num.cart_num);
+					this.$set(this.attribute.productSelect, "cart_num", num.cart_num);
+				}
+			},
+			attrVal(val) {
+				this.attribute.productAttr[val.indexw].index = this.attribute.productAttr[val.indexw].attr_values[val.indexn];
+			},
+			/**
+			 * 属性变动赋值
+			 * 
+			 */
+			ChangeAttr(res) {
+				this.$set(this, 'cart_num', 1);
+				let productSelect = this.productValue[res];
+				this.$set(this, "selectSku", productSelect);
+				if (productSelect) {
+					this.$set(this.attribute.productSelect, "image", productSelect.image);
+					this.$set(this.attribute.productSelect, "price", productSelect.price);
+					this.$set(this.attribute.productSelect, "ot_price", productSelect.ot_price);
+					this.$set(this.attribute.productSelect, "stock", productSelect.stock);
+					this.$set(this.attribute.productSelect, "unique", productSelect.unique);
+					this.$set(this.attribute.productSelect, "cart_num", 1);
+					this.$set(this.attribute.productSelect, "quota", productSelect.quota);
+					this.$set(this.attribute.productSelect, "quota_show", productSelect.quota_show);
+					this.$set(this, "attrValue", res);
+					this.attrTxt = "已选择"
+				} else {
+					this.$set(this.attribute.productSelect, "image", this.storeInfo.image);
+					this.$set(this.attribute.productSelect, "price", this.storeInfo.price);
+					this.$set(this.attribute.productSelect, "ot_price", productSelect.ot_price);
+					this.$set(this.attribute.productSelect, "stock", 0);
+					this.$set(this.attribute.productSelect, "unique", "");
+					this.$set(this.attribute.productSelect, "cart_num", 0);
+					this.$set(this.attribute.productSelect, "quota", 0);
+					this.$set(this.attribute.productSelect, "quota_show", 0);
+					this.$set(this, "attrValue", "");
+					this.attrTxt = "已选择"
+				}
 			},
 			//默认选中
 			DefaultSelect() {
@@ -311,22 +389,65 @@
 						break;
 					}
 				}
+				for (let i = 0; i < productAttr.length; i++) {
+					this.$set(productAttr[i], "index", value[i]);
+				}
 				let productSelect = this.productValue[value.join(",")];
 				if (productSelect && productAttr.length) {
+					this.$set(this.attribute.productSelect,"store_name",this.storeInfo.title);
+					this.$set(this.attribute.productSelect, "image", productSelect.image);
+					this.$set(this.attribute.productSelect, "price", productSelect.price);
+					this.$set(this.attribute.productSelect, "ot_price", productSelect.ot_price);
+					this.$set(this.attribute.productSelect, "stock", productSelect.stock);
+					this.$set(this.attribute.productSelect, "unique", productSelect.unique);
+					this.$set(this.attribute.productSelect, "quota", productSelect.quota);
+					this.$set(this.attribute.productSelect, "quota_show", productSelect.quota_show);
+					this.$set(this.attribute.productSelect, "product_stock", productSelect.product_stock);
+					this.$set(this.attribute.productSelect, "cart_num", 1);
 					this.attrValue = value.join(",");
 					this.attribute.productSelect.quota = productSelect.quota;
 					this.attribute.productSelect.product_stock = productSelect.product_stock;
 				} else if (!productSelect && productAttr.length) {
-					this.attribute.productSelect.quota = 0;
-					this.attribute.productSelect.product_stock = 0;
+					this.$set(this.attribute.productSelect,"store_name",this.storeInfo.title);
+					this.$set(this.attribute.productSelect, "image", this.storeInfo.image);
+					this.$set(this.attribute.productSelect, "price", this.storeInfo.price);
+					this.$set(this.attribute.productSelect, "ot_price", this.storeInfo.product_price);
+					this.$set(this.attribute.productSelect, "quota", 0);
+					this.$set(this.attribute.productSelect, "quota_show", 0);
+					this.$set(this.attribute.productSelect, "product_stock", 0);
+					this.$set(this.attribute.productSelect, "stock", 0);
+					this.$set(this.attribute.productSelect, "unique", "");
+					this.$set(this.attribute.productSelect, "cart_num", 0);
+					this.$set(this, "attrValue", "");
+					this.$set(this, "attrTxt", "请选择");
 				} else if (!productSelect && !productAttr.length){
-					this.attribute.productSelect.quota = 0;
-					this.attribute.productSelect.product_stock = 0;
+					this.$set(this.attribute.productSelect,"store_name",this.storeInfo.title);
+					this.$set(this.attribute.productSelect, "image", this.storeInfo.image);
+					this.$set(this.attribute.productSelect, "price", this.storeInfo.price);
+					this.$set(this.attribute.productSelect, "ot_price", this.storeInfo.product_price);
+					this.$set(this.attribute.productSelect, "stock", this.storeInfo.stock);
+					this.$set(this.attribute.productSelect, "quota", 0);
+					this.$set(this.attribute.productSelect, "product_stock", 0);
+					this.$set(this.attribute.productSelect,"unique",this.storeInfo.unique || "");
+					this.$set(this.attribute.productSelect, "cart_num", 1);
+					this.$set(this, "attrValue", "");
+					this.$set(this, "attrTxt", "请选择");
 				}
-				console.log(this.pinglunList)
 			},
 			async kaituan() {
 				let productSelect = this.productValue[this.attrValue];
+				//打开属性
+				if (this.isOpen){
+					this.attribute.cartAttr = true;
+				}else{
+					this.attribute.cartAttr = !this.attribute.cartAttr;
+				}
+				//只有关闭属性弹窗时进行加入购物车
+				if (this.attribute.cartAttr === true && this.isOpen == false) return this.isOpen = true;
+				if (this.attribute.productAttr.length && productSelect === undefined && this.isOpen == true){
+					this.$u.toast('请选择属性');
+					return false;
+				}
 				let data = {
 					cartNum:1,
 					combinationId:this.obj.storeInfo.combination,
@@ -890,7 +1011,10 @@
 
 	.footer {
 		position: fixed;
+		left:0;
+		right:0;
 		bottom: 0;
+		z-index: 200;
 		width: 100%;
 		height: 140rpx;
 		background: #FFFFFF;

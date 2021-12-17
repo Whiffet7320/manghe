@@ -49,9 +49,9 @@
 				<text>推荐商品</text>
 			</view>
 			<view class="likelist">
-				<view class="like_item" v-for="(item,index) in hotlist" :key="index">
+				<view class="like_item" v-for="(item,index) in hotlist" :key="index" @click="goPro(item.product_id)">
 					<image :src="item.image" mode="aspectFill" class="img"></image>
-					<view class="name">{{item.title}}</view>
+					<view class="name">{{item.store_name}}</view>
 					<view class="price">￥{{item.price}}</view>
 				</view>
 			</view>
@@ -105,7 +105,10 @@
 				attrValue: '', //已选属性
 				cartId: 0,
 				product_id: 0,
-				hotlist:[]
+				hotlist:[],
+				hotScroll: false,
+				hotPage: 1,
+				loadend: false
 			}
 		},
 		methods:{
@@ -218,7 +221,7 @@
 				if (selectValue.length > 0) {
 					let skuItem = narry;
 					uni.navigateTo({
-						url: `/pages/users/order/tijiaodingdan?cartId=${selectValue.join(',')}&new=1`
+						url: `/pages/users/order/tijiaodingdan?cartId=${selectValue.join(',')}&new=0`
 					});
 				} else {
 					uni.showToast({
@@ -324,10 +327,27 @@
 					});
 				}
 				this.show = !this.show;
+			},
+			getHostProduct(){
+				if (this.hotScroll) return
+				this.$api.productHot({product_from:0,page:this.hotPage,limit:10}).then(res => {
+					this.hotPage++;
+					this.hotScroll = res.data.length < 10;
+					this.hotlist = this.hotlist.concat(res.data);
+				});
+			},
+			goPro(id){
+				uni.navigateTo({
+					url:"/pages/yanxuanshangcheng/rexiaoxiangqin/rexiaoxiangqin?id="+id
+				})
 			}
 		},
 		onShow(){
 			this.getCartlist();
+			this.getHostProduct();
+		},
+		onReachBottom(){
+			this.getHostProduct();
 		}
 	}
 </script>
@@ -374,12 +394,14 @@
 				border-radius: 20rpx;
 			}
 			.info{
+				flex:1;
 				padding-left: 24rpx;
 				.hd{
 					display: flex;
 					flex-direction: row;
 				}
 				.name{
+					flex:1;
 					padding-right: 56rpx;
 					height: 76rpx;
 					font-size: 28rpx;

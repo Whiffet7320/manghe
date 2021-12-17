@@ -25,6 +25,11 @@
 								<view class="right">
 									<text v-if="order.finish_pay_status==1 && order._status._type != 3">已完成</text>
 									<text v-else-if="order.finish_pay_status==1 && order._status._type == 3">待评价</text>
+									<text v-else-if="order.refund_type==1">申请退款中</text>
+									<text v-else-if="order.refund_type==2">申请退货中</text>
+									<text v-else-if="order.refund_type==4">待退货</text>
+									<text v-else-if="order.refund_type==5">退款中</text>
+									<text v-else-if="order.refund_type==6">已退款</text>
 									<text v-else>{{order._status._title}}</text>
 									<!-- <text v-if="order._status._type == -1||order._status._type == -2">{{order._status._title}}</text>
 									<text v-else-if="order._status._type == 0">待付款</text>
@@ -66,8 +71,14 @@
 							</view>
 							<view class="tit3">
 								<view class="box1" v-if="Number(order.finish_pay_price)>0 && order.finish_pay_status>=0">
-									<view class="txt1">订单编号：{{order.finish_pay_order_num}}</view>
-									<view class="txt2" @click.stop="$tool.onCopy(order.finish_pay_order_num)">复制</view>
+									<view class="u-flex" v-if="order.paid==0">
+										<view class="txt1">订单编号：{{order.order_id}}</view>
+										<view class="txt2" @click.stop="$tool.onCopy(order.order_id)">复制</view>
+									</view>
+									<view class="u-flex" v-if="order.paid==1">
+										<view class="txt1">订单编号：{{order.finish_pay_order_num}}</view>
+										<view class="txt2" @click.stop="$tool.onCopy(order.finish_pay_order_num)">复制</view>
+									</view>
 								</view>
 								<view class="box1" v-else>
 									<view class="txt1">订单编号：{{order.order_id}}</view>
@@ -82,11 +93,12 @@
 										<view class="more">...</view>
 									</view>
 									<view class="b-right">
-										<view class="btn1" v-if="order._status._type == 0 || order._status._type == 9" @click.stop="cancelOrder(okey, order.order_id)">取消订单</view>
+										<view class="btn3 btn1" v-if="order._status._type == 0 || order._status._type == 9" @click.stop="cancelOrder(okey, order.order_id)">取消订单</view>
 										<view class="btn2" v-if="order._status._type == 0 || order._status._type == 6" @click.stop="goPay(order)">去支付</view>
-										<view class="btn2" v-else-if="order._status._type == 2" @click.stop="confirmOrder(order.order_id)">确认收货</view>
-										<view class="btn1" v-else-if="order._status._type == 3" @click.stop="goOrderComment(order)">去评论</view>
-										<view class="btn1" v-else-if="order._status._type == 4" @click.stop="goOrderReturn(order.order_id)">申请售后</view>
+										<view class="btn3 btn1" v-else-if="(order.refund_status==0||order.refund_status==3) && Number(order.finish_pay_price)==0" @click.stop="goOrderReturn(order.order_id)">申请售后</view>
+										<view class="btn3 btn1" v-else-if="order.refund_type>0 && Number(order.finish_pay_price)==0" @tap="goOrderReturnDetail(order.order_id)">进度查询</view>
+										<view class="btn3 btn1" v-if="order._status._type == 3" @click.stop="goOrderComment(order)">去评论</view>
+										<view class="btn2" v-if="order._status._type == 2" @click.stop="confirmOrder(order.order_id)">确认收货</view>
 										<view class="btn2" v-if="order.combination_id < 1 && order._status._type == 4" @click.stop="toBuyagain(order)">再次购买</view>
 									</view>
 								</view>
@@ -244,6 +256,8 @@
 								if(res.status==200){
 									uni.hideLoading();
 									this.$u.toast(res.msg);
+									this.loadStatus = "loadmore";
+									this.current_page = 1;
 									this.loadData();
 								}else{
 									uni.hideLoading();
@@ -266,9 +280,15 @@
 			},
 			goPay(item) {
 				if(item.finish_pay_order_num!=="" && item.finish_pay_order_num!==null){
-					uni.navigateTo({
-						url: `/pages/users/order/querendingdan?wid=${item.finish_pay_order_num}&price=${item.pay_price}`
-					})
+					if(order.paid==0){
+						uni.navigateTo({
+							url: `/pages/users/order/querendingdan?id=${item.order_id}&price=${item.pay_price}`
+						})
+					}else if(order.paid==1){
+						uni.navigateTo({
+							url: `/pages/users/order/querendingdan?wid=${item.finish_pay_order_num}&price=${item.pay_price}`
+						})
+					}
 				}else{
 					uni.navigateTo({
 						url: `/pages/users/order/querendingdan?id=${item.order_id}&price=${item.pay_price}`
@@ -314,6 +334,11 @@
 			goOrderReturn(id){
 				uni.navigateTo({
 					url:"/pages/users/sale/index?orderId="+id
+				})
+			},
+			goOrderReturnDetail(id){
+				uni.navigateTo({
+					url:"/pages/users/sale/detail?orderId="+id
 				})
 			},
 			//swiper 切换
@@ -640,7 +665,7 @@
 					}
 
 					.btn3.btn1 {
-						margin-right: 20rpx;
+						margin-left: 20rpx;
 					}
 
 					.btn2 {

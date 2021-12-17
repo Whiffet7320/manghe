@@ -36,17 +36,19 @@
 			</view>
 			<view v-if="(pinkBool === 1 || pinkBool === -1) && count > 9" class="lookAll" @click="lookAll">
 				{{ iShidden ? '收起' : '查看全部' }}
-				<span class="iconfont" :class="iShidden ? 'icon-xiangshang' : 'icon-xiangxia'"></span>
+				<u-icon class="iconfont" name="arrow-up" v-if="iShidden"></u-icon>
+				<u-icon class="iconfont" name="arrow-down" v-else></u-icon>
 			</view>
 			<view v-if="userBool === 1 && isOk == 0 && pinkBool === 0">
 				<view class="teamBnt">
 					<button class="item u-reset-button" open-type="share">邀请好友参团</button>
 				</view>
 			</view>
-			<view class="teamBnt" v-else-if="userBool === 0 && pinkBool === 0 && count > 0" @click="goPay">我要参团</view>
+			<view class="teamBnt" v-else-if="userBool === 0 && pinkBool === 0 && count > 0" @click="pay">我要参团</view>
 			<view class="teamBnt" v-if="pinkBool === 1 || pinkBool === -1" @click="goDetail(storeCombination.id)">再次开团</view>
 			<view class="cancel" @click="getCombinationRemove" v-if="pinkBool === 0 && userBool === 1 && pinkT.uid == userInfo.uid">取消开团</view>
 			<view class="lookOrder" v-if="pinkBool === 1" @click="goOrder">查看订单信息</view>
+			<product-sku :attr="attr" :limitNum="1" :iSbnt="1" @myevent="onMyEvent" @ChangeAttr="ChangeAttr" @ChangeCartNum="ChangeCartNum" @iptCartNum="iptCartNum" @attrVal="attrVal" @goCat="goPay"></product-sku>
 		</view>
 	</view>
 </template>
@@ -54,9 +56,11 @@
 <script>
 	import {mapState} from 'vuex';
 	import CountDown from '@/components/countDown';
+	import ProductSku from '@/components/productSku';
 	export default{
 		components:{
-			CountDown
+			CountDown,
+			ProductSku
 		},
 		data(){
 			return{
@@ -71,6 +75,7 @@
 				pinkId: 0,
 				count: 0, //拼团剩余人数
 				iShidden: false,
+				isOpen: false, //是否打开属性组件
 				attr: {
 					cartAttr: false,
 					productSelect: {
@@ -88,8 +93,6 @@
 				},
 				cart_num: '',
 				userInfo: {},
-				posters: false,
-				weixinStatus: false,
 				attrTxt: '请选择', //属性页面提示
 				attrValue: '' //已选属性
 			}
@@ -112,8 +115,12 @@
 			}
 		},
 		methods:{
-			goPay() {
-				var data = {};
+			pay(){
+				this.attr.cartAttr = true;
+				this.isOpen = true;
+			},
+			goPay(){
+				let data = {};
 				data.productId = this.storeCombination.product_id;
 				data.cartNum = this.attr.productSelect.cart_num;
 				data.uniqueId = this.attr.productSelect.unique;
@@ -139,6 +146,85 @@
 					url: '/pages/yanxuanshangcheng/dijiapintuan/dijiapintuan?id=' + id
 				});
 			},
+			iptCartNum(e) {
+				this.$set(this.attr.productSelect, 'cart_num', e);
+				this.$set(this, 'cart_num', e);
+			},
+			attrVal(val) {
+				this.attr.productAttr[val.indexw].index = this.attr.productAttr[val.indexw].attr_values[val.indexn];
+			},
+			onMyEvent() {
+				this.$set(this.attr, 'cartAttr', false);
+				this.$set(this, 'isOpen', false);
+			},
+			//选择属性；
+			ChangeAttr(res) {
+				this.$set(this, 'cart_num', 1);
+				let productSelect = this.productValue[res];
+				if (productSelect) {
+					this.$set(this.attr.productSelect, 'image', productSelect.image);
+					this.$set(this.attr.productSelect, 'price', productSelect.price);
+					this.$set(this.attr.productSelect, 'quota', productSelect.quota);
+					this.$set(this.attr.productSelect, 'unique', productSelect.unique);
+					this.$set(this.attr.productSelect, 'cart_num', 1);
+					this.$set(this.attr.productSelect, 'product_stock', productSelect.product_stock);
+					this.$set(this.attr.productSelect, 'quota_show', productSelect.quota_show);
+					this.$set(this, 'attrValue', res);
+					this.$set(this, 'attrTxt', '已选择');
+				} else {
+					this.$set(this.attr.productSelect, 'image', this.storeCombination.image);
+					this.$set(this.attr.productSelect, 'price', this.storeCombination.price);
+					this.$set(this.attr.productSelect, 'quota', 0);
+					this.$set(this.attr.productSelect, 'unique', '');
+					this.$set(this.attr.productSelect, 'cart_num', 0);
+					this.$set(this.attr.productSelect, 'quota_show', 0);
+					this.$set(this.attr.productSelect, 'product_stock', 0);
+					this.$set(this, 'attrValue', '');
+					this.$set(this, 'attrTxt', '请选择');
+				}
+			},
+			ChangeCartNum(res) {
+				//changeValue:是否 加|减
+				//获取当前变动属性
+				let productSelect = this.productValue[this.attrValue];
+				if (this.cart_num) {
+					productSelect.cart_num = this.cart_num;
+					this.attr.productSelect.cart_num = this.cart_num;
+				}
+				//如果没有属性,赋值给商品默认库存
+				if (productSelect === undefined && !this.attr.productAttr.length) productSelect = this.attr.productSelect;
+				if (productSelect === undefined) return;
+				let stock = productSelect.stock || 0;
+				let quotaShow = productSelect.quota_show || 0;
+				let quota = productSelect.quota || 0;
+				let productStock = productSelect.product_stock || 0;
+				let num = this.attr.productSelect;
+				let nums = this.storeCombination.num || 0;
+				//设置默认数据
+				if (productSelect.cart_num == undefined) productSelect.cart_num = 1;
+				if (res) {
+					num.cart_num++;
+					let arrMin = [];
+					arrMin.push(nums);
+					arrMin.push(quota);
+					arrMin.push(productStock);
+					let minN = Math.min.apply(null, arrMin);
+					if (num.cart_num >= minN) {
+						this.$set(this.attr.productSelect, 'cart_num', minN ? minN : 1);
+						this.$set(this, 'cart_num', minN ? minN : 1);
+					}
+					this.$set(this, 'cart_num', num.cart_num);
+					this.$set(this.attr.productSelect, 'cart_num', num.cart_num);
+				} else {
+					num.cart_num--;
+					if (num.cart_num < 1) {
+						this.$set(this.attr.productSelect, 'cart_num', 1);
+						this.$set(this, 'cart_num', 1);
+					}
+					this.$set(this, 'cart_num', num.cart_num);
+					this.$set(this.attr.productSelect, 'cart_num', num.cart_num);
+				}
+			},
 			//默认选中属性；
 			DefaultSelect() {
 				let productAttr = this.attr.productAttr,
@@ -152,26 +238,38 @@
 				//sort();排序函数:数字-英文-汉字；
 				let productSelect = this.productValue[value.join(',')];
 				if (productSelect && productAttr.length) {
-					this.attr.productSelect.quota = productSelect.quota;
-					this.attr.productSelect.unique = productSelect.unique;
-					this.attr.productSelect.cart_num = 1;
-					this.attr.productSelect.product_stock = productSelect.product_stock;
-					this.attr.productSelect.quota_show = productSelect.quota_show;
-					this.attrValue = value.join(',');
+					this.$set(this.attr.productSelect, 'store_name', this.storeCombination.title);
+					this.$set(this.attr.productSelect, 'image', productSelect.image);
+					this.$set(this.attr.productSelect, 'price', productSelect.price);
+					this.$set(this.attr.productSelect, 'quota', productSelect.quota);
+					this.$set(this.attr.productSelect, 'unique', productSelect.unique);
+					this.$set(this.attr.productSelect, 'cart_num', 1);
+					this.$set(this.attr.productSelect, 'product_stock', productSelect.product_stock);
+					this.$set(this.attr.productSelect, 'quota_show', productSelect.quota_show);
+					this.$set(this, 'attrValue', value.join(','));
+					this.$set(this, 'attrTxt', '已选择');
 				} else if (!productSelect && productAttr.length) {
-					this.attr.productSelect.quota = 0;
-					this.attr.productSelect.unique = "";
-					this.attr.productSelect.cart_num = 0;
-					this.attr.productSelect.product_stock = 0;
-					this.attr.productSelect.quota_show = 0;
-					this.attrValue = "";
+					this.$set(this.attr.productSelect, 'store_name', this.storeCombination.title);
+					this.$set(this.attr.productSelect, 'image', this.storeCombination.image);
+					this.$set(this.attr.productSelect, 'price', this.storeCombination.price);
+					this.$set(this.attr.productSelect, 'quota', 0);
+					this.$set(this.attr.productSelect, 'unique', '');
+					this.$set(this.attr.productSelect, 'cart_num', 0);
+					this.$set(this.attr.productSelect, 'product_stock', 0);
+					this.$set(this.attr.productSelect, 'quota_show', 0);
+					this.$set(this, 'attrValue', '');
+					this.$set(this, 'attrTxt', '请选择');
 				} else if (!productSelect && !productAttr.length) {
-					this.attr.productSelect.quota = 0;
-					this.attr.productSelect.unique = this.storeCombination.unique || '';
-					this.attr.productSelect.cart_num = 1;
-					this.attr.productSelect.product_stock = 0;
-					this.attr.productSelect.quota_show = 0;
-					this.attrValue = "";
+					this.$set(this.attr.productSelect, 'store_name', this.storeCombination.title);
+					this.$set(this.attr.productSelect, 'image', this.storeCombination.image);
+					this.$set(this.attr.productSelect, 'price', this.storeCombination.price);
+					this.$set(this.attr.productSelect, 'quota', 0);
+					this.$set(this.attr.productSelect, 'unique', this.storeCombination.unique || '');
+					this.$set(this.attr.productSelect, 'cart_num', 1);
+					this.$set(this.attr.productSelect, 'quota_show', 0);
+					this.$set(this.attr.productSelect, 'product_stock', 0);
+					this.$set(this, 'attrValue', '');
+					this.$set(this, 'attrTxt', '请选择');
 				}
 			},
 			setProductSelect() {

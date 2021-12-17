@@ -1,6 +1,6 @@
 <template>
 	<view class="salewrap">
-		<view class="prowrap">
+		<view class="prowrap" v-if="orderInfo.cartInfo">
 			<view class="tit">退款商品</view>
 			<view class="proinfo" v-for="(item,index) in orderInfo.cartInfo" :key="index">
 				<image :src="item.productInfo.image" mode="aspectFill" class="img"></image>
@@ -42,7 +42,7 @@
 					<image src="/static/image/user/arrow_right.png" mode="aspectFit" class="icon_right"></image>
 				</view>
 			</view>
-			<view class="tkitem">
+			<view class="tkitem" v-if="orderInfo.cartInfo">
 				<view class="label">
 					<view>退款金额</view>
 					<view class="desc" v-if="orderInfo.total_num == 1 || orderInfo.cartInfo.length > 1 || orderInfo.pid > 0">最多 ￥{{orderInfo.pay_price}}，含发货邮费 ¥0.00</view>
@@ -89,18 +89,20 @@
 					</view>
 				</view>
 				<view class="rlist">
-					<view class="radio" v-for="(item,index) in refundArray" :key="index" @click="reasonChange(item)">
-						<image src="/static/image/user/icon_checked.png" mode="aspectFit" class="icon" v-if="sreason==item"></image>
-						<view class="ick" v-else></view>
-						<text>{{item}}</text>
-					</view>
+					<scroll-view scroll-y="true" style="height:340rpx;">
+						<view class="radio" v-for="(item,index) in refundArray" :key="index" @click="reasonChange(item)">
+							<image src="/static/image/user/icon_checked.png" mode="aspectFit" class="icon" v-if="sreason==item"></image>
+							<view class="ick" v-else></view>
+							<text>{{item}}</text>
+						</view>
+					</scroll-view>
 				</view>
 				<view class="btn" @click.stop="onSub">确定</view>
 			</view>
 		</u-popup>
 		<u-gap height="104"></u-gap>
 		<view class="ftbar safe-area-inset-bottom">
-			<view class="subbtn">提交</view>
+			<view class="subbtn" @click="subRefund">提交</view>
 		</view>
 	</view>
 </template>
@@ -109,13 +111,17 @@
 	export default{
 		data(){
 			return{
+				cartId:0,
+				orderId:0,
+				refund_num: 0,
+				one_price: 0,
 				orderInfo:{},
 				show:false,
-				value:"已收货",
+				value:"未收货",
 				rlist:["已收货","未收货"],
+				returnGoods:1,
 				reason:"",
 				price:"￥0.00",
-				one_price:0,
 				textarea:"",
 				imglist:[],
 				refundArray:["买错/多买","不想要了","其他原因"],
@@ -123,6 +129,15 @@
 			}
 		},
 		methods:{
+			getOrderInfo() {
+				this.$api.getRefundOrderDetail(this.orderId, this.cart_id).then(res => {
+					if(res.status==200){
+						this.orderInfo = res.data;
+						this.refund_num = res.data.total_num;
+						this.one_price = (Number(res.data.cartInfo[0].truePrice) + Number(res.data.cartInfo[0].one_postage_price)) * 10000;
+					}
+				});
+			},
 			getRefundReason(){
 				this.$api.ordeRefundReason().then(res => {
 					this.refundArray = res.data;
@@ -138,30 +153,13 @@
 				this.imglist.splice(index, 1);
 			},
 			chooseImage(){
-				uni.chooseImage({
-					count: 1, //默认9
-					sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
-					sourceType: ['album'], //从相册选择
-					success: res => {
-						for (let i = 0; i < res.tempFilePaths.length; i++) {
-							// 读取图片宽高
-							uni.getImageInfo({
-								src: res.tempFilePaths[i],
-								success: image => {
-									uni.showLoading({
-										mask:true,
-										title:"上传中..."
-									})
-									uni.hideLoading();
-									this.imglist = this.imglist.concat(image.path);
-								}
-							});
-						}
-					}
+				this.$tool.uploadImageOne('upload/image',(res)=> {
+					this.imglist = this.imglist.concat(res.data.url);
 				});
 			},
 			radioChange(e){
 				this.value = e;
+				this.returnGoods = this.value=="未收货"?1:2;
 			},
 			reasonChange(e){
 				this.sreason = e;
@@ -169,7 +167,44 @@
 			onSub(){
 				this.show = !this.show;
 				this.reason = this.sreason;
+			},
+			subRefund(){
+				if (this.reason==""){
+					this.$u.toast("请选择退货原因");
+					return false;
+				}
+				this.$api.orderRefundVerify({
+					text: this.reason || '',
+					refund_reason_wap_explain: this.textarea,
+					refund_reason_wap_img: this.imglist.length?this.imglist.join(','):"",
+					refund_type: this.returnGoods,
+					uni: this.orderId,
+					cart_id: this.cartId,
+					refund_num: this.refund_num
+				}).then(res => {
+					uni.showToast({
+						title:"申请成功",
+						icon:"success"
+					})
+					setTimeout(()=> {
+						uni.reLaunch({
+							url: "/pages/users/order/list"
+						})
+					}, 1500);
+				}).catch(err => {
+					this.$u.toast(err);
+				})
 			}
+		},
+		onLoad(options){
+			if (options.cartId){
+				this.cartId = options.cartId;
+			}
+			if(options.orderId){
+				this.orderId = options.orderId;
+			}
+			this.getRefundReason();
+			this.getOrderInfo();
 		}
 	}
 </script>

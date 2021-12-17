@@ -1,5 +1,5 @@
 export default {
-	baseUrl: 'http://192.168.50.142:8098', // http://192.168.50.142:8098  //https://ceshi.xingmangkeji.cn
+	baseUrl: 'https://ceshi.xingmangkeji.cn', // http://192.168.50.142:8098  //https://ceshi.xingmangkeji.cn
 	silence_auth: "/api/v2/wechat/silence_auth_login", //授权登录
 	user: "/api/user", //用户信息
 	user_update: "/api/v2/user/user_update", //更新用户信息
@@ -30,6 +30,13 @@ export default {
 	spreadPeopleCount:"/api/user/spread_people_count", //我的团队
 	refundOrderDetail:"/api/order/refund_detail", //退款订单详情
 	ordeRefundReason:"/api/order/refund/reason", //退款理由
+	orderRefundVerify:"/api/order/refund/verify", //订单退款审核
+	refundExpress:"/api/order/refund/express", //退货物流单号
+	getCartCounts:"/api/cart/count", //购物车数量 numType true 购物车数量,false=购物车产品数量
+	newlist:"/api/article/new/list", //新闻
+	articleDetails:"/api/article/details", //文章详情
+	guanggao:"/api/guanggao", //广告
+	wechatLive:"/api/wechat/live", //直播
 	// 
 	loginWechat: '/api/login/wechat',
 	category: '/api/category', //商品分类

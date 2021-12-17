@@ -22,6 +22,7 @@
 </template>
 
 <script>
+	import {mapState} from "vuex";
 	export default {
 		data() {
 			return {
@@ -32,6 +33,20 @@
 				payObj: null,
 				price: 0,
 				sdjTime: 0,
+				order_pay_info:{}
+			}
+		},
+		computed:{
+			...mapState(["isLogin"])
+		},
+		watch: {
+			isLogin: {
+				handler: function(newV, oldV) {
+					if (newV) {
+						this.getOrderPayInfo();
+					}
+				},
+				deep: true
 			}
 		},
 		onLoad(options) {
@@ -51,6 +66,7 @@
 				this.price = options.price;
 			}
 			console.log(this.payObj)
+			
 			var date = new Date();
 			var min = date.getMinutes();
 			date.setMinutes(min + 5);
@@ -93,7 +109,18 @@
 					this.TimeDown(id, endDateStr);
 				}, 1000)
 			},
-			async pay() {
+			getOrderPayInfo(){
+				uni.showLoading({
+					title: '正在加载中'
+				});
+				this.$api.getOrderDetail(this.id).then(res => {
+					uni.hideLoading();
+					this.order_pay_info = res.data;
+				}).catch(err => {
+					uni.hideLoading();
+				});
+			},
+			async pay(){
 				if(this.wid!==0){
 					this.$api.orderWaitpay(this.wid).then((res)=>{
 						if(res.status==200){
@@ -102,6 +129,9 @@
 						}
 					})
 				}else{
+					uni.showLoading({
+						title:"支付中..."
+					})
 					this.$api.orderPay({
 						uni: this.id,
 						paytype: this.paytype,
@@ -110,6 +140,8 @@
 						if (res.status == 200) {
 							let jsConfig = res.data.result.jsConfig;
 							this.goPay(jsConfig);
+						}else{
+							uni.hideLoading();
 						}
 					})
 				}
@@ -123,9 +155,15 @@
 							icon:"success"
 						})
 						setTimeout(()=>{
-							uni.redirectTo({
-								url:"/pages/users/order/list"
-							})
+							if(this.order_pay_info.pink_id){
+								uni.redirectTo({
+									url:"/pages/users/order/combinationStatus?id="+this.order_pay_info.pink_id
+								})
+							}else{
+								uni.redirectTo({
+									url:"/pages/users/order/list"
+								})
+							}
 						},1500)
 					break;
 					case 'weixin':
@@ -143,9 +181,15 @@
 									icon:"success"
 								})
 								setTimeout(()=>{
-									uni.redirectTo({
-										url:"/pages/users/order/list"
-									})
+									if(this.order_pay_info.pink_id){
+										uni.redirectTo({
+											url:"/pages/users/order/combinationStatus?id="+this.order_pay_info.pink_id
+										})
+									}else{
+										uni.redirectTo({
+											url:"/pages/users/order/list"
+										})
+									}
 								},1500)
 							},
 							fail: (err)=> {
@@ -163,6 +207,9 @@
 					break;
 				}
 			}
+		},
+		onShow(){
+			this.getOrderPayInfo();
 		}
 	}
 </script>

@@ -3,23 +3,22 @@
 		<view class="nav1">
 			<view class="item" @click="changeRad(1)">
 				<view :class='{"txt":true,"active":RadIndex==1}'>综合</view>
-				<image class="pic" v-if="RadIndex == 1" src="/static/image/zu1564.png" mode=""></image>
-				<image class="pic" v-else src="/static/image/zu1567.png" mode=""></image>
+				<image class="pic" v-if="RadIndexs == 1" src="/static/image/zu1564.png" mode=""></image>
+				<image class="pic" v-if="RadIndexs == 2" src="/static/image/zu1567.png" mode=""></image>
 			</view>
 			<view class="item" @click="changeRad(2)">
 				<view :class='{"txt":true,"active":RadIndex==2}'>价格</view>
-				<image class="pic" v-if="RadIndex == 2" src="/static/image/zu1564.png" mode=""></image>
-				<image class="pic" v-else src="/static/image/zu1567.png" mode=""></image>
+				<image class="pic" v-if="RadIndexss == 1" src="/static/image/zu1564.png" mode=""></image>
+				<image class="pic" v-if="RadIndexss == 2" src="/static/image/zu1567.png" mode=""></image>
 			</view>
 		</view>
 		<view class="nav2">
 			<view class="item" v-for="item in shopList" :key='item.id'>
-				<image class="pic" :src="item.image" mode="">
-				</image>
+				<image class="pic" :src="item.image" mode=""></image>
 				<view class="right">
 					<view class="up">
 						<view class="txt1">{{item.title}}</view>
-						<view class="txt2">规格：20寸</view>
+						<view class="txt2" v-if="item.productAttr">规格：{{item.productAttr[0].attr_values[0]}}</view>
 					</view>
 					<view class="down">
 						<view class="d-left">
@@ -30,7 +29,7 @@
 					</view>
 				</view>
 			</view>
-			<u-loadmore :status="status" />
+			<u-loadmore :status="status" font-size="22" />
 		</view>
 	</view>
 </template>
@@ -54,7 +53,12 @@
 		},
 		data() {
 			return {
+				order:"id desc",
 				RadIndex: 1,
+				RadIndexs:1,
+				RadIndexss:1,
+				iscle:false,
+				iscles:false,
 				shopList:[],
 				// 加载
 				status: 'loadmore',
@@ -79,10 +83,10 @@
 				this.status = 'loading';
 				setTimeout(async () => {
 					const res = await this.$api.store_integralList({
+						order:this.order,
 						page:this.jifenShopPage,
 						limit:this.jifenShopPageSize
 					})
-					console.log(res.data)
 					if (res.data.length == 0) {
 						this.status = 'nomore'
 					} else {
@@ -90,16 +94,26 @@
 						this.shopList = this.shopList.concat(res.data)
 					}
 				}, 200)
-				console.log(this.shopList)
 			},
 			changeRad(val) {
 				this.RadIndex = val;
+				if(val==1){
+					this.iscle = !this.iscle;
+					this.RadIndexs = this.iscle?1:2;
+					this.order = this.iscle?"id asc":"id desc";
+				}else if(val==2){
+					this.iscles = !this.iscles;
+					this.RadIndexss = this.iscles?1:2;
+					this.order = this.iscles?"price desc":"price asc";
+				}
+				this.shopList = [];
+				this.getData();
 			},
 			toDuihuan(item) {
 				uni.navigateTo({
 					url: `/pages/yanxuanshangcheng/jifenchanpin/chanpin?id=${item.id}`
 				})
-			},
+			}
 		}
 	}
 </script>
