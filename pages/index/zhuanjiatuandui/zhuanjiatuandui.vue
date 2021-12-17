@@ -7,9 +7,9 @@
 			<view class="position-icon">
 				<view @click="collect">
 					<!-- 未收藏 -->
-					<!-- <u-icon name="star" color="#000000" size="48"></u-icon> -->
+					<u-icon v-if='!isShoucang' name="star" color="#000000" size="48"></u-icon>
 					<!-- 已收藏 -->
-					<u-icon name="star-fill" color="#000000" size="48"></u-icon>
+					<u-icon v-else name="star-fill" color="#000000" size="48"></u-icon>
 				</view>
 				<button class="btnshare u-reset-button" open-type="share">
 					<u-icon name="zhuanfa" style='margin-left: 40rpx;' color="#000000" size="50"></u-icon>

@@ -56,13 +56,15 @@
 			"path": "pages/search/searchResult",
 			"style": {
 				"navigationStyle": "custom",
-				"navigationBarTitleText": "搜索"
+				"navigationBarTitleText": "搜索",
+				"navigationBarBackgroundColor": "#FECF05",
+				"navigationBarTextStyle": "black"
 			}
 		},
 		{
 			"path": "pages/cart/index",
 			"style": {
-				"navigationStyle":"custom",
+				"navigationStyle": "custom",
 				"navigationBarTitleText": "购物车",
 				"navigationBarBackgroundColor": "#FECF05",
 				"navigationBarTextStyle": "black"
@@ -93,38 +95,13 @@
 			}
 		}]
 	}, {
-		"root": "pages/index/live",
-		"pages": [
-			{
-				"path": "index",
-				"style": {
-					"navigationBarTitleText":"直播",
-					"navigationBarTextStyle": "black",
-					"navigationBarBackgroundColor": "#FECF05"
-				}
-			}
-		]
-	}, {
-		"root": "pages/index/article",
-		"pages": [
-			{
-				"path": "index",
-				"style": {
-					"navigationBarTitleText":"详情",
-					"navigationBarTextStyle": "black",
-					"navigationBarBackgroundColor": "#FECF05"
-				}
-			}
-		]
-	},
-	{
 		"root": "pages/index/zhuanjiatuandui",
 		"pages": [{
 			"path": "zhuanjiatuandui",
 			"style": {
-				"navigationBarTitleText":"",
-				"navigationBarTextStyle": "black",
-				"navigationBarBackgroundColor": "#FECF05"
+				"navigationStyle": "custom",
+				"navigationBarTextStyle": "black"
+				// "navigationBarBackgroundColor": "#FECF05"
 			}
 		}]
 	}, {
@@ -151,10 +128,29 @@
 		"pages": [{
 			"path": "dijiapintuan",
 			"style": {
-				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": ""
+				// "navigationStyle": "custom",
+				"navigationBarTextStyle": "black"
+				// "navigationBarTitleText": "积分产品列表"
+				// "navigationBarBackgroundColor": "#FECF05"
 			}
 		}]
+	}, {
+		"root": "pages/index/live",
+		"pages": [{
+			"path": "index",
+			"style": {
+				// "navigationStyle": "custom",
+				"navigationBarTextStyle": "black"
+				// "navigationBarTitleText": "积分产品列表"
+				// "navigationBarBackgroundColor": "#FECF05"
+			}
+		}],
+		"plugins": {
+			"live-player-plugin": {
+				"version": "1.3.2", // 注意该直播组件最新版本号，微信开发者工具调试时可获取最新版本号（复制时请去掉注释）
+				"provider": "wx2b03c6e691cd7370" // 必须填该直播组件appid，该示例值即为直播组件appid（复制时请去掉注释）
+			}
+		}
 	}, {
 		"root": "pages/yanxuanshangcheng/rexiaoxiangqin",
 		"pages": [{
@@ -177,53 +173,40 @@
 	}, {
 		"root": "pages/users/order",
 		"pages": [{
-			"path": "list",
+			"path": "order",
 			"style": {
 				"navigationBarTitleText": "我的订单",
 				"navigationBarBackgroundColor": "#FECF05",
 				"enablePullDownRefresh": false
 			}
-		},{
+		}, {
 			"path": "querendingdan",
 			"style": {
 				"navigationBarTitleText": "确认订单",
 				// "navigationBarBackgroundColor": "#FECF05",
 				"enablePullDownRefresh": false
 			}
-		},{
+		}, {
 			"path": "tijiaodingdan",
 			"style": {
 				"navigationBarTitleText": "提交订单",
 				// "navigationBarBackgroundColor": "#FECF05",
 				"enablePullDownRefresh": false
 			}
-		},{
+		}, {
 			"path": "comment",
 			"style": {
 				"navigationBarTitleText": "订单评价"
 			}
-		},{
-			"path": "Detail",
-			"style": {
-				"navigationBarTitleText": "订单详情",
-				"navigationBarBackgroundColor": "#FECF05"
-			}
-		},{
+		}, {
 			"path": "wkorderDetail",
 			"style": {
-				"navigationBarTitleText": "加载中..."
-			}
-		},{
-			"path": "combinationStatus",
-			"style": {
-				"navigationBarTitleText": "拼团详情",
-				"navigationBarBackgroundColor": "#FECF05"
+				"navigationBarTitleText": "等待买家支付尾款"
 			}
 		}]
-	},{
+	}, {
 		"root": "pages/users/sale",
-		"pages": [
-			{
+		"pages": [{
 				"path": "index",
 				"style": {
 					"navigationBarTitleText": "售后服务",
@@ -280,63 +263,53 @@
 				}
 			}
 		]
-	},{
+	}, {
 		"root": "pages/users/follow",
-		"pages": [
-			{
-				"path": "index",
-				"style": {
-					"navigationBarTitleText": "我的关注",
-					"navigationBarTextStyle": "black",
-					"navigationBarBackgroundColor": "#FECF05",
-					"enablePullDownRefresh":true
-				}
+		"pages": [{
+			"path": "index",
+			"style": {
+				"navigationBarTitleText": "我的关注",
+				"navigationBarTextStyle": "black",
+				"navigationBarBackgroundColor": "#FECF05",
+				"enablePullDownRefresh": true
 			}
-		]
-	},{
+		}]
+	}, {
 		"root": "pages/users/subscribe",
-		"pages": [
-			{
-				"path": "index",
-				"style": {
-					"navigationBarTitleText": "我的预约",
-					"navigationBarTextStyle": "black",
-					"navigationBarBackgroundColor": "#FECF05"
-				}
+		"pages": [{
+			"path": "index",
+			"style": {
+				"navigationBarTitleText": "我的预约",
+				"navigationBarTextStyle": "black",
+				"navigationBarBackgroundColor": "#FECF05"
 			}
-		]
-	},{
+		}]
+	}, {
 		"root": "pages/users/collect",
-		"pages": [
-			{
-				"path": "index",
-				"style": {
-					"navigationBarTitleText": "我的收藏",
-					"navigationBarTextStyle": "black",
-					"navigationBarBackgroundColor": "#FECF05"
-				}
+		"pages": [{
+			"path": "index",
+			"style": {
+				"navigationBarTitleText": "我的收藏",
+				"navigationBarTextStyle": "black",
+				"navigationBarBackgroundColor": "#FECF05"
 			}
-		]
-	},{
+		}]
+	}, {
 		"root": "pages/users/share",
-		"pages": [
-			{
-				"path": "index",
-				"style": {
-					"navigationBarTitleText": "分享码",
-					"navigationBarTextStyle": "black",
-					"navigationBarBackgroundColor": "#FECF05"
-				}
+		"pages": [{
+			"path": "index",
+			"style": {
+				"navigationBarTitleText": "分享码",
+				"navigationBarTextStyle": "black",
+				"navigationBarBackgroundColor": "#FECF05"
 			}
-		]
-	},{
+		}]
+	}, {
 		"root": "pages/users/integral",
-		"pages": [
-			{
+		"pages": [{
 				"path": "index",
 				"style": {
-					"navigationBarTitleText": "我的积分",
-					"enablePullDownRefresh":true
+					"navigationBarTitleText": "我的积分"
 				}
 			},
 			{
@@ -346,10 +319,9 @@
 				}
 			}
 		]
-	},{
+	}, {
 		"root": "pages/users/team",
-		"pages": [
-			{
+		"pages": [{
 				"path": "index",
 				"style": {
 					"navigationBarTitleText": "我的团队"
@@ -362,10 +334,9 @@
 				}
 			}
 		]
-	},{
+	}, {
 		"root": "pages/users/comment",
-		"pages": [
-			{
+		"pages": [{
 				"path": "index",
 				"style": {
 					"navigationBarTitleText": "我的评论",
@@ -382,10 +353,9 @@
 				}
 			}
 		]
-	},{
+	}, {
 		"root": "pages/users/info",
-		"pages": [
-			{
+		"pages": [{
 				"path": "index",
 				"style": {
 					"navigationBarTitleText": "个人信息",
@@ -410,10 +380,9 @@
 				}
 			}
 		]
-	},{
+	}, {
 		"root": "pages/users/address",
-		"pages": [
-			{
+		"pages": [{
 				"path": "index",
 				"style": {
 					"navigationBarTitleText": "我的地址",
@@ -433,7 +402,7 @@
 	}],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "医美",
+		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#ffffff",
 		"backgroundColor": "#282828"
 	},

@@ -318,7 +318,6 @@
 				})
 			},
 			toZhuanjiatuandui(item) {
-				this.$store.commit("setDoctor",item);
 				uni.navigateTo({
 					url: `/pages/index/zhuanjiatuandui/zhuanjiatuandui?id=${item.id}&obj=${encodeURIComponent(JSON.stringify(item))}`
 				})
@@ -335,6 +334,7 @@
 			},
 			//广告跳转
 			goShop(){
+				console.log('11')
 				uni.navigateTo({
 					url:"/pages/index/live/index"
 				})
