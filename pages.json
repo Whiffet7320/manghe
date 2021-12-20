@@ -40,6 +40,32 @@
 				// "navigationBarTitleText": "分享",
 			}
 		}]
+	}, {
+		"root": "pages/order",
+		"pages": [{
+			"path": "querendingdan",
+			"style": {
+				"navigationBarTitleText": "确认订单",
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black"
+			}
+		}]
+	}, {
+		"root": "pages/user/jifen",
+		"pages": [{
+			"path": "wodejifen",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}]
+	}, {
+		"root": "pages/user/tixian",
+		"pages": [{
+			"path": "tixian",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}]
 	}],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

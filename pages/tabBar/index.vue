@@ -28,7 +28,7 @@
 			</view> -->
 
 		</view>
-		<view class="nav3">
+		<view class="nav3" @click="toQuerendingdan">
 			<image src="/static/image/zu2998.png" class="pic1" mode=""></image>
 			<image src="/static/image/zu1998.png" class="pic2" mode=""></image>
 			<view class="tit1">阳澄湖大闸蟹</view>
@@ -73,6 +73,11 @@
 					url:'/pages/index/fenxiang'
 				})
 			},
+			toQuerendingdan(){
+				uni.navigateTo({
+					url:'/pages/order/querendingdan'
+				})
+			},
 		}
 	}
 </script>
@@ -87,6 +92,7 @@
 		position: relative;
 	}
 	.float1{
+		z-index: 99;
 		background-image: url(../../static/image/juxin12.png);
 		background-size: 100% 100%;
 		width: 126rpx;

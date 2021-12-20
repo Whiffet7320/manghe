@@ -98,7 +98,7 @@ var components
 try {
   components = {
     uNavbar: function() {
-      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-navbar/u-navbar */ "node-modules/uview-ui/components/u-navbar/u-navbar").then(__webpack_require__.bind(null, /*! uview-ui/components/u-navbar/u-navbar.vue */ 166))
+      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-navbar/u-navbar */ "node-modules/uview-ui/components/u-navbar/u-navbar").then(__webpack_require__.bind(null, /*! uview-ui/components/u-navbar/u-navbar.vue */ 186))
     }
   }
 } catch (e) {
@@ -228,6 +228,11 @@ var _default =
     tofenxiang: function tofenxiang() {
       uni.navigateTo({
         url: '/pages/index/fenxiang' });
+
+    },
+    toQuerendingdan: function toQuerendingdan() {
+      uni.navigateTo({
+        url: '/pages/order/querendingdan' });
 
     } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
