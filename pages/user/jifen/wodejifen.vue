@@ -1,7 +1,7 @@
 <template>
 	<view class="index">
 		<view class="nav1">
-			<image src="/static/image/zu3029.png" class="pic1" mode=""></image>
+			<image src="/static/image/zu3037.png" class="pic1" mode=""></image>
 			<view class="tit1">
 				<image src="/static/image/zu3030.png" class="pic1-1" mode=""></image>
 				<view class="txt1">总积分</view>
@@ -42,13 +42,29 @@
 					</view>
 					<view class="right">+80</view>
 				</view>
+				<u-loadmore :status="status" />
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
+	import {
+		mapState
+	} from "vuex";
 	export default {
+		computed: {
+			...mapState(["dingdanPage", "dingdanPageSize"]),
+		},
+		watch: {
+			dingdanPage: function(page) {
+				console.log('ddpage')
+				this.$store.commit("dingdanPage", page);
+				if (this.dingdanPage != 1) {
+					this.getData();
+				}
+			},
+		},
 		data() {
 			return {
 				background: {
@@ -56,7 +72,18 @@
 				},
 				index: 1,
 				mytext: '<小猪猪>',
+				// 加载
+				status: 'loadmore',
+				iconType: 'flower',
+				loadText: {
+					loadmore: '上拉加载更多',
+					loading: '正在加载...',
+					nomore: '没有了更多了'
+				},
 			}
+		},
+		onReachBottom() {
+			this.$store.commit("dingdanPage", this.dingdanPage + 1);
 		},
 		methods: {
 			changeIndex(i) {
@@ -82,6 +109,10 @@
 	}
 </style>
 <style lang="scss" scoped>
+	/deep/ .u-load-more-wrap {
+		height: 100rpx !important;
+	}
+	
 	.index {
 		position: relative;
 	}

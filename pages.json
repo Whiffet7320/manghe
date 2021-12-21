@@ -58,12 +58,49 @@
 				"navigationStyle": "custom"
 			}
 		}]
+	},{
+		"root": "pages/user/qianbao",
+		"pages": [{
+			"path": "qianbao",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},{
+			"path": "chongzhi",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}]
+	}, {
+		"root": "pages/user/order",
+		"pages": [{
+			"path": "order",
+			"style": {
+				"navigationBarTitleText": "我的订单",
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black"
+			}
+		}]
 	}, {
 		"root": "pages/user/tixian",
 		"pages": [{
 			"path": "tixian",
 			"style": {
 				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "jifentixian",
+			"style": {
+				"navigationBarTitleText": "积分提现",
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black"
+			}
+		}, {
+			"path": "zhifumima",
+			"style": {
+				"navigationBarTitleText": "支付密码",
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black"
 			}
 		}]
 	}],
