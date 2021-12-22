@@ -6,7 +6,7 @@
 				<image src="/static/image/zu3030.png" class="pic1-1" mode=""></image>
 				<view class="txt1">总积分</view>
 			</view>
-			<view class="tit2">12590</view>
+			<view class="tit2">{{zongJifen}}</view>
 			<view class="boxs">
 				<view class="left" @click="toGuize">
 					<view class="lt">
@@ -30,12 +30,12 @@
 		</view>
 		<view class="nav2">
 			<view class="tit1">
-				<view @click="changeIndex(1)" :class="{'txt1':true,'active':index==1}">全部</view>
-				<view @click="changeIndex(2)" :class="{'txt1':true,'active':index==2}">收入</view>
-				<view @click="changeIndex(3)" :class="{'txt1':true,'active':index==3}">支出</view>
+				<view @click="changeIndex(-1)" :class="{'txt1':true,'active':index==-1}">全部</view>
+				<view @click="changeIndex(1)" :class="{'txt1':true,'active':index==1}">收入</view>
+				<view @click="changeIndex(0)" :class="{'txt1':true,'active':index==0}">支出</view>
 			</view>
 			<view class="items">
-				<view class="item" v-for="item in 10">
+				<view class="item" v-for="item in orderList" :key='item.id'>
 					<view class="left">
 						<view class="tit1-1">成功邀请{{mytext}}下单</view>
 						<view class="tit2-1">2021-12-16<text style="margin-left: 20rpx;">12:20:45</text></view>
@@ -67,10 +67,12 @@
 		},
 		data() {
 			return {
+				orderList:[],
+				zongJifen:'',
 				background: {
 					'background': 'transparent'
 				},
-				index: 1,
+				index: -1,
 				mytext: '<小猪猪>',
 				// 加载
 				status: 'loadmore',
@@ -82,12 +84,40 @@
 				},
 			}
 		},
+		onShow() {
+			this.orderList = [];
+			this.$store.commit("dingdanPage", 1);
+			this.getData()
+		},
+		onLoad(options) {
+			this.zongJifen = options.zongjifen
+		},
 		onReachBottom() {
 			this.$store.commit("dingdanPage", this.dingdanPage + 1);
 		},
 		methods: {
+			async getData() {
+				this.status = 'loading';
+				setTimeout(async () => {
+					const res = await this.$api.integral_list({
+						page: this.dingdanPage,
+						limit: this.dingdanPageSize,
+						status: this.index,
+					})
+					console.log(res.data.data)
+					if (res.data.data.length == 0) {
+						this.status = 'nomore'
+					} else {
+						this.status = 'loadmore';
+						this.orderList = this.orderList.concat(res.data.data)
+					}
+				}, 200)
+				console.log(this.orderList)
+			},
 			changeIndex(i) {
 				this.index = i;
+				this.orderList = [];
+				this.getData()
 			},
 			toGuize(){
 				uni.navigateTo({

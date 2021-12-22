@@ -4,7 +4,7 @@
 			<image src="/static/image/zu3038.png" class="pic1" mode=""></image>
 			<view class="tit1">
 				<view class="txt1">余额(元)</view>
-				<view class="txt2">134.00</view>
+				<view class="txt2">{{nowPrice}}</view>
 				<view class="btns">
 					<view class="btn1" @click="tojifen">
 						<image src="/static/image/lujin2776.png" class="picc1" mode=""></image>
@@ -62,6 +62,7 @@
 		},
 		data() {
 			return {
+				nowPrice:'',
 				// 加载
 				status: 'loadmore',
 				iconType: 'flower',
@@ -71,6 +72,9 @@
 					nomore: '没有了更多了'
 				},
 			}
+		},
+		onLoad(options) {
+			this.nowPrice = options.now_money
 		},
 		onReachBottom() {
 			this.$store.commit("dingdanPage", this.dingdanPage + 1);
@@ -83,7 +87,7 @@
 			},
 			tochongzhi(){
 				uni.navigateTo({
-					url:'/pages/user/qianbao/chongzhi'
+					url:`/pages/user/qianbao/chongzhi?nowPrice=${this.nowPrice}`
 				})
 			},
 		}

@@ -21,7 +21,7 @@ export default new Vuex.Store({
 		uid:uni.getStorageSync("uid") || 0,
 		addressInfo:{},
 		onResh:false,
-		cartNum:0
+		proInfo:{}
 	},
 	mutations: {
 		searchList(state, str) {
@@ -68,8 +68,8 @@ export default new Vuex.Store({
 		setResh(state,data){
 			state.onResh = data;
 		},
-		setCartNum(state, data) {
-			state.cartNum = data;
+		setProinfo(state, data) {
+			state.proInfo = data;
 		}
 	},
 	getters:{

@@ -11270,7 +11270,7 @@ myDelete.interceptors.response.use(function (response) {
   if (response.status === 200) {
     if (response.data.code == 401) {
       uni.navigateTo({
-        url: '/pages/login/index' });
+        url: '/pages/login/login' });
 
     } else {
       return response.data;
@@ -11322,7 +11322,7 @@ myUploadImg.interceptors.response.use(function (response) {
   if (response.status === 200) {
     if (response.data.code == 401) {
       uni.navigateTo({
-        url: '/pages/login/index' });
+        url: '/pages/login/login' });
 
     } else {
       return response.data;
@@ -11390,7 +11390,7 @@ myPut.interceptors.response.use(function (response) {
   if (response.status === 200) {
     if (response.data.code == 401) {
       uni.navigateTo({
-        url: '/pages/login/index' });
+        url: '/pages/login/login' });
 
     } else {
       return response.data;
@@ -11442,7 +11442,7 @@ myPost.interceptors.response.use(function (response) {
   if (response.status === 200) {
     if (response.data.code == 410001) {
       uni.navigateTo({
-        url: '/pages/login/index' });
+        url: '/pages/login/login' });
 
     } else {
       return response.data;
@@ -11493,7 +11493,7 @@ myGet.interceptors.response.use(function (response) {
   if (response.status === 200) {
     if (response.data.code == 410001) {
       uni.navigateTo({
-        url: '/pages/login/index' });
+        url: '/pages/login/login' });
 
     } else {
       return response.data;
@@ -11595,7 +11595,7 @@ dzpMyPut.interceptors.response.use(function (response) {
   if (response.status === 200) {
     if (response.data.code == 401) {
       uni.navigateTo({
-        url: '/pages/login/index' });
+        url: '/pages/login/login' });
 
     } else {
       return response.data;
@@ -11647,7 +11647,7 @@ dzpMyPost.interceptors.response.use(function (response) {
   if (response.status === 200) {
     if (response.data.code == 401) {
       uni.navigateTo({
-        url: '/pages/login/index' });
+        url: '/pages/login/login' });
 
     } else {
       return response.data;
@@ -11698,7 +11698,7 @@ dzpMyGet.interceptors.response.use(function (response) {
   if (response.status === 200) {
     if (response.data.code == 401) {
       uni.navigateTo({
-        url: '/pages/login/index' });
+        url: '/pages/login/login' });
 
     } else {
       return response.data;
@@ -11746,17 +11746,17 @@ dzpMyGet.interceptors.response.use(function (response) {
 });var _default =
 
 {
-  silenceAuth: function silenceAuth(obj) {
-    return myGet({
-      url: _url.default.silence_auth,
-      params: _objectSpread({},
+  loginWechat: function loginWechat(obj) {
+    return myPost({
+      url: _url.default.loginWechat,
+      data: _objectSpread({},
       obj) });
 
 
   },
-  getUserInfo: function getUserInfo(obj) {
+  userInfo: function userInfo(obj) {
     return myGet({
-      url: _url.default.user,
+      url: _url.default.userInfo,
       params: _objectSpread({},
       obj) });
 
@@ -11783,9 +11783,37 @@ dzpMyGet.interceptors.response.use(function (response) {
 
 
   },
+  saveAddress: function saveAddress(obj) {
+    return myPost({
+      url: _url.default.saveAddress, data: _objectSpread({},
+      obj) });
+
+
+  },
   send_sms: function send_sms(obj) {
     return myPost({
       url: _url.default.send_sms,
+      data: _objectSpread({},
+      obj) });
+
+
+  },
+  addressList: function addressList() {
+    return myGet({
+      url: _url.default.addressList });
+
+  },
+  delAddress: function delAddress(id) {
+    return myPost({
+      url: _url.default.delAddress,
+      data: {
+        id: id } });
+
+
+  },
+  orderPay: function orderPay(obj) {
+    return myPost({
+      url: _url.default.orderPay,
       data: _objectSpread({},
       obj) });
 
@@ -11807,10 +11835,42 @@ dzpMyGet.interceptors.response.use(function (response) {
 
 
   },
+  yzrealName: function yzrealName(obj) {
+    return myPost({
+      url: _url.default.yzrealName,
+      data: _objectSpread({},
+      obj) });
+
+
+  },
   forgetpwd: function forgetpwd(obj) {
     return myPost({
       url: _url.default.forgetpwd,
       data: _objectSpread({},
+      obj) });
+
+
+  },
+  recharge: function recharge(obj) {
+    return myPost({
+      url: _url.default.recharge,
+      data: _objectSpread({},
+      obj) });
+
+
+  },
+  integral_list: function integral_list(obj) {
+    return myGet({
+      url: _url.default.integral_list,
+      params: _objectSpread({},
+      obj) });
+
+
+  },
+  withdraw_list: function withdraw_list(obj) {
+    return myGet({
+      url: _url.default.withdraw_list,
+      params: _objectSpread({},
       obj) });
 
 
@@ -11832,7 +11892,7 @@ dzpMyGet.interceptors.response.use(function (response) {
                   success: function success(res) {
                     if (JSON.parse(res.data).code == 401) {
                       uni.navigateTo({
-                        url: '/pages/login/index' });
+                        url: '/pages/login/login' });
 
                     }
                     return resolve(JSON.parse(res.data));
@@ -14242,13 +14302,22 @@ module.exports = function isAxiosError(payload) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = {
   baseUrl: 'http://192.168.50.142:9007', // http://192.168.50.142:8098  //https://ceshi.xingmangkeji.cn
-  loginWechat: '/api/login/wechat',
+  userInfo: "/api/user_info", //用户信息
+  loginWechat: '/api/mini_login', //微信登录
   product: '/api/product_detail', //商品信息
   login: '/api/login', //账户密码登录
+  saveAddress: "/api/save_address", //地址新增/编辑
+  addressList: "/api/address_list", //收货地址
+  delAddress: "/api/del_address", //删除收货地址
+  orderPay: "/api/order_pay", //立即购买
+  yzrealName: "/api/real_name", //实名验证
   send_sms: '/api/send_sms', //发送短信
   register: '/api/register', //账户注册
   captch_login: '/api/captch_login', //验证码登录
-  forgetpwd: '/api/forgetpwd' //忘记密码
+  forgetpwd: '/api/forgetpwd', //忘记密码
+  recharge: '/api/recharge', //用户充值
+  integral_list: '/api/integral_list', //积分列表
+  withdraw_list: '/api/withdraw_list' //提现列表
 };exports.default = _default;
 
 /***/ }),
@@ -14317,7 +14386,7 @@ new _vuex.default.Store({
     uid: uni.getStorageSync("uid") || 0,
     addressInfo: {},
     onResh: false,
-    cartNum: 0 },
+    proInfo: {} },
 
   mutations: {
     searchList: function searchList(state, str) {
@@ -14364,8 +14433,8 @@ new _vuex.default.Store({
     setResh: function setResh(state, data) {
       state.onResh = data;
     },
-    setCartNum: function setCartNum(state, data) {
-      state.cartNum = data;
+    setProinfo: function setProinfo(state, data) {
+      state.proInfo = data;
     } },
 
   getters: {
@@ -15654,8 +15723,8 @@ module.exports = index_cjs;
     sourceType = opt.sourceType || ['album', 'camera'],
     is_load = opt.is_load || true,
     uploadUrl = opt.url || '',
-    inputName = opt.name || 'pics',
-    fileType = opt.fileType || 'image';
+    inputName = opt.name || 'image',
+    fileType = opt.fileType || 'avatar';
     uni.chooseImage({
       count: count, //最多可以选择的图片总数  
       sizeType: sizeType, // 可以指定是原图还是压缩图，默认二者都有  
@@ -15668,10 +15737,9 @@ module.exports = index_cjs;
         uni.uploadFile({
           url: _url.default.baseUrl + '/api/' + uploadUrl,
           filePath: res.tempFilePaths[0],
-          fileType: fileType,
           name: inputName,
           formData: {
-            'filename': inputName },
+            'type': fileType },
 
           header: {
             "Content-Type": "multipart/form-data",
@@ -15691,7 +15759,7 @@ module.exports = index_cjs;
               } else {
                 errorCallback && errorCallback(data);
                 uni.showToast({
-                  title: data.msg,
+                  title: data.message,
                   icon: "none" });
 
               }
@@ -15726,8 +15794,8 @@ module.exports = index_cjs;
     sourceType = opt.sourceType || ['album', 'camera'],
     is_load = opt.is_load || true,
     uploadUrl = opt.url || '',
-    inputName = opt.name || 'pics',
-    fileType = opt.fileType || 'image';
+    inputName = opt.name || 'image',
+    fileType = opt.fileType || 'avatar';
     uni.chooseImage({
       count: count, //最多可以选择的图片总数  
       sizeType: sizeType, // 可以指定是原图还是压缩图，默认二者都有  
@@ -15788,10 +15856,9 @@ module.exports = index_cjs;
       uni.uploadFile({
         url: _url.default.baseUrl + '/api/' + uploadUrl,
         filePath: filePath,
-        fileType: fileType,
         name: inputName,
         formData: {
-          'filename': inputName },
+          'type': fileType },
 
         header: {
 
@@ -15813,7 +15880,7 @@ module.exports = index_cjs;
             } else {
               errorCallback && errorCallback(data);
               uni.showToast({
-                title: data.msg,
+                title: data.message,
                 icon: "none" });
 
             }
@@ -25785,7 +25852,14 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
 /* 442 */,
 /* 443 */,
 /* 444 */,
-/* 445 */
+/* 445 */,
+/* 446 */,
+/* 447 */,
+/* 448 */,
+/* 449 */,
+/* 450 */,
+/* 451 */,
+/* 452 */
 /*!*************************************************************************************************!*\
   !*** D:/HBuilderProjects/pangxie/node_modules/uview-ui/components/u-parse/libs/MpHtmlParser.js ***!
   \*************************************************************************************************/
@@ -25799,9 +25873,9 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
  * @author JinYufeng
  * @listens MIT
  */
-var cfg = __webpack_require__(/*! ./config.js */ 446),
+var cfg = __webpack_require__(/*! ./config.js */ 453),
 blankChar = cfg.blankChar,
-CssHandler = __webpack_require__(/*! ./CssHandler.js */ 447),
+CssHandler = __webpack_require__(/*! ./CssHandler.js */ 454),
 windowWidth = uni.getSystemInfoSync().windowWidth;
 var emoji;
 
@@ -26375,7 +26449,7 @@ module.exports = MpHtmlParser;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ }),
-/* 446 */
+/* 453 */
 /*!*******************************************************************************************!*\
   !*** D:/HBuilderProjects/pangxie/node_modules/uview-ui/components/u-parse/libs/config.js ***!
   \*******************************************************************************************/
@@ -26464,14 +26538,14 @@ if (wx.canIUse('editor')) {
 module.exports = cfg;
 
 /***/ }),
-/* 447 */
+/* 454 */
 /*!***********************************************************************************************!*\
   !*** D:/HBuilderProjects/pangxie/node_modules/uview-ui/components/u-parse/libs/CssHandler.js ***!
   \***********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var cfg = __webpack_require__(/*! ./config.js */ 446),
+var cfg = __webpack_require__(/*! ./config.js */ 453),
 isLetter = function isLetter(c) {return c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z';};
 
 function CssHandler(tagStyle) {

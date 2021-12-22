@@ -2,43 +2,45 @@
 	<view>
 		<view class="form_group">
 			<view class="title">真实姓名</view>
-			<input type="text" v-model="username" placeholder="请如实填写" placeholder-style="color:#808080;" class="ipt" />
+			<input type="text" v-model="real_name" placeholder="请如实填写" placeholder-style="color:#808080;" class="ipt" />
 		</view>
 		<view class="form_group">
 			<view class="title">证件类型</view>
 			<view class="gray">身份证</view>
 		</view>
-		<view class="form_group">
+		<view class="form_group" @click="kshow=true">
 			<view class="title">证件号码</view>
-			<input type="text" v-model="cardNum" placeholder="请输入你的身份证号码" placeholder-style="color:#808080;" class="ipt" />
+			<input type="text" v-model="cardNum" :disabled="true" placeholder="请输入你的身份证号码" placeholder-style="color:#808080;" class="ipt" />
 		</view>
 		<view class="form_group last">
 			<view class="title">证件上传</view>
 			<view class="upload">
-				<view class="uimg" v-if="sfzImg1==''">
+				<view class="uimg" @click="uploadpic(0)" v-if="front_img==''">
 					<view class="plus">+</view>
 					<text class="text">身份证正面照片</text>
 				</view>
-				<view class="zimg" v-else>
-					<image :src="sfzImg1" mode="aspectFill" class="img"></image>
+				<view class="zimg" @click="uploadpic(0)" v-else>
+					<image :src="front_imgs" mode="aspectFill" class="img"></image>
 				</view>
-				<view class="uimg" v-if="sfzImg2==''">
+				<view class="uimg" @click="uploadpic(1)" v-if="back_img==''">
 					<view class="plus">+</view>
 					<text class="text">身份证反面照片</text>
 				</view>
-				<view class="zimg" v-else>
-					<image :src="sfzImg2" mode="aspectFill" class="img"></image>
+				<view class="zimg" @click="uploadpic(1)" v-else>
+					<image :src="back_imgs" mode="aspectFill" class="img"></image>
 				</view>
 			</view>
 		</view>
 		<view class="btnwrap">
 			<button class="cubtn" @tap="onSubmit">提交审核</button>
 		</view>
+		<u-keyboard ref="uKeyboard" mode="card" v-model="kshow" :random="true" @change="change"></u-keyboard>
 		<page-toast v-model="show" content="请耐心等待1-3个工作日" @confirm="confirm"></page-toast>
 	</view>
 </template>
 
 <script>
+	import config from "../../../api/url.js";
 	import pageToast from "@/components/page-toast";
 	export default{
 		components:{
@@ -46,16 +48,67 @@
 		},
 		data(){
 			return{
+				kshow:false,
 				show:false,
-				username:"",
+				real_name:"",
 				cardNum:"",
-				sfzImg1:"",
-				sfzImg2:""
+				front_img:"",
+				front_imgs:"",
+				back_img:"",
+				back_imgs:""
 			}
 		},
 		methods:{
+			change(detail) {
+				this.cardNum += detail;
+			},
+			uploadpic(index){
+				this.$tool.uploadImageOne({url:"upload_pic",fileType:"idcard"},(res)=>{
+					console.log(res)
+					if(res.code==200){
+						if(index==0){
+							this.front_img = res.data.path;
+							this.front_imgs = config.baseUrl+"/"+res.data.path;
+						}else if(index==1){
+							this.back_img = res.data.path;
+							this.back_imgs = config.baseUrl+"/"+res.data.path;
+						}
+					}
+				});
+			},
 			onSubmit(){
-				this.show = true;
+				if(this.real_name==""){
+					this.$u.toast("请填写真实姓名");
+					return;
+				}
+				if(this.cardNum==""){
+					this.$u.toast("请输入你的身份证号码");
+					return;
+				}
+				if(this.front_img==""){
+					this.$u.toast("请上传身份证正面照片");
+					return;
+				}
+				if(this.back_img==""){
+					this.$u.toast("请上传身份证反面照片");
+					return;
+				}
+				let data = {
+					real_name:this.real_name,
+					id_number:this.cardNum,
+					front_img:this.front_img,
+					back_img:this.back_img
+				}
+				this.$api.yzrealName(data).then((res)=>{
+					if(res.code==200){
+						this.show = true;
+						setTimeout(()=>{
+							uni.navigateBack();
+						},1500)
+					}else{
+						this.$u.toast(res.message);
+					}
+				})
 			},
 			confirm(){
 				this.show = false;

@@ -19,7 +19,7 @@
 				<view class="LocaTes">所在地区</view>
 				<view class="AddStat" @click="show=true">
 					<view class="Puin">
-						<view class="picker" v-if="region.length">{{region[0]}}{{region[1]}}{{region[2]}}</view>
+						<view class="picker" v-if="address">{{address}}</view>
 						<view style="color:#999" v-else>请选择地区</view>
 					</view>
 					<view class="icon">
@@ -34,15 +34,10 @@
 				</view>
 			</view>
 		</view>
-
 		<view class="ExidAdd">
 			<view class="ExTies">
-				<view class="Tes">
-					设置为默认地址
-				</view>
-				<view class="Caref">
-					注：每次下单会默认使用该地址
-				</view>
+				<view class="Tes">设置为默认地址</view>
+				<view class="Caref">注：每次下单会默认使用该地址</view>
 			</view>
 			<view class="Switch" v-if="!Switch" @click="SwitchOpen">
 				<view class="redio"></view>
@@ -63,7 +58,7 @@
 			<view class="pop2">
 				<view class="txt1">提示</view>
 				<view class="txt2">保存成功</view>
-				<view @click="queding" class="btn">确定</view>
+				<view class="btn" @click="queding">确定</view>
 			</view>
 		</u-popup>
 	</view>
@@ -78,7 +73,10 @@
 				popShow1: false,
 				infoName: '', //收货人
 				Phone: '', //手机号码
-				Address: '', //地址
+				province:"",
+				city:"",
+				district: '',
+				address:"",
 				DateAddrs: '', //详情地址
 				Switch: true, //是否默认
 				id: 0
@@ -102,19 +100,17 @@
 				this.infoName = this.addressInfo.real_name;
 				this.Phone = this.addressInfo.phone;
 				this.Switch = this.addressInfo.is_default==1?true:false;
+				this.province = this.addressInfo.province;
+				this.city = this.addressInfo.city;
+				this.district = this.addressInfo.district;
+				this.address = this.province+this.city+this.district;
 				this.DateAddrs = this.addressInfo.detail;
-				// this.$api.getAddressDetail(this.id).then(res => {
-				// 	let region = [res.data.province, res.data.city, res.data.district];
-				// 	this.infoName = res.data.real_name;
-				// 	this.Phone = res.data.phone;
-				// 	this.Switch = res.data.is_default==1?true:false;
-				// 	this.DateAddrs = res.data.detail;
-				// 	this.region = region;
-				// 	this.cityId = res.data.city_id
-				// });
 			},
 			confirm(val){
-				this.DateAddrs = `${val.province.label}${val.city.label}${val.area.label}`;
+				this.province = val.province.label;
+				this.city = val.city.label;
+				this.district = val.area.label;
+				this.address = `${val.province.label}${val.city.label}${val.area.label}`;
 			},
 			queding() {
 				this.popShow1 = false;
@@ -134,48 +130,31 @@
 			async PresInfo() {
 				var myreg = /^[1][3,4,5,7,8,9][0-9]{9}$/;
 				if (!myreg.test(this.Phone)){
-					this.$refs.uToast.show({
-						title: "请填写正确的手机号码",
-						type: 'warning',
-					})
+					this.$u.toast("请填写正确的手机号码");
 					return;
 				}
-				if (this.region[0] === '省'&&this.region[1] === '市'&&this.region[2] === '区'){
-					this.$refs.uToast.show({
-						title: '请选择所在地区',
-						type: 'warning',
-					})
+				if (this.address === ''){
+					this.$u.toast("请选择所在地区");
 					return;
 				}
 				if (!this.DateAddrs){
-					this.$refs.uToast.show({
-						title: '请填写详细地址',
-						type: 'warning',
-					})
+					this.$u.toast("请填写详细地址");
 					return;
 				}
-				let regionArray = this.region;
-				let address = {
-					province: regionArray[0],
-					city: regionArray[1],
-					district: regionArray[2],
-					city_id: this.cityId,
-				};
-				const res = await this.$api.editAddress({
+				const res = await this.$api.saveAddress({
 					id:this.id,
 					real_name: this.infoName,
 					phone: this.Phone,
-					is_default: this.Switch ? 1 : 0,
-					address: address,
-					detail: this.DateAddrs
+					province:this.province,
+					city:this.city,
+					district:this.district,
+					detail: this.DateAddrs,
+					is_default: this.Switch ? 1 : 0
 				})
-				if (res.status == 200) {
+				if (res.code == 200) {
 					this.popShow1 = true;
 				} else {
-					this.$refs.uToast.show({
-						title: res.msg,
-						type: 'warning',
-					})
+					this.$u.toast(res.message);
 				}
 			}
 		}
@@ -223,7 +202,7 @@
 			margin-top: 60rpx;
 			width: 240rpx;
 			height: 80rpx;
-			background: #BD9E81;
+			background: #D61D1D;
 			border-radius: 40rpx;
 			font-size: 28rpx;
 			font-weight: 500;
@@ -235,7 +214,6 @@
 
 	.index {
 		width: 100%;
-		height: 100%;
 		position: relative;
 		.userFi {
 			width: 100%;

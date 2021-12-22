@@ -7,8 +7,11 @@
 			<view class="bg"></view>
 			<view class="info">
 				<view class="uinfo" v-if="userInfo.uid" @click="goInfo">
-					<image :src="userInfo.avatar" mode="aspectFill" class="avatar"></image>
-					<view class="name">{{userInfo.nickname}}</view>
+					<view class="avatar user" v-if="userInfo.avatar==''">
+						<image src="/static/image/user/user.png" mode="aspectFill" class="avatars"></image>
+					</view>
+					<image :src="userInfo.avatar" mode="aspectFill" class="avatar" v-else></image>
+					<view class="name">{{userInfo.nickname||''}}</view>
 				</view>
 				<view class="uinfo" @click="goLogin" v-else>
 					<view class="avatar user">
@@ -20,12 +23,12 @@
 					<text>邀请码：{{code==''?'00000000':code}}</text>
 					<view class="btn">复制</view>
 				</view>
-				<view class="set" @click="jump('/pages/users/set/index')">
+				<view class="set" @click="jump('/pages/user/set/index')">
 					<image src="/static/image/icon_set.png" mode="aspectFill" class="icon"></image>
 				</view>
 			</view>
 		</view>
-		<view class="jfcode">
+		<view class="jfcode" @click="jump(`/pages/user/jifen/wodejifen?zongjifen=${userInfo.integral}`)">
 			<image src="/static/image/jfbg.png" mode="aspectFit" class="img"></image>
 			<view class="text">
 				<view class="name">小积分 大智慧</view>
@@ -42,25 +45,25 @@
 				<view class="subtit"></view>
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="arrow"></image>
 			</view>
-			<view class="menu_item" @click="jump('/pages/users/certificate/index')">
+			<view class="menu_item" @click="jump('/pages/user/certificate/index')">
 				<image src="/static/image/user/m2.png" mode="aspectFit" class="icon"></image>
 				<view class="name">实名认证</view>
-				<view class="subtit">未实名</view>
+				<view class="subtit">{{userInfo.realname==null||userInfo.realname==''?'未实名':'已认证'}}</view>
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="arrow"></image>
 			</view>
-			<view class="menu_item" @click="jump('/pages/user/qianbao/qianbao')">
+			<view class="menu_item" @click="jump(`/pages/user/qianbao/qianbao?now_money=${userInfo.now_money}`)">
 				<image src="/static/image/user/m3.png" mode="aspectFit" class="icon"></image>
 				<view class="name">钱包</view>
 				<view class="subtit"></view>
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="arrow"></image>
 			</view>
-			<view class="menu_item" @click="jump('/pages/users/bank/index')">
+			<view class="menu_item" @click="jump('/pages/user/bank/index')">
 				<image src="/static/image/user/m4.png" mode="aspectFit" class="icon"></image>
 				<view class="name">绑定银行卡</view>
 				<view class="subtit"></view>
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="arrow"></image>
 			</view>
-			<view class="menu_item" @click="jump('/pages/users/address/index')">
+			<view class="menu_item" @click="jump('/pages/user/address/index')">
 				<image src="/static/image/user/m5.png" mode="aspectFit" class="icon"></image>
 				<view class="name">收货地址</view>
 				<view class="subtit"></view>
@@ -72,15 +75,16 @@
 				<view class="subtit"></view>
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="arrow"></image>
 			</view>
-			<view class="menu_item" @click="jump('/pages/users/privacy/index')">
+			<view class="menu_item" @click="jump('/pages/user/privacy/index')">
 				<image src="/static/image/user/m7.png" mode="aspectFit" class="icon"></image>
 				<view class="name">隐私条款</view>
 				<view class="subtit"></view>
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="arrow"></image>
 			</view>
 		</view>
-		<view class="logout">退出登录</view>
+		<view class="logout" @click="lshow=true">退出登录</view>
 		<page-modal v-model="show" :content="tel" width="466" confirm-text="立即拨打" :show-cancel-button="true" @confirm="confirm"></page-modal>
+		<page-modal v-model="lshow" content="是否确定退出登录？" width="466" confirm-text="确定" :show-cancel-button="true" @confirm="confirm2"></page-modal>
 	</view>
 </template>
 
@@ -93,9 +97,10 @@
 		},
 		data(){
 			return{
+				lshow:false,
 				show:false,
 				userInfo:{},
-				code:"47356086",
+				code:"",
 				scrollTop:0,
 				tel:"400-1234-4321"
 			}
@@ -104,25 +109,34 @@
 			...mapGetters(['isLogin'])
 		},
 		methods:{
+			async getUserInfo() {
+				await this.$api.userInfo().then(res => {
+					if(res.code==200){
+						this.userInfo = res.data;
+						this.$store.commit("UpdateUserinfo",res.data);
+						this.$store.commit('SetUid', res.data.uid);
+					}
+				});
+			},
 			goLogin(){
 				uni.navigateTo({
-					url:"/pages/login/index"
+					url:"/pages/login/login"
 				})
 			},
 			jump(url){
-				// if(!this.isLogin){
-				// 	uni.navigateTo({
-				// 		url:"/pages/login/index"
-				// 	})
-				// 	return;
-				// }
+				if(!this.isLogin){
+					uni.navigateTo({
+						url:"/pages/login/login"
+					})
+					return;
+				}
 				uni.navigateTo({
 					url:url
 				})
 			},
 			goInfo(){
 				uni.navigateTo({
-					url:"/pages/users/set/index"
+					url:"/pages/user/set/index"
 				})
 			},
 			confirm(){
@@ -132,6 +146,17 @@
 						console.log(res)
 					}
 				})
+			},
+			confirm2(){
+				uni.clearStorageSync();
+				uni.navigateTo({
+					url:"/pages/login/login"
+				})
+			}
+		},
+		onShow(){
+			if(this.isLogin){
+				this.getUserInfo();
 			}
 		},
 		onPageScroll(e) {

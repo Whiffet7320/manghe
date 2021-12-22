@@ -48,7 +48,18 @@
 		}]
 	},
 	{
-		"root": "pages/users",
+		"root": "pages/order",
+		"pages": [{
+			"path": "querendingdan",
+			"style": {
+				"navigationBarTitleText": "确认订单",
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black"
+			}
+		}]
+	},
+	{
+		"root": "pages/user",
 		"pages": [
 			{
 				"path": "set/index",
@@ -103,78 +114,63 @@
 				"style": {
 					"navigationBarTitleText": "隐私条款"
 				}
+			},
+			{
+				"path": "tixian/tixian",
+				"style": {
+					"navigationStyle": "custom"
+				}
+			},
+			{
+				"path": "tixian/jifentixian",
+				"style": {
+					"navigationBarTitleText": "积分提现",
+					"navigationBarBackgroundColor": "#ffffff",
+					"navigationBarTextStyle": "black"
+				}
+			},
+			{
+				"path": "tixian/zhifumima",
+				"style": {
+					"navigationBarTitleText": "支付密码",
+					"navigationBarBackgroundColor": "#ffffff",
+					"navigationBarTextStyle": "black"
+				}
+			},
+			{
+				"path": "jifen/wodejifen",
+				"style": {
+					"navigationStyle": "custom"
+				}
+			},
+			{
+				"path": "qianbao/qianbao",
+				"style": {
+					"navigationStyle": "custom"
+				}
+			},{
+				"path": "qianbao/chongzhi",
+				"style": {
+					"navigationStyle": "custom"
+				}
+			},
+			{
+				"path": "order/order",
+				"style": {
+					"navigationBarTitleText": "我的订单",
+					"navigationBarBackgroundColor": "#ffffff",
+					"navigationBarTextStyle": "black"
+				}
+			},
+			{
+				"path": "order/wuliu",
+				"style": {
+					"navigationBarTitleText": "物流信息",
+					"navigationBarBackgroundColor": "#ffffff",
+					"navigationBarTextStyle": "black"
+				}
 			}
 		]
-	}, {
-		"root": "pages/order",
-		"pages": [{
-			"path": "querendingdan",
-			"style": {
-				"navigationBarTitleText": "确认订单",
-				"navigationBarBackgroundColor": "#ffffff",
-				"navigationBarTextStyle": "black"
-			}
-		}]
-	}, {
-		"root": "pages/user/jifen",
-		"pages": [{
-			"path": "wodejifen",
-			"style": {
-				"navigationStyle": "custom"
-			}
-		}]
-	},{
-		"root": "pages/user/qianbao",
-		"pages": [{
-			"path": "qianbao",
-			"style": {
-				"navigationStyle": "custom"
-			}
-		},{
-			"path": "chongzhi",
-			"style": {
-				"navigationStyle": "custom"
-			}
-		}]
-	}, {
-		"root": "pages/user/order",
-		"pages": [{
-			"path": "order",
-			"style": {
-				"navigationBarTitleText": "我的订单",
-				"navigationBarBackgroundColor": "#ffffff",
-				"navigationBarTextStyle": "black"
-			}
-		},{
-			"path": "wuliu",
-			"style": {
-				"navigationBarTitleText": "物流信息",
-				"navigationBarBackgroundColor": "#ffffff",
-				"navigationBarTextStyle": "black"
-			}
-		}]
-	}, {
-		"root": "pages/user/tixian",
-		"pages": [{
-			"path": "tixian",
-			"style": {
-				"navigationStyle": "custom"
-			}
-		}, {
-			"path": "jifentixian",
-			"style": {
-				"navigationBarTitleText": "积分提现",
-				"navigationBarBackgroundColor": "#ffffff",
-				"navigationBarTextStyle": "black"
-			}
-		}, {
-			"path": "zhifumima",
-			"style": {
-				"navigationBarTitleText": "支付密码",
-				"navigationBarBackgroundColor": "#ffffff",
-				"navigationBarTextStyle": "black"
-			}
-		}]
 	}],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

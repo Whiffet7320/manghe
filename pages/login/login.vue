@@ -53,19 +53,23 @@
 							uni.login({
 								provider: 'weixin',
 								success: (loginres) => {
-									userInfo.code = loginres.code;
-									this.$api.silenceAuth({
+									this.$api.loginWechat({
 										code:loginres.code,
+										userinfo:userInfo,
 										spread_code: getApp().spread_code,
 										spread_spid: getApp().spread_spid
 									}).then(res => {
 										uni.hideLoading();
 										if (res.data.token !== undefined && res.data.token) {
 											uni.hideLoading();
-											let time = res.data.expires_time - Math.round(new Date() / 1000);
-											this.$store.commit('Login', {token: res.data.token,time: time});
+											this.$store.commit('Login', {token: res.data.token});
 											uni.setStorageSync("token", res.data.token);
-											this.getUserInfo();
+											this.$u.toast("登录成功");
+											setTimeout(()=>{
+												uni.navigateBack({
+													delta: 1
+												})
+											},1500)
 										}
 									}).catch(err => {
 										uni.hideLoading();
@@ -84,7 +88,7 @@
 					uni.hideLoading();
 					this.$u.toast("取消授权");
 				}
-			},
+			}
 		}
 	}
 </script>

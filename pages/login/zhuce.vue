@@ -115,6 +115,7 @@
 					console.log(res)
 					if (res.code == 200) {
 						this.$u.toast('登录成功');
+						this.$store.commit('Login', {token: res.data.token});
 						uni.setStorageSync("token", res.data.token);
 						uni.navigateTo({
 							url: '/pages/tabBar/user'
@@ -151,6 +152,7 @@
 						console.log(res)
 						if (res.code == 200) {
 							this.$u.toast('登录成功');
+							this.$store.commit('Login', {token: res.data.token});
 							uni.setStorageSync("token", res.data.token);
 							uni.navigateTo({
 								url: '/pages/tabBar/user'
@@ -174,10 +176,7 @@
 							this.$u.toast(res.message);
 						}
 					}
-
-
 				}
-
 			},
 			zhuce() {
 				this.navtitle = '注册';
