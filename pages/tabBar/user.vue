@@ -147,7 +147,7 @@
 <style lang="scss" scoped>
 	.swiper{
 		width: 100%;
-		height: 500rpx;
+		height: 560rpx;
 		position: relative;
 		.img{
 			width: 100%;

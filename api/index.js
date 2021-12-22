@@ -656,6 +656,38 @@ export default {
 			}
 		})
 	},
+	send_sms(obj) {
+		return myPost({
+			url: urls.send_sms,
+			data: {
+				...obj
+			}
+		})
+	},
+	register(obj) {
+		return myPost({
+			url: urls.register,
+			data: {
+				...obj
+			}
+		})
+	},
+	captch_login(obj) {
+		return myPost({
+			url: urls.captch_login,
+			data: {
+				...obj
+			}
+		})
+	},
+	forgetpwd(obj) {
+		return myPost({
+			url: urls.forgetpwd,
+			data: {
+				...obj
+			}
+		})
+	},
 	upload_pic(file, type) {
 		return new Promise(async (resolve, reject) => {
 			uni.uploadFile({
