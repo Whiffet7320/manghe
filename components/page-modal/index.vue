@@ -2,26 +2,22 @@
 	<view>
 		<u-popup :zoom="zoom" mode="center" :popup="false" :z-index="uZIndex" v-model="value" :length="width"
 		 :mask-close-able="maskCloseAble" :border-radius="borderRadius" @close="popupClose" :negative-top="negativeTop">
-			<view class="u-model">
-				<view v-if="showTitle" class="u-model__title u-line-1">{{ title }}</view>
-				<view class="u-model__content">
+			<view class="model">
+				<view v-if="showTitle" class="model__title u-line-1">{{ title }}</view>
+				<view class="model__content">
 					<view v-if="$slots.default  || $slots.$default">
 						<slot />
 					</view>
-					<view v-else class="u-model__content__message">{{ content }}</view>
+					<view v-else class="model__content__message">{{ content }}</view>
 				</view>
-				<view class="u-model__footer u-border-top" v-if="showCancelButton || showConfirmButton">
-					<view v-if="showConfirmButton || $slots['confirm-button']" :hover-stay-time="100" :hover-class="asyncClose ? 'none' : 'u-model__btn--hover'"
-					 class="u-model__footer__button hairline-left" @tap="confirm">
-						<slot v-if="$slots['confirm-button']" name="confirm-button"></slot>
-						<block v-else>
-							<u-loading mode="circle" v-if="loading"></u-loading>
-							<view :style="{'color':confirmColor}" v-else>
-								{{confirmText}}
-							</view>
-						</block>
+				<view class="model__footer u-border-top" v-if="showCancelButton || showConfirmButton">
+					<view v-if="showConfirmButton" class="footer_button hairline-left" @tap="confirm">
+						<u-loading mode="circle" v-if="loading"></u-loading>
+						<view :style="{'color':confirmColor}" v-else>
+							{{confirmText}}
+						</view>
 					</view>
-					<view v-if="showCancelButton" class="u-model__footer__button u-border-left" @tap="cancel">
+					<view v-if="showCancelButton" class="footer_button u-border-left" @tap="cancel">
 						{{cancelText}}
 					</view>
 				</view>
@@ -187,7 +183,7 @@
 </script>
 
 <style lang="scss" scoped>
-	.u-model {
+	.model {
 		height: auto;
 		overflow: hidden;
 		font-size: 28rpx;
@@ -216,7 +212,7 @@
 		&__footer {
 			display: flex;
 
-			&__button {
+			.footer_button {
 				flex: 1;
 				height: 100rpx;
 				line-height: 100rpx;
@@ -226,6 +222,7 @@
 				cursor: pointer;
 				text-align: center;
 				border-radius: 4rpx;
+				-webkit-tap-highlight-color:rgba(0,0,0,0);
 			}
 		}
 	}

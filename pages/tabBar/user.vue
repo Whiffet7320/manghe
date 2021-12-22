@@ -2,7 +2,7 @@
 	<view>
 		<view class="swiper">
 			<image :src="userInfo.avatar" mode="aspectFill" class="img"></image>
-			<u-navbar v-if="scrollTop>100" title="我的" :title-bold="true" back-icon-color="#ffffff" title-color="#ffffff" :background="{backgroundColor: 'rgba(38,2,2)'}" :border-bottom="false"></u-navbar>
+			<u-navbar v-if="scrollTop>100" title="我的" :title-bold="true" back-icon-color="#ffffff" title-color="#ffffff" :background="{backgroundColor: '#562c2c'}" :border-bottom="false"></u-navbar>
 			<u-navbar v-else title="我的" :title-bold="true" back-icon-color="#ffffff" title-color="#ffffff" :background="{backgroundColor: 'transparent'}" :border-bottom="false"></u-navbar>
 			<view class="bg"></view>
 			<view class="info">

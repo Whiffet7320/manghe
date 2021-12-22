@@ -27,7 +27,7 @@
 			<image src="/static/image/lujin14561.png" class="pic1" mode="aspectFit"></image>
 			<view class="notice">
 				<image src="/static/image/icon_notice.png" mode="aspectFit" class="icon"></image>
-				<swiper class="list" :autoplay="true" :vertical="true" :circular="true" :interval="3000" :display-multiple-items="2" v-if="list.length>4">
+				<swiper class="list" :autoplay="true" :vertical="true" :circular="true" :interval="3000" :display-multiple-items="2" v-if="list.length>2">
 					<swiper-item class="nitem" v-for="(item,index) in list" :key="index">
 						<text class="tit">{{item.name}}</text>
 						<text class="time">{{item.time}}</text>
@@ -35,15 +35,15 @@
 				</swiper>
 			</view>
 		</view>
-		<view class="nav3">
+		<view class="nav3" @click="toQuerendingdan">
 			<image src="/static/image/zu2998.png" class="pic1" mode=""></image>
 			<image src="/static/image/zu1998.png" class="pic2" mode=""></image>
 			<view class="tit1">阳澄湖大闸蟹</view>
 			<view class="tit2">
 				<view class="txt1">
-					￥<text class="big">99</text>元/只
+					￥<text class="big">{{obj.price}}</text>元/只
 				</view>
-				<view class="txt2">母蟹5两</view>
+				<view class="txt2">母蟹{{obj.unit}}两</view>
 			</view>
 			<view class="tit3">立即购买</view>
 		</view>
@@ -72,10 +72,24 @@
 						name:"7610312用户购买了10只大闸蟹",
 						time:"5分钟前"
 					}
-				]
+				],
+				obj:{},
 			}
 		},
+		onShow() {
+			this.getData()
+		},
 		methods: {
+			async getData(){
+				const res = await this.$api.product()
+				console.log(res)
+				this.obj = res.data;
+			},
+			toLogin(){
+				uni.navigateTo({
+					url:'/pages/login/login'
+				})
+			},
 			toJifenguize(){
 				uni.navigateTo({
 					url:'/pages/index/jifenguize'
@@ -90,7 +104,12 @@
 				uni.navigateTo({
 					url:"/pages/tabBar/user"
 				})
-			}
+			},
+			toQuerendingdan(){
+				uni.navigateTo({
+					url:'/pages/order/querendingdan'
+				})
+			},
 		}
 	}
 </script>
@@ -111,6 +130,7 @@
 		z-index: 100;
 	}
 	.float1{
+		z-index: 99;
 		background-image: url(../../static/image/juxin12.png);
 		background-size: 100% 100%;
 		width: 126rpx;
@@ -224,12 +244,13 @@
 				display: flex;
 				flex-wrap: wrap;
 				padding-top: 30rpx;
-				height: 120rpx;
+				height: 90rpx;
 				overflow: hidden;
 				.nitem{
 					display: flex;
 					align-items: center;
 					width: 100%;
+					height: 34rpx !important;
 					padding-bottom: 14rpx;
 					.tit{
 						flex:1;

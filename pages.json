@@ -2,7 +2,7 @@
 	"easycom": {
 		"^u-(.*)": "uview-ui/components/u-$1/u-$1.vue"
 	},
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+	"pages": [
 		{
 			"path": "pages/tabBar/index",
 			"style": {
@@ -105,6 +105,76 @@
 				}
 			}
 		]
+	}, {
+		"root": "pages/order",
+		"pages": [{
+			"path": "querendingdan",
+			"style": {
+				"navigationBarTitleText": "确认订单",
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black"
+			}
+		}]
+	}, {
+		"root": "pages/user/jifen",
+		"pages": [{
+			"path": "wodejifen",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}]
+	},{
+		"root": "pages/user/qianbao",
+		"pages": [{
+			"path": "qianbao",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},{
+			"path": "chongzhi",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}]
+	}, {
+		"root": "pages/user/order",
+		"pages": [{
+			"path": "order",
+			"style": {
+				"navigationBarTitleText": "我的订单",
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black"
+			}
+		},{
+			"path": "wuliu",
+			"style": {
+				"navigationBarTitleText": "物流信息",
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black"
+			}
+		}]
+	}, {
+		"root": "pages/user/tixian",
+		"pages": [{
+			"path": "tixian",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "jifentixian",
+			"style": {
+				"navigationBarTitleText": "积分提现",
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black"
+			}
+		}, {
+			"path": "zhifumima",
+			"style": {
+				"navigationBarTitleText": "支付密码",
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black"
+			}
+		}]
 	}],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
