@@ -42,10 +42,10 @@
 				<view class="subtit"></view>
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="arrow"></image>
 			</view>
-			<view class="menu_item" @click="jump('/pages/users/certificate/index')">
+			<view class="menu_item" @click="jump('/pages/user/certificate/index')">
 				<image src="/static/image/user/m2.png" mode="aspectFit" class="icon"></image>
 				<view class="name">实名认证</view>
-				<view class="subtit">未实名</view>
+				<view class="subtit">{{userInfo.realname==null||userInfo.realname==''?'未实名':'已认证'}}</view>
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="arrow"></image>
 			</view>
 			<view class="menu_item">
@@ -54,13 +54,13 @@
 				<view class="subtit"></view>
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="arrow"></image>
 			</view>
-			<view class="menu_item" @click="jump('/pages/users/bank/index')">
+			<view class="menu_item" @click="jump('/pages/user/bank/index')">
 				<image src="/static/image/user/m4.png" mode="aspectFit" class="icon"></image>
 				<view class="name">绑定银行卡</view>
 				<view class="subtit"></view>
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="arrow"></image>
 			</view>
-			<view class="menu_item" @click="jump('/pages/users/address/index')">
+			<view class="menu_item" @click="jump('/pages/user/address/index')">
 				<image src="/static/image/user/m5.png" mode="aspectFit" class="icon"></image>
 				<view class="name">收货地址</view>
 				<view class="subtit"></view>
@@ -72,7 +72,7 @@
 				<view class="subtit"></view>
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="arrow"></image>
 			</view>
-			<view class="menu_item" @click="jump('/pages/users/privacy/index')">
+			<view class="menu_item" @click="jump('/pages/user/privacy/index')">
 				<image src="/static/image/user/m7.png" mode="aspectFit" class="icon"></image>
 				<view class="name">隐私条款</view>
 				<view class="subtit"></view>
@@ -95,7 +95,7 @@
 			return{
 				show:false,
 				userInfo:{},
-				code:"47356086",
+				code:"",
 				scrollTop:0,
 				tel:"400-1234-4321"
 			}
@@ -104,25 +104,34 @@
 			...mapGetters(['isLogin'])
 		},
 		methods:{
+			async getUserInfo() {
+				await this.$api.userInfo().then(res => {
+					if(res.code==200){
+						this.userInfo = res.data;
+						this.$store.commit("UpdateUserinfo",res.data);
+						this.$store.commit('SetUid', res.data.uid);
+					}
+				});
+			},
 			goLogin(){
 				uni.navigateTo({
-					url:"/pages/login/index"
+					url:"/pages/login/login"
 				})
 			},
 			jump(url){
-				// if(!this.isLogin){
-				// 	uni.navigateTo({
-				// 		url:"/pages/login/index"
-				// 	})
-				// 	return;
-				// }
+				if(!this.isLogin){
+					uni.navigateTo({
+						url:"/pages/login/login"
+					})
+					return;
+				}
 				uni.navigateTo({
 					url:url
 				})
 			},
 			goInfo(){
 				uni.navigateTo({
-					url:"/pages/users/set/index"
+					url:"/pages/user/set/index"
 				})
 			},
 			confirm(){
@@ -132,6 +141,11 @@
 						console.log(res)
 					}
 				})
+			}
+		},
+		onShow(){
+			if(this.isLogin){
+				this.getUserInfo();
 			}
 		},
 		onPageScroll(e) {
@@ -147,7 +161,7 @@
 <style lang="scss" scoped>
 	.swiper{
 		width: 100%;
-		height: 500rpx;
+		height: 560rpx;
 		position: relative;
 		.img{
 			width: 100%;

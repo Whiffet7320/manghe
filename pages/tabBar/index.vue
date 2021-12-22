@@ -38,7 +38,7 @@
 		<view class="nav3" @click="toQuerendingdan">
 			<image src="/static/image/zu2998.png" class="pic1" mode=""></image>
 			<image src="/static/image/zu1998.png" class="pic2" mode=""></image>
-			<view class="tit1">阳澄湖大闸蟹</view>
+			<view class="tit1">{{obj.name}}</view>
 			<view class="tit2">
 				<view class="txt1">
 					￥<text class="big">{{obj.price}}</text>元/只
@@ -106,6 +106,7 @@
 				})
 			},
 			toQuerendingdan(){
+				this.$store.commit("setProinfo",this.obj);
 				uni.navigateTo({
 					url:'/pages/order/querendingdan'
 				})

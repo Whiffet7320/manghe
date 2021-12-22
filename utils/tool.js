@@ -12,8 +12,8 @@ export default{
 			sourceType = opt.sourceType || ['album', 'camera'],
 			is_load = opt.is_load || true,
 			uploadUrl = opt.url || '',
-			inputName = opt.name || 'pics',
-			fileType = opt.fileType || 'image';
+			inputName = opt.name || 'image',
+			fileType = opt.fileType || 'avatar';
 		uni.chooseImage({
 			count: count, //最多可以选择的图片总数  
 			sizeType: sizeType, // 可以指定是原图还是压缩图，默认二者都有  
@@ -26,10 +26,9 @@ export default{
 				uni.uploadFile({
 					url: config.baseUrl + '/api/' + uploadUrl,
 					filePath: res.tempFilePaths[0],
-					fileType: fileType,
 					name: inputName,
 					formData: {
-						'filename': inputName
+						'type': fileType
 					},
 					header: {
 						"Content-Type": "multipart/form-data",
@@ -49,7 +48,7 @@ export default{
 							} else {
 								errorCallback && errorCallback(data);
 								uni.showToast({
-									title: data.msg,
+									title: data.message,
 									icon:"none"
 								})
 							}
@@ -84,8 +83,8 @@ export default{
 			sourceType = opt.sourceType || ['album', 'camera'],
 			is_load = opt.is_load || true,
 			uploadUrl = opt.url || '',
-			inputName = opt.name || 'pics',
-			fileType = opt.fileType || 'image';
+			inputName = opt.name || 'image',
+			fileType = opt.fileType || 'avatar';
 		uni.chooseImage({
 			count: count, //最多可以选择的图片总数  
 			sizeType: sizeType, // 可以指定是原图还是压缩图，默认二者都有  
@@ -146,10 +145,9 @@ export default{
 			uni.uploadFile({
 				url: config.baseUrl + '/api/' + uploadUrl,
 				filePath,
-				fileType: fileType,
 				name: inputName,
 				formData: {
-					'filename': inputName
+					'type': fileType
 				},
 				header: {
 					// #ifdef MP
@@ -171,7 +169,7 @@ export default{
 						} else {
 							errorCallback && errorCallback(data);
 							uni.showToast({
-								title: data.msg,
+								title: data.message,
 								icon:"none"
 							})
 						}

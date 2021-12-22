@@ -263,6 +263,7 @@ var _default =
 
     },
     toQuerendingdan: function toQuerendingdan() {
+      this.$store.commit("setProinfo", this.obj);
       uni.navigateTo({
         url: '/pages/order/querendingdan' });
 

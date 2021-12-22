@@ -143,7 +143,7 @@ myDelete.interceptors.response.use(response => {
 	if (response.status === 200) {
 		if (response.data.code == 401) {
 			uni.navigateTo({
-				url: '/pages/login/index'
+				url: '/pages/login/login'
 			})
 		} else {
 			return response.data
@@ -195,7 +195,7 @@ myUploadImg.interceptors.response.use(response => {
 	if (response.status === 200) {
 		if (response.data.code == 401) {
 			uni.navigateTo({
-				url: '/pages/login/index'
+				url: '/pages/login/login'
 			})
 		} else {
 			return response.data
@@ -263,7 +263,7 @@ myPut.interceptors.response.use(response => {
 	if (response.status === 200) {
 		if (response.data.code == 401) {
 			uni.navigateTo({
-				url: '/pages/login/index'
+				url: '/pages/login/login'
 			})
 		} else {
 			return response.data
@@ -315,7 +315,7 @@ myPost.interceptors.response.use(response => {
 	if (response.status === 200) {
 		if (response.data.code == 410001) {
 			uni.navigateTo({
-				url: '/pages/login/index'
+				url: '/pages/login/login'
 			})
 		} else {
 			return response.data
@@ -366,7 +366,7 @@ myGet.interceptors.response.use(response => {
 	if (response.status === 200) {
 		if (response.data.code == 410001) {
 			uni.navigateTo({
-				url: '/pages/login/index'
+				url: '/pages/login/login'
 			})
 		} else {
 			return response.data
@@ -468,7 +468,7 @@ dzpMyPut.interceptors.response.use(response => {
 	if (response.status === 200) {
 		if (response.data.code == 401) {
 			uni.navigateTo({
-				url: '/pages/login/index'
+				url: '/pages/login/login'
 			})
 		} else {
 			return response.data
@@ -520,7 +520,7 @@ dzpMyPost.interceptors.response.use(response => {
 	if (response.status === 200) {
 		if (response.data.code == 401) {
 			uni.navigateTo({
-				url: '/pages/login/index'
+				url: '/pages/login/login'
 			})
 		} else {
 			return response.data
@@ -571,7 +571,7 @@ dzpMyGet.interceptors.response.use(response => {
 	if (response.status === 200) {
 		if (response.data.code == 401) {
 			uni.navigateTo({
-				url: '/pages/login/index'
+				url: '/pages/login/login'
 			})
 		} else {
 			return response.data
@@ -619,17 +619,17 @@ dzpMyGet.interceptors.response.use(response => {
 })
 
 export default {
-	silenceAuth(obj) {
-		return myGet({
-			url: urls.silence_auth,
-			params: {
+	loginWechat(obj) {
+		return myPost({
+			url: urls.loginWechat,
+			data: {
 				...obj
 			}
 		})
 	},
-	getUserInfo(obj) {
+	userInfo(obj) {
 		return myGet({
-			url: urls.user,
+			url: urls.userInfo,
 			params: {
 				...obj
 			}
@@ -656,6 +656,43 @@ export default {
 			}
 		})
 	},
+	saveAddress(obj) {
+		return myPost({
+			url: urls.saveAddress,
+			data: {
+				...obj
+			}
+		})
+	},
+	addressList() {
+		return myGet({
+			url: urls.addressList,
+		})
+	},
+	delAddress(id) {
+		return myPost({
+			url: urls.delAddress,
+			data: {
+				id
+			}
+		})
+	},
+	orderPay(obj) {
+		return myPost({
+			url: urls.orderPay,
+			data: {
+				...obj
+			}
+		})
+	},
+	yzrealName(obj) {
+		return myPost({
+			url: urls.yzrealName,
+			data: {
+				...obj
+			}
+		})
+	},
 	upload_pic(file, type) {
 		return new Promise(async (resolve, reject) => {
 			uni.uploadFile({
@@ -673,7 +710,7 @@ export default {
 				success: (res) => {
 					if (JSON.parse(res.data).code == 401) {
 						uni.navigateTo({
-							url: '/pages/login/index'
+							url: '/pages/login/login'
 						})
 					}
 					return resolve(JSON.parse(res.data))

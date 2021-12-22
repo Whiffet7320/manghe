@@ -1,30 +1,31 @@
 <template>
 	<view class="index">
-		<view class="nav1">
+		<view class="nav1" v-if="aInfo.province" @click="goAddress(0)">
 			<view class="left">
 				<u-icon name="map-fill" color="#D61D1D" size="44"></u-icon>
-				<view class="tit">浙江省温州市龙湾区滨海五道交叉路区滨海五道交叉路</view>
+				<view class="tit">{{aInfo.province}}{{aInfo.city}}{{aInfo.district}}{{aInfo.detail}}</view>
 			</view>
 			<view class="right">
 				<u-icon name="arrow-right" color="#D61D1D" size="28"></u-icon>
 			</view>
 		</view>
+		<view class="noAddress" @click="goAddress(1)" v-else>添加收货地址</view>
 		<view class="nav2">
 			<view class="left">
 				<image src="/static/image/zu1998.png" class="pic1" mode=""></image>
 			</view>
 			<view class="right">
 				<view class="tit1">
-					<view class="txt1-1">阳澄湖大闸蟹</view>
-					<view class="txt1-2">￥99.00</view>
+					<view class="txt1-1">{{proInfo.name}}</view>
+					<view class="txt1-2">￥{{proInfo.price}}</view>
 				</view>
 				<view class="tit2">
-					<view class="txt2-1">规格：<text style="margin-left: 4rpx;">母蟹5两</text></view>
-					<view class="txt2-2">X1</view>
+					<view class="txt2-1">规格：<text style="margin-left: 4rpx;">母蟹{{proInfo.unit}}两</text></view>
+					<view class="txt2-2">X{{num}}</view>
 				</view>
 				<view class="tit3">
 					<view class="tit3-1">不可退款退货</view>
-					<view class="tit3-1" style="margin-left: 24rpx;">限购50只/天</view>
+					<view class="tit3-1" style="margin-left: 24rpx;">限购{{proInfo.today_buy_times}}只/天</view>
 				</view>
 				<view class="tit4">
 					<view class='txt1'>购买数量：</view>
@@ -39,15 +40,14 @@
 		<view class="nav3">
 			<view class="item">
 				<view class="txt1">实际付款金额</view>
-				<view class="txt2">99.00元</view>
+				<view class="txt2">{{(parseFloat($tool.argMul(this.num,this.proInfo.price))+parseFloat(storePostage)).toFixed(2)}}元</view>
 			</view>
 			<view class="item">
 				<view class="txt1">邮费</view>
-				<view class="txt2">0.00元</view>
+				<view class="txt2">{{storePostage}}元</view>
 			</view>
 			<view class="item2">
-				<u-input v-model="value" :clearable='false' type="textarea" :border="false"
-					placeholder='选填：给卖家留言（45字以内）' />
+				<u-input v-model="value" :clearable='false' type="textarea" :border="false" placeholder='选填：给卖家留言（45字以内）' />
 			</view>
 			<view class="item3">
 				<view class="txt">付款后，我们尽快安排给您发货</view>
@@ -81,7 +81,7 @@
 						<image v-if="payIndex == 2" src="/static/image/lujin1937.png" class="quan2"></image>
 						<view v-else class="quan"></view>
 					</view>
-					<view class="t2">当前积分为0分</view>
+					<view class="t2">当前积分为{{userInfo.integral}}分</view>
 				</view>
 				<view class="item1" @click="payIndex = 3">
 					<view class="t1">
@@ -92,9 +92,9 @@
 						<image v-if="payIndex == 3" src="/static/image/lujin1937.png" class="quan2"></image>
 						<view v-else class="quan"></view>
 					</view>
-					<view class="t2">当前余额为0元</view>
+					<view class="t2">当前余额为{{userInfo.now_money}}元</view>
 				</view>
-				<view class="btn-footer">确认</view>
+				<view class="btn-footer" @click="onSubmit">确认</view>
 			</view>
 		</u-popup>
 		<!-- 支付成功 -->
@@ -109,17 +109,55 @@
 </template>
 
 <script>
+	import {mapState} from "vuex";
 	export default {
 		data() {
 			return {
+				addressId:0,
+				aInfo:{},
+				storePostage:0,
+				userInfo:{},
 				num: 1,
 				value: '',
 				show: false,
 				payIndex:1,
-				show2:true,
+				show2:false,
 			}
 		},
+		computed:{
+			...mapState(["proInfo","addressInfo"])
+		},
 		methods: {
+			goAddress(index) {
+				if(index==0){
+					uni.navigateTo({
+						url: '/pages/user/address/index?type=order'
+					});
+				}else if(index==1){
+					uni.navigateTo({
+						url: '/pages/user/address/detail?type=order'
+					});
+				}
+			},
+			async userDefaultShip() {
+				await this.$api.addressList().then((res)=>{
+					if (res.code === 200 && res.data) {
+						let data = res.data;
+						let newData = data.filter(item => item.is_default == 1);
+						if(newData.length){
+							this.aInfo = newData[0];
+							this.addressId = newData[0].id;
+						}
+					}
+				});
+			},
+			async getUserInfo() {
+				await this.$api.userInfo().then(res => {
+					if(res.code==200){
+						this.userInfo = res.data;
+					}
+				});
+			},
 			jian() {
 				if (this.num > 1) {
 					this.num--
@@ -128,6 +166,75 @@
 			jia() {
 				this.num++
 			},
+			onSubmit(){
+				let data = {
+					user_address_id:this.addressId,
+					buy_num:this.num,
+					remark:this.value
+				}
+				this.$api.orderPay(data).then((res)=>{
+					if(res.code==200){
+						this.show = false;
+						this.goPay(res.data);
+					}
+				})
+			},
+			goPay(jsConfig){
+				uni.showLoading({
+					title:"支付中..."
+				})
+				switch (this.payIndex) {
+					case 1:
+						uni.requestPayment({
+							provider: 'wxpay',
+							timeStamp: jsConfig.timeStamp.toString(),
+							nonceStr: jsConfig.nonceStr,
+							package: jsConfig.package,
+							signType: jsConfig.signType,
+							paySign: jsConfig.paySign,
+							success: (res)=> {
+								uni.hideLoading();
+								this.show2 = true;
+								setTimeout(()=>{
+									uni.redirectTo({
+										url:"/pages/user/order/order"
+									})
+								},1500)
+							},
+							fail: (err)=> {
+								uni.hideLoading();
+								console.log('fail:' + JSON.stringify(err));
+								this.$u.toast("支付失败");
+							},
+							complete: (e)=> {
+								uni.hideLoading();
+								if (e.errMsg == 'requestPayment:cancel'){
+									this.$u.toast("取消支付");
+								}
+							}
+						});
+					break;
+					case 3:
+						uni.hideLoading();
+						this.show2 = true;
+						setTimeout(()=>{
+							uni.redirectTo({
+								url:"/pages/user/order/order"
+							})
+						},1500)
+					break;
+				}
+			}
+		},
+		onLoad(options){
+			this.getUserInfo();
+			this.userDefaultShip();
+		},
+		onShow(){
+			if(this.addressInfo){
+				this.aInfo = this.addressInfo;
+				this.addressId = this.addressInfo.id;
+			}
 		}
 	}
 </script>

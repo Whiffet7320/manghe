@@ -10,7 +10,7 @@
 								<text class="phone">{{item.phone.substr(0,3)+'****'+item.phone.substr(7)}}</text>
 								<text class="tag" v-show="item.is_default === 1">默认</text>
 							</view>
-							<view class="detail">{{item.detail}}</view>
+							<view class="detail">{{item.province}}{{item.city}}{{item.district}}{{item.detail}}</view>
 						</view>
 						<view class="ft" @click.stop="Default(item)">
 							<view class="check">
@@ -35,7 +35,7 @@
 			<u-gap height="260"></u-gap>
 			<image src="/static/image/user/empty.png" mode="aspectFit" class="img"></image>
 			<text class="text">暂无收货地址</text>
-			<view class="btn">去新建</view>
+			<view class="btn" @click="goAdd">去新建</view>
 		</view>
 		<view class="goAdds" @click="goAdd" v-if="list.length!=0">新建地址</view>
 	</view>
@@ -45,59 +45,75 @@
 	export default {
 		data() {
 			return {
-				list:[
-					{
-						real_name:"玛德撒",
-						phone:"15057575757",
-						detail:"浙江省温州市龙湾区滨海五道交叉路",
-						is_default:1
-					}
-				]
+				list:[],
+				type:""
 			}
-		},
-		onShow() {
-			// this.getlist()
 		},
 		methods: {
 			toEdit(item){
 				this.$store.commit("setAddress",item);
-				uni.navigateTo({
-					url:`/pages/users/address/detail?id=${item.id}`
-				})
+				if(this.type!=""){
+					uni.navigateBack({
+						delta:1
+					})
+				}else{
+					uni.navigateTo({
+						url:`/pages/user/address/detail?id=${item.id}`
+					})
+				}
 			},
 			//获取地址信息
 			async getlist(){
-				const res = await this.$api.address();
-				console.log(res)
-				this.list = res.data;
+				const res = await this.$api.addressList();
+				if(res.code==200){
+					this.list = res.data;
+				}
 			},
 			//新建地址
 			goAdd(){
 				uni.navigateTo({
-					url:'/pages/users/address/detail'
+					url:'/pages/user/address/detail'
 				})
 			},
 			//设置默认地址
 			async Default(item){
-				const res = await this.$api.upDateAddress({
+				const res = await this.$api.saveAddress({
+					id:item.id,
+					real_name: item.real_name,
+					phone: item.phone,
+					province:item.province,
+					city:item.city,
+					district:item.district,
+					detail: item.detail,
 					is_default: 1
-				},item.id)
+				})
 				if(res.code == 200){
-					this.ddrelist()
+					this.$u.toast(res.message);
+					this.getlist();
+				}else{
+					this.$u.toast(res.message);
 				}
 			},
 			bindClick(e,index,id){
 				if(e=="del"){
-					this.$api.delAddress({id:id}).then((res)=>{
-						if(res.status==200){
+					this.$api.delAddress(id).then((res)=>{
+						if(res.code==200){
 							this.$u.toast("删除成功");
 							this.list.splice(index,1);
 						}else{
-							this.$u.toast(res.msg);
+							this.$u.toast(res.message);
 						}
 					})
 				}
 			},
+		},
+		onLoad(options){
+			if(options.type){
+				this.type = options.type;
+			}
+		},
+		onShow(){
+			this.getlist();
 		}
 	}
 </script>
