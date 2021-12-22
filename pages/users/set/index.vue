@@ -1,0 +1,130 @@
+<template>
+	<view>
+		<view class="cellbox">
+			<view class="cellitem">
+				<view class="name">我的头像</view>
+				<view class="pic" @click="uploadpic">
+					<image :src="avatar" mode="aspectFill" class="avatar"></image>
+				</view>
+				<image src="/static/image/arrow_right.png" mode="aspectFit" class="icon"></image>
+			</view>
+			<view class="cellitem" @click="goUname">
+				<view class="name">我的昵称</view>
+				<view class="desc">{{userInfo.nickname}}</view>
+				<image src="/static/image/arrow_right.png" mode="aspectFit" class="icon"></image>
+			</view>
+			<view class="cellitem">
+				<view class="name">登陆密码</view>
+				<view class="desc">设置登陆密码</view>
+				<image src="/static/image/arrow_right.png" mode="aspectFit" class="icon"></image>
+			</view>
+			<view class="cellitem">
+				<view class="name">支付密码</view>
+				<view class="desc">设置支付密码</view>
+				<image src="/static/image/arrow_right.png" mode="aspectFit" class="icon"></image>
+			</view>
+			<view class="cellitem" @click="clearfileSize">
+				<view class="name">清理缓存</view>
+				<view class="desc">{{fileSizeString}}</view>
+				<image src="/static/image/arrow_right.png" mode="aspectFit" class="icon"></image>
+			</view>
+		</view>
+		<u-popup v-model="show" mode="center" border-radius="16" width="466rpx" height="238rpx">
+			<view class="modcon">
+				<u-icon name="checkmark-circle" color="#D61D1D" size="62"></u-icon>
+				<text class="text">你已成功清理{{fileSizeString}}内存</text>
+			</view>
+		</u-popup>
+	</view>
+</template>
+
+<script>
+	import {mapState} from "vuex";
+	export default{
+		data(){
+			return{
+				avatar:"",
+				fileSizeString:"0B",
+				show:false
+			}
+		},
+		computed:{
+			...mapState(['userInfo'])
+		},
+		methods:{
+			uploadpic(){},
+			goUname(){
+				uni.navigateTo({
+					url:"/pages/users/set/uname"
+				})
+			},
+			clearfileSize(){
+				this.show = true;
+				setTimeout(()=>{
+					this.show = false;
+				},1500)
+			}
+		},
+		onLoad(){
+			this.fileSizeString = uni.getStorageInfoSync().currentSize+"Kb";
+		}
+	}
+</script>
+
+<style lang="scss" scoped>
+	.cellbox{
+		.cellitem{
+			display: flex;
+			align-items: center;
+			border-bottom: 2rpx solid #f2f2f2;
+			margin:0 30rpx;
+			padding:32rpx 0 22rpx 0;
+			&:last-child{
+				border-bottom: 0;
+			}
+			.pic{
+				flex:1;
+				width: 100rpx;
+				height: 100rpx;
+				.avatar{
+					width: 100%;
+					height: 100%;
+					border-radius: 50%;
+				}
+			}
+			.name{
+				font-size: 28rpx;
+				font-family: PingFang SC, PingFang SC-Bold;
+				font-weight: 700;
+				color: #000000;
+			}
+			.desc{
+				flex:1;
+				font-size: 28rpx;
+				font-family: PingFang SC, PingFang SC-Medium;
+				font-weight: 500;
+				text-align: right;
+				color: #808080;
+			}
+			.icon{
+				width: 20rpx;
+				height: 35rpx;
+				margin-left: 26rpx;
+			}
+		}
+	}
+	.modcon{
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		height: 100%;
+		.text{
+			margin-top: 32rpx;
+			font-size: 28rpx;
+			font-family: PingFang SC, PingFang SC-Medium;
+			color: #000000;
+		}
+	}
+</style>

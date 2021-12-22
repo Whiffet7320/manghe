@@ -11,6 +11,14 @@
 				"navigationBarTextStyle": "black",
 				"navigationStyle": "custom"
 			}
+		},{
+			"path": "pages/tabBar/user",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "我的",
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black"
+			}
 		}, {
 			"path": "pages/login/login",
 			"style": {
@@ -28,7 +36,6 @@
 		"pages": [{
 			"path": "jifenguize",
 			"style": {
-				// "navigationStyle": "custom",
 				"navigationBarTitleText": "积分规则",
 				"navigationBarBackgroundColor": "#f9edd1",
 				"navigationBarTextStyle": "black"
@@ -37,14 +44,72 @@
 			"path": "fenxiang",
 			"style": {
 				"navigationStyle": "custom"
-				// "navigationBarTitleText": "分享",
 			}
 		}]
+	},
+	{
+		"root": "pages/users",
+		"pages": [
+			{
+				"path": "set/index",
+				"style": {
+					"navigationBarTitleText": "设置"
+				}
+			},
+			{
+				"path": "set/uname",
+				"style": {
+					"navigationBarTitleText": "更改昵称"
+				}
+			},
+			{
+				"path": "set/pwd",
+				"style": {
+					"navigationBarTitleText": "设置登陆密码"
+				}
+			},
+			{
+				"path": "address/index",
+				"style": {
+					"navigationBarTitleText": "收货地址"
+				}
+			},
+			{
+				"path": "address/detail",
+				"style": {
+					"navigationBarTitleText": "新建地址"
+				}
+			},
+			{
+				"path": "bank/index",
+				"style": {
+					"navigationBarTitleText": "银行卡"
+				}
+			},
+			{
+				"path": "bank/detail",
+				"style": {
+					"navigationBarTitleText": "绑定银行卡"
+				}
+			},
+			{
+				"path": "certificate/index",
+				"style": {
+					"navigationBarTitleText": "实名认证"
+				}
+			},
+			{
+				"path": "privacy/index",
+				"style": {
+					"navigationBarTitleText": "隐私条款"
+				}
+			}
+		]
 	}],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
+		"navigationBarTitleText": "螃蟹商城",
 		"navigationBarBackgroundColor": "#ffffff",
-		"backgroundColor": "#282828"
+		"backgroundColor": "#FFFFFF"
 	}
 }

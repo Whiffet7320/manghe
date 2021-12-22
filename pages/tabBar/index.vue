@@ -1,15 +1,17 @@
 <template>
 	<view class="index">
-		<view @click="tofenxiang" class="float1">
-			<image src="/static/image/lujin2107.png" class="pic" mode=""></image>
-			<view class="txt">分享</view>
-		</view>
-		<view @click="toJifenguize" class="float1 float2">
-			<image src="/static/image/lujin2108.png" class="pic" mode=""></image>
-			<view class="txt">规则</view>
+		<view class="fixbtn">
+			<view @click="tofenxiang" class="float1">
+				<image src="/static/image/lujin2107.png" class="pic" mode=""></image>
+				<view class="txt">分享</view>
+			</view>
+			<view @click="toJifenguize" class="float1 float2">
+				<image src="/static/image/lujin2108.png" class="pic" mode=""></image>
+				<view class="txt">规则</view>
+			</view>
 		</view>
 		<u-navbar :title-bold='true' title-color='#000000' :is-back="false" title="首页" title-size='34'>
-			<view class="slot-wrap">
+			<view class="slot-wrap" @click="goUser">
 				<image src="/static/image/lujin2106.png" class="top-pic" mode=""></image>
 			</view>
 		</u-navbar>
@@ -22,11 +24,16 @@
 			<image src="/static/image/lujin2.png" class="pic2" mode=""></image>
 		</view>
 		<view class="nav2">
-			<image src="/static/image/lujin14561.png" class="pic1" mode=""></image>
-			<!-- 			<view class="box">
-				<u-notice-bar type="none" mode='vertical' :is-circular="false" :list="list"></u-notice-bar>
-			</view> -->
-
+			<image src="/static/image/lujin14561.png" class="pic1" mode="aspectFit"></image>
+			<view class="notice">
+				<image src="/static/image/icon_notice.png" mode="aspectFit" class="icon"></image>
+				<swiper class="list" :autoplay="true" :vertical="true" :circular="true" :interval="3000" :display-multiple-items="2" v-if="list.length>4">
+					<swiper-item class="nitem" v-for="(item,index) in list" :key="index">
+						<text class="tit">{{item.name}}</text>
+						<text class="time">{{item.time}}</text>
+					</swiper-item>
+				</swiper>
+			</view>
 		</view>
 		<view class="nav3">
 			<image src="/static/image/zu2998.png" class="pic1" mode=""></image>
@@ -49,18 +56,24 @@
 		data() {
 			return {
 				list: [
-					'寒雨连江夜入吴',
-					'平明送客楚山孤',
-					'洛阳亲友如相问',
-					'一片冰心在玉壶'
+					{
+						name:"450378用户充值500元",
+						time:"10分钟前"
+					},
+					{
+						name:"7610312用户购买了6只大闸蟹",
+						time:"10分钟前"
+					},
+					{
+						name:"350378用户充值500元",
+						time:"3分钟前"
+					},
+					{
+						name:"7610312用户购买了10只大闸蟹",
+						time:"5分钟前"
+					}
 				]
 			}
-		},
-		onShow() {
-
-		},
-		mounted() {
-
 		},
 		methods: {
 			toJifenguize(){
@@ -73,6 +86,11 @@
 					url:'/pages/index/fenxiang'
 				})
 			},
+			goUser(){
+				uni.navigateTo({
+					url:"/pages/tabBar/user"
+				})
+			}
 		}
 	}
 </script>
@@ -86,14 +104,18 @@
 	.index {
 		position: relative;
 	}
+	.fixbtn{
+		position: fixed;
+		bottom: 442rpx;
+		right: 0;
+		z-index: 100;
+	}
 	.float1{
 		background-image: url(../../static/image/juxin12.png);
 		background-size: 100% 100%;
 		width: 126rpx;
 		height: 48rpx;
-		position: fixed;
-		top: 1032rpx;
-		right: 0;
+		margin-bottom: 46rpx;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -108,8 +130,8 @@
 			color: #ffffff;
 		}
 	}
-	.float2.float1{
-		top: 1128rpx;
+	.float2{
+		margin-bottom: 0;
 		.pic{
 			width: 26rpx;
 			height: 32rpx;
@@ -170,14 +192,61 @@
 	}
 
 	.nav2 {
+		position: relative;
+		margin:0 40rpx;
+		height: 212rpx;
 		.pic1 {
-			margin-left: 42rpx;
 			width: 668rpx;
 			height: 212rpx;
+			position: absolute;
+			top:0;
+			left:0;
+			z-index: 2;
 		}
-
-		.box {
-			width: 400rpx;
+		.notice{
+			position: absolute;
+			top: 25px;
+			left: 15px;
+			z-index: 50;
+			width: 634rpx;
+			height: 150rpx;
+			overflow: hidden;
+			display: flex;
+			.icon{
+				width: 36rpx;
+				height: 34rpx;
+				margin-top: 30rpx;
+				margin-left: 30rpx;
+				margin-right: 19rpx;
+			}
+			.list{
+				flex:1;
+				display: flex;
+				flex-wrap: wrap;
+				padding-top: 30rpx;
+				height: 120rpx;
+				overflow: hidden;
+				.nitem{
+					display: flex;
+					align-items: center;
+					width: 100%;
+					padding-bottom: 14rpx;
+					.tit{
+						flex:1;
+						font-size: 24rpx;
+						font-family: PingFang SC, PingFang SC-Bold;
+						font-weight: 700;
+						color: #d61d1d;
+					}
+					.time{
+						font-size: 24rpx;
+						font-family: PingFang SC, PingFang SC-Medium;
+						font-weight: 500;
+						color: #d61d1d;
+						padding-right: 22rpx;
+					}
+				}
+			}
 		}
 	}
 
@@ -253,6 +322,6 @@
 		font-weight: 500;
 		text-align: center;
 		color: #d61d1d;
+		padding-bottom: 60rpx;
 	}
-
 </style>
