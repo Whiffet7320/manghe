@@ -98,7 +98,7 @@ var components
 try {
   components = {
     uNavbar: function() {
-      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-navbar/u-navbar */ "node-modules/uview-ui/components/u-navbar/u-navbar").then(__webpack_require__.bind(null, /*! uview-ui/components/u-navbar/u-navbar.vue */ 206))
+      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-navbar/u-navbar */ "node-modules/uview-ui/components/u-navbar/u-navbar").then(__webpack_require__.bind(null, /*! uview-ui/components/u-navbar/u-navbar.vue */ 256))
     }
   }
 } catch (e) {
@@ -155,7 +155,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0; //
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _regenerator = _interopRequireDefault(__webpack_require__(/*! ./node_modules/@babel/runtime/regenerator */ 20));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {try {var info = gen[key](arg);var value = info.value;} catch (error) {reject(error);return;}if (info.done) {resolve(value);} else {Promise.resolve(value).then(_next, _throw);}}function _asyncToGenerator(fn) {return function () {var self = this,args = arguments;return new Promise(function (resolve, reject) {var gen = fn.apply(self, args);function _next(value) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);}function _throw(err) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);}_next(undefined);});};} //
 //
 //
 //
@@ -209,17 +209,28 @@ var _default =
       '寒雨连江夜入吴',
       '平明送客楚山孤',
       '洛阳亲友如相问',
-      '一片冰心在玉壶'] };
+      '一片冰心在玉壶'],
 
+      obj: {} };
 
   },
   onShow: function onShow() {
-
+    this.getData();
   },
   mounted: function mounted() {
 
   },
   methods: {
+    getData: function getData() {var _this = this;return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {var res;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:_context.next = 2;return (
+                  _this.$api.product());case 2:res = _context.sent;
+                console.log(res);
+                _this.obj = res.data;case 5:case "end":return _context.stop();}}}, _callee);}))();
+    },
+    toLogin: function toLogin() {
+      uni.navigateTo({
+        url: '/pages/login/login' });
+
+    },
     toJifenguize: function toJifenguize() {
       uni.navigateTo({
         url: '/pages/index/jifenguize' });

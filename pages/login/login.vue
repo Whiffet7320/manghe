@@ -3,7 +3,7 @@
 		<image src="/static/image/zu3029.png" class="bacImg" mode=""></image>
 		<u-navbar :title-bold='true' :background='background' :border-bottom='false' title-color='#000000' :is-back="false" title-size='34'>
 			<view class="slot-wrap">
-				<image src="/static/image/lujin2814.png" class="home" mode=""></image>
+				<image @click="toShouye" src="/static/image/lujin2814.png" class="home" mode=""></image>
 			</view>
 		</u-navbar>
 		<image src="/static/image/zu2711.png" class="pic1" mode=""></image>
@@ -30,6 +30,11 @@
 			tozhuce(){
 				uni.navigateTo({
 					url:'/pages/login/zhuce'
+				})
+			},
+			toShouye(){
+				uni.navigateTo({
+					url:'/pages/tabBar/index'
 				})
 			},
 			getUserProfile() {

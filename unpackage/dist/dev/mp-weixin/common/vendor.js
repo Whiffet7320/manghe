@@ -11770,246 +11770,17 @@ dzpMyGet.interceptors.response.use(function (response) {
 
 
   },
-  verifyCode: function verifyCode() {
+  product: function product() {
     return myGet({
-      url: _url.default.verifyCode });
+      url: _url.default.product });
 
   },
-  registerVerify: function registerVerify(obj) {
+  login: function login(obj) {
     return myPost({
-      url: _url.default.registerVerify,
+      url: _url.default.login,
       data: _objectSpread({},
       obj) });
 
-
-  },
-  updatePhone: function updatePhone(obj) {
-    return myPost({
-      url: _url.default.user_update,
-      data: _objectSpread({},
-      obj) });
-
-
-  },
-  addressList: function addressList() {
-    return myGet({
-      url: _url.default.addressList });
-
-  },
-  editAddress: function editAddress(obj) {
-    return myPost({
-      url: _url.default.editAddress,
-      data: _objectSpread({},
-      obj) });
-
-
-  },
-  delAddress: function delAddress(obj) {
-    return myPost({
-      url: _url.default.delAddress,
-      data: _objectSpread({},
-      obj) });
-
-
-  },
-  cartlist: function cartlist() {
-    return myGet({
-      url: _url.default.cartlist });
-
-  },
-  cartDel: function cartDel(id) {
-    return myPost({
-      url: _url.default.cartDel,
-      data: {
-        ids: id } });
-
-
-  },
-  changeCartNum: function changeCartNum(obj) {
-    return myPost({
-      url: _url.default.cartNum,
-      data: _objectSpread({},
-      obj) });
-
-
-  },
-  collectDoctor: function collectDoctor(id) {
-    return myPost({
-      url: _url.default.collectDoctor,
-      data: {
-        doctor_id: id } });
-
-
-  },
-  collectDoctorlist: function collectDoctorlist(obj) {
-    return myGet({
-      url: _url.default.collectDoctorlist,
-      params: _objectSpread({},
-      obj) });
-
-
-  },
-  spreadBanner: function spreadBanner(type) {
-    return myGet({
-      url: _url.default.spreadBanner,
-      params: {
-        type: type } });
-
-
-  },
-  orderComment: function orderComment(obj) {
-    return myPost({
-      url: _url.default.orderComment,
-      data: _objectSpread({},
-      obj) });
-
-
-  },
-  myCommentDel: function myCommentDel(id) {
-    return myPost({
-      url: _url.default.myCommentDel,
-      data: {
-        id: id } });
-
-
-  },
-  integralList: function integralList(obj) {
-    return myGet({
-      url: _url.default.integralList,
-      params: _objectSpread({},
-      obj) });
-
-
-  },
-  getOrderDetail: function getOrderDetail(uni, cart_id) {
-    return myGet({
-      url: _url.default.orderDetail + "/" + uni + "".concat(cart_id ? "/".concat(cart_id) : '') });
-
-  },
-  collectAdd: function collectAdd(id) {
-    return myPost({
-      url: _url.default.collectAdd,
-      data: {
-        id: id } });
-
-
-  },
-  collectDel: function collectDel(id) {
-    return myPost({
-      url: _url.default.collectDel,
-      data: {
-        id: id } });
-
-
-  },
-  userCollect: function userCollect(obj) {
-    return myGet({
-      url: _url.default.userCollect,
-      params: _objectSpread({},
-      obj) });
-
-
-  },
-  orderDel: function orderDel(uni) {
-    return myPost({
-      url: _url.default.orderDel,
-      data: {
-        uni: uni } });
-
-
-  },
-  myCommentList: function myCommentList(obj) {
-    return myGet({
-      url: _url.default.myCommentList,
-      params: _objectSpread({},
-      obj) });
-
-
-  },
-  myAppointmentlist: function myAppointmentlist(obj) {
-    return myGet({
-      url: _url.default.myAppointmentlist,
-      params: _objectSpread({},
-      obj) });
-
-
-  },
-  orderWaitpay: function orderWaitpay(uni) {
-    return myPost({
-      url: _url.default.orderWaitpay,
-      data: {
-        uni: uni } });
-
-
-  },
-  spreadPeople: function spreadPeople(obj) {
-    return myPost({
-      url: _url.default.spreadPeople,
-      data: _objectSpread({},
-      obj) });
-
-
-  },
-  spreadPeopleCount: function spreadPeopleCount(obj) {
-    return myGet({
-      url: _url.default.spreadPeopleCount,
-      params: _objectSpread({},
-      obj) });
-
-
-  },
-  getRefundOrderDetail: function getRefundOrderDetail(uni, cart_id) {
-    return myGet({
-      url: _url.default.refundOrderDetail + "/" + uni + "".concat(cart_id ? "/".concat(cart_id) : '') });
-
-  },
-  ordeRefundReason: function ordeRefundReason() {
-    return myGet({
-      url: _url.default.ordeRefundReason });
-
-  },
-  orderRefundVerify: function orderRefundVerify(obj) {
-    return myPost({
-      url: _url.default.orderRefundVerify,
-      data: _objectSpread({},
-      obj) });
-
-
-  },
-  refundExpress: function refundExpress(obj) {
-    return myPost({
-      url: _url.default.refundExpress,
-      data: _objectSpread({},
-      obj) });
-
-
-  },
-  getCartCounts: function getCartCounts(numType) {
-    return myGet({
-      url: _url.default.getCartCounts,
-      params: {
-        numType: numType === undefined ? 0 : numType } });
-
-
-  },
-  newlist: function newlist() {
-    return myGet({
-      url: _url.default.newlist });
-
-  },
-  guanggao: function guanggao() {
-    return myGet({
-      url: _url.default.guanggao });
-
-  },
-  getArticleDetails: function getArticleDetails(id) {
-    return myGet({
-      url: _url.default.articleDetails + "/" + id });
-
-  },
-  getLiveList: function getLiveList() {
-    return myGet({
-      url: _url.default.wechatLive });
 
   },
   upload_pic: function upload_pic(file, type) {
@@ -12035,251 +11806,6 @@ dzpMyGet.interceptors.response.use(function (response) {
                     return resolve(JSON.parse(res.data));
                   } });case 1:case "end":return _context.stop();}}}, _callee);}));return function (_x, _x2) {return _ref.apply(this, arguments);};}());
 
-
-  },
-  category: function category(obj) {
-    return myGet({
-      url: _url.default.category,
-      params: _objectSpread({},
-      obj) });
-
-
-  },
-  products: function products(obj) {
-    return myGet({
-      url: _url.default.products,
-      params: _objectSpread({},
-      obj) });
-
-
-  },
-  detail: function detail(id) {
-    return myGet({
-      url: "".concat(_url.default.detail, "/").concat(id) });
-
-  },
-  cartAdd: function cartAdd(obj) {
-    return myPost({
-      url: _url.default.cartAdd,
-      data: _objectSpread({},
-      obj) });
-
-
-  },
-  getAddressDetail: function getAddressDetail(id) {
-    return myGet({
-      url: "".concat(_url.default.addressDetail, "/").concat(id) });
-
-  },
-  cityList: function cityList() {
-    return myGet({
-      url: _url.default.city_list });
-
-  },
-  orderCancel: function orderCancel(id) {
-    return myPost({
-      url: _url.default.orderCancel,
-      data: {
-        id: id } });
-
-
-  },
-  orderConfirm: function orderConfirm(obj) {
-    return myPost({
-      url: _url.default.orderConfirm,
-      data: _objectSpread({},
-      obj) });
-
-
-  },
-  orderCreate: function orderCreate(obj, key) {
-    return myPost({
-      url: "".concat(_url.default.orderCreate, "/").concat(key),
-      data: _objectSpread({},
-      obj) });
-
-
-  },
-  orderList: function orderList(obj) {
-    return myGet({
-      url: _url.default.orderList,
-      params: _objectSpread({},
-      obj) });
-
-
-  },
-  orderPay: function orderPay(obj) {
-    return myPost({
-      url: _url.default.orderPay,
-      data: _objectSpread({},
-      obj) });
-
-
-  },
-  zhuanjia: function zhuanjia(obj) {
-    return myGet({
-      url: _url.default.zhuanjia,
-      params: _objectSpread({},
-      obj) });
-
-
-  },
-  xiufu: function xiufu(obj) {
-    return myGet({
-      url: _url.default.xiufu,
-      params: _objectSpread({},
-      obj) });
-
-
-  },
-  orderComputed: function orderComputed(obj, key) {
-    return myPost({
-      url: "".concat(_url.default.orderComputed, "/").concat(key),
-      data: _objectSpread({},
-      obj) });
-
-
-  },
-  productHot: function productHot(obj) {
-    return myGet({
-      url: _url.default.productHot,
-      params: _objectSpread({},
-      obj) });
-
-
-  },
-  searchKeyword: function searchKeyword(obj) {
-    return myGet({
-      url: _url.default.searchKeyword,
-      params: _objectSpread({},
-      obj) });
-
-
-  },
-  position: function position(obj) {
-    return myGet({
-      url: _url.default.position,
-      params: _objectSpread({},
-      obj) });
-
-
-  },
-  banner: function banner(obj) {
-    return myGet({
-      url: _url.default.banner,
-      params: _objectSpread({},
-      obj) });
-
-
-  },
-  store_integralList: function store_integralList(obj) {
-    return myGet({
-      url: _url.default.store_integralList,
-      params: _objectSpread({},
-      obj) });
-
-
-  },
-  yanxuan_index: function yanxuan_index(obj) {
-    return myGet({
-      url: _url.default.yanxuan_index,
-      params: _objectSpread({},
-      obj) });
-
-
-  },
-  combinationDetail: function combinationDetail(id) {
-    return myGet({
-      url: "".concat(_url.default.combinationDetail, "/").concat(id) });
-
-  },
-  replyList: function replyList(obj, id) {
-    return myGet({
-      url: "".concat(_url.default.replyList, "/").concat(id),
-      params: _objectSpread({},
-      obj) });
-
-
-  },
-  orderAgain: function orderAgain(obj) {
-    return myPost({
-      url: _url.default.orderAgain,
-      data: _objectSpread({},
-      obj) });
-
-
-  },
-  orderTake: function orderTake(obj) {
-    return myPost({
-      url: "".concat(_url.default.orderTake),
-      data: _objectSpread({},
-      obj) });
-
-
-  },
-  combinationPink: function combinationPink(id) {
-    return myGet({
-      url: "".concat(_url.default.combinationPink, "/").concat(id) });
-
-  },
-  combinationRemove: function combinationRemove(obj) {
-    return myPost({
-      url: _url.default.combinationRemove,
-      data: _objectSpread({},
-      obj) });
-
-
-  },
-  store_integralDetail: function store_integralDetail(id) {
-    return myGet({
-      url: "".concat(_url.default.store_integralDetail, "/").concat(id) });
-
-  },
-  spread_info: function spread_info() {
-    return myGet({
-      url: "".concat(_url.default.spread_info) });
-
-  },
-  store_integralOrderConfirm: function store_integralOrderConfirm(obj) {
-    return myPost({
-      url: "".concat(_url.default.store_integralOrderConfirm),
-      data: _objectSpread({},
-      obj) });
-
-
-  },
-  store_integralOrderCreate: function store_integralOrderCreate(obj) {
-    return myPost({
-      url: "".concat(_url.default.store_integralOrderCreate),
-      data: _objectSpread({},
-      obj) });
-
-
-  },
-  store_integralOrderList: function store_integralOrderList(obj) {
-    return myGet({
-      url: "".concat(_url.default.store_integralOrderList),
-      params: _objectSpread({},
-      obj) });
-
-
-  },
-  store_integralOrderTake: function store_integralOrderTake(obj) {
-    return myPost({
-      url: "".concat(_url.default.store_integralOrderTake),
-      data: _objectSpread({},
-      obj) });
-
-
-  },
-  store_integralOrderCount_num: function store_integralOrderCount_num() {
-    return myGet({
-      url: "".concat(_url.default.store_integralOrderCount_num) });
-
-  },
-  userRoutine_code: function userRoutine_code() {
-    return myGet({
-      url: "".concat(_url.default.userRoutine_code) });
 
   } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
@@ -14683,80 +14209,10 @@ module.exports = function isAxiosError(payload) {
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = {
-  baseUrl: 'https://ceshi.xingmangkeji.cn', // http://192.168.50.142:8098  //https://ceshi.xingmangkeji.cn
-  silence_auth: "/api/v2/wechat/silence_auth_login", //授权登录
-  user: "/api/user", //用户信息
-  user_update: "/api/v2/user/user_update", //更新用户信息
-  updatePhone: "/api/user/updatePhone", //绑定手机号
-  verifyCode: "/api/verify_code", //获取发送短信的key
-  registerVerify: "/api/register/verify", //发送短信
-  addressList: "/api/address/list", //收货地址
-  editAddress: "/api/address/edit", //编辑收货地址
-  delAddress: "/api/address/del", //删除收货地址
-  city_list: "/api/city_list", //城市列表
-  addressDetail: "/api/address/detail", //收货地址详情
-  cartlist: "/api/cart/list", //购物车列表
-  cartDel: "/api/cart/del", //购物车删除
-  cartNum: "/api/cart/num", //购物车数量修改
-  collectDoctor: "/api/collect/doctor", //关注医生
-  collectDoctorlist: "/api/collect/doctor/list", //专家列表
-  integralList: "/api/integral/list", //积分记录
-  orderComment: "/api/order/comment", //商品评价
-  orderDetail: "/api/order/detail", //商品详情
-  collectAdd: "/api/collect/add", //商品收藏
-  collectDel: "/api/collect/del", //商品取消收藏
-  userCollect: "/api/collect/user", //商品收藏列表
-  myCommentList: "/api/comment/my_comment_list", //我的评论
-  myCommentDel: "/api/comment/my_comment_del", //评论删除
-  myAppointmentlist: "/api/order/my_appointment_list", //我的预约
-  orderWaitpay: "/api/order/order_wait_pay", //支付尾款
-  spreadPeople: "/api/spread/people", //我的团队列表
-  spreadPeopleCount: "/api/user/spread_people_count", //我的团队
-  refundOrderDetail: "/api/order/refund_detail", //退款订单详情
-  ordeRefundReason: "/api/order/refund/reason", //退款理由
-  orderRefundVerify: "/api/order/refund/verify", //订单退款审核
-  refundExpress: "/api/order/refund/express", //退货物流单号
-  getCartCounts: "/api/cart/count", //购物车数量 numType true 购物车数量,false=购物车产品数量
-  newlist: "/api/article/new/list", //新闻
-  articleDetails: "/api/article/details", //文章详情
-  guanggao: "/api/guanggao", //广告
-  wechatLive: "/api/wechat/live", //直播
-  // 
+  baseUrl: 'http://192.168.50.142:9007', // http://192.168.50.142:8098  //https://ceshi.xingmangkeji.cn
   loginWechat: '/api/login/wechat',
-  category: '/api/category', //商品分类
-  products: '/api/products', //商品列表
-  detail: '/api/product/detail', //商品详情
-  cartAdd: '/api/cart/add', //添加到购物车
-  orderConfirm: '/api/order/confirm', //订单确认
-  orderCreate: '/api/order/create', //订单创建
-  orderList: '/api/order/list', //订单列表
-  orderPay: '/api/order/pay', //订单支付
-  orderCancel: "/api/order/cancel", //订单取消
-  orderDel: "/api/order/del", //订单删除
-  zhuanjia: '/api/zhuanjia', //专家列表
-  xiufu: '/api/xiufu', //修复专区
-  orderComputed: '/api/order/computed', //计算订单金额
-  productHot: '/api/product/hot', //首页商品
-  searchKeyword: '/api/search/keyword', //热搜词
-  position: '/api/position', //首页城市列表
-  banner: '/api/banner', //首页轮播图
-  store_integralList: '/api/store_integral/list', //积分商品
-  yanxuan_index: '/api/yanxuan_index', //严选商城首页-促销商品和团购商品
-  combinationDetail: '/api/combination/detail', //拼团产品详情
-  replyList: '/api/reply/list', //获取商品评论
-  orderAgain: '/api/order/again', //再次购买
-  orderTake: '/api/order/take', //订单收货
-  spread_info: '/api/user/spread_info', //推广分销二维码海报生成
-  combinationPink: '/api/combination/pink', //拼团 开团
-  combinationRemove: "/api/combination/remove", //拼团取消
-  store_integralDetail: '/api/store_integral/detail', //积分商品详情
-  store_integralOrderConfirm: '/api/store_integral/order/confirm', //积分兑换确认页
-  store_integralOrderCreate: '/api/store_integral/order/create', //积分兑换订单创建
-  store_integralOrderList: '/api/store_integral/order/list', //积分订单
-  store_integralOrderTake: '/api/store_integral/order/take', //积分商品订单收货
-  store_integralOrderCount_num: '/api/store_integral/order/count_num', //
-  spreadBanner: '/api/spread/banner', //
-  userRoutine_code: '/api/user/routine_code' //我的推广小程序码
+  product: '/api/product_detail', //商品信息
+  login: '/api/login' //账户密码登录
 };exports.default = _default;
 
 /***/ }),
@@ -25828,7 +25284,57 @@ module.exports = Array.isArray || function (arr) {
 /* 215 */,
 /* 216 */,
 /* 217 */,
-/* 218 */
+/* 218 */,
+/* 219 */,
+/* 220 */,
+/* 221 */,
+/* 222 */,
+/* 223 */,
+/* 224 */,
+/* 225 */,
+/* 226 */,
+/* 227 */,
+/* 228 */,
+/* 229 */,
+/* 230 */,
+/* 231 */,
+/* 232 */,
+/* 233 */,
+/* 234 */,
+/* 235 */,
+/* 236 */,
+/* 237 */,
+/* 238 */,
+/* 239 */,
+/* 240 */,
+/* 241 */,
+/* 242 */,
+/* 243 */,
+/* 244 */,
+/* 245 */,
+/* 246 */,
+/* 247 */,
+/* 248 */,
+/* 249 */,
+/* 250 */,
+/* 251 */,
+/* 252 */,
+/* 253 */,
+/* 254 */,
+/* 255 */,
+/* 256 */,
+/* 257 */,
+/* 258 */,
+/* 259 */,
+/* 260 */,
+/* 261 */,
+/* 262 */,
+/* 263 */,
+/* 264 */,
+/* 265 */,
+/* 266 */,
+/* 267 */,
+/* 268 */
 /*!******************************************************************************!*\
   !*** D:/HBuilderProjects/pangxie/node_modules/uview-ui/libs/util/emitter.js ***!
   \******************************************************************************/

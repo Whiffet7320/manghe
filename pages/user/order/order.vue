@@ -30,7 +30,7 @@
 								</view>
 								<view class="btns">
 									<view class="btn2">再来一单</view>
-									<view class="btn1" style="margin-left: 20rpx;">查看物流</view>
+									<view class="btn1" @click="toWuliu" style="margin-left: 20rpx;">查看物流</view>
 									<view class="btn1">删除订单</view>
 								</view>
 							</view>
@@ -178,6 +178,11 @@
 					})
 				}, 200)
 				console.log(this.orderList)
+			},
+			toWuliu(){
+				uni.navigateTo({
+					url:'/pages/user/order/wuliu'
+				})
 			},
 			// tabs通知swiper切换
 			tabsChange(index) {

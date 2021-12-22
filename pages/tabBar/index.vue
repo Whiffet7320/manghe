@@ -10,7 +10,7 @@
 		</view>
 		<u-navbar :title-bold='true' title-color='#000000' :is-back="false" title="首页" title-size='34'>
 			<view class="slot-wrap">
-				<image src="/static/image/lujin2106.png" class="top-pic" mode=""></image>
+				<image @click="toLogin" src="/static/image/lujin2106.png" class="top-pic" mode=""></image>
 			</view>
 		</u-navbar>
 		<view class="nav1">
@@ -34,9 +34,9 @@
 			<view class="tit1">阳澄湖大闸蟹</view>
 			<view class="tit2">
 				<view class="txt1">
-					￥<text class="big">99</text>元/只
+					￥<text class="big">{{obj.price}}</text>元/只
 				</view>
-				<view class="txt2">母蟹5两</view>
+				<view class="txt2">母蟹{{obj.unit}}两</view>
 			</view>
 			<view class="tit3">立即购买</view>
 		</view>
@@ -53,16 +53,27 @@
 					'平明送客楚山孤',
 					'洛阳亲友如相问',
 					'一片冰心在玉壶'
-				]
+				],
+				obj:{},
 			}
 		},
 		onShow() {
-
+			this.getData()
 		},
 		mounted() {
 
 		},
 		methods: {
+			async getData(){
+				const res = await this.$api.product()
+				console.log(res)
+				this.obj = res.data;
+			},
+			toLogin(){
+				uni.navigateTo({
+					url:'/pages/login/login'
+				})
+			},
 			toJifenguize(){
 				uni.navigateTo({
 					url:'/pages/index/jifenguize'

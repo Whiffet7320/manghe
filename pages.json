@@ -80,6 +80,13 @@
 				"navigationBarBackgroundColor": "#ffffff",
 				"navigationBarTextStyle": "black"
 			}
+		},{
+			"path": "wuliu",
+			"style": {
+				"navigationBarTitleText": "物流信息",
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black"
+			}
 		}]
 	}, {
 		"root": "pages/user/tixian",
