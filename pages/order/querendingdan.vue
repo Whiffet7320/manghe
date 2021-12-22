@@ -60,7 +60,7 @@
 				<view class="tit1">
 					<view class="txt1">支付方式</view>
 				</view>
-				<view class="item1" @click="payIndex = 1">
+				<view class="item1" @click="changePay(1)">
 					<view class="t1">
 						<view class="left">
 							<image src="/static/image/lujin1936.png" class="pic1" mode=""></image>
@@ -72,7 +72,7 @@
 					</view>
 					<view class="t2">亿万用户的选择，更快更安全</view>
 				</view>
-				<view class="item1" style="border-top: 2rpx solid #f2f2f2;border-bottom: 2rpx solid #f2f2f2;" @click="payIndex = 2">
+				<view class="item1" style="border-top: 2rpx solid #f2f2f2;border-bottom: 2rpx solid #f2f2f2;" @click="changePay(2)">
 					<view class="t1">
 						<view class="left">
 							<image src="/static/image/zu3030.png" class="pic1 p2" mode=""></image>
@@ -83,7 +83,7 @@
 					</view>
 					<view class="t2">当前积分为{{userInfo.integral}}分</view>
 				</view>
-				<view class="item1" @click="payIndex = 3">
+				<view class="item1" @click="changePay(3)">
 					<view class="t1">
 						<view class="left">
 							<image src="/static/image/lujin2820.png" class="pic1 p3" mode=""></image>
@@ -122,6 +122,7 @@
 				show: false,
 				payIndex:1,
 				show2:false,
+				paytype:"weixin"
 			}
 		},
 		computed:{
@@ -166,11 +167,22 @@
 			jia() {
 				this.num++
 			},
+			changePay(index){
+				this.payIndex = index;
+				if(index==1){
+					this.paytype = "weixin";
+				}else if(index==2){
+					this.paytype = "integral";
+				}else if(index==3){
+					this.paytype = "yue";
+				}
+			},
 			onSubmit(){
 				let data = {
 					user_address_id:this.addressId,
 					buy_num:this.num,
-					remark:this.value
+					remark:this.value,
+					type:this.paytype
 				}
 				this.$api.orderPay(data).then((res)=>{
 					if(res.code==200){
@@ -214,7 +226,7 @@
 							}
 						});
 					break;
-					case 3:
+					case 2||3:
 						uni.hideLoading();
 						this.show2 = true;
 						setTimeout(()=>{
@@ -278,6 +290,17 @@
 		}
 
 		.right {}
+	}
+	.noAddress{
+		margin:30rpx 30rpx 0 30rpx;
+		width: 690rpx;
+		height: 80rpx;
+		line-height: 80rpx;
+		font-size: 28rpx;
+		color: #FFFFFF;
+		background: #D61D1D;
+		text-align: center;
+		border-radius: 40rpx;
 	}
 
 	.nav2 {

@@ -658,7 +658,14 @@ export default {
 	},
 	saveAddress(obj) {
 		return myPost({
-			url: urls.saveAddress,
+			url: urls.saveAddress,data: {
+				...obj
+			}
+		})
+	},
+	send_sms(obj) {
+		return myPost({
+			url: urls.send_sms,
 			data: {
 				...obj
 			}
@@ -685,9 +692,33 @@ export default {
 			}
 		})
 	},
+	register(obj) {
+		return myPost({
+			url: urls.register,
+			data: {
+				...obj
+			}
+		})
+	},
+	captch_login(obj) {
+		return myPost({
+			url: urls.captch_login,
+			data: {
+				...obj
+			}
+		})
+	},
 	yzrealName(obj) {
 		return myPost({
 			url: urls.yzrealName,
+			data: {
+				...obj
+			}
+		})
+	},
+	forgetpwd(obj) {
+		return myPost({
+			url: urls.forgetpwd,
 			data: {
 				...obj
 			}

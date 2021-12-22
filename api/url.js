@@ -9,4 +9,8 @@ export default {
 	delAddress:"/api/del_address",//删除收货地址
 	orderPay:"/api/order_pay", //立即购买
 	yzrealName:"/api/real_name",//实名验证
+	send_sms:'/api/send_sms',//发送短信
+	register:'/api/register',//账户注册
+	captch_login:'/api/captch_login',//验证码登录
+	forgetpwd:'/api/forgetpwd',//忘记密码
 }

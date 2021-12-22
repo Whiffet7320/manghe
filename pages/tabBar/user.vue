@@ -7,8 +7,11 @@
 			<view class="bg"></view>
 			<view class="info">
 				<view class="uinfo" v-if="userInfo.uid" @click="goInfo">
-					<image :src="userInfo.avatar" mode="aspectFill" class="avatar"></image>
-					<view class="name">{{userInfo.nickname}}</view>
+					<view class="avatar user" v-if="userInfo.avatar==''">
+						<image src="/static/image/user/user.png" mode="aspectFill" class="avatars"></image>
+					</view>
+					<image :src="userInfo.avatar" mode="aspectFill" class="avatar" v-else></image>
+					<view class="name">{{userInfo.nickname||''}}</view>
 				</view>
 				<view class="uinfo" @click="goLogin" v-else>
 					<view class="avatar user">
@@ -79,8 +82,9 @@
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="arrow"></image>
 			</view>
 		</view>
-		<view class="logout">退出登录</view>
+		<view class="logout" @click="lshow=true">退出登录</view>
 		<page-modal v-model="show" :content="tel" width="466" confirm-text="立即拨打" :show-cancel-button="true" @confirm="confirm"></page-modal>
+		<page-modal v-model="lshow" content="是否确定退出登录？" width="466" confirm-text="确定" :show-cancel-button="true" @confirm="confirm2"></page-modal>
 	</view>
 </template>
 
@@ -93,6 +97,7 @@
 		},
 		data(){
 			return{
+				lshow:false,
 				show:false,
 				userInfo:{},
 				code:"",
@@ -140,6 +145,12 @@
 					success: (res) => {
 						console.log(res)
 					}
+				})
+			},
+			confirm2(){
+				uni.clearStorageSync();
+				uni.navigateTo({
+					url:"/pages/login/login"
 				})
 			}
 		},

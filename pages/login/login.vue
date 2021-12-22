@@ -55,9 +55,9 @@
 								success: (loginres) => {
 									this.$api.loginWechat({
 										code:loginres.code,
+										userinfo:userInfo,
 										spread_code: getApp().spread_code,
-										spread_spid: getApp().spread_spid,
-										userinfo:userInfo
+										spread_spid: getApp().spread_spid
 									}).then(res => {
 										uni.hideLoading();
 										if (res.data.token !== undefined && res.data.token) {

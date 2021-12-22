@@ -20,14 +20,14 @@
 					<text class="text">身份证正面照片</text>
 				</view>
 				<view class="zimg" @click="uploadpic(0)" v-else>
-					<image :src="front_img" mode="aspectFill" class="img"></image>
+					<image :src="front_imgs" mode="aspectFill" class="img"></image>
 				</view>
 				<view class="uimg" @click="uploadpic(1)" v-if="back_img==''">
 					<view class="plus">+</view>
 					<text class="text">身份证反面照片</text>
 				</view>
 				<view class="zimg" @click="uploadpic(1)" v-else>
-					<image :src="back_img" mode="aspectFill" class="img"></image>
+					<image :src="back_imgs" mode="aspectFill" class="img"></image>
 				</view>
 			</view>
 		</view>
@@ -40,6 +40,7 @@
 </template>
 
 <script>
+	import config from "../../../api/url.js";
 	import pageToast from "@/components/page-toast";
 	export default{
 		components:{
@@ -52,7 +53,9 @@
 				real_name:"",
 				cardNum:"",
 				front_img:"",
-				back_img:""
+				front_imgs:"",
+				back_img:"",
+				back_imgs:""
 			}
 		},
 		methods:{
@@ -61,11 +64,14 @@
 			},
 			uploadpic(index){
 				this.$tool.uploadImageOne({url:"upload_pic",fileType:"idcard"},(res)=>{
+					console.log(res)
 					if(res.code==200){
 						if(index==0){
 							this.front_img = res.data.path;
+							this.front_imgs = config.baseUrl+"/"+res.data.path;
 						}else if(index==1){
 							this.back_img = res.data.path;
+							this.back_imgs = config.baseUrl+"/"+res.data.path;
 						}
 					}
 				});

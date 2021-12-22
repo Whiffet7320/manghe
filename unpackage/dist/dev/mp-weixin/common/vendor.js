@@ -11848,7 +11848,14 @@ dzpMyGet.interceptors.response.use(function (response) {
   },
   saveAddress: function saveAddress(obj) {
     return myPost({
-      url: _url.default.saveAddress,
+      url: _url.default.saveAddress, data: _objectSpread({},
+      obj) });
+
+
+  },
+  send_sms: function send_sms(obj) {
+    return myPost({
+      url: _url.default.send_sms,
       data: _objectSpread({},
       obj) });
 
@@ -11875,9 +11882,33 @@ dzpMyGet.interceptors.response.use(function (response) {
 
 
   },
+  register: function register(obj) {
+    return myPost({
+      url: _url.default.register,
+      data: _objectSpread({},
+      obj) });
+
+
+  },
+  captch_login: function captch_login(obj) {
+    return myPost({
+      url: _url.default.captch_login,
+      data: _objectSpread({},
+      obj) });
+
+
+  },
   yzrealName: function yzrealName(obj) {
     return myPost({
       url: _url.default.yzrealName,
+      data: _objectSpread({},
+      obj) });
+
+
+  },
+  forgetpwd: function forgetpwd(obj) {
+    return myPost({
+      url: _url.default.forgetpwd,
       data: _objectSpread({},
       obj) });
 
@@ -14318,7 +14349,11 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
   addressList: "/api/address_list", //收货地址
   delAddress: "/api/del_address", //删除收货地址
   orderPay: "/api/order_pay", //立即购买
-  yzrealName: "/api/real_name" //实名验证
+  yzrealName: "/api/real_name", //实名验证
+  send_sms: '/api/send_sms', //发送短信
+  register: '/api/register', //账户注册
+  captch_login: '/api/captch_login', //验证码登录
+  forgetpwd: '/api/forgetpwd' //忘记密码
 };exports.default = _default;
 
 /***/ }),
@@ -25527,7 +25562,14 @@ module.exports = Array.isArray || function (arr) {
 /* 366 */,
 /* 367 */,
 /* 368 */,
-/* 369 */
+/* 369 */,
+/* 370 */,
+/* 371 */,
+/* 372 */,
+/* 373 */,
+/* 374 */,
+/* 375 */,
+/* 376 */
 /*!*********************************************************************!*\
   !*** D:/project/pangxie/node_modules/uview-ui/libs/util/emitter.js ***!
   \*********************************************************************/
@@ -25586,13 +25628,6 @@ function _broadcast(componentName, eventName, params) {
     } } };exports.default = _default;
 
 /***/ }),
-/* 370 */,
-/* 371 */,
-/* 372 */,
-/* 373 */,
-/* 374 */,
-/* 375 */,
-/* 376 */,
 /* 377 */,
 /* 378 */,
 /* 379 */,
@@ -25853,7 +25888,14 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
 /* 442 */,
 /* 443 */,
 /* 444 */,
-/* 445 */
+/* 445 */,
+/* 446 */,
+/* 447 */,
+/* 448 */,
+/* 449 */,
+/* 450 */,
+/* 451 */,
+/* 452 */
 /*!****************************************************************************************!*\
   !*** D:/project/pangxie/node_modules/uview-ui/components/u-parse/libs/MpHtmlParser.js ***!
   \****************************************************************************************/
@@ -25867,9 +25909,9 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
  * @author JinYufeng
  * @listens MIT
  */
-var cfg = __webpack_require__(/*! ./config.js */ 446),
+var cfg = __webpack_require__(/*! ./config.js */ 453),
 blankChar = cfg.blankChar,
-CssHandler = __webpack_require__(/*! ./CssHandler.js */ 447),
+CssHandler = __webpack_require__(/*! ./CssHandler.js */ 454),
 windowWidth = uni.getSystemInfoSync().windowWidth;
 var emoji;
 
@@ -26443,7 +26485,7 @@ module.exports = MpHtmlParser;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ }),
-/* 446 */
+/* 453 */
 /*!**********************************************************************************!*\
   !*** D:/project/pangxie/node_modules/uview-ui/components/u-parse/libs/config.js ***!
   \**********************************************************************************/
@@ -26532,14 +26574,14 @@ if (wx.canIUse('editor')) {
 module.exports = cfg;
 
 /***/ }),
-/* 447 */
+/* 454 */
 /*!**************************************************************************************!*\
   !*** D:/project/pangxie/node_modules/uview-ui/components/u-parse/libs/CssHandler.js ***!
   \**************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var cfg = __webpack_require__(/*! ./config.js */ 446),
+var cfg = __webpack_require__(/*! ./config.js */ 453),
 isLetter = function isLetter(c) {return c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z';};
 
 function CssHandler(tagStyle) {
