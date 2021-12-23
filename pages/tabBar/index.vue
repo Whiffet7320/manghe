@@ -29,15 +29,15 @@
 				<image src="/static/image/icon_notice.png" mode="aspectFit" class="icon"></image>
 				<swiper class="list" :autoplay="true" :vertical="true" :circular="true" :interval="3000" :display-multiple-items="2" v-if="list.length>2">
 					<swiper-item class="nitem" v-for="(item,index) in list" :key="index">
-						<text class="tit">{{item.name}}</text>
-						<text class="time">{{item.time}}</text>
+						<text class="tit">{{item.notice_content}}</text>
+						<text class="time">{{$u.timeFrom(item.time,false)}}</text>
 					</swiper-item>
 				</swiper>
 			</view>
 		</view>
 		<view class="nav3" @click="toQuerendingdan">
 			<image src="/static/image/zu2998.png" class="pic1" mode=""></image>
-			<image src="/static/image/zu1998.png" class="pic2" mode=""></image>
+			<image :src="obj.img" class="pic2" mode=""></image>
 			<view class="tit1">{{obj.name}}</view>
 			<view class="tit2">
 				<view class="txt1">
@@ -52,38 +52,38 @@
 </template>
 
 <script>
+	import {mapGetters,mapState} from "vuex";
 	export default {
+		computed: {
+			...mapGetters(['isLogin'])
+		},
 		data() {
 			return {
-				list: [
-					{
-						name:"450378用户充值500元",
-						time:"10分钟前"
-					},
-					{
-						name:"7610312用户购买了6只大闸蟹",
-						time:"10分钟前"
-					},
-					{
-						name:"350378用户充值500元",
-						time:"3分钟前"
-					},
-					{
-						name:"7610312用户购买了10只大闸蟹",
-						time:"5分钟前"
-					}
-				],
+				list: [],
 				obj:{},
 			}
 		},
 		onShow() {
-			this.getData()
+			this.getData();
 		},
 		methods: {
 			async getData(){
-				const res = await this.$api.product()
-				console.log(res)
-				this.obj = res.data;
+				const res = await this.$api.product();
+				if(res.code==200){
+					this.obj = res.data;
+				}
+				const res2 = await this.$api.notice();
+				if(res2.code==200){
+					let data = res2.data;
+					let newArr = data.map((ele)=>{
+						let json = {};
+						json.id = ele.id;
+						json.notice_content = ele.notice_content;
+						json.time = new Date(ele.add_time.replace(/-/g, '/')).getTime()/1000;
+						return json;
+					})
+					this.list = newArr;
+				}
 			},
 			toLogin(){
 				uni.navigateTo({
@@ -106,11 +106,15 @@
 				})
 			},
 			toQuerendingdan(){
-				this.$store.commit("setProinfo",this.obj);
-				uni.navigateTo({
-					url:'/pages/order/querendingdan'
-				})
-			},
+				if(this.isLogin){
+					this.$store.commit("setProinfo",this.obj);
+					uni.navigateTo({
+						url:'/pages/order/querendingdan'
+					})
+				}else{
+					this.toLogin();
+				}
+			}
 		}
 	}
 </script>
@@ -126,14 +130,14 @@
 	}
 	.fixbtn{
 		position: fixed;
-		bottom: 442rpx;
+		bottom: 610rpx;
 		right: 0;
 		z-index: 100;
 	}
 	.float1{
 		z-index: 99;
-		background-image: url(../../static/image/juxin12.png);
-		background-size: 100% 100%;
+		background: rgba(52,2,2,0.83);
+		border-radius: 22rpx 0rpx 0rpx 0rpx;
 		width: 126rpx;
 		height: 48rpx;
 		margin-bottom: 46rpx;
@@ -226,17 +230,17 @@
 		}
 		.notice{
 			position: absolute;
-			top: 25px;
+			top: 37px;
 			left: 15px;
 			z-index: 50;
-			width: 634rpx;
-			height: 150rpx;
+			width: 630rpx;
+			height: 120rpx;
 			overflow: hidden;
 			display: flex;
 			.icon{
 				width: 36rpx;
 				height: 34rpx;
-				margin-top: 30rpx;
+				margin-top: 8rpx;
 				margin-left: 30rpx;
 				margin-right: 19rpx;
 			}
@@ -244,7 +248,6 @@
 				flex:1;
 				display: flex;
 				flex-wrap: wrap;
-				padding-top: 30rpx;
 				height: 90rpx;
 				overflow: hidden;
 				.nitem{
@@ -276,6 +279,7 @@
 		margin-top: 26rpx;
 		position: relative;
 		height: 334rpx;
+		overflow: hidden;
 		.pic1 {
 			position: absolute;
 			left: 40rpx;
@@ -286,10 +290,10 @@
 
 		.pic2 {
 			position: absolute;
-			left: 42rpx;
-			top: 12rpx;
-			width: 286rpx;
-			height: 286rpx;
+			left: 80rpx;
+			top: 50rpx;
+			width: 230rpx;
+			height: 230rpx;
 		}
 
 		.tit1 {

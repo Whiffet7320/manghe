@@ -1,20 +1,19 @@
 <template>
 	<view class="empty-box">
-		<image src="/static/image/empty.png"></image>
-		<view class="txt">{{title}}</view>
+		<image src="/static/image/empty-box.png"></image>
+		<view class="txt">{{text}}</view>
 	</view>
 </template>
 
 <script>
 	export default{
 		props: {
-			title: {
+			text: {
 				type: String,
 				default: '暂无记录',
-			},
-		},
+			}
+		}
 	}
-	
 </script>
 
 <style lang="scss">

@@ -21,7 +21,8 @@ export default new Vuex.Store({
 		uid:uni.getStorageSync("uid") || 0,
 		addressInfo:{},
 		onResh:false,
-		proInfo:{}
+		proInfo:{},
+		orderInfo:{}
 	},
 	mutations: {
 		searchList(state, str) {
@@ -70,6 +71,9 @@ export default new Vuex.Store({
 		},
 		setProinfo(state, data) {
 			state.proInfo = data;
+		},
+		setOrderInfo(state, data) {
+			state.orderInfo = data;
 		}
 	},
 	getters:{

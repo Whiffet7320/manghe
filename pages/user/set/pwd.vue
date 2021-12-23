@@ -10,7 +10,7 @@
 			<input type="number" v-model="phone" maxlength="11" class="ipt" placeholder="请输入你的手机号" placeholder-style="color:#808080;font-weight:500" />
 		</view>
 		<view class="cell">
-			<input type="number" v-model="captcha" class="ipt ipts" placeholder="请输入短信验证码" placeholder-style="color:#808080;font-weight:500" />
+			<input type="number" v-model="captch" class="ipt ipts" placeholder="请输入短信验证码" placeholder-style="color:#808080;font-weight:500" />
 			<view class="light" v-if="isSend" @click="getVerifyCode">获取验证码</view>
 			<view class="reset" v-else>{{verifyText}}</view>
 		</view>
@@ -21,6 +21,7 @@
 </template>
 
 <script>
+	import {mapState} from "vuex";
 	import pageToast from "@/components/page-toast";
 	export default{
 		components:{
@@ -31,7 +32,7 @@
 				pwd:"",
 				npwd:"",
 				phone:"",
-				captcha:"",
+				captch:"",
 				isSend:true,
 				second: 0,
 				clockTimer: null,
@@ -39,6 +40,7 @@
 			}
 		},
 		computed:{
+			...mapState(['userInfo']),
 			verifyText(){
 				if (this.second < 10) {
 					return '0' + this.second +'s后重新获取';
@@ -57,6 +59,7 @@
 				if (this.second > 0) {
 					return;
 				}
+				this.isSend = !this.isSend;
 				this.second = 60;
 				this.clockTimer = setInterval(()=> {
 					this.second--;
@@ -65,6 +68,13 @@
 						this.isSend = !this.isSend;
 					}
 				}, 1000)
+				await this.$api.send_sms({mobile:this.phone,event:"updatepwd"}).then(res => {
+					if(res.code==200){
+						this.$u.toast(res.message);
+					}else{
+						this.$u.toast(res.message);
+					}
+				})
 			},
 			onSubmit(){
 				if(!(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,18}$/.test(this.pwd))){
@@ -83,17 +93,38 @@
 					this.$u.toast("请输入正确的手机号");
 					return false;
 				}
-				if(this.captcha==""){
+				if(this.captch==""){
 					this.$u.toast("请输入短信验证码");
 					return false;
 				}
-				this.show = true;
+				let data = {
+					mobile:this.phone,
+					newpwd:this.pwd,
+					repwd:this.npwd,
+					captch:this.captch
+				}
+				this.$api.updatepwd(data).then((res)=>{
+					if(res.code==200){
+						this.userInfo.pwd = this.pwd;
+						this.$store.commit("UpdateUserinfo",this.userInfo);
+						this.show = true;
+					}else{
+						this.$u.toast(res.message);
+					}
+				})
 			},
 			confirm(){
 				this.show = false;
 				setTimeout(()=> {
 					uni.navigateBack();
-				}, 1500);
+				},800);
+			}
+		},
+		onLoad(options){
+			if(options.type){
+				uni.setNavigationBarTitle({
+					title:"修改登陆密码"
+				})
 			}
 		},
 		onUnload() {
@@ -133,7 +164,7 @@
 				font-weight:700;
 			}
 			.ipts{
-				width:446rpx;
+				width:440rpx;
 				margin-right: 40rpx;
 			}
 			.light{

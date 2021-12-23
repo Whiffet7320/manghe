@@ -6,20 +6,34 @@
 </template>
 
 <script>
+	import {mapState} from "vuex";
 	export default{
 		data(){
 			return{
 				uname:""
 			}
 		},
+		computed:{
+			...mapState(['userInfo'])
+		},
 		methods:{
 			onSubmit(){
-				let data = {nickname:this.uname};
-				this.$store.commit("UpdateUserinfo",data);
-				this.$u.toast("设置成功");
-				setTimeout(()=>{
-					uni.navigateBack();
-				},1500);
+				if(this.$u.trim(this.uname)==""){
+					this.$u.toast("请输入用户昵称");
+					return false;
+				}
+				this.$api.updateUserInfo({nickname:this.uname}).then((res)=>{
+					if(res.code==200){
+						this.userInfo.nickname = this.uname;
+						this.$store.commit("UpdateUserinfo",this.userInfo);
+						this.$u.toast("设置成功");
+						setTimeout(()=>{
+							uni.navigateBack();
+						},1500);
+					}else{
+						this.$u.toast(res.message);
+					}
+				})
 			}
 		}
 	}
@@ -33,7 +47,7 @@
 	.content{
 		padding: 20rpx 30rpx;
 		.ipt{
-			width: 100%;
+			flex:1;
 			height: 80rpx;
 			line-height: 80rpx;
 			padding:0 24rpx;

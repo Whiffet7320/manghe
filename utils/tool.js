@@ -43,7 +43,7 @@ export default{
 							})
 						} else {
 							let data = res.data ? JSON.parse(res.data) : {};
-							if (data.status == 200) {
+							if (data.code == 200) {
 								successCallback && successCallback(data)
 							} else {
 								errorCallback && errorCallback(data);
@@ -164,7 +164,7 @@ export default{
 						})
 					} else {
 						let data = res.data ? JSON.parse(res.data) : {};
-						if (data.status == 200) {
+						if (data.code == 200) {
 							successCallback && successCallback(data)
 						} else {
 							errorCallback && errorCallback(data);
@@ -295,5 +295,16 @@ export default{
 			return param;
 		}
 		return value;
+	},
+	/**
+	 * 获取图片完整地址
+	 */
+	imgUrl(url){
+		let index = url.hasOwnProperty("https");
+		if(index==-1){
+			return url;
+		}else{
+			return config.baseUrl+"/" + url;
+		}
 	},
 }

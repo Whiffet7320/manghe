@@ -3,14 +3,14 @@
 		<view class="stit">银行卡</view>
 		<view class="list">
 			<view class="bank_item" v-for="(item,index) in list" :key="index">
-				<image src="" mode="aspectFit" class="img"></image>
+				<image :src="'https://apimg.alipay.com/combo.png?d=cashier&t='+item.bank_code+'_s'" mode="aspectFit" class="img"></image>
 				<view class="info">
-					<view class="name">{{item.name}}</view>
+					<view class="name">{{item.bank_name}}</view>
 					<view class="code">
 						<text class="omit">****</text>
 						<text class="omit">****</text>
 						<text class="omit">****</text>
-						<text>{{item.code.substr(item.code.length - 4, item.code.length)}}</text>
+						<text>{{item.bank_number.substr(item.bank_number.length - 4, item.bank_number.length)}}</text>
 					</view>
 				</view>
 				<view class="moren" v-if="item.default==1"></view>
@@ -28,21 +28,17 @@
 	export default{
 		data(){
 			return{
-				list:[
-					{
-						name:"建设银行",
-						code:"1234567891011112888",
-						default:1
-					},
-					{
-						name:"建设银行",
-						code:"1234567891011112888",
-						default:0
-					}
-				]
+				list:[]
 			}
 		},
 		methods:{
+			getlist(){
+				this.$api.userBanklist().then((res)=>{
+					if(res.code==200){
+						this.list = res.data;
+					}
+				})
+			},
 			onDelete(id,index){
 				uni.showModal({
 					title:"提示",
@@ -50,16 +46,26 @@
 					confirmColor:"#D61D1D",
 					success: (res) => {
 						if(res.confirm){
-							this.list.splice(index,1);
+							this.$api.delBank(id).then((res)=>{
+								if(res.code==200){
+									this.$u.toast(res.message);
+									this.list.splice(index,1);
+								}else{
+									this.$u.toast(res.message);
+								}
+							})
 						}
 					}
 				})
 			},
 			goAdd(){
 				uni.navigateTo({
-					url:"/pages/users/bank/detail"
+					url:"/pages/user/bank/detail"
 				})
 			}
+		},
+		onShow(){
+			this.getlist();
 		}
 	}
 </script>

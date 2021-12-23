@@ -34,7 +34,7 @@
 		<view class="btnwrap">
 			<button class="cubtn" @tap="onSubmit">提交审核</button>
 		</view>
-		<u-keyboard ref="uKeyboard" mode="card" v-model="kshow" :random="true" @change="change"></u-keyboard>
+		<u-keyboard ref="uKeyboard" mode="card" v-model="kshow" :random="true" @change="change" @backspace="backspace"></u-keyboard>
 		<page-toast v-model="show" content="请耐心等待1-3个工作日" @confirm="confirm"></page-toast>
 	</view>
 </template>
@@ -59,12 +59,31 @@
 			}
 		},
 		methods:{
+			async getUserInfo() {
+				await this.$api.userInfo().then(res => {
+					if(res.code==200){
+						let data = res.data.realname;
+						if(data){
+							this.real_name = data.real_name;
+							this.cardNum = data.id_number;
+							this.front_img = data.front_img;
+							this.back_img = data.back_img;
+							this.front_imgs = config.baseUrl+"/"+data.front_img;
+							this.back_imgs = config.baseUrl+"/"+data.back_img;
+						}
+					}
+				});
+			},
+			// 点击退格键
+			backspace() {
+				if(this.cardNum.length) this.cardNum = this.cardNum.substr(0, this.cardNum.length - 1);
+			},
+			// 键盘按键发生变化
 			change(detail) {
 				this.cardNum += detail;
 			},
 			uploadpic(index){
 				this.$tool.uploadImageOne({url:"upload_pic",fileType:"idcard"},(res)=>{
-					console.log(res)
 					if(res.code==200){
 						if(index==0){
 							this.front_img = res.data.path;
@@ -102,9 +121,6 @@
 				this.$api.yzrealName(data).then((res)=>{
 					if(res.code==200){
 						this.show = true;
-						setTimeout(()=>{
-							uni.navigateBack();
-						},1500)
 					}else{
 						this.$u.toast(res.message);
 					}
@@ -112,7 +128,14 @@
 			},
 			confirm(){
 				this.show = false;
+				this.$store.commit("setResh",true);
+				setTimeout(()=>{
+					uni.navigateBack();
+				},1500)
 			}
+		},
+		onLoad(){
+			this.getUserInfo();
 		}
 	}
 </script>
@@ -173,6 +196,7 @@
 		.zimg{
 			width: 430rpx;
 			height: 240rpx;
+			margin-bottom: 40rpx;
 			.img{
 				width: 100%;
 				height: 100%;

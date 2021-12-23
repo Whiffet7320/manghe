@@ -116,6 +116,12 @@
 				}
 			},
 			{
+				"path": "agreement/index",
+				"style": {
+					"navigationBarTitleText": "用户协议"
+				}
+			},
+			{
 				"path": "tixian/tixian",
 				"style": {
 					"navigationStyle": "custom"
@@ -158,6 +164,14 @@
 				"path": "order/order",
 				"style": {
 					"navigationBarTitleText": "我的订单",
+					"navigationBarBackgroundColor": "#ffffff",
+					"navigationBarTextStyle": "black"
+				}
+			},
+			{
+				"path": "order/detail",
+				"style": {
+					"navigationBarTitleText": "订单详情",
 					"navigationBarBackgroundColor": "#ffffff",
 					"navigationBarTextStyle": "black"
 				}

@@ -1,59 +1,48 @@
 <template>
-	<view class="index">
-		<view class="nav1" v-if="aInfo.province" @click="goAddress(0)">
+	<view class="detail">
+		<view class="nav1" v-if="orderInfo.addressinfo">
 			<view class="left">
 				<u-icon name="map-fill" color="#D61D1D" size="44"></u-icon>
-				<view class="tit">{{aInfo.province}}{{aInfo.city}}{{aInfo.district}}{{aInfo.detail}}</view>
-			</view>
-			<view class="right">
-				<u-icon name="arrow-right" color="#D61D1D" size="28"></u-icon>
+				<view class="tit">{{orderInfo.addressinfo.province}}{{orderInfo.addressinfo.city}}{{orderInfo.addressinfo.district}}{{orderInfo.addressinfo.detail}}</view>
 			</view>
 		</view>
-		<view class="noAddress" @click="goAddress(1)" v-else>添加收货地址</view>
 		<view class="nav2">
-			<view class="left">
-				<image src="/static/image/zu1998.png" class="pic1" mode=""></image>
+			<view class="left" v-if="proInfo.img">
+				<image :src="proInfo.img" class="pic1" mode=""></image>
 			</view>
 			<view class="right">
 				<view class="tit1">
-					<view class="txt1-1">{{proInfo.name}}</view>
-					<view class="txt1-2">￥{{proInfo.price}}</view>
+					<view class="txt1-1">{{proInfo.name||''}}</view>
+					<view class="txt1-2">￥{{proInfo.price||0.00}}</view>
 				</view>
 				<view class="tit2">
-					<view class="txt2-1">规格：<text style="margin-left: 4rpx;">母蟹{{proInfo.unit}}两</text></view>
-					<view class="txt2-2">x{{num}}</view>
+					<view class="txt2-1">规格：<text style="margin-left: 4rpx;">母蟹{{proInfo.unit||1}}两</text></view>
+					<view class="txt2-2">x{{orderInfo.total_num||1}}</view>
 				</view>
 				<view class="tit3">
 					<view class="tit3-1">不可退款退货</view>
-					<view class="tit3-1" style="margin-left: 24rpx;">限购{{proInfo.today_buy_times}}只/天</view>
-				</view>
-				<view class="tit4">
-					<view class='txt1'>购买数量：</view>
-					<view class="right4">
-						<view @click="jian" class="jian">-</view>
-						<view class="txt">{{num}}</view>
-						<view @click="jia" class="jian">+</view>
-					</view>
+					<view class="tit3-1" style="margin-left: 24rpx;">限购{{proInfo.today_buy_times||1}}只/天</view>
 				</view>
 			</view>
 		</view>
 		<view class="nav3">
 			<view class="item">
 				<view class="txt1">实际付款金额</view>
-				<view class="txt2">{{(parseFloat($tool.argMul(num,proInfo.price))+parseFloat(storePostage)).toFixed(2)}}元</view>
+				<view class="txt2">{{(parseFloat($tool.argMul(orderInfo.total_num,proInfo.price))+parseFloat(orderInfo.total_postage)).toFixed(2)}}元</view>
 			</view>
 			<view class="item">
 				<view class="txt1">邮费</view>
-				<view class="txt2">{{storePostage}}元</view>
+				<view class="txt2">{{orderInfo.total_postage}}元</view>
 			</view>
-			<view class="item2">
-				<u-input v-model="value" :clearable='false' type="textarea" :border="false" placeholder='选填：给卖家留言（45字以内）' />
-			</view>
-			<view class="item3">
-				<view class="txt">付款后，我们尽快安排给您发货</view>
-			</view>
+			<view class="item2">{{orderInfo.remark}}</view>
 		</view>
-		<view @click="show = true" class="footer">提交订单</view>
+		<view class="ftbtn">
+			<view class="btns gray" @click="dshow=true">删除</view>
+			<view class="btns" @click="goShop">再来一单</view>
+		</view>
+		<page-modal v-model="show" width="466" title="确认删除订单？" confirm-text="确认删除" @confirm="confirm">
+			<view class="mcont">删除之后数据无法恢复</view>
+		</page-modal>
 		<!-- 弹出层 -->
 		<u-popup v-model="show" mode='bottom' border-radius='24' height='708' closeable>
 			<view class="pop">
@@ -110,15 +99,15 @@
 
 <script>
 	import {mapState} from "vuex";
+	import pageModal from "@/components/page-modal";
 	export default {
+		components:{
+			pageModal
+		},
 		data() {
 			return {
-				addressId:0,
-				aInfo:{},
-				storePostage:0,
-				userInfo:{},
-				num: 1,
-				value: '',
+				id:0,
+				dshow:false,
 				show: false,
 				payIndex:1,
 				show2:false,
@@ -126,46 +115,24 @@
 			}
 		},
 		computed:{
-			...mapState(["proInfo","addressInfo"])
+			...mapState(["orderInfo","proInfo"])
 		},
 		methods: {
-			goAddress(index) {
-				if(index==0){
-					uni.navigateTo({
-						url: '/pages/user/address/index?type=order'
-					});
-				}else if(index==1){
-					uni.navigateTo({
-						url: '/pages/user/address/detail?type=order'
-					});
-				}
-			},
-			async userDefaultShip() {
-				await this.$api.addressList().then((res)=>{
-					if (res.code === 200 && res.data) {
-						let data = res.data;
-						let newData = data.filter(item => item.is_default == 1);
-						if(newData.length){
-							this.aInfo = newData[0];
-							this.addressId = newData[0].id;
-						}
-					}
-				});
-			},
-			async getUserInfo() {
-				await this.$api.userInfo().then(res => {
+			confirm(){
+				this.$api.delOrder(this.id).then((res)=>{
 					if(res.code==200){
-						this.userInfo = res.data;
+						this.$u.toast("删除成功");
+						this.orderList.splice(this.index,1);
+					}else{
+						this.$u.toast(res.message);
 					}
-				});
+				})
 			},
-			jian() {
-				if (this.num > 1) {
-					this.num--
-				}
-			},
-			jia() {
-				this.num++
+			goShop(){
+				this.$store.commit("setProinfo",this.proInfo);
+				uni.navigateTo({
+					url:'/pages/order/querendingdan'
+				})
 			},
 			changePay(index){
 				this.payIndex = index;
@@ -176,20 +143,6 @@
 				}else if(index==3){
 					this.paytype = "yue";
 				}
-			},
-			onSubmit(){
-				let data = {
-					user_address_id:this.addressId,
-					buy_num:this.num,
-					remark:this.value,
-					type:this.paytype
-				}
-				this.$api.orderPay(data).then((res)=>{
-					if(res.code==200){
-						this.show = false;
-						this.goPay(res.data);
-					}
-				})
 			},
 			goPay(jsConfig){
 				uni.showLoading({
@@ -248,13 +201,8 @@
 			}
 		},
 		onLoad(options){
-			this.getUserInfo();
-			this.userDefaultShip();
-		},
-		onShow(){
-			if(this.addressInfo){
-				this.aInfo = this.addressInfo;
-				this.addressId = this.addressInfo.id;
+			if(options.id){
+				this.id = options.id;
 			}
 		}
 	}
@@ -266,7 +214,7 @@
 	}
 </style>
 <style lang="scss" scoped>
-	.index {
+	.detail {
 		position: relative;
 		padding: 30rpx;
 	}
@@ -296,30 +244,15 @@
 				text-overflow: ellipsis;
 			}
 		}
-
-		.right {}
 	}
-	.noAddress{
-		width: 690rpx;
-		height: 80rpx;
-		line-height: 80rpx;
-		font-size: 28rpx;
-		color: #FFFFFF;
-		background: #D61D1D;
-		text-align: center;
-		border-radius: 40rpx;
-	}
-
 	.nav2 {
-		margin-top: 24rpx;
+		margin-top:24rpx;
 		width: 690rpx;
 		height: 276rpx;
 		background: #ffffff;
 		box-shadow: 0rpx 0rpx 8rpx 0rpx rgba(0, 0, 0, 0.16);
 		display: flex;
-		align-items: center;
-		padding: 0 16rpx;
-
+		padding: 10rpx 16rpx 0;
 		.left {
 			.pic1 {
 				width: 248rpx;
@@ -329,8 +262,7 @@
 
 		.right {
 			flex:1;
-			padding-left: 44rpx;
-
+			padding-left: 45rpx;
 			.tit1 {
 				display: flex;
 				align-items: center;
@@ -457,14 +389,9 @@
 
 		.item2 {
 			border-top: 2rpx solid #f2f2f2;
-			padding: 16rpx 24rpx;
-
-			.txt {
-				line-height: 84rpx;
-				font-size: 20rpx;
-				font-weight: 500;
-				color: #808080;
-			}
+			padding: 36rpx 24rpx;
+			font-size: 28rpx;
+			color: #000;
 		}
 
 		.item3 {
@@ -481,19 +408,26 @@
 		}
 	}
 
-	.footer {
-		position: fixed;
-		bottom: 86rpx;
-		left: 30rpx;
-		width: 690rpx;
-		height: 80rpx;
-		background: #d61d1d;
-		border-radius: 12rpx;
-		font-size: 28rpx;
-		font-weight: 700;
-		text-align: center;
-		line-height: 80rpx;
-		color: #fafafc;
+	.ftbtn {
+		width: 100%;
+		padding: 48rpx 30rpx;
+		display: flex;
+		justify-content: space-between;
+		.btns{
+			width: 272rpx;
+			height: 80rpx;
+			line-height: 80rpx;
+			background: #d61d1d;
+			border-radius: 12rpx;
+			font-size: 28rpx;
+			font-weight: 700;
+			text-align: center;
+			color: #FAFAFC;
+			&.gray{
+				background-color: #E0E1E2;
+				color: #808080;
+			}
+		}
 	}
 
 	.pop {

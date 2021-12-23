@@ -4,7 +4,7 @@
 			<view class="cellitem">
 				<view class="name">我的头像</view>
 				<view class="pic" @click="uploadpic">
-					<image :src="avatar" mode="aspectFill" class="avatar"></image>
+					<image :src="$tool.imgUrl(userInfo.avatar)" mode="aspectFill" class="avatar"></image>
 				</view>
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="icon"></image>
 			</view>
@@ -13,12 +13,12 @@
 				<view class="desc">{{userInfo.nickname}}</view>
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="icon"></image>
 			</view>
-			<view class="cellitem">
+			<view class="cellitem" @click="goPwd">
 				<view class="name">登陆密码</view>
-				<view class="desc">设置登陆密码</view>
+				<view class="desc">{{userInfo.pwd==''?'设置登陆密码':"修改登陆密码"}}</view>
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="icon"></image>
 			</view>
-			<view class="cellitem">
+			<view class="cellitem" @click="goPaywd">
 				<view class="name">支付密码</view>
 				<view class="desc">设置支付密码</view>
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="icon"></image>
@@ -39,11 +39,11 @@
 </template>
 
 <script>
+	import config from "../../../api/url.js";
 	import {mapState} from "vuex";
 	export default{
 		data(){
 			return{
-				avatar:"",
 				fileSizeString:"0B",
 				show:false
 			}
@@ -52,10 +52,43 @@
 			...mapState(['userInfo'])
 		},
 		methods:{
-			uploadpic(){},
+			uploadpic(){
+				this.$tool.uploadImageOne("upload_pic",(res)=>{
+					if(res.code==200){
+						let avatar = res.data.path;
+						this.$api.updateUserInfo({avatar:avatar}).then((res)=>{
+							if(res.code==200){
+								this.userInfo.avatar = res.data.path;
+								this.$store.commit("UpdateUserinfo",this.userInfo);
+								this.$u.toast("上传成功");
+							}else{
+								this.$u.toast(res.message);
+							}
+						})
+					}else{
+						this.$u.toast(res.message);
+					}
+				});
+			},
 			goUname(){
 				uni.navigateTo({
-					url:"/pages/users/set/uname"
+					url:"/pages/user/set/uname"
+				})
+			},
+			goPwd(){
+				if(this.userInfo.pwd==''){
+					uni.navigateTo({
+						url:"/pages/user/set/pwd"
+					})
+				}else{
+					uni.navigateTo({
+						url:"/pages/user/set/pwd?type=1"
+					})
+				}
+			},
+			goPaywd(){
+				uni.navigateTo({
+					url:"/pages/user/tixian/zhifumima"
 				})
 			},
 			clearfileSize(){
@@ -67,6 +100,9 @@
 		},
 		onLoad(){
 			this.fileSizeString = uni.getStorageInfoSync().currentSize+"Kb";
+		},
+		onShow(){
+			console.log(this.userInfo)
 		}
 	}
 </script>
@@ -84,11 +120,13 @@
 			}
 			.pic{
 				flex:1;
+				display: flex;
+				justify-content: flex-end;
 				width: 100rpx;
 				height: 100rpx;
 				.avatar{
-					width: 100%;
-					height: 100%;
+					width: 100rpx;
+					height: 100rpx;
 					border-radius: 50%;
 				}
 			}

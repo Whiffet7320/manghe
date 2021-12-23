@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<view class="swiper">
-			<image :src="userInfo.avatar" mode="aspectFill" class="img"></image>
+			<image :src="$tool.imgUrl(userInfo.avatar)" mode="aspectFill" class="img" v-if="userInfo.uid"></image>
 			<u-navbar v-if="scrollTop>100" title="我的" :title-bold="true" back-icon-color="#ffffff" title-color="#ffffff" :background="{backgroundColor: '#562c2c'}" :border-bottom="false"></u-navbar>
 			<u-navbar v-else title="我的" :title-bold="true" back-icon-color="#ffffff" title-color="#ffffff" :background="{backgroundColor: 'transparent'}" :border-bottom="false"></u-navbar>
 			<view class="bg"></view>
@@ -10,7 +10,7 @@
 					<view class="avatar user" v-if="userInfo.avatar==''">
 						<image src="/static/image/user/user.png" mode="aspectFill" class="avatars"></image>
 					</view>
-					<image :src="userInfo.avatar" mode="aspectFill" class="avatar" v-else></image>
+					<image :src="$tool.imgUrl(userInfo.avatar)" mode="aspectFill" class="avatar" v-else></image>
 					<view class="name">{{userInfo.nickname||''}}</view>
 				</view>
 				<view class="uinfo" @click="goLogin" v-else>
@@ -20,10 +20,10 @@
 					<view class="name">点击登录/注册</view>
 				</view>
 				<view class="code">
-					<text>邀请码：{{code==''?'00000000':code}}</text>
-					<view class="btn">复制</view>
+					<text>邀请码：{{userInfo.invite_code==''||userInfo.invite_code==null?'00000000':userInfo.invite_code}}</text>
+					<view class="btn" @click="$tool.onCopy(userInfo.invite_code)">复制</view>
 				</view>
-				<view class="set" @click="jump('/pages/users/set/index')">
+				<view class="set" @click="jump('/pages/user/set/index')">
 					<image src="/static/image/icon_set.png" mode="aspectFill" class="icon"></image>
 				</view>
 			</view>
@@ -39,7 +39,7 @@
 			</view>
 		</view>
 		<view class="menulist">
-			<view class="menu_item">
+			<view class="menu_item" @click="jump('/pages/user/order/order')">
 				<image src="/static/image/user/m1.png" mode="aspectFit" class="icon"></image>
 				<view class="name">我的订单</view>
 				<view class="subtit"></view>
@@ -48,7 +48,7 @@
 			<view class="menu_item" @click="jump('/pages/user/certificate/index')">
 				<image src="/static/image/user/m2.png" mode="aspectFit" class="icon"></image>
 				<view class="name">实名认证</view>
-				<view class="subtit">{{userInfo.realname==null||userInfo.realname==''?'未实名':'已认证'}}</view>
+				<view class="subtit">{{userInfo.realname==null||userInfo.realname==''?'未实名':userInfo.realname.status==0?'待审核':'已认证'}}</view>
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="arrow"></image>
 			</view>
 			<view class="menu_item">
@@ -57,10 +57,16 @@
 				<view class="subtit"></view>
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="arrow"></image>
 			</view>
-			<view class="menu_item" @click="jump('/pages/user/bank/index')">
+			<view class="menu_item" v-if="userInfo.is_bind_bank>0" @click="jump('/pages/user/bank/index')">
+				<image src="/static/image/user/m4.png" mode="aspectFit" class="icon"></image>
+				<view class="name">银行卡</view>
+				<view class="subtit">{{userInfo.is_bind_bank>0?'':'点击去绑定'}}</view>
+				<image src="/static/image/arrow_right.png" mode="aspectFit" class="arrow"></image>
+			</view>
+			<view class="menu_item" v-else @click="jump('/pages/user/bank/detail')">
 				<image src="/static/image/user/m4.png" mode="aspectFit" class="icon"></image>
 				<view class="name">绑定银行卡</view>
-				<view class="subtit"></view>
+				<view class="subtit">点击去绑定</view>
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="arrow"></image>
 			</view>
 			<view class="menu_item" @click="jump('/pages/user/address/index')">
@@ -81,15 +87,21 @@
 				<view class="subtit"></view>
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="arrow"></image>
 			</view>
+			<view class="menu_item" @click="jump('/pages/user/agreement/index')">
+				<image src="/static/image/user/m7.png" mode="aspectFit" class="icon"></image>
+				<view class="name">用户协议</view>
+				<view class="subtit"></view>
+				<image src="/static/image/arrow_right.png" mode="aspectFit" class="arrow"></image>
+			</view>
 		</view>
 		<view class="logout" @click="lshow=true">退出登录</view>
-		<page-modal v-model="show" :content="tel" width="466" confirm-text="立即拨打" :show-cancel-button="true" @confirm="confirm"></page-modal>
-		<page-modal v-model="lshow" content="是否确定退出登录？" width="466" confirm-text="确定" :show-cancel-button="true" @confirm="confirm2"></page-modal>
+		<page-modal v-model="show" :content="tel" width="466" confirm-text="立即拨打" @confirm="confirm"></page-modal>
+		<page-modal v-model="lshow" content="是否确定退出登录？" width="466" confirm-text="确定" @confirm="confirm2"></page-modal>
 	</view>
 </template>
 
 <script>
-	import {mapGetters} from "vuex";
+	import {mapGetters,mapState} from "vuex";
 	import pageModal from "@/components/page-modal";
 	export default{
 		components:{
@@ -106,7 +118,8 @@
 			}
 		},
 		computed: {
-			...mapGetters(['isLogin'])
+			...mapGetters(['isLogin']),
+			...mapState(['onResh'])
 		},
 		methods:{
 			async getUserInfo() {
@@ -115,6 +128,10 @@
 						this.userInfo = res.data;
 						this.$store.commit("UpdateUserinfo",res.data);
 						this.$store.commit('SetUid', res.data.uid);
+					}else{
+						uni.navigateTo({
+							url:"/pages/login/login"
+						})
 					}
 				});
 			},
@@ -156,6 +173,9 @@
 		},
 		onShow(){
 			if(this.isLogin){
+				this.getUserInfo();
+			}
+			if(this.onResh){
 				this.getUserInfo();
 			}
 		},

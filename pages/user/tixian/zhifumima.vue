@@ -1,7 +1,7 @@
 <template>
 	<view class="index">
 		<view class="tit1">请输入螃蟹商城的支付密码，可用于银行卡提现</view>
-		<u-message-input :focus="true" :breathe="true" :maxlength='6' :dot-fill="true" @finish="finish"></u-message-input>
+		<u-message-input :focus="true" :breathe="true" :maxlength='6' :dot-fill="true" @finish="finish" width="64" inactive-color="#B7B7B7" active-color="#d61d1d"></u-message-input>
 		<view @click="onSubmit" class="btn">确定</view>
 	</view>
 </template>

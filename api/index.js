@@ -635,6 +635,14 @@ export default {
 			}
 		})
 	},
+	updateUserInfo(obj) {
+		return myPost({
+			url: urls.updateUserInfo,
+			data: {
+				...obj
+			}
+		})
+	},
 	userEdit(obj) {
 		return myPost({
 			url: urls.user_update,
@@ -720,6 +728,67 @@ export default {
 		return myPost({
 			url: urls.forgetpwd,
 			data: {
+				...obj
+			}
+		})
+	},
+	updatepwd(obj) {
+		return myPost({
+			url: urls.updatepwd,
+			data: {
+				...obj
+			}
+		})
+	},
+	bindBank(obj) {
+		return myPost({
+			url: urls.bindBank,
+			data: {
+				...obj
+			}
+		})
+	},
+	userBanklist() {
+		return myGet({
+			url: urls.userBanklist,
+		})
+	},
+	delBank(bank_id) {
+		return myPost({
+			url: urls.delBank,
+			data: {
+				bank_id
+			}
+		})
+	},
+	orderList(obj) {
+		return myGet({
+			url: urls.orderList,
+			params: {
+				...obj
+			}
+		})
+	},
+	confirmOrder(order_id) {
+		return myPost({
+			url: urls.confirmOrder,
+			data: {
+				order_id
+			}
+		})
+	},
+	delOrder(order_id) {
+		return myPost({
+			url: urls.delOrder,
+			data: {
+				order_id
+			}
+		})
+	},
+	notice(obj) {
+		return myGet({
+			url: urls.notice,
+			params: {
 				...obj
 			}
 		})

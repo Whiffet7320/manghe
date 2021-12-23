@@ -2,7 +2,7 @@
 	<view>
 		<u-popup mode="center" border-radius="16" v-model="value" width="360rpx" height="360rpx" class="modpop">
 			<view class="popcon">
-				<view class="txt1">提示</view>
+				<view class="txt1">{{title}}</view>
 				<view class="txt2">{{content}}</view>
 				<view class="btn" @click="confirm">确定</view>
 			</view>
@@ -17,6 +17,10 @@
 			value: {
 				type: Boolean,
 				default: false
+			},
+			title:{
+				type:String,
+				default:"提示"
 			},
 			content:{
 				type:String,
