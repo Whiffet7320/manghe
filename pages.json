@@ -80,6 +80,14 @@
 				}
 			},
 			{
+				"path": "set/zhifumima",
+				"style": {
+					"navigationBarTitleText": "设置支付密码",
+					"navigationBarBackgroundColor": "#ffffff",
+					"navigationBarTextStyle": "black"
+				}
+			},
+			{
 				"path": "address/index",
 				"style": {
 					"navigationBarTitleText": "收货地址"

@@ -98,7 +98,7 @@ var components
 try {
   components = {
     uNavbar: function() {
-      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-navbar/u-navbar */ "node-modules/uview-ui/components/u-navbar/u-navbar").then(__webpack_require__.bind(null, /*! uview-ui/components/u-navbar/u-navbar.vue */ 350))
+      return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-navbar/u-navbar */ "node-modules/uview-ui/components/u-navbar/u-navbar").then(__webpack_require__.bind(null, /*! uview-ui/components/u-navbar/u-navbar.vue */ 360))
     }
   }
 } catch (e) {
@@ -212,6 +212,7 @@ var _default =
 {
   data: function data() {
     return {
+      scencLid: '',
       list: [
       {
         name: "450378用户充值500元",
@@ -236,11 +237,25 @@ var _default =
   onShow: function onShow() {
     this.getData();
   },
+  onLoad: function onLoad(options) {var _this = this;return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {var arr;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
+              console.log(options.scene, 1111111111111111);
+              if (options.scene) {
+                arr = options.scene.split('_');
+                _this.scencLid = arr[0];
+                console.log(_this.scencLid);
+                uni.setStorageSync('scencLid', _this.scencLid);
+                // if (!uni.getStorageSync('token')) {
+                // 	uni.navigateTo({
+                // 		url: `/pages/wode/weixinshouquan/weixinshouquan?recommend_userid=${uni.getStorageSync('myUserId')}`
+                // 	})
+                // }
+              }case 2:case "end":return _context.stop();}}}, _callee);}))();
+  },
   methods: {
-    getData: function getData() {var _this = this;return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee() {var res;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:_context.next = 2;return (
-                  _this.$api.product());case 2:res = _context.sent;
+    getData: function getData() {var _this2 = this;return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee2() {var res;return _regenerator.default.wrap(function _callee2$(_context2) {while (1) {switch (_context2.prev = _context2.next) {case 0:_context2.next = 2;return (
+                  _this2.$api.product());case 2:res = _context2.sent;
                 console.log(res);
-                _this.obj = res.data;case 5:case "end":return _context.stop();}}}, _callee);}))();
+                _this2.obj = res.data;case 5:case "end":return _context2.stop();}}}, _callee2);}))();
     },
     toLogin: function toLogin() {
       uni.navigateTo({

@@ -748,6 +748,22 @@ export default {
 			}
 		})
 	},
+	set_pay_password(obj) {
+		return myPost({
+			url: urls.set_pay_password,
+			data: {
+				...obj
+			}
+		})
+	},
+	spread(obj) {
+		return myGet({
+			url: urls.spread,
+			params: {
+				...obj
+			}
+		})
+	},
 	upload_pic(file, type) {
 		return new Promise(async (resolve, reject) => {
 			uni.uploadFile({

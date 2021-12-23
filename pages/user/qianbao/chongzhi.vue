@@ -61,7 +61,7 @@
 				index: 1,
 				show2: true,
 				nowPrice: '',
-				price: '',
+				price: '100',
 			}
 		},
 		onLoad(options) {

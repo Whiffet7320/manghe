@@ -55,6 +55,7 @@
 	export default {
 		data() {
 			return {
+				scencLid:'',
 				list: [
 					{
 						name:"450378用户充值500元",
@@ -78,6 +79,20 @@
 		},
 		onShow() {
 			this.getData()
+		},
+		async onLoad(options) {
+			console.log(options.scene, 1111111111111111)
+			if (options.scene) {
+				const arr = options.scene.split('_')
+				this.scencLid = arr[0];
+				console.log(this.scencLid)
+				uni.setStorageSync('scencLid',this.scencLid)
+				// if (!uni.getStorageSync('token')) {
+				// 	uni.navigateTo({
+				// 		url: `/pages/wode/weixinshouquan/weixinshouquan?recommend_userid=${uni.getStorageSync('myUserId')}`
+				// 	})
+				// }
+			}
 		},
 		methods: {
 			async getData(){

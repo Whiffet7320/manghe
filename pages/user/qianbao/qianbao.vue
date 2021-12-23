@@ -27,7 +27,7 @@
 				<view class="txt">全部记录</view>
 			</view>
 			<view class="items">
-				<view class="item" v-for="item in 6">
+				<view class="item" v-for="item in orderList" :key='item.id'>
 					<view class="titt1">
 						<view class="txt1">积分</view>
 						<view class="txt2">+250</view>
@@ -62,6 +62,7 @@
 		},
 		data() {
 			return {
+				orderList:[],
 				nowPrice:'',
 				// 加载
 				status: 'loadmore',
@@ -73,6 +74,11 @@
 				},
 			}
 		},
+		onShow() {
+			this.orderList = [];
+			this.$store.commit("dingdanPage", 1);
+			this.getData()
+		},
 		onLoad(options) {
 			this.nowPrice = options.now_money
 		},
@@ -80,6 +86,23 @@
 			this.$store.commit("dingdanPage", this.dingdanPage + 1);
 		},
 		methods:{
+			async getData() {
+				this.status = 'loading';
+				setTimeout(async () => {
+					const res = await this.$api.withdraw_list({
+						page: this.dingdanPage,
+						limit: this.dingdanPageSize,
+					})
+					console.log(res.data.data)
+					if (res.data.data.length == 0) {
+						this.status = 'nomore'
+					} else {
+						this.status = 'loadmore';
+						this.orderList = this.orderList.concat(res.data.data)
+					}
+				}, 200)
+				console.log(this.orderList)
+			},
 			tojifen(){
 				uni.navigateTo({
 					url:'/pages/user/jifen/wodejifen'

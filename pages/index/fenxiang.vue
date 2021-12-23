@@ -8,15 +8,15 @@
 			</view>
 			<view class="tit2">
 				<view class="txt1">您的邀请码为</view>
-				<view class="txt2">47356086</view>
+				<view class="txt2">{{yqm}}</view>
 				<view class="txt3">好友也可在注册时直接填写邀请码</view>
 			</view>
 			<view class="tit3">
 				<view class="txt1">①通过下方邀请按钮分享</view>
 				<view class="txt1 txt2">②点击右上角分享邀请链接，朋友通过链接注册</view>
-				<view class="txt1 txt2">③分享您的专属邀请码，朋友扫码注册获得奖励</view>
+				<!-- <view class="txt1 txt2">③分享您的专属邀请码，朋友扫码注册获得奖励</view> -->
 			</view>
-			<view class="tit4">立即邀请</view>
+			<button open-type="share" class="tit4">立即邀请</button>
 		</view>
 		<view class="mynav">
 			<u-navbar v-if='!isFlag' :title-bold='true' :border-bottom='false' back-icon-color='#ffffff'
@@ -67,6 +67,7 @@
 					'background': '#D61D1D'
 				},
 				isFlag: false,
+				yqm:'',
 			}
 		},
 		onPageScroll(e) {
@@ -75,6 +76,31 @@
 			}else{
 				this.isFlag = false;
 			}
+		},
+		// 用户点击右上角分享转发
+		onShareAppMessage: async function() {
+			var title = '跟我一起来领取奖励吧！'; //data，return 数据title
+			return {
+				title: title || '',
+				path: `/pages/tabBar/index?scene=${this.yqm}_0`,
+			}
+		},
+		//用户点击右上角分享朋友圈
+		onShareTimeline: async function() {
+			var title = '跟我一起来领取奖励吧！'; //data，return 数据title
+			return {
+				title: title || '',
+				path: `/pages/tabBar/index?scene=${this.yqm}_0`,
+			}
+		},
+		onLoad() {
+			this.getData()
+		},
+		methods:{
+			async getData(){
+				const res = await this.$api.getUserInfo()
+				this.yqm = res.data.invite_code
+			},
 		},
 	}
 </script>
