@@ -8,33 +8,31 @@
 			</view>
 			<view class="tit2">
 				<view class="txt1">您的邀请码为</view>
-				<view class="txt2">47356086</view>
+				<view class="txt2">{{yqm}}</view>
 				<view class="txt3">好友也可在注册时直接填写邀请码</view>
 			</view>
 			<view class="tit3">
 				<view class="txt1">①通过下方邀请按钮分享</view>
 				<view class="txt1 txt2">②点击右上角分享邀请链接，朋友通过链接注册</view>
-				<view class="txt1 txt2">③分享您的专属邀请码，朋友扫码注册获得奖励</view>
+				<!-- <view class="txt1 txt2">③分享您的专属邀请码，朋友扫码注册获得奖励</view> -->
 			</view>
-			<view class="tit4">立即邀请</view>
+			<button open-type="share" class="tit4">立即邀请</button>
 		</view>
 		<view class="mynav">
-			<u-navbar v-if='!isFlag' :title-bold='true' :border-bottom='false' back-icon-color='#ffffff'
-				:background='background' title-color='#ffffff' title="分享" title-size='34'></u-navbar>
-			<u-navbar v-else :title-bold='true' :border-bottom='false' :background='background2' title-color='#ffffff'
-				title="分享" title-size='34'></u-navbar>
+			<u-navbar v-if='!isFlag' :title-bold='true' :border-bottom='false' back-icon-color='#ffffff' :background='background' title-color='#ffffff' title="分享" title-size='34'></u-navbar>
+			<u-navbar v-else :title-bold='true' :border-bottom='false' :background='background2' title-color='#ffffff' title="分享" title-size='34'></u-navbar>
 		</view>
 		<view class="nav2">
 			<view class="txt1">我的邀请</view>
 			<view class="item2">
 				<view class="left">
 					<view class="txt1-1">成功邀请(人)</view>
-					<view class="txt2-1">12</view>
+					<view class="txt2-1">{{invite_num}}</view>
 				</view>
 				<view class="shu"></view>
 				<view class="right left">
 					<view class="txt1-1">邀请所获得的积分</view>
-					<view class="txt2-1">45870</view>
+					<view class="txt2-1">{{invite_integral}}</view>
 				</view>
 			</view>
 		</view>
@@ -57,7 +55,11 @@
 </template>
 
 <script>
+	import {mapGetters,mapState} from "vuex";
 	export default {
+		computed: {
+			...mapGetters(['isLogin'])
+		},
 		data() {
 			return {
 				background: {
@@ -67,6 +69,9 @@
 					'background': '#D61D1D'
 				},
 				isFlag: false,
+				yqm:'',
+				invite_num:0,
+				invite_integral:0
 			}
 		},
 		onPageScroll(e) {
@@ -76,6 +81,41 @@
 				this.isFlag = false;
 			}
 		},
+		// 用户点击右上角分享转发
+		onShareAppMessage: async function() {
+			var title = '跟我一起来领取奖励吧！'; //data，return 数据title
+			return {
+				title: title || '',
+				path: `/pages/tabBar/index?scene=${this.yqm}_0`,
+			}
+		},
+		//用户点击右上角分享朋友圈
+		onShareTimeline: async function() {
+			var title = '跟我一起来领取奖励吧！'; //data，return 数据title
+			return {
+				title: title || '',
+				path: `/pages/tabBar/index?scene=${this.yqm}_0`,
+			}
+		},
+		onLoad(){
+			if(this.isLogin){
+				this.getData();
+			}else{
+				uni.navigateTo({
+					url:'/pages/login/login'
+				})
+			}
+		},
+		methods:{
+			async getData(){
+				const res = await this.$api.userInfo();
+				if(res.code==200){
+					this.yqm = res.data.invite_code;
+					this.invite_num = res.data.invite_num;
+					this.invite_integral = res.data.invite_integral;
+				}
+			}
+		}
 	}
 </script>
 

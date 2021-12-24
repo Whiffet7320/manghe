@@ -40,7 +40,7 @@
 			<view class="btns gray" @click="dshow=true">删除</view>
 			<view class="btns" @click="goShop">再来一单</view>
 		</view>
-		<page-modal v-model="show" width="466" title="确认删除订单？" confirm-text="确认删除" @confirm="confirm">
+		<page-modal v-model="dshow" width="466" title="确认删除订单？" confirm-text="确认删除" @confirm="confirm">
 			<view class="mcont">删除之后数据无法恢复</view>
 		</page-modal>
 		<!-- 弹出层 -->
@@ -122,7 +122,9 @@
 				this.$api.delOrder(this.id).then((res)=>{
 					if(res.code==200){
 						this.$u.toast("删除成功");
-						this.orderList.splice(this.index,1);
+						setTimeout(()=>{
+							uni.navigateBack();
+						},800)
 					}else{
 						this.$u.toast(res.message);
 					}

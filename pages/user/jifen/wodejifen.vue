@@ -6,7 +6,7 @@
 				<image src="/static/image/zu3030.png" class="pic1-1" mode=""></image>
 				<view class="txt1">总积分</view>
 			</view>
-			<view class="tit2">12590</view>
+			<view class="tit2">{{zongJifen}}</view>
 			<view class="boxs">
 				<view class="left" @click="toGuize">
 					<view class="lt">
@@ -25,69 +25,85 @@
 			</view>
 		</view>
 		<view class="mynav">
-			<u-navbar :title-bold='true' :border-bottom='false' back-icon-color='#ffffff' :background='background'
-				title-color='#ffffff' title="我的积分" title-size='34'></u-navbar>
+			<u-navbar :title-bold='true' :border-bottom='false' back-icon-color='#ffffff' :background='background' title-color='#ffffff' title="我的积分" title-size='34'></u-navbar>
 		</view>
 		<view class="nav2">
 			<view class="tit1">
-				<view @click="changeIndex(1)" :class="{'txt1':true,'active':index==1}">全部</view>
-				<view @click="changeIndex(2)" :class="{'txt1':true,'active':index==2}">收入</view>
-				<view @click="changeIndex(3)" :class="{'txt1':true,'active':index==3}">支出</view>
+				<view @click="changeIndex(-1)" :class="{'txt1':true,'active':index==-1}">全部</view>
+				<view @click="changeIndex(1)" :class="{'txt1':true,'active':index==1}">收入</view>
+				<view @click="changeIndex(0)" :class="{'txt1':true,'active':index==0}">支出</view>
 			</view>
 			<view class="items">
-				<view class="item" v-for="item in 10">
-					<view class="left">
-						<view class="tit1-1">成功邀请{{mytext}}下单</view>
-						<view class="tit2-1">2021-12-16<text style="margin-left: 20rpx;">12:20:45</text></view>
+				<scroll-view class="list-scroll-content" scroll-y='true' enable-back-to-top @scrolltolower="loadMore">
+					<view class="item" v-for="item in list" :key='item.id'>
+						<view class="left">
+							<view class="tit1-1">{{item.mark}}</view>
+							<view class="tit2-1">{{item.add_time}}</view>
+						</view>
+						<view class="right" v-if="item.pm">+{{item.number}}</view>
+						<view class="right gray" v-else>-{{item.number}}</view>
 					</view>
-					<view class="right">+80</view>
-				</view>
-				<u-loadmore :status="status" />
+					<page-empty v-show="isEmpty"></page-empty>
+					<u-loadmore v-show="list.length" height="80rpx" :status="status" font-size="24" />
+				</scroll-view>
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
-	import {
-		mapState
-	} from "vuex";
+	import {mapState} from "vuex";
+	import pageEmpty from "@/components/page-empty";
 	export default {
-		computed: {
-			...mapState(["dingdanPage", "dingdanPageSize"]),
-		},
-		watch: {
-			dingdanPage: function(page) {
-				console.log('ddpage')
-				this.$store.commit("dingdanPage", page);
-				if (this.dingdanPage != 1) {
-					this.getData();
-				}
-			},
+		components:{
+			pageEmpty
 		},
 		data() {
 			return {
+				isEmpty: false,
+				list:[],
+				zongJifen:'',
 				background: {
 					'background': 'transparent'
 				},
-				index: 1,
-				mytext: '<小猪猪>',
+				index: -1,
 				// 加载
-				status: 'loadmore',
-				iconType: 'flower',
-				loadText: {
-					loadmore: '上拉加载更多',
-					loading: '正在加载...',
-					nomore: '没有了更多了'
-				},
+				current_page: 1,
+				last_page: 1,
+				status: 'loadmore'
 			}
 		},
-		onReachBottom() {
-			this.$store.commit("dingdanPage", this.dingdanPage + 1);
-		},
 		methods: {
+			loadData(){
+				this.status = 'loading';
+				setTimeout(() => {
+					this.$api.integral_list({
+						page: this.current_page,
+						limit: 10,
+						status: this.index
+					}).then((res)=>{
+						if(res.code==200){
+							uni.stopPullDownRefresh();
+							this.list = this.list.concat(res.data.data);
+							this.isEmpty = !this.list.length;
+							this.last_page = res.data.last_page;
+							this.status = this.current_page < res.data.last_page ? 'loadmore' : 'nomore';
+						}
+					})
+				}, 200)
+			},
+			loadMore(){
+				if (this.current_page < this.last_page) {
+					this.current_page += 1;
+					this.loadData();
+				}
+			},
 			changeIndex(i) {
 				this.index = i;
+				this.list = [];
+				this.current_page = 1;
+				this.last_page = 1;
+				this.loadData();
 			},
 			toGuize(){
 				uni.navigateTo({
@@ -98,7 +114,19 @@
 				uni.navigateTo({
 					url:'/pages/user/tixian/tixian'
 				})
-			},
+			}
+		},
+		onLoad(options) {
+			if(options.zongjifen){
+				this.zongJifen = options.zongjifen;
+			}
+			this.loadData();
+		},
+		onPullDownRefresh() {
+			this.list = [];
+			this.current_page = 1;
+			this.last_page = 1;
+			this.loadData();
 		}
 	}
 </script>
@@ -109,9 +137,6 @@
 	}
 </style>
 <style lang="scss" scoped>
-	/deep/ .u-load-more-wrap {
-		height: 100rpx !important;
-	}
 	
 	.index {
 		position: relative;
@@ -258,8 +283,9 @@
 		.items {
 			margin-top: 20rpx;
 			height: calc(100% - 86rpx);
-			overflow-y: scroll;
-
+			.list-scroll-content{
+				height: 100%;
+			}
 			.item {
 				border-bottom: 2rpx solid #f2f2f2;
 				height: 136rpx;
@@ -287,6 +313,9 @@
 					font-size: 32rpx;
 					font-weight: 700;
 					color: #d61d1d;
+					&.gray{
+						color: #000;
+					}
 				}
 			}
 		}

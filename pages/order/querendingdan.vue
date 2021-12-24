@@ -188,6 +188,8 @@
 					if(res.code==200){
 						this.show = false;
 						this.goPay(res.data);
+					}else{
+						this.$u.toast(res.message);
 					}
 				})
 			},
@@ -249,13 +251,13 @@
 		},
 		onLoad(options){
 			this.getUserInfo();
-			this.userDefaultShip();
 		},
 		onShow(){
 			if(this.addressInfo){
 				this.aInfo = this.addressInfo;
 				this.addressId = this.addressInfo.id;
 			}
+			this.userDefaultShip();
 		}
 	}
 </script>

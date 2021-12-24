@@ -38,6 +38,7 @@
 			<view class="btn" @click="goAdd">去新建</view>
 		</view>
 		<view class="goAdds" @click="goAdd" v-if="list.length!=0">新建地址</view>
+		<u-gap height="40"></u-gap>
 	</view>
 </template>
 

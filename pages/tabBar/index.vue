@@ -28,7 +28,7 @@
 			<view class="notice">
 				<image src="/static/image/icon_notice.png" mode="aspectFit" class="icon"></image>
 				<swiper class="list" :autoplay="true" :vertical="true" :circular="true" :interval="3000" :display-multiple-items="2" v-if="list.length>2">
-					<swiper-item class="nitem" v-for="(item,index) in list" :key="index">
+					<swiper-item class="nitem" catchtouchmove="return" v-for="(item,index) in list" :key="index">
 						<text class="tit">{{item.notice_content}}</text>
 						<text class="time">{{$u.timeFrom(item.time,false)}}</text>
 					</swiper-item>
@@ -60,11 +60,19 @@
 		data() {
 			return {
 				list: [],
+				scencLid:'',
 				obj:{},
 			}
 		},
-		onShow() {
+		onShow(){
 			this.getData();
+		},
+		async onLoad(options) {
+			if (options.scene) {
+				const arr = options.scene.split('_');
+				this.scencLid = arr[0];
+				uni.setStorageSync('scencLid',this.scencLid);
+			}
 		},
 		methods: {
 			async getData(){
@@ -96,9 +104,13 @@
 				})
 			},
 			tofenxiang(){
-				uni.navigateTo({
-					url:'/pages/index/fenxiang'
-				})
+				if(this.isLogin){
+					uni.navigateTo({
+						url:'/pages/index/fenxiang'
+					})
+				}else{
+					this.toLogin();
+				}
 			},
 			goUser(){
 				uni.navigateTo({

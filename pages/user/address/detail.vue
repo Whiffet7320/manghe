@@ -10,7 +10,7 @@
 			<view class="UserPhoes">
 				<view class="userName">手机号码</view>
 				<view class="Puin">
-					<u-input type="text" :clearable='false' v-model="Phone" input-align="right" placeholder="请输入收货人手机号" maxlength="11" placeholder-style="color:#999" />
+					<u-input type="number" :clearable='false' v-model="Phone" input-align="right" placeholder="请输入收货人手机号" maxlength="11" placeholder-style="color:#999" />
 				</view>
 			</view>
 		</view>
@@ -39,11 +39,11 @@
 				<view class="Tes">设置为默认地址</view>
 				<view class="Caref">注：每次下单会默认使用该地址</view>
 			</view>
-			<view class="Switch" v-if="!Switch" @click="SwitchOpen">
+			<view class="Switch" v-if="Switch" @click="SwitchOpen">
 				<view class="redio"></view>
 				<view class="SwTie">关</view>
 			</view>
-			<view class="opSwitch" v-if="Switch" @click="SwitchOpen">
+			<view class="opSwitch" v-if="!Switch" @click="SwitchOpen">
 				<view class="SwTie">开</view>
 				<view class="redio"></view>
 			</view>
@@ -149,7 +149,7 @@
 					city:this.city,
 					district:this.district,
 					detail: this.DateAddrs,
-					is_default: this.Switch ? 1 : 0
+					is_default: this.Switch ? 0 : 1
 				})
 				if (res.code == 200) {
 					this.popShow1 = true;

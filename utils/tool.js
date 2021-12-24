@@ -269,7 +269,7 @@ export default{
 				success: () => {
 					uni.showToast({
 						title:"已复制到剪切板",
-						icon:"none"
+						icon:"success"
 					})
 				}
 			})
@@ -300,8 +300,8 @@ export default{
 	 * 获取图片完整地址
 	 */
 	imgUrl(url){
-		let index = url.hasOwnProperty("https");
-		if(index==-1){
+		let index = url.indexOf("https");
+		if(index==0){
 			return url;
 		}else{
 			return config.baseUrl+"/" + url;

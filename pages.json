@@ -80,6 +80,14 @@
 				}
 			},
 			{
+				"path": "set/zhifumima",
+				"style": {
+					"navigationBarTitleText": "设置支付密码",
+					"navigationBarBackgroundColor": "#ffffff",
+					"navigationBarTextStyle": "black"
+				}
+			},
+			{
 				"path": "address/index",
 				"style": {
 					"navigationBarTitleText": "收货地址"
@@ -146,13 +154,15 @@
 			{
 				"path": "jifen/wodejifen",
 				"style": {
-					"navigationStyle": "custom"
+					"navigationStyle": "custom",
+					"enablePullDownRefresh": true
 				}
 			},
 			{
 				"path": "qianbao/qianbao",
 				"style": {
-					"navigationStyle": "custom"
+					"navigationStyle": "custom",
+					"enablePullDownRefresh": true
 				}
 			},{
 				"path": "qianbao/chongzhi",

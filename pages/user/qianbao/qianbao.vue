@@ -4,7 +4,7 @@
 			<image src="/static/image/zu3038.png" class="pic1" mode=""></image>
 			<view class="tit1">
 				<view class="txt1">余额(元)</view>
-				<view class="txt2">134.00</view>
+				<view class="txt2">{{nowPrice}}</view>
 				<view class="btns">
 					<view class="btn1" @click="tojifen">
 						<image src="/static/image/lujin2776.png" class="picc1" mode=""></image>
@@ -27,55 +27,55 @@
 				<view class="txt">全部记录</view>
 			</view>
 			<view class="items">
-				<view class="item" v-for="item in 6">
+				<view class="item" v-for="item in list" :key='item.id'>
 					<view class="titt1">
-						<view class="txt1">积分</view>
-						<view class="txt2">+250</view>
+						<view class="txt1">{{item.title}}</view>
+						<view class="txt2" v-if="item.pm">+{{item.number}}</view>
+						<view class="txt2" v-else>-{{item.number}}</view>
 					</view>
 					<view class="titt2">
-						<view class="txt1">充值钱包获得积分</view>
-						<view class="txt2">2021-12-08 15:32</view>
+						<view class="txt1">{{item.mark}}</view>
+						<view class="txt2">{{item.add_time}}</view>
 					</view>
 				</view>
-				<u-loadmore :status="status" />
+				<u-loadmore :status="status" font-size="24" />
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
-	import {
-		mapState
-	} from "vuex";
+	import {mapState} from "vuex";
 	export default {
-		computed: {
-			...mapState(["dingdanPage", "dingdanPageSize"]),
-		},
-		watch: {
-			dingdanPage: function(page) {
-				console.log('ddpage')
-				this.$store.commit("dingdanPage", page);
-				if (this.dingdanPage != 1) {
-					this.getData();
-				}
-			},
-		},
 		data() {
 			return {
+				list:[],
+				nowPrice:'',
 				// 加载
-				status: 'loadmore',
-				iconType: 'flower',
-				loadText: {
-					loadmore: '上拉加载更多',
-					loading: '正在加载...',
-					nomore: '没有了更多了'
-				},
+				reload: false,
+				current_page: 1,
+				last_page: 1,
+				status: 'loadmore'
 			}
 		},
-		onReachBottom() {
-			this.$store.commit("dingdanPage", this.dingdanPage + 1);
-		},
 		methods:{
+			loadData(){
+				this.status = 'loading';
+				setTimeout(() => {
+					this.$api.walletlist({
+						page: this.current_page,
+						limit: 10
+					}).then((res)=>{
+						if(res.code==200){
+							uni.stopPullDownRefresh();
+							this.list = this.reload ? res.data.data : this.list.concat(res.data.data);
+							this.current_page = res.data.current_page; //当前页码
+							this.last_page = res.data.last_page; //总页码
+							this.status = res.data.total == 0 ? 'nomore' : 'more';
+						}
+					})
+				}, 200)
+			},
 			tojifen(){
 				uni.navigateTo({
 					url:'/pages/user/jifen/wodejifen'
@@ -83,9 +83,31 @@
 			},
 			tochongzhi(){
 				uni.navigateTo({
-					url:'/pages/user/qianbao/chongzhi'
+					url:`/pages/user/qianbao/chongzhi?nowPrice=${this.nowPrice}`
 				})
 			},
+		},
+		onLoad(options) {
+			if(options.now_money){
+				this.nowPrice = options.now_money;
+			}
+			this.loadData();
+		},
+		onPullDownRefresh() {
+			this.current_page = 1;
+			this.reload = true;
+			this.loadData();
+		},
+		onReachBottom() {
+			//判断是否最后一页
+			if (this.current_page >= this.last_page) {
+				this.status = 'nomore';
+			} else {
+				this.reload = false;
+				this.current_page = this.current_page + 1; //页码+1
+				this.status = 'loading';
+				this.loadData();
+			}
 		}
 	}
 </script>
@@ -99,8 +121,6 @@
 	/deep/ .u-load-more-wrap {
 		height: 100rpx !important;
 	}
-
-	.index {}
 
 	.nav1 {
 		height: 640rpx;
@@ -139,6 +159,7 @@
 				color: #000000;
 				text-align: center;
 			}
+			
 
 			.btns {
 				position: absolute;
@@ -208,9 +229,7 @@
 		}
 
 		.items {
-			height: calc(100vh - 740rpx);
 			margin-top: 28rpx;
-			overflow-y: scroll;
 
 			.item {
 				margin-bottom: 24rpx;

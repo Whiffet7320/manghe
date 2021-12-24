@@ -22,4 +22,10 @@ export default {
 	confirmOrder:"/api/confirm_order",//确认收货
 	delOrder:"/api/del_order",//删除订单
 	notice:"/api/notice",//首页滚动消息
+	recharge:'/api/recharge',//用户充值
+	integral_list:'/api/integral_list',//积分列表
+	withdraw_list:'/api/withdraw_list',//提现列表
+	set_pay_password:'/api/set_pay_password',//设置支付密码
+	spread:'/api/spread',//分享
+	walletlist:"/api/wallet_list" //我的钱包
 }

@@ -1,38 +1,54 @@
 <template>
 	<view>
-		<view class="form_group">
-			<view class="title">真实姓名</view>
-			<input type="text" v-model="real_name" placeholder="请如实填写" placeholder-style="color:#808080;" class="ipt" />
-		</view>
-		<view class="form_group">
-			<view class="title">证件类型</view>
-			<view class="gray">身份证</view>
-		</view>
-		<view class="form_group" @click="kshow=true">
-			<view class="title">证件号码</view>
-			<input type="text" v-model="cardNum" :disabled="true" placeholder="请输入你的身份证号码" placeholder-style="color:#808080;" class="ipt" />
-		</view>
-		<view class="form_group last">
-			<view class="title">证件上传</view>
-			<view class="upload">
-				<view class="uimg" @click="uploadpic(0)" v-if="front_img==''">
-					<view class="plus">+</view>
-					<text class="text">身份证正面照片</text>
-				</view>
-				<view class="zimg" @click="uploadpic(0)" v-else>
-					<image :src="front_imgs" mode="aspectFill" class="img"></image>
-				</view>
-				<view class="uimg" @click="uploadpic(1)" v-if="back_img==''">
-					<view class="plus">+</view>
-					<text class="text">身份证反面照片</text>
-				</view>
-				<view class="zimg" @click="uploadpic(1)" v-else>
-					<image :src="back_imgs" mode="aspectFill" class="img"></image>
+		<view v-if="status==-1">
+			<view class="form_group">
+				<view class="title">真实姓名</view>
+				<input type="text" v-model="real_name" placeholder="请如实填写" placeholder-style="color:#808080;" class="ipt" />
+			</view>
+			<view class="form_group">
+				<view class="title">证件类型</view>
+				<view class="gray">身份证</view>
+			</view>
+			<view class="form_group" @click="kshow=true">
+				<view class="title">证件号码</view>
+				<input type="text" v-model="cardNum" :disabled="true" placeholder="请输入你的身份证号码" placeholder-style="color:#808080;" class="ipt" />
+			</view>
+			<view class="form_group last">
+				<view class="title">证件上传</view>
+				<view class="upload">
+					<view class="uimg" @click="uploadpic(0)" v-if="front_img==''">
+						<view class="plus">+</view>
+						<text class="text">身份证正面照片</text>
+					</view>
+					<view class="zimg" @click="uploadpic(0)" v-else>
+						<image :src="front_imgs" mode="aspectFill" class="img"></image>
+					</view>
+					<view class="uimg" @click="uploadpic(1)" v-if="back_img==''">
+						<view class="plus">+</view>
+						<text class="text">身份证反面照片</text>
+					</view>
+					<view class="zimg" @click="uploadpic(1)" v-else>
+						<image :src="back_imgs" mode="aspectFill" class="img"></image>
+					</view>
 				</view>
 			</view>
+			<view class="btnwrap">
+				<button class="cubtn" @tap="onSubmit">提交审核</button>
+			</view>
 		</view>
-		<view class="btnwrap">
-			<button class="cubtn" @tap="onSubmit">提交审核</button>
+		<view v-if="status==0">
+			<view class="rzwrap">
+				<image src="/static/image/icon_shenhe.png" mode="aspectFit" class="icon"></image>
+				<text>等待审核中</text>
+			</view>
+		</view>
+		<view class="rzwrap" v-if="status==1">
+			<view class="rzcon">
+				<image src="/static/image/icon_shenhe.png" mode="aspectFit" class="icon"></image>
+				<text>您已通过认证</text>
+			</view>
+			<u-gap height="300"></u-gap>
+			<view class="btn" @click="onBack">确定</view>
 		</view>
 		<u-keyboard ref="uKeyboard" mode="card" v-model="kshow" :random="true" @change="change" @backspace="backspace"></u-keyboard>
 		<page-toast v-model="show" content="请耐心等待1-3个工作日" @confirm="confirm"></page-toast>
@@ -48,6 +64,7 @@
 		},
 		data(){
 			return{
+				status:-1,
 				kshow:false,
 				show:false,
 				real_name:"",
@@ -64,6 +81,7 @@
 					if(res.code==200){
 						let data = res.data.realname;
 						if(data){
+							this.status = data.status;
 							this.real_name = data.real_name;
 							this.cardNum = data.id_number;
 							this.front_img = data.front_img;
@@ -132,6 +150,9 @@
 				setTimeout(()=>{
 					uni.navigateBack();
 				},1500)
+			},
+			onBack(){
+				uni.navigateBack();
 			}
 		},
 		onLoad(){
@@ -141,6 +162,40 @@
 </script>
 
 <style lang="scss" scoped>
+	.rzwrap{
+		width: 100%;
+		padding:0 68rpx;
+		height: 100vh;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		.rzcon{
+			width: 100%;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			font-size: 28rpx;
+			color: #000;
+			.icon{
+				width: 358rpx;
+				height: 252rpx;
+				margin-bottom: 48rpx;
+			}
+		}
+		.btn{
+			width: 612rpx;
+			height: 80rpx;
+			line-height: 80rpx;
+			background: #d61d1d;
+			border-radius: 10rpx;
+			font-size: 28rpx;
+			color: #FFFFFF;
+			text-align: center;
+		}
+	}
+	
 	.form_group{
 		display: flex;
 		align-items: center;
@@ -218,6 +273,10 @@
 			font-weight: 700;
 			text-align: center;
 			color: #ffffff;
+			&.gray{
+				background-color: #E0E1E2;
+				color: #808080;
+			}
 		}
 	}
 </style>

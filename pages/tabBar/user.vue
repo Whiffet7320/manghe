@@ -28,7 +28,7 @@
 				</view>
 			</view>
 		</view>
-		<view class="jfcode">
+		<view class="jfcode" @click="jump(`/pages/user/jifen/wodejifen?zongjifen=${userInfo.integral}`)">
 			<image src="/static/image/jfbg.png" mode="aspectFit" class="img"></image>
 			<view class="text">
 				<view class="name">小积分 大智慧</view>
@@ -51,7 +51,7 @@
 				<view class="subtit">{{userInfo.realname==null||userInfo.realname==''?'未实名':userInfo.realname.status==0?'待审核':'已认证'}}</view>
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="arrow"></image>
 			</view>
-			<view class="menu_item">
+			<view class="menu_item" @click="jump(`/pages/user/qianbao/qianbao?now_money=${userInfo.now_money}`)">
 				<image src="/static/image/user/m3.png" mode="aspectFit" class="icon"></image>
 				<view class="name">钱包</view>
 				<view class="subtit"></view>
@@ -94,7 +94,7 @@
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="arrow"></image>
 			</view>
 		</view>
-		<view class="logout" @click="lshow=true">退出登录</view>
+		<view class="logout" v-if="isLogin" @click="lshow=true">退出登录</view>
 		<page-modal v-model="show" :content="tel" width="466" confirm-text="立即拨打" @confirm="confirm"></page-modal>
 		<page-modal v-model="lshow" content="是否确定退出登录？" width="466" confirm-text="确定" @confirm="confirm2"></page-modal>
 	</view>
@@ -114,7 +114,7 @@
 				userInfo:{},
 				code:"",
 				scrollTop:0,
-				tel:"400-1234-4321"
+				tel:""
 			}
 		},
 		computed: {
@@ -122,6 +122,13 @@
 			...mapState(['onResh'])
 		},
 		methods:{
+			getInfo(){
+				this.$api.product().then(res => {
+					if(res.code==200){
+						this.tel = res.data.kefu_phone;
+					}
+				});
+			},
 			async getUserInfo() {
 				await this.$api.userInfo().then(res => {
 					if(res.code==200){
@@ -157,6 +164,10 @@
 				})
 			},
 			confirm(){
+				if(this.tel==""){
+					this.$u.toast("暂未绑定电话号码");
+					return false;
+				}
 				uni.makePhoneCall({
 					phoneNumber: this.tel,
 					success: (res) => {
@@ -170,6 +181,9 @@
 					url:"/pages/login/login"
 				})
 			}
+		},
+		onLoad(){
+			this.getInfo();
 		},
 		onShow(){
 			if(this.isLogin){

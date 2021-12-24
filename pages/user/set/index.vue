@@ -18,9 +18,9 @@
 				<view class="desc">{{userInfo.pwd==''?'设置登陆密码':"修改登陆密码"}}</view>
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="icon"></image>
 			</view>
-			<view class="cellitem" @click="goPaywd">
+			<view class="cellitem" @click="toZhifumima">
 				<view class="name">支付密码</view>
-				<view class="desc">设置支付密码</view>
+				<view class="desc">{{myUserInfo.pay_pwd ? '已设置支付密码':'设置支付密码'}}</view>
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="icon"></image>
 			</view>
 			<view class="cellitem" @click="clearfileSize">
@@ -39,16 +39,17 @@
 </template>
 
 <script>
-	import config from "../../../api/url.js";
 	import {mapState} from "vuex";
-	export default{
-		data(){
-			return{
-				fileSizeString:"0B",
-				show:false
+	export default {
+		data() {
+			return {
+				avatar: "",
+				fileSizeString: "0B",
+				show: false,
+				myUserInfo: null
 			}
 		},
-		computed:{
+		computed: {
 			...mapState(['userInfo'])
 		},
 		methods:{
@@ -91,31 +92,38 @@
 					url:"/pages/user/tixian/zhifumima"
 				})
 			},
-			clearfileSize(){
+			clearfileSize() {
 				this.show = true;
-				setTimeout(()=>{
+				setTimeout(() => {
 					this.show = false;
-				},1500)
+				}, 1500)
+			},
+			toZhifumima(){
+				uni.navigateTo({
+					url: `/pages/user/set/zhifumima?isShezhi=${this.myUserInfo.pay_pwd?'yes':'no'}`
+				})
 			}
 		},
-		onLoad(){
-			this.fileSizeString = uni.getStorageInfoSync().currentSize+"Kb";
+		onLoad() {
+			this.fileSizeString = uni.getStorageInfoSync().currentSize + "Kb";
 		},
-		onShow(){
-			console.log(this.userInfo)
+		async onShow(){
+			const res = await this.$api.userInfo()
+			this.myUserInfo = res.data;
 		}
 	}
 </script>
 
 <style lang="scss" scoped>
-	.cellbox{
-		.cellitem{
+	.cellbox {
+		.cellitem {
 			display: flex;
 			align-items: center;
 			border-bottom: 2rpx solid #f2f2f2;
-			margin:0 30rpx;
-			padding:32rpx 0 22rpx 0;
-			&:last-child{
+			margin: 0 30rpx;
+			padding: 32rpx 0 22rpx 0;
+
+			&:last-child {
 				border-bottom: 0;
 			}
 			.pic{
@@ -130,35 +138,40 @@
 					border-radius: 50%;
 				}
 			}
-			.name{
+
+			.name {
 				font-size: 28rpx;
 				font-family: PingFang SC, PingFang SC-Bold;
 				font-weight: 700;
 				color: #000000;
 			}
-			.desc{
-				flex:1;
+
+			.desc {
+				flex: 1;
 				font-size: 28rpx;
 				font-family: PingFang SC, PingFang SC-Medium;
 				font-weight: 500;
 				text-align: right;
 				color: #808080;
 			}
-			.icon{
+
+			.icon {
 				width: 20rpx;
 				height: 35rpx;
 				margin-left: 26rpx;
 			}
 		}
 	}
-	.modcon{
+
+	.modcon {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 		width: 100%;
 		height: 100%;
-		.text{
+
+		.text {
 			margin-top: 32rpx;
 			font-size: 28rpx;
 			font-family: PingFang SC, PingFang SC-Medium;

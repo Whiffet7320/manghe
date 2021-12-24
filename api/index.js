@@ -740,6 +740,14 @@ export default {
 			}
 		})
 	},
+	recharge(obj) {
+		return myPost({
+			url: urls.recharge,
+			data: {
+				...obj
+			}
+		})
+	},
 	bindBank(obj) {
 		return myPost({
 			url: urls.bindBank,
@@ -769,6 +777,30 @@ export default {
 			}
 		})
 	},
+	integral_list(obj) {
+		return myGet({
+			url: urls.integral_list,
+			params: {
+				...obj
+			}
+		})
+	},
+	withdraw_list(obj) {
+		return myGet({
+			url: urls.withdraw_list,
+			params: {
+				...obj
+			}
+		})
+	},
+	walletlist(obj) {
+		return myGet({
+			url: urls.walletlist,
+			params: {
+				...obj
+			}
+		})
+	},
 	confirmOrder(order_id) {
 		return myPost({
 			url: urls.confirmOrder,
@@ -787,7 +819,20 @@ export default {
 	},
 	notice(obj) {
 		return myGet({
-			url: urls.notice,
+			url: urls.notice
+		})
+	},
+	set_pay_password(obj) {
+		return myPost({
+			url: urls.set_pay_password,
+			data: {
+				...obj
+			}
+		})
+	},
+	spread(obj) {
+		return myGet({
+			url: urls.spread,
 			params: {
 				...obj
 			}

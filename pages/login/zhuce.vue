@@ -54,8 +54,14 @@
 				</view>
 				<view @click='getCode' class="txt1">{{tips}}</view>
 			</view>
+			<view v-if="isZhuce && !isWangji" class="inp2box inp3" style="top:950rpx">
+				<view class="inp2">
+					<u-input v-model="yqm" type="text" :clearable='false' placeholder='请输入推荐人邀请码' />
+				</view>
+				<view class="txt1">*非必填项</view>
+			</view>
 			<view :class="{'jzmm':true,'isZhuce':isZhuce}">
-				<view v-if="isZhuce && !isWangji" @click="denglu" style="margin-left: 150rpx;" class="txt11">立即去登陆
+				<view v-if="isZhuce && !isWangji" @click="denglu" style="margin-left: 150rpx;transform: translateY(44px);" class="txt11">立即去登陆
 				</view>
 				<view v-if="isWangji && !isZhuce" @click="denglu" style="transform:translate(150rpx,156rpx);"
 					class="txt11">立即去登陆</view>
@@ -101,6 +107,9 @@
 				isWangji: false,
 			}
 		},
+		onLoad() {
+			this.yqm = uni.getStorageSync('scencLid') ? uni.getStorageSync('scencLid') : '';
+		},
 		methods: {
 			async onSubmit() {
 				if (this.isYzmLogin) {
@@ -110,7 +119,8 @@
 					}
 					const res = await this.$api.captch_login({
 						account: this.phone,
-						captch: this.yzm
+						captch: this.yzm,
+						invite_code:this.yqm
 					})
 					console.log(res)
 					if (res.code == 200) {
@@ -130,7 +140,8 @@
 							account: this.phone,
 							password: this.password,
 							repassword: this.password,
-							captch: this.yzm
+							captch: this.yzm,
+							invite_code:this.yqm
 						})
 						console.log(res)
 						if (res.code == 200) {
@@ -227,6 +238,9 @@
 </script>
 
 <style lang="scss" scoped>
+	/deep/ .u-input__input{
+		font-size: 24rpx !important;
+	}
 	.index {
 		position: relative;
 	}

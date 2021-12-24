@@ -31,10 +31,9 @@
 								</view>
 								<view class="btns" v-if="order.status==0">
 									<view class="btn2" @click.stop="pshow=true">提醒发货</view>
-									<view class="btn1" @click.stop="onDel(order.id,index)">删除订单</view>
 								</view>
 								<view class="btns" v-if="order.status==1">
-									<view class="btn2" @click.stop="comfirmOrder(order.id)">确认收货</view>
+									<view class="btn2" @click.stop="confirmOrder(order.id)">确认收货</view>
 									<view class="btn1" style="margin-left: 20rpx;" @click.stop="toWuliu(order.id)">查看物流</view>
 								</view>
 								<view class="btns" v-if="order.status==2">
@@ -44,7 +43,7 @@
 								</view>
 							</view>
 						</view>
-						<u-loadmore :status="status" />
+						<u-loadmore :status="status" font-size="24" />
 					</view>
 				</scroll-view>
 			</swiper-item>
@@ -135,7 +134,7 @@
 					this.$api.orderList({
 						page: this.current_page,
 						limit: 10,
-						type: this.type
+						status: this.type
 					}).then((res)=>{
 						if(res.code==200){
 							this.current_page = res.data.current_page; //当前页码
@@ -183,12 +182,18 @@
 			pconfirm(){
 				this.pshow = !this.pshow;
 			},
-			comfirmOrder(id){
-				this.$api.comfirmOrder(id).then((res)=>{
+			confirmOrder(id){
+				this.cshow = true;
+				this.id = id;
+			},
+			confirm2(){
+				this.$api.confirmOrder(this.id).then((res)=>{
 					if(res.code==200){
+						this.cshow = false;
 						this.$u.toast(res.message);
 						this.loadData();
 					}else{
+						this.cshow = false;
 						this.$u.toast(res.message);
 					}
 				})
@@ -204,8 +209,10 @@
 			tabClick(index) {
 				this.tabCurrentIndex = index;
 				this.type = this.list[this.tabCurrentIndex].state;
-				this.current_page = 1;
-				this.orderList = [];
+				// this.current_page = 1;
+				// this.orderList = [];
+				// this.status = "loadmore";
+				// this.loaded = false;
 				this.loadData();
 			},
 			changeTab(e) {

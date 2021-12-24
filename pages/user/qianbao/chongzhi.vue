@@ -4,7 +4,7 @@
 			<image src="/static/image/zu3038.png" class="pic1" mode=""></image>
 			<view class="tit1">
 				<view class="txt1">总资产(元)</view>
-				<view class="txt2">134.00</view>
+				<view class="txt2">{{nowPrice}}</view>
 			</view>
 		</view>
 		<view class="mynav">
@@ -17,14 +17,14 @@
 				<view class="txt">自定义金额（100元起充）</view>
 			</view>
 			<view class="items">
-				<view @click="changeIndex(1)" :class="{'item':true,'active':index == 1}">100元</view>
-				<view @click="changeIndex(2)" :class="{'item':true,'active':index == 2}">300元</view>
-				<view @click="changeIndex(3)" :class="{'item':true,'active':index == 3}">500元</view>
+				<view @click="changeIndex(1,100)" :class="{'item':true,'active':index == 1}">100元</view>
+				<view @click="changeIndex(2,300)" :class="{'item':true,'active':index == 2}">300元</view>
+				<view @click="changeIndex(3,500)" :class="{'item':true,'active':index == 3}">500元</view>
 			</view>
 			<view class="items">
-				<view @click="changeIndex(4)" :class="{'item':true,'active':index == 4}">1000元</view>
-				<view @click="changeIndex(5)" :class="{'item':true,'active':index == 5}">3000元</view>
-				<view @click="changeIndex(6)" :class="{'item':true,'active':index == 6}">4000元</view>
+				<view @click="changeIndex(4,1000)" :class="{'item':true,'active':index == 4}">1000元</view>
+				<view @click="changeIndex(5,3000)" :class="{'item':true,'active':index == 5}">3000元</view>
+				<view @click="changeIndex(6,4000)" :class="{'item':true,'active':index == 6}">4000元</view>
 			</view>
 		</view>
 		<view class="nav3">
@@ -39,8 +39,10 @@
 				</view>
 				<u-icon name="checkmark-circle-fill" color="#D61D1D" size="32"></u-icon>
 			</view>
-			<view class="btn">立即充值</view>
-			<view class="tit3"><text style="font-weight: 700;">*注：</text>积分等于充值金额的1/15，充值金额所得的积分第二天到账，详情请查看积分明细；若有疑问请联系客服；</view>
+			<view @click="onSubmit" class="btn">立即充值</view>
+			<view class="tit3">
+				<text style="font-weight: 700;">*注：</text>积分等于充值金额的1/15，充值金额所得的积分第二天到账，详情请查看积分明细；若有疑问请联系客服；
+			</view>
 		</view>
 		<!-- 支付成功 -->
 		<u-popup v-model="show2" mode='center' border-radius='24' height='256' width='424'>
@@ -57,14 +59,55 @@
 	export default {
 		data() {
 			return {
-				index:1,
-				show2:true,
+				index: 1,
+				show2: false,
+				nowPrice: '',
+				price: '100',
 			}
 		},
-		methods:{
-			changeIndex(i){
-				this.index = i;
+		onLoad(options) {
+			if(options.nowPrice){
+				this.nowPrice = options.nowPrice;
 			}
+		},
+		methods: {
+			changeIndex(i, price) {
+				this.index = i;
+				this.price = price;
+			},
+			async onSubmit() {
+				const res = await this.$api.recharge({
+					money: this.price
+				})
+				if (res.code == 200) {
+					var jsConfig = res.data
+					uni.requestPayment({
+						provider: 'wxpay',
+						timeStamp: jsConfig.timeStamp.toString(),
+						nonceStr: jsConfig.nonceStr,
+						package: jsConfig.package,
+						signType: jsConfig.signType,
+						paySign: jsConfig.paySign,
+						success: (res) => {
+							this.show2 = true;
+							setTimeout(() => {
+								uni.navigateBack();
+							}, 1500)
+						},
+						fail: (err) => {
+							console.log('fail:' + JSON.stringify(err));
+							this.$u.toast("支付失败");
+						},
+						complete: (e) => {
+							if (e.errMsg == 'requestPayment:cancel') {
+								this.$u.toast("取消支付");
+							}
+						}
+					});
+				}else{
+					this.$u.toast(res.message);
+				}
+			},
 		}
 	}
 </script>
@@ -143,12 +186,14 @@
 				color: #808080;
 			}
 		}
-		.items{
+
+		.items {
 			padding: 0 18rpx;
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			.item{
+
+			.item {
 				margin-top: 32rpx;
 				width: 178rpx;
 				height: 100rpx;
@@ -160,7 +205,8 @@
 				line-height: 100rpx;
 				color: #000000;
 			}
-			.active{
+
+			.active {
 				width: 178rpx;
 				height: 100rpx;
 				background: #fff1f1;
@@ -168,19 +214,21 @@
 			}
 		}
 	}
-	.nav3{
+
+	.nav3 {
 		margin-top: 48rpx;
 		padding: 0 30rpx;
+
 		.tit1 {
 			display: flex;
 			align-items: center;
-		
+
 			.box {
 				width: 8rpx;
 				height: 32rpx;
 				background: linear-gradient(180deg, #d61d1d, #530a0a);
 			}
-		
+
 			.txt {
 				margin-left: 8rpx;
 				font-size: 28rpx;
@@ -188,17 +236,20 @@
 				color: #808080;
 			}
 		}
-		.tit2{
+
+		.tit2 {
 			padding-right: 12rpx;
 			margin-top: 26rpx;
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			.left{
+
+			.left {
 				display: flex;
 				align-items: center;
 				margin-left: 10rpx;
-				.l-txt{
+
+				.l-txt {
 					margin-left: 16rpx;
 					font-size: 28rpx;
 					font-weight: 700;
@@ -206,7 +257,8 @@
 				}
 			}
 		}
-		.btn{
+
+		.btn {
 			margin-top: 60rpx;
 			margin-left: 40rpx;
 			width: 612rpx;
@@ -219,7 +271,8 @@
 			line-height: 80rpx;
 			color: #ffffff;
 		}
-		.tit3{
+
+		.tit3 {
 			margin-left: 8rpx;
 			width: 676rpx;
 			margin-top: 54rpx;
@@ -229,23 +282,25 @@
 			line-height: 32rpx;
 		}
 	}
-	.pop2{
+
+	.pop2 {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		padding-top: 30rpx;
-		.p2-tit1{
+
+		.p2-tit1 {
 			margin-top: 32rpx;
 			font-size: 32rpx;
 			font-weight: 700;
 			color: #000000;
 		}
-		.p2-tit2{
+
+		.p2-tit2 {
 			margin-top: 16rpx;
 			font-size: 24rpx;
 			font-weight: 500;
 			color: #000000;
 		}
 	}
-	
 </style>
