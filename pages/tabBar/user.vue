@@ -19,7 +19,7 @@
 					</view>
 					<view class="name">点击登录/注册</view>
 				</view>
-				<view class="code">
+				<view class="code" v-if="userInfo.invite_code">
 					<text>邀请码：{{userInfo.invite_code==''||userInfo.invite_code==null?'00000000':userInfo.invite_code}}</text>
 					<view class="btn" @click="$tool.onCopy(userInfo.invite_code)">复制</view>
 				</view>

@@ -76,7 +76,7 @@
 	<!-- #endif -->
 
 </template>
-<!-- <script src="./index.wxs" module="swipe" lang="wxs"></script> -->
+<script src="./index.wxs" module="swipe" lang="wxs"></script>
 <script>
 	// #ifdef APP-VUE|| MP-WEIXIN || H5
 	import mpwxs from './mpwxs'

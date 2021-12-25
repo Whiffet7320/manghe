@@ -93,10 +93,12 @@
 				})
 			},
 			clearfileSize() {
+				uni.clearStorageSync();
 				this.show = true;
 				setTimeout(() => {
 					this.show = false;
-				}, 1500)
+					this.fileSizeString = "0B";
+				}, 800)
 			},
 			toZhifumima(){
 				uni.navigateTo({

@@ -43,7 +43,13 @@
 </template>
 
 <script>
+	import UniSwipeAction from "@/components/uni-swipe-action/uni-swipe-action.vue";
+	import UniSwipeActionItem from "@/components/uni-swipe-action-item/uni-swipe-action-item.vue";
 	export default {
+		components:{
+			UniSwipeAction,
+			UniSwipeActionItem
+		},
 		data() {
 			return {
 				list:[],

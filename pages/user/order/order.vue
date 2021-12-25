@@ -218,39 +218,12 @@
 						status: this.type
 					})
 					console.log(res.data.data.length)
-					if (res.data.data.length == 0) {
+					if (this.current_page >= res.data.last_page) {
 						this.status = 'nomore'
 					} else {
 						this.status = 'loadmore';
-						this.orderList = this.orderList.concat(res.data.data);
 					}
-					// if (res.code == 200) {
-					// 	this.current_page = res.data.current_page; //当前页码
-					// 	if (res.data.last_page === res.data.current_page) {
-					// 		this.status = 'nomore';
-					// 	} else {
-					// 		this.status = 'more';
-					// 		this.current_page++;
-					// 	}
-					// 	this.orderList = this.orderList.concat(res.data.data);
-					// }
-					// this.$api.orderList({
-					// 	page: this.current_page,
-					// 	limit: 10,
-					// 	status: this.type
-					// }).then((res) => {
-					// 	if (res.code == 200) {
-					// 		this.current_page = res.data.current_page; //当前页码
-					// 		if (res.data.last_page === res.data.current_page) {
-					// 			this.status = 'nomore';
-					// 		} else {
-					// 			this.status = 'more';
-					// 			this.current_page++;
-					// 		}
-					// 		this.orderList = this.orderList.concat(res.data.data);
-					// 	}
-					// 	console.log(this.orderList)
-					// })
+					this.orderList = this.orderList.concat(res.data.data);
 				}, 200)
 				console.log(this.orderList)
 			},
