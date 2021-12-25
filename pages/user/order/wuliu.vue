@@ -25,70 +25,56 @@
 <script>
 	import logistics from '@/components/xinyu-logistics/xinyu-logistics.vue'
 	export default {
-		components: { logistics },
+		components: {
+			logistics
+		},
+		onLoad(option) {
+			this.order_id = option.order_id;
+			this.wlInfo.post_name = option.express_name;
+			this.wlInfo.addr = option.address
+			this.getData()
+		},
 		data() {
 			return {
+				order_id: '',
 				wlInfo: {
-				    delivery_status: 1, //快递状态 1已签收 2配送中
-				    post_name: '韵达快递', //快递名称
-				    logo: 'https://cdn.kuaidi100.com/images/all/56/yunda.png', //快递logo
-				    exp_phone: '95546', //快递电话
-				    post_no: '4304678557725', //快递单号
-				    addr: '江西省南昌市青云谱区', //收货地址
-				    //物流信息
-				    list: [{
-				            "time": "2020-04-12 13:00:57",
-				            "timeArr": ['2020-04-12 13:00:57'],
-				            "context": "江西南昌青云谱区 快件已被 丰巢智能柜 代签收。",
-				            "location": ""
-				        },
-				        {
-				            "time": "2020-04-12 12:58:53",
-				            "timeArr": ['2020-04-12 12:58:53'],
-				            "context": "江西南昌青云谱区 进行派件扫描；派送业务员：张三；联系电话：88888888888",
-				            "location": ""
-				        },
-				        {
-				            "time": "2020-04-11 15:45:44",
-				            "timeArr": ['2020-04-11', '15:45:44'],
-				            "context": "江西南昌分拨中心 从站点发出，本次转运目的地：江西南昌青云谱区",
-				            "location": ""
-				        },
-				        {
-				            "time": "2020-04-11 15:08:45",
-				            "timeArr": ['2020-04-11', '15:08:45'],
-				            "context": "江西南昌分拨中心 在分拨中心进行卸车扫描",
-				            "location": ""
-				        },
-				        {
-				            "time": "2020-04-10 17:42:41",
-				            "timeArr": ['2020-04-10', '17:42:41'],
-				            "context": "浙江义乌分拨中心 进行装车扫描，发往：江西南昌分拨中心",
-				            "location": ""
-				        },
-				        {
-				            "time": "2020-04-10 17:39:38",
-				            "timeArr": ['2020-04-10', '17:39:38'],
-				            "context": "浙江义乌分拨中心 在分拨中心进行称重扫描",
-				            "location": ""
-				        },
-				        {
-				            "time": "2020-04-10 16:02:46",
-				            "timeArr": ['2020-04-10', '16:02:46'],
-				            "context": "浙江义乌城西公司 进行下级地点扫描，发往：江西南昌地区包",
-				            "location": ""
-				        },
-				        {
-				            "time": "2020-04-10 15:48:42",
-				            "timeArr": ['2020-04-10', '15:48:42'],
-				            "context": "浙江义乌城西公司城西营销部 进行揽件扫描",
-				            "location": ""
-				        }
-				    ]
+					delivery_status: 1, //快递状态 1已签收 2配送中
+					post_name: '', //快递名称
+					logo: 'https://img1.baidu.com/it/u=4283675395,4246710405&fm=253&fmt=auto&app=120&f=PNG?w=256&h=256', //快递logo
+					exp_phone: '暂无', //快递电话
+					post_no: '', //快递单号
+					addr: '', //收货地址
+					//物流信息
+					list: []
 				}
 			}
 		},
 		methods: {
+			async getData() {
+				const res = await this.$api.exress_detail({
+					order_id: this.order_id
+				})
+				if (res.data.status == 200) {
+					this.wlInfo.delivery_status = res.data.state == 3 ? 1 : 2;
+					this.wlInfo.post_no = res.data.nu;
+					res.data.data.forEach((ele, i) => {
+						this.$set(this.wlInfo.list, i, {
+							time: ele.time,
+							timeArr: [ele.time],
+							context: ele.context
+						})
+					})
+				} else {
+					this.wlInfo.delivery_status = 2;
+					this.wlInfo.post_no = '暂无';
+					this.wlInfo.list[0] = {
+						time:'暂无',
+						timeArr: ['暂无'],
+						context:res.data.message
+					}
+				}
+
+			},
 			copy() {
 
 			},

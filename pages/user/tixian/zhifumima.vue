@@ -11,15 +11,45 @@
 		data(){
 			return{
 				password:'',
+				money:'',
+				user_bank_id:'',
 			}
+		},
+		onLoad(options) {
+			this.user_bank_id = options.user_bank_id;
+			this.getUserInfo()
 		},
 		methods:{
 			finish(e){
 				console.log(e)
 				this.password = e;
 			},
-			onSubmit(){
+			async onSubmit(){
 				console.log(this.password)
+				const res = await this.$api.withdraw({
+					user_bank_id:this.user_bank_id,
+					money:this.money,
+					pay_password:this.password
+				})
+				this.$u.toast(res.message);
+				if(res.code == 200){
+					setTimeout(()=>{
+						uni.navigateBack({
+							delta:1
+						})
+					},1000)
+				}
+			},
+			async getUserInfo() {
+				await this.$api.userInfo().then(res => {
+					if(res.code==200){
+						this.money = res.data.integral;
+					}else{
+						uni.navigateTo({
+							url:"/pages/login/login"
+						})
+					}
+				});
 			},
 		}
 	}

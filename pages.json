@@ -132,7 +132,8 @@
 			{
 				"path": "tixian/tixian",
 				"style": {
-					"navigationStyle": "custom"
+					"navigationStyle": "custom",
+					"enablePullDownRefresh": true
 				}
 			},
 			{

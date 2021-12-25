@@ -6,7 +6,7 @@
 				<image src="/static/image/zu3030.png" class="pic1-1" mode=""></image>
 				<view class="txt1">总积分</view>
 			</view>
-			<view class="tit2">{{zongJifen}}</view>
+			<view class="tit2">{{integral}}</view>
 			<view class="boxs">
 				<view class="left" @click="toGuize">
 					<view class="lt">
@@ -43,8 +43,8 @@
 						<view class="right" v-if="item.pm">+{{item.number}}</view>
 						<view class="right gray" v-else>-{{item.number}}</view>
 					</view>
-					<page-empty v-show="isEmpty"></page-empty>
-					<u-loadmore v-show="list.length" height="80rpx" :status="status" font-size="24" />
+					<page-empty v-if="isEmpty"></page-empty>
+					<u-loadmore v-if="list.length" height="80rpx" :status="status" font-size="24" />
 				</scroll-view>
 			</view>
 		</view>
@@ -60,6 +60,7 @@
 		},
 		data() {
 			return {
+				integral:'',
 				isEmpty: false,
 				list:[],
 				zongJifen:'',
@@ -112,14 +113,12 @@
 			},
 			toTixian(){
 				uni.navigateTo({
-					url:'/pages/user/tixian/tixian'
+					url:`/pages/user/tixian/tixian?integral=${this.integral}`
 				})
 			}
 		},
 		onLoad(options) {
-			if(options.zongjifen){
-				this.zongJifen = options.zongjifen;
-			}
+			this.integral = options.integral;
 			this.loadData();
 		},
 		onPullDownRefresh() {

@@ -17,7 +17,7 @@
 				<view class="txt">自定义金额（100元起充）</view>
 			</view>
 			<view class="items">
-				<view @click="changeIndex(1,100)" :class="{'item':true,'active':index == 1}">100元</view>
+				<view @click="changeIndex(1,0.01)" :class="{'item':true,'active':index == 1}">100元</view>
 				<view @click="changeIndex(2,300)" :class="{'item':true,'active':index == 2}">300元</view>
 				<view @click="changeIndex(3,500)" :class="{'item':true,'active':index == 3}">500元</view>
 			</view>

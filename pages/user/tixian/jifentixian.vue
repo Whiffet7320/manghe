@@ -4,24 +4,31 @@
 			<u-icon name="volume-fill" color="#D61D1D" size="28"></u-icon>
 			<view class="txt1">温馨提示：积分与提现金额是1:1的；</view>
 		</view>
-		<view class="nav2">提现到当前银行卡</view>
-		<view class="items">
-			<view class="item" @click="changeI(i)" v-for="(item,i) in 6">
-				<image v-if="index == i" src="/static/image/zu3008.png" class="float" mode=""></image>
-				<view class="left">
-					<view class="top">
-						<image src="/static/Group.png" class="pic1" mode=""></image>
-						<view class="t-txt1">建设银行</view>
+		<view class="content">
+			<view class="stit">提现到当前银行卡</view>
+			<view class="list">
+				<view class="bank_item" @click="changeI(item)" v-for="(item,index) in list" :key="index">
+					<image :src="'https://apimg.alipay.com/combo.png?d=cashier&t='+item.bank_code+'_s'" mode="aspectFit"
+						class="img"></image>
+					<view class="info">
+						<view class="name">{{item.bank_name}}</view>
+						<view class="code">
+							<text class="omit">****</text>
+							<text class="omit">****</text>
+							<text class="omit">****</text>
+							<text>{{item.bank_number.substr(item.bank_number.length - 4, item.bank_number.length)}}</text>
+						</view>
 					</view>
-					<view class="down">**** **** **** 6789</view>
+					<view class="moren" v-if="item.default==1"></view>
+					<view class="del" @click="onDelete(item.id,index)">删除</view>
 				</view>
-				<view class="right">删除</view>
+			</view>
+			<view class="add" @click="goAdd">
+				<image src="/static/image/user/icon_add.png" mode="aspectFit" class="img"></image>
+				<text>添加银行卡</text>
 			</view>
 		</view>
-		<view class="btn">
-			<u-icon name="plus-circle" color="#808080" size="30"></u-icon>
-			<view class="txt">添加银行卡</view>
-		</view>
+
 	</view>
 </template>
 
@@ -29,14 +36,49 @@
 	export default {
 		data() {
 			return {
-				index : 0,
+				index: 0,
+				list: []
 			}
 		},
-		methods:{
-			changeI(i){
-				this.index = i;
+		onShow() {
+			this.getlist();
+		},
+		methods: {
+			changeI(item) {
+				// this.index = i;
 				uni.navigateTo({
-					url:'/pages/user/tixian/zhifumima'
+					url: `/pages/user/tixian/zhifumima?user_bank_id=${item.id}`
+				})
+			},
+			getlist() {
+				this.$api.userBanklist().then((res) => {
+					if (res.code == 200) {
+						this.list = res.data;
+					}
+				})
+			},
+			onDelete(id, index) {
+				uni.showModal({
+					title: "提示",
+					content: "确定是否删除？",
+					confirmColor: "#D61D1D",
+					success: (res) => {
+						if (res.confirm) {
+							this.$api.delBank(id).then((res) => {
+								if (res.code == 200) {
+									this.$u.toast(res.message);
+									this.list.splice(index, 1);
+								} else {
+									this.$u.toast(res.message);
+								}
+							})
+						}
+					}
+				})
+			},
+			goAdd() {
+				uni.navigateTo({
+					url: "/pages/user/bank/detail"
 				})
 			}
 		}
@@ -69,89 +111,100 @@
 			color: #808080;
 		}
 	}
-
-	.nav2 {
-		margin: 30rpx 34rpx 28rpx 34rpx;
+	.content{
+		padding: 46rpx 30rpx;
+	}
+	.stit {
 		font-size: 28rpx;
+		font-family: PingFang SC, PingFang SC-Bold;
 		font-weight: 700;
 		color: #808080;
-		line-height: 40rpx;
+		margin-bottom: 28rpx;
 	}
 
-	.items {
-		padding: 0 30rpx;
-
-		.item {
-			margin-bottom: 20rpx;
+	.list {
+		.bank_item {
 			position: relative;
-			width: 690rpx;
+			background-color: #FFFFFF;
+			width: 100%;
 			height: 218rpx;
 			background: #ffffff;
 			border-radius: 16rpx;
+			margin-bottom: 40rpx;
+			padding: 40rpx 0 0 24rpx;
 			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			padding: 0 40rpx 0 24rpx;
-			.float{
+
+			.img {
+				width: 66rpx;
+				height: 66rpx;
+			}
+
+			.info {
+				flex: 1;
+				padding-left: 32rpx;
+
+				.name {
+					font-size: 36rpx;
+					font-family: PingFang SC, PingFang SC-Bold;
+					font-weight: 700;
+					color: #000000;
+					margin-bottom: 40rpx;
+				}
+
+				.code {
+					font-size: 28rpx;
+					font-family: PingFang SC, PingFang SC-Medium;
+					color: #000000;
+
+					.omit {
+						margin-right: 30rpx;
+					}
+				}
+			}
+
+			.moren {
 				position: absolute;
 				top: 0;
 				right: 0;
+				z-index: 20;
 				width: 82rpx;
 				height: 72rpx;
+				background: url('../../../static/image/user/moren.png') no-repeat;
+				background-size: 100% 100%;
+				font-size: 20rpx;
+				font-family: PingFang SC, PingFang SC-Medium;
+				color: #ffffff;
 			}
-			.left {
-				display: flex;
-				flex-direction: column;
 
-				.top {
-					display: flex;
-					align-items: center;
-					.pic1 {
-						width: 64rpx;
-						height: 66rpx;
-					}
-					.t-txt1{
-						margin-left: 32rpx;
-						font-size: 36rpx;
-						font-weight: 700;
-						color: #000000;
-						line-height: 40rpx;
-					}
-				}
-
-				.down {
-					margin-top: 40rpx;
-					margin-left: 96rpx;
-					font-size: 28rpx;
-					font-weight: 500;
-					color: #000000;
-					line-height: 40rpx;
-				}
-			}
-			.right{
+			.del {
+				position: absolute;
+				top: 92rpx;
+				right: 40rpx;
 				font-size: 24rpx;
+				font-family: PingFang SC, PingFang SC-Medium;
 				font-weight: 500;
 				color: #808080;
-				line-height: 40rpx;
 			}
-
 		}
 	}
-	.btn{
-		margin: 40rpx 32rpx;
-		width: 690rpx;
+
+	.add {
+		width: 100%;
 		height: 96rpx;
+		line-height: 96rpx;
 		background: #ffffff;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		.txt{
-			margin-left: 16rpx;
-			font-size: 28rpx;
-			font-weight: 500;
-			color: #000000;
-			line-height: 96rpx;
+		font-size: 28rpx;
+		font-family: PingFang SC, PingFang SC-Medium;
+		font-weight: 500;
+		color: #000000;
+
+		.img {
+			width: 23rpx;
+			height: 23rpx;
+			margin-right: 16rpx;
 		}
 	}
-
 </style>

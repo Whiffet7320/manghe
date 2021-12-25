@@ -27,5 +27,8 @@ export default {
 	withdraw_list:'/api/withdraw_list',//提现列表
 	set_pay_password:'/api/set_pay_password',//设置支付密码
 	spread:'/api/spread',//分享
-	walletlist:"/api/wallet_list" //我的钱包
+	walletlist:"/api/wallet_list" ,//我的钱包
+	wait_pay:'/api/wait_pay',//
+	exress_detail:'/api/exress_detail',//快递查询
+	withdraw:'/api/withdraw',//提现
 }

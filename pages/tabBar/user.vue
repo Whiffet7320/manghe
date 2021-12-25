@@ -51,7 +51,7 @@
 				<view class="subtit">{{userInfo.realname==null||userInfo.realname==''?'未实名':userInfo.realname.status==0?'待审核':'已认证'}}</view>
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="arrow"></image>
 			</view>
-			<view class="menu_item" @click="jump(`/pages/user/qianbao/qianbao?now_money=${userInfo.now_money}`)">
+			<view class="menu_item" @click="jump(`/pages/user/qianbao/qianbao?now_money=${userInfo.now_money}&integral=${userInfo.integral}`)">
 				<image src="/static/image/user/m3.png" mode="aspectFit" class="icon"></image>
 				<view class="name">钱包</view>
 				<view class="subtit"></view>

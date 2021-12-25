@@ -6,7 +6,7 @@
 				<image src="/static/image/zu3030.png" class="pic1-1" mode=""></image>
 				<view class="txt1">总积分</view>
 			</view>
-			<view class="tit2">12590</view>
+			<view class="tit2">{{money}}</view>
 			<view class="btn" @click="toJifentixian">
 				<image src="/static/image/zu3007.png" class="pic-btn" mode=""></image>
 				<view class="txt-btn">全部提现</view>
@@ -22,27 +22,96 @@
 					<view class="box"></view>
 					<view class="txt1">提现记录</view>
 				</view>
-				<view class="txt2">已经提现2500积分</view>
+				<view class="txt2">已经提现{{userInfo.withdraw_integral}}积分</view>
 			</view>
 			<view class="items">
-				<view :class="{'item':true,'active':i%2!=0}" v-for="(item,i) in 6">
-					<view class="i-txt1 i1">2021-06-30</view>
-					<view class="i-txt1">提现成功</view>
-					<view class="i-txt1">500积分</view>
+				<view :class="{'item':true,'active':i%2!=0}" v-for="(item,i) in orderList">
+					<view class="i-txt1 i1">{{$u.timeFormat(item.add_time,'yyyy-mm-dd')}}</view>
+					<view class="i-txt1">{{item.paid == 0 ? '待审核' : item.paid == 1 ? '提现成功' : '提现失败'}}</view>
+					<view class="i-txt1">{{item.withdraw_price}}积分</view>
 				</view>
+				<u-loadmore :status="status" font-size="24" />
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
+	import {
+		mapState
+	} from "vuex";
 	export default{
+		computed: {
+			...mapState(["IndexshopPage", "IndexshopPageSize",'userInfo']),
+		},
+		watch: {
+			IndexshopPage: function(page) {
+				console.log('ddpage')
+				this.$store.commit("IndexshopPage", page);
+				if (this.IndexshopPage != 1) {
+					this.getShopData();
+				}
+			},
+		},
 		data(){
 			return{
-				
+				orderList: [],
+				money:'',
+				// 加载
+				status: 'loadmore',
+				loadText: {
+					loadmore: '上拉加载更多',
+					loading: '正在加载...',
+					nomore: '没有了更多了'
+				},
+				iconType: 'flower',
 			}
 		},
+		onPullDownRefresh() {
+			this.$store.commit('IndexshopPage',1)
+			this.orderList = [];
+			this.getData();
+		},
+		onShow() {
+			this.$store.commit('IndexshopPage',1)
+			this.orderList = [];
+			this.getData();
+			this.getUserInfo()
+		},
+		onReachBottom(){
+			this.$store.commit('IndexshopPage',this.IndexshopPage +1)
+		},
 		methods:{
+			async getData(){
+				this.status = 'loading';
+				setTimeout(async() => {
+					const res = await this.$api.withdraw_list({
+						page: this.IndexshopPage,
+						limit: this.IndexshopPageSize,
+					})
+					console.log(res.data.data.length)
+					if (res.data.data.length == 0) {
+						this.status = 'nomore'
+					} else {
+						this.status = 'loadmore';
+						this.orderList = this.orderList.concat(res.data.data);
+					}
+				}, 200)
+				console.log(this.orderList)
+				uni.stopPullDownRefresh()
+			},
+			async getUserInfo() {
+				await this.$api.userInfo().then(res => {
+					if(res.code==200){
+						this.money = res.data.integral;
+					}else{
+						uni.navigateTo({
+							url:"/pages/login/login"
+						})
+					}
+				});
+				console.log(this.money)
+			},
 			toJifentixian(){
 				uni.navigateTo({
 					url:'/pages/user/tixian/jifentixian'
@@ -58,6 +127,9 @@
 	}
 </style>
 <style lang="scss" scoped>
+	/deep/ .u-load-more-wrap {
+		height: 100rpx !important;
+	}
 	.index {
 		position: relative;
 	}

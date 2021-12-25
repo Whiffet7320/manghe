@@ -2,43 +2,54 @@
 	<view class="olist">
 		<view class="navbar">
 			<u-tabs-swiper bg-color="#f7f8fa" height='60' font-size="32" inactive-color="#000000" bar-height="2"
-				bar-width="80" active-color="#D61D1D" ref="uTabs" :list="list" :current="tabCurrentIndex" @change="tabClick"
-				:is-scroll="false" swiperWidth="750"></u-tabs-swiper>
+				bar-width="80" active-color="#D61D1D" ref="uTabs" :list="list" :current="tabCurrentIndex"
+				@change="tabClick" :is-scroll="false" swiperWidth="750"></u-tabs-swiper>
 		</view>
 		<swiper style="height: calc(100% - 110rpx)" :current="tabCurrentIndex" duration="300" @change="changeTab">
 			<swiper-item class="tab-content" v-for="(item, index) in list" :key="index">
-				<scroll-view class="list-scroll-content" scroll-y='true' @scrolltolower="loadData">
-					<page-empty text="没有找到任何订单" v-if="loaded === true && orderList.length === 0"/>
+				<scroll-view class="list-scroll-content" scroll-y='true' @scrolltolower="myReachBottom">
+					<page-empty text="没有找到任何订单" v-if="loaded === true && orderList.length === 0" />
 					<view class="nav5Items">
 						<view class="item" v-for="(order, okey) in orderList" :key="okey" @click="goDetail(order)">
 							<image :src="proInfo.img" class="pic1" mode="" v-if="proInfo.img"></image>
 							<view class="right">
 								<view class="tit1">
-									<view class="txt1">{{proInfo.name}}<u-icon style='margin-left: 20rpx;' name="arrow-right" color="#808080" size="28"></u-icon></view>
-									<view class="txt2" v-if="order.status==0">待发货</view>
-									<view class="txt2" v-if="order.status==1">待收货</view>
-									<view class="txt2" v-if="order.status==2">订单已完成</view>
+									<view class="txt1">{{proInfo.name}}
+										<u-icon style='margin-left: 20rpx;' name="arrow-right" color="#808080"
+											size="28"></u-icon>
+									</view>
+									<view class="txt2" v-if="order.paid==0">待付款</view>
+									<view class="txt2" v-else-if="order.status==0">待发货</view>
+									<view class="txt2" v-else-if="order.status==1">待收货</view>
+									<view class="txt2" v-else-if="order.status==2">订单已完成</view>
 								</view>
 								<view class="tit2">
-									<view class="txt1">规格：<text style="margin-left: 4rpx;">母蟹{{proInfo.unit}}两</text></view>
+									<view class="txt1">规格：<text style="margin-left: 4rpx;">母蟹{{proInfo.unit}}两</text>
+									</view>
 									<view class="txt2">x{{order.total_num}}</view>
 								</view>
 								<view class="tit3">
 									<view class="txt1">下单时间：{{order.add_time}}</view>
 								</view>
 								<view class="tit3">
-									<view class="txt2">实付<text style="font-weight: 700;">￥{{order.pay_price}}</text></view>
+									<view class="txt2">实付<text style="font-weight: 700;">￥{{order.pay_price}}</text>
+									</view>
 								</view>
-								<view class="btns" v-if="order.status==0">
+								<view class="btns" v-if="order.paid==0">
+									<view class="btn2" @click.stop="lijiPay(order)">立即支付</view>
+								</view>
+								<view class="btns" v-else-if="order.status==0">
 									<view class="btn2" @click.stop="pshow=true">提醒发货</view>
 								</view>
-								<view class="btns" v-if="order.status==1">
+								<view class="btns" v-else-if="order.status==1">
 									<view class="btn2" @click.stop="confirmOrder(order.id)">确认收货</view>
-									<view class="btn1" style="margin-left: 20rpx;" @click.stop="toWuliu(order.id)">查看物流</view>
+									<view class="btn1" style="margin-left: 20rpx;" @click.stop="toWuliu(order)">查看物流
+									</view>
 								</view>
-								<view class="btns" v-if="order.status==2">
+								<view class="btns" v-else-if="order.status==2">
 									<view class="btn2" @click.stop="goShop">再来一单</view>
-									<view class="btn1" style="margin-left: 20rpx;" @click.stop="toWuliu(order.id)">查看物流</view>
+									<view class="btn1" style="margin-left: 20rpx;" @click.stop="toWuliu(order)">查看物流
+									</view>
 									<view class="btn1" @click.stop="onDel(order.id,index)">删除订单</view>
 								</view>
 							</view>
@@ -55,153 +66,317 @@
 		<page-modal v-model="cshow" width="466" title="确定收到货了？" confirm-text="确认收货" @confirm="confirm2">
 			<view class="mcont">保障权益商品无误再收货</view>
 		</page-modal>
+		<!-- 弹出层 -->
+		<u-popup v-model="popshow" mode='bottom' border-radius='24' height='708' closeable>
+			<view class="pop">
+				<view class="tit1">
+					<view class="txt1">支付方式</view>
+				</view>
+				<view class="item1" @click="changePay(1)">
+					<view class="t1">
+						<view class="left">
+							<image src="/static/image/lujin1936.png" class="pic1" mode=""></image>
+							<view class="txt1-1">微信支付</view>
+							<view class="box1">推荐</view>
+						</view>
+						<image v-if="payIndex == 1" src="/static/image/lujin1937.png" class="quan2"></image>
+						<view v-else class="quan"></view>
+					</view>
+					<view class="t2">亿万用户的选择，更快更安全</view>
+				</view>
+				<view class="item1" style="border-top: 2rpx solid #f2f2f2;border-bottom: 2rpx solid #f2f2f2;"
+					@click="changePay(2)">
+					<view class="t1">
+						<view class="left">
+							<image src="/static/image/zu3030.png" class="pic1 p2" mode=""></image>
+							<view class="txt1-1">积分抵扣</view>
+						</view>
+						<image v-if="payIndex == 2" src="/static/image/lujin1937.png" class="quan2"></image>
+						<view v-else class="quan"></view>
+					</view>
+					<view class="t2">当前积分为{{userInfo.integral||0}}分</view>
+				</view>
+				<view class="item1" @click="changePay(3)">
+					<view class="t1">
+						<view class="left">
+							<image src="/static/image/lujin2820.png" class="pic1 p3" mode=""></image>
+							<view class="txt1-1">余额抵扣</view>
+						</view>
+						<image v-if="payIndex == 3" src="/static/image/lujin1937.png" class="quan2"></image>
+						<view v-else class="quan"></view>
+					</view>
+					<view class="t2">当前余额为{{userInfo.now_money||0.00}}元</view>
+				</view>
+				<view class="btn-footer" @click="onSubmit">确认</view>
+			</view>
+		</u-popup>
 	</view>
 </template>
 
 <script>
-	import {mapState} from "vuex";
+	import {
+		mapState
+	} from "vuex";
 	import pageEmpty from "@/components/page-empty";
 	import pageToast from "@/components/page-toast";
 	import pageModal from "@/components/page-modal";
 	export default {
-		components:{
+		components: {
 			pageEmpty,
 			pageToast,
 			pageModal
 		},
 		data() {
 			return {
-				id:0,
-				index:0,
-				show:false,
-				pshow:false,
-				cshow:false,
-				proInfo:{},
+				payOrder: {},
+				popshow: false,
+				payIndex: 1,
+				paytype: 'weixin',
+				id: 0,
+				index: 0,
+				show: false,
+				pshow: false,
+				cshow: false,
+				proInfo: {},
 				orderList: [],
 				tabCurrentIndex: 0,
-				list: [
-					{
+				list: [{
 						name: '全部订单',
-						state:-1
-					}, 
+						state: -1
+					},
 					{
 						name: '待发货',
-						state:0
+						state: 0
 					},
 					{
 						name: '待收货',
-						state:1
+						state: 1
 					},
 					{
 						name: '已完成',
-						state:2
+						state: 2
 					}
 				],
 				type: -1, // tabs组件的current值，表示当前活动的tab选项
 				// 加载
 				status: 'loadmore',
-				current_page:1,
-				loaded:false
+				loadText: {
+					loadmore: '上拉加载更多',
+					loading: '正在加载...',
+					nomore: '没有了更多了'
+				},
+				iconType: 'flower',
+				current_page: 1,
 			}
 		},
-		onLoad(options){
+		watch:{
+			tabCurrentIndex: function() {
+				this.orderList = [];
+				this.current_page = 1;
+				this.loadData()
+				// setTimeout(() => {
+				// 	this.getCurrentSwiperHeight('.nav5Items')
+				// }, 800)
+			},
+		},
+		onLoad(options) {
 			this.getProinfo();
 			this.loadData();
 		},
 		methods: {
-			async getProinfo(){
-				await this.$api.product().then((res)=>{
-					if(res.code==200){
+			myReachBottom() {
+				this.current_page++;
+				this.loadData()
+			},
+			async getProinfo() {
+				await this.$api.product().then((res) => {
+					if (res.code == 200) {
 						this.proInfo = res.data;
 					}
 				})
 			},
-			loadData(source) {
-				//判断是否最后一页
-				if (this.status == 'nomore') {
-					return;
+			lijiPay(order) {
+				this.popshow = true;
+				this.payOrder = order;
+			},
+			changePay(index) {
+				this.payIndex = index;
+				if (index == 1) {
+					this.paytype = "weixin";
+				} else if (index == 2) {
+					this.paytype = "integral";
+				} else if (index == 3) {
+					this.paytype = "yue";
 				}
-				//tab切换只有第一次需要加载数据
-				if (source === 'tabChange' && this.loaded === true) {
-					return;
-				}
-				//防止重复加载
-				if (this.status === 'loading') {
-					return;
-				}
+			},
+			async loadData() {
 				this.status = 'loading';
-				setTimeout(()=>{
-					this.$api.orderList({
+				setTimeout(async() => {
+					const res = await this.$api.orderList({
 						page: this.current_page,
 						limit: 10,
 						status: this.type
-					}).then((res)=>{
-						if(res.code==200){
-							this.current_page = res.data.current_page; //当前页码
-							if (res.data.last_page === res.data.current_page) {
-								this.status = 'nomore';
-							} else {
-								this.status = 'more';
-								this.current_page++;
-							}
-							this.orderList = this.orderList.concat(res.data.data);
-							//loaded新字段用于表示数据加载完毕，如果为空可以显示空白页
-							this.loaded = true;
-						}
 					})
+					console.log(res.data.data.length)
+					if (res.data.data.length == 0) {
+						this.status = 'nomore'
+					} else {
+						this.status = 'loadmore';
+						this.orderList = this.orderList.concat(res.data.data);
+					}
+					// if (res.code == 200) {
+					// 	this.current_page = res.data.current_page; //当前页码
+					// 	if (res.data.last_page === res.data.current_page) {
+					// 		this.status = 'nomore';
+					// 	} else {
+					// 		this.status = 'more';
+					// 		this.current_page++;
+					// 	}
+					// 	this.orderList = this.orderList.concat(res.data.data);
+					// }
+					// this.$api.orderList({
+					// 	page: this.current_page,
+					// 	limit: 10,
+					// 	status: this.type
+					// }).then((res) => {
+					// 	if (res.code == 200) {
+					// 		this.current_page = res.data.current_page; //当前页码
+					// 		if (res.data.last_page === res.data.current_page) {
+					// 			this.status = 'nomore';
+					// 		} else {
+					// 			this.status = 'more';
+					// 			this.current_page++;
+					// 		}
+					// 		this.orderList = this.orderList.concat(res.data.data);
+					// 	}
+					// 	console.log(this.orderList)
+					// })
 				}, 200)
+				console.log(this.orderList)
 			},
-			goDetail(val){
-				this.$store.commit("setProinfo",this.proInfo);
-				this.$store.commit("setOrderInfo",val);
-				uni.navigateTo({
-					url:"/pages/user/order/detail?id="+val.id
+			onSubmit() {
+				let data = {
+					order_id:this.payOrder.id,
+					type: this.paytype
+				}
+				this.$api.wait_pay(data).then((res) => {
+					if (res.code == 200) {
+						this.popshow = false;
+						this.goPay(res.data);
+					} else {
+						this.$u.toast(res.message);
+					}
 				})
 			},
-			toWuliu(){
+			goPay(jsConfig) {
+				uni.showLoading({
+					title: "支付中..."
+				})
+				switch (this.payIndex) {
+					case 1:
+						uni.requestPayment({
+							provider: 'wxpay',
+							timeStamp: jsConfig.timeStamp.toString(),
+							nonceStr: jsConfig.nonceStr,
+							package: jsConfig.package,
+							signType: jsConfig.signType,
+							paySign: jsConfig.paySign,
+							success: (res) => {
+								uni.hideLoading();
+								this.show2 = true;
+								setTimeout(() => {
+									uni.redirectTo({
+										url: "/pages/user/order/order"
+									})
+								}, 1500)
+							},
+							fail: (err) => {
+								uni.hideLoading();
+								console.log('fail:' + JSON.stringify(err));
+								this.$u.toast("支付失败");
+							},
+							complete: (e) => {
+								uni.hideLoading();
+								if (e.errMsg == 'requestPayment:cancel') {
+									this.$u.toast("取消支付");
+								}
+							}
+						});
+						break;
+					case 2:
+						uni.hideLoading();
+						this.show2 = true;
+						setTimeout(() => {
+							uni.redirectTo({
+								url: "/pages/user/order/order"
+							})
+						}, 1500)
+						break;
+					case 3:
+						uni.hideLoading();
+						this.show2 = true;
+						setTimeout(() => {
+							uni.redirectTo({
+								url: "/pages/user/order/order"
+							})
+						}, 1500)
+						break;
+				}
+			},
+			goDetail(val) {
+				this.$store.commit("setProinfo", this.proInfo);
+				this.$store.commit("setOrderInfo", val);
 				uni.navigateTo({
-					url:'/pages/user/order/wuliu'
+					url: "/pages/user/order/detail?id=" + val.id
 				})
 			},
-			onDel(id,index){
+			toWuliu(order) {
+				var address = `${order.addressinfo.province}${order.addressinfo.city}${order.addressinfo.district}${order.addressinfo.detail}`
+				uni.navigateTo({
+					url: `/pages/user/order/wuliu?order_id=${order.id}&express_name=${order.express_name}&address=${address}`
+				})
+			},
+			onDel(id, index) {
 				this.id = id;
 				this.index = index;
 				this.show = true;
 			},
-			confirm(){
-				this.$api.delOrder(this.id).then((res)=>{
-					if(res.code==200){
+			confirm() {
+				this.$api.delOrder(this.id).then((res) => {
+					if (res.code == 200) {
 						this.$u.toast("删除成功");
-						this.orderList.splice(this.index,1);
-					}else{
+						this.orderList.splice(this.index, 1);
+					} else {
 						this.$u.toast(res.message);
 					}
 				})
 			},
 			//提醒发货
-			pconfirm(){
+			pconfirm() {
 				this.pshow = !this.pshow;
 			},
-			confirmOrder(id){
+			confirmOrder(id) {
 				this.cshow = true;
 				this.id = id;
 			},
-			confirm2(){
-				this.$api.confirmOrder(this.id).then((res)=>{
-					if(res.code==200){
+			confirm2() {
+				this.$api.confirmOrder(this.id).then((res) => {
+					if (res.code == 200) {
 						this.cshow = false;
 						this.$u.toast(res.message);
+						this.orderList = [];
+						this.current_page = 1;
 						this.loadData();
-					}else{
+					} else {
 						this.cshow = false;
 						this.$u.toast(res.message);
 					}
 				})
 			},
-			goShop(){
-				this.$store.commit("setProinfo",this.proInfo);
+			goShop() {
+				this.$store.commit("setProinfo", this.proInfo);
 				uni.navigateTo({
-					url:'/pages/order/querendingdan'
+					url: '/pages/order/querendingdan'
 				})
 			},
 			// tabs通知swiper切换
@@ -209,16 +384,17 @@
 			tabClick(index) {
 				this.tabCurrentIndex = index;
 				this.type = this.list[this.tabCurrentIndex].state;
-				// this.current_page = 1;
+				this.current_page = 1;
 				// this.orderList = [];
-				// this.status = "loadmore";
-				// this.loaded = false;
-				this.loadData();
+				// this.loadData();
 			},
 			changeTab(e) {
+				console.log('changeTab')
 				this.tabCurrentIndex = e.target.current;
 				this.type = this.list[this.tabCurrentIndex].state;
-				this.loadData('tabChange');
+				this.current_page = 1;
+				// this.orderList = [];
+				// this.loadData();
 			},
 			animationfinish(e) {
 				let current = e.detail.current;
@@ -243,16 +419,25 @@
 	}
 </style>
 <style lang="scss" scoped>
-	.olist{
+	/deep/ .u-load-more-wrap {
+		width: 686rpx;
+		height: 100rpx !important;
+		transform: translateY(-20rpx);
+	}
+
+	.olist {
 		height: 100vh;
 	}
-	.list-scroll-content{
+
+	.list-scroll-content {
 		height: 100%;
 	}
-	.navbar{
-		padding:40rpx 0 24rpx 0;
+
+	.navbar {
+		padding: 40rpx 0 24rpx 0;
 	}
-	.mcont{
+
+	.mcont {
 		padding: 24rpx 24rpx 30rpx 24rpx;
 		font-size: 32rpx;
 		font-family: PingFang SC, PingFang SC-Bold;
@@ -260,6 +445,7 @@
 		text-align: center;
 		color: #141414;
 	}
+
 	.nav5Items {
 		padding: 0 30rpx;
 
@@ -273,18 +459,21 @@
 			display: flex;
 			align-items: center;
 			padding: 0 28rpx 0 16rpx;
+
 			.pic1 {
 				width: 248rpx;
 				height: 248rpx;
 			}
 
 			.right {
-				margin-top: 18rpx;
+				// margin-top: 18rpx;
 				margin-left: 18rpx;
+
 				.tit1 {
 					display: flex;
 					align-items: center;
 					justify-content: space-between;
+
 					.txt1 {
 						font-size: 32rpx;
 						font-weight: 700;
@@ -297,45 +486,53 @@
 						color: #808080;
 					}
 				}
-				.tit2{
+
+				.tit2 {
 					display: flex;
 					align-items: center;
 					justify-content: space-between;
 					margin-top: 12rpx;
-					.txt1{
+
+					.txt1 {
 						font-size: 24rpx;
 						font-weight: 500;
 						color: #808080;
 					}
-					.txt2{
+
+					.txt2 {
 						font-size: 24rpx;
 						font-weight: 500;
 						color: #808080;
 					}
 				}
-				.tit3{
+
+				.tit3 {
 					display: flex;
 					align-items: center;
 					justify-content: space-between;
 					margin-top: 10rpx;
-					.txt1{
+
+					.txt1 {
 						font-size: 20rpx;
 						font-weight: 500;
 						color: #808080;
 					}
-					.txt2{
+
+					.txt2 {
 						font-size: 20rpx;
 						font-weight: 500;
 						color: #000000;
 					}
 				}
-				.btns{
+
+				.btns {
 					width: 380rpx;
-					margin-top: 34rpx;
+					margin-top: 10rpx;
 					display: flex;
 					flex-direction: row-reverse;
 					align-items: center;
-					.btn1{
+
+					.btn1 {
 						width: 112rpx;
 						height: 44rpx;
 						border: 2rpx solid #f2f2f2;
@@ -346,7 +543,8 @@
 						line-height: 40rpx;
 						color: #000000;
 					}
-					.btn2{
+
+					.btn2 {
 						margin-left: 20rpx;
 						width: 112rpx;
 						height: 44rpx;
@@ -360,6 +558,105 @@
 					}
 				}
 			}
+		}
+	}
+
+	.pop {
+		.tit1 {
+			margin-top: 28rpx;
+
+			.txt1 {
+				margin-left: 24rpx;
+				font-size: 28rpx;
+				font-weight: 700;
+				color: #000000;
+			}
+		}
+
+		.item1 {
+			padding: 0 68rpx;
+			height: 152rpx;
+
+			.t1 {
+				padding-top: 32rpx;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+
+				.left {
+					display: flex;
+					align-items: center;
+
+					.pic1 {
+						width: 42rpx;
+						height: 38rpx;
+					}
+
+					.p2.pic1 {
+						height: 42rpx;
+					}
+
+					.p3.pic1 {
+						height: 42rpx;
+					}
+
+					.txt1-1 {
+						margin-left: 32rpx;
+						font-size: 28rpx;
+						font-weight: 700;
+						color: #000000;
+					}
+
+					.box1 {
+						margin-left: 60rpx;
+						width: 56rpx;
+						height: 32rpx;
+						border: 2rpx solid #ff0000;
+						border-radius: 4rpx;
+						font-size: 20rpx;
+						font-weight: 500;
+						text-align: center;
+						line-height: 30rpx;
+						color: #ff0000;
+					}
+				}
+
+				.quan {
+					width: 26rpx;
+					height: 26rpx;
+					border: 2rpx solid #808080;
+					border-radius: 50%;
+				}
+
+				.quan2 {
+					width: 26rpx;
+					height: 26rpx;
+				}
+
+			}
+
+			.t2 {
+				margin-left: 74rpx;
+				margin-top: 16rpx;
+				font-size: 24rpx;
+				font-weight: 500;
+				color: #000000;
+			}
+
+		}
+
+		.btn-footer {
+			width: 276rpx;
+			height: 60rpx;
+			background: #d61d1d;
+			border-radius: 8rpx;
+			font-size: 28rpx;
+			font-weight: 700;
+			text-align: center;
+			line-height: 60rpx;
+			color: #ffffff;
+			margin-left: 238rpx;
+			margin-top: 16rpx;
 		}
 	}
 </style>

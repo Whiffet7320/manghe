@@ -748,6 +748,22 @@ export default {
 			}
 		})
 	},
+	wait_pay(obj) {
+		return myPost({
+			url: urls.wait_pay,
+			data: {
+				...obj
+			}
+		})
+	},
+	exress_detail(obj) {
+		return myGet({
+			url: urls.exress_detail,
+			params:{
+				...obj
+			}
+		})
+	},
 	bindBank(obj) {
 		return myPost({
 			url: urls.bindBank,
@@ -834,6 +850,14 @@ export default {
 		return myGet({
 			url: urls.spread,
 			params: {
+				...obj
+			}
+		})
+	},
+	withdraw(obj) {
+		return myPost({
+			url: urls.withdraw,
+			data: {
 				...obj
 			}
 		})

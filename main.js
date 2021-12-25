@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import App from './App'
 import uView from "uview-ui";
-import api from 'api/index.js';
+import api from './api/index.js';
 import store from './store';
 import tool from 'utils/tool';
 

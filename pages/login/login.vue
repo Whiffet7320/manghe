@@ -48,8 +48,8 @@
 						success: (res) => {
 							infoRes = res;
 							let userInfo = res.userInfo;
-							userInfo.spread_spid = getApp().globalData.spid; //获取推广人ID
-							userInfo.spread_code = getApp().globalData.code; //获取推广人分享二维码ID
+							// userInfo.spread_spid = getApp().globalData.spid; //获取推广人ID
+							// userInfo.spread_code = getApp().globalData.code; //获取推广人分享二维码ID
 							uni.login({
 								provider: 'weixin',
 								success: (loginres) => {

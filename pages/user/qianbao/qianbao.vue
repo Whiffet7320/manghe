@@ -51,6 +51,7 @@
 			return {
 				list:[],
 				nowPrice:'',
+				integral:'',
 				// 加载
 				reload: false,
 				current_page: 1,
@@ -76,9 +77,22 @@
 					})
 				}, 200)
 			},
+			async getUserInfo() {
+				await this.$api.userInfo().then(res => {
+					if(res.code==200){
+						this.nowPrice = res.data.now_money;
+						this.$store.commit("UpdateUserinfo",res.data);
+						this.$store.commit('SetUid', res.data.uid);
+					}else{
+						uni.navigateTo({
+							url:"/pages/login/login"
+						})
+					}
+				});
+			},
 			tojifen(){
 				uni.navigateTo({
-					url:'/pages/user/jifen/wodejifen'
+					url:`/pages/user/jifen/wodejifen?integral=${this.integral}`
 				})
 			},
 			tochongzhi(){
@@ -90,6 +104,7 @@
 		onLoad(options) {
 			if(options.now_money){
 				this.nowPrice = options.now_money;
+				this.integral = options.integral;
 			}
 			this.loadData();
 		},
@@ -97,6 +112,9 @@
 			this.current_page = 1;
 			this.reload = true;
 			this.loadData();
+		},
+		onShow() {
+			this.getUserInfo()
 		},
 		onReachBottom() {
 			//判断是否最后一页
