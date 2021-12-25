@@ -94,7 +94,9 @@
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="arrow"></image>
 			</view>
 		</view>
-		<view class="logout" v-if="isLogin" @click="lshow=true">退出登录</view>
+		<view style="padding-bottom: 40rpx;">
+			<view class="logout" v-if="isLogin" @click="lshow=true">退出登录</view>
+		</view>
 		<page-modal v-model="show" :content="tel" width="466" confirm-text="立即拨打" @confirm="confirm"></page-modal>
 		<page-modal v-model="lshow" content="是否确定退出登录？" width="466" confirm-text="确定" @confirm="confirm2"></page-modal>
 	</view>
