@@ -25,7 +25,8 @@
 			</view>
 		</view>
 		<view class="mynav">
-			<u-navbar :title-bold='true' :border-bottom='false' back-icon-color='#ffffff' :background='background' title-color='#ffffff' title="我的积分" title-size='34'></u-navbar>
+			<u-navbar :title-bold='true' :border-bottom='false' back-icon-color='#ffffff' :background='background'
+				title-color='#ffffff' title="我的积分" title-size='34'></u-navbar>
 		</view>
 		<view class="nav2">
 			<view class="tit1">
@@ -52,18 +53,20 @@
 </template>
 
 <script>
-	import {mapState} from "vuex";
+	import {
+		mapState
+	} from "vuex";
 	import pageEmpty from "@/components/page-empty";
 	export default {
-		components:{
+		components: {
 			pageEmpty
 		},
 		data() {
 			return {
-				integral:'',
+				integral: '',
 				isEmpty: false,
-				list:[],
-				zongJifen:'',
+				list: [],
+				zongJifen: '',
 				background: {
 					'background': 'transparent'
 				},
@@ -75,15 +78,15 @@
 			}
 		},
 		methods: {
-			loadData(){
+			loadData() {
 				this.status = 'loading';
 				setTimeout(() => {
 					this.$api.integral_list({
 						page: this.current_page,
 						limit: 10,
 						status: this.index
-					}).then((res)=>{
-						if(res.code==200){
+					}).then((res) => {
+						if (res.code == 200) {
 							uni.stopPullDownRefresh();
 							this.list = this.list.concat(res.data.data);
 							this.isEmpty = !this.list.length;
@@ -93,7 +96,7 @@
 					})
 				}, 200)
 			},
-			loadMore(){
+			loadMore() {
 				if (this.current_page < this.last_page) {
 					this.current_page += 1;
 					this.loadData();
@@ -106,16 +109,29 @@
 				this.last_page = 1;
 				this.loadData();
 			},
-			toGuize(){
+			toGuize() {
 				uni.navigateTo({
-					url:'/pages/index/jifenguize'
+					url: '/pages/index/jifenguize'
 				})
 			},
-			toTixian(){
+			toTixian() {
 				uni.navigateTo({
-					url:`/pages/user/tixian/tixian?integral=${this.integral}`
+					url: `/pages/user/tixian/tixian?integral=${this.integral}`
 				})
-			}
+			},
+			async getUserInfo() {
+				await this.$api.userInfo().then(res => {
+					if (res.code == 200) {
+						this.integral = res.data.integral
+						this.$store.commit("UpdateUserinfo", res.data);
+						this.$store.commit('SetUid', res.data.uid);
+					} else {
+						uni.navigateTo({
+							url: "/pages/login/login"
+						})
+					}
+				});
+			},
 		},
 		onLoad(options) {
 			this.integral = options.integral;
@@ -126,7 +142,10 @@
 			this.current_page = 1;
 			this.last_page = 1;
 			this.loadData();
-		}
+		},
+		onShow() {
+			this.getUserInfo()
+		},
 	}
 </script>
 
@@ -136,7 +155,6 @@
 	}
 </style>
 <style lang="scss" scoped>
-	
 	.index {
 		position: relative;
 	}
@@ -272,7 +290,7 @@
 				position: absolute;
 				bottom: 2rpx;
 				left: 50%;
-				transform: translate(-50%,10rpx);
+				transform: translate(-50%, 10rpx);
 				width: 40rpx;
 				height: 2rpx;
 				background: #D61D1D;
@@ -282,9 +300,11 @@
 		.items {
 			margin-top: 20rpx;
 			height: calc(100% - 86rpx);
-			.list-scroll-content{
+
+			.list-scroll-content {
 				height: 100%;
 			}
+
 			.item {
 				border-bottom: 2rpx solid #f2f2f2;
 				height: 136rpx;
@@ -312,7 +332,8 @@
 					font-size: 32rpx;
 					font-weight: 700;
 					color: #d61d1d;
-					&.gray{
+
+					&.gray {
 						color: #000;
 					}
 				}

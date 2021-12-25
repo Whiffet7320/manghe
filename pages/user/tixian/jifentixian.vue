@@ -20,7 +20,7 @@
 						</view>
 					</view>
 					<view class="moren" v-if="item.default==1"></view>
-					<view class="del" @click="onDelete(item.id,index)">删除</view>
+					<view class="del" @click.stop="onDelete(item.id,index)">删除</view>
 				</view>
 			</view>
 			<view class="add" @click="goAdd">
