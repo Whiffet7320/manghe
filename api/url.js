@@ -1,5 +1,5 @@
 export default {
-	baseUrl: 'http://192.168.50.142:9007', // http://192.168.50.142:8098  //https://ceshi.xingmangkeji.cn
+	baseUrl: 'https://pangxie.xingmangkeji.cn', // http://192.168.50.142:8098  //https://ceshi.xingmangkeji.cn
 	userInfo: "/api/user_info", //用户信息
 	loginWechat: '/api/mini_login',//微信登录
 	updateUserInfo:"/api/update_user_info",//修改用户信息

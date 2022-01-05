@@ -19,7 +19,7 @@ export default new Vuex.Store({
 		token:uni.getStorageSync("token")||"",
 		userInfo: {},
 		uid:uni.getStorageSync("uid") || 0,
-		addressInfo:{},
+		addressInfo:null,
 		onResh:false,
 		proInfo:{},
 		orderInfo:{}

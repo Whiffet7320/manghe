@@ -4,13 +4,15 @@
 			<view class="Usins">
 				<view class="userName">收货人</view>
 				<view class="Puin">
-					<u-input type="text" :clearable='false' v-model="infoName" input-align="right" placeholder="请输入收货人姓名" placeholder-style="color:#999" />
+					<u-input type="text" :clearable='false' v-model="infoName" input-align="right"
+						placeholder="请输入收货人姓名" placeholder-style="color:#999" />
 				</view>
 			</view>
 			<view class="UserPhoes">
 				<view class="userName">手机号码</view>
 				<view class="Puin">
-					<u-input type="number" :clearable='false' v-model="Phone" input-align="right" placeholder="请输入收货人手机号" maxlength="11" placeholder-style="color:#999" />
+					<u-input type="number" :clearable='false' v-model="Phone" input-align="right"
+						placeholder="请输入收货人手机号" maxlength="11" placeholder-style="color:#999" />
 				</view>
 			</view>
 		</view>
@@ -30,7 +32,8 @@
 			<view class="DetaRess">
 				<view class="LocaTes">详细地址</view>
 				<view class="AddStat">
-					<u-input type="text" :clearable='false' v-model="DateAddrs" input-align="right" placeholder="请输入详细地址信息" placeholder-style="color:#999" />
+					<u-input type="text" :clearable='false' v-model="DateAddrs" input-align="right"
+						placeholder="请输入详细地址信息" placeholder-style="color:#999" />
 				</view>
 			</view>
 		</view>
@@ -50,7 +53,8 @@
 		</view>
 		<u-gap height="136"></u-gap>
 		<view class="footer">
-			<view @click="PresInfo" v-if="infoName!='' && Phone!='' && region.length!=0 && DateAddrs!=''" class="btn">保存</view>
+			<view @click="PresInfo" v-if="infoName!='' && Phone!='' && region.length!=0 && DateAddrs!=''" class="btn">保存
+			</view>
 			<view v-else class="btn noactive">保存</view>
 		</view>
 		<u-picker mode="region" v-model="show" confirm-color="#D61D1D" @confirm="confirm"></u-picker>
@@ -65,29 +69,36 @@
 </template>
 
 <script>
-	import {mapGetters,mapState} from "vuex";
+	import {
+		mapGetters,
+		mapState
+	} from "vuex";
 	export default {
 		data() {
 			return {
-				show:false,
+				opType: '',
+				show: false,
 				popShow1: false,
 				infoName: '', //收货人
 				Phone: '', //手机号码
-				province:"",
-				city:"",
+				province: "",
+				city: "",
 				district: '',
-				address:"",
+				address: "",
 				DateAddrs: '', //详情地址
 				Switch: true, //是否默认
 				id: 0
 			}
 		},
-		computed:{
+		computed: {
 			...mapGetters(['isLogin']),
 			...mapState(['addressInfo'])
 		},
 		onLoad(options) {
-			if(this.isLogin){
+			if (options.type) {
+				this.opType = options.type
+			}
+			if (this.isLogin) {
 				this.id = options.id || 0;
 				uni.setNavigationBarTitle({
 					title: options.id ? '修改收货地址' : '新建收货地址'
@@ -99,14 +110,14 @@
 			getUserAddress() {
 				this.infoName = this.addressInfo.real_name;
 				this.Phone = this.addressInfo.phone;
-				this.Switch = this.addressInfo.is_default==1?true:false;
+				this.Switch = this.addressInfo.is_default == 1 ? true : false;
 				this.province = this.addressInfo.province;
 				this.city = this.addressInfo.city;
 				this.district = this.addressInfo.district;
-				this.address = this.province+this.city+this.district;
+				this.address = this.province + this.city + this.district;
 				this.DateAddrs = this.addressInfo.detail;
 			},
-			confirm(val){
+			confirm(val) {
 				this.province = val.province.label;
 				this.city = val.city.label;
 				this.district = val.area.label;
@@ -114,6 +125,17 @@
 			},
 			queding() {
 				this.popShow1 = false;
+				// if (this.opType == 'order') {
+				// 	this.$store.commit("setAddress", {
+				// 		id: this.id,
+				// 		real_name: this.infoName,
+				// 		phone: this.Phone,
+				// 		province: this.province,
+				// 		city: this.city,
+				// 		district: this.district,
+				// 		detail: this.DateAddrs,
+				// 	});
+				// }
 				uni.navigateBack({
 					delta: 1
 				})
@@ -129,25 +151,25 @@
 			//保存
 			async PresInfo() {
 				var myreg = /^[1][3,4,5,7,8,9][0-9]{9}$/;
-				if (!myreg.test(this.Phone)){
+				if (!myreg.test(this.Phone)) {
 					this.$u.toast("请填写正确的手机号码");
 					return;
 				}
-				if (this.address === ''){
+				if (this.address === '') {
 					this.$u.toast("请选择所在地区");
 					return;
 				}
-				if (!this.DateAddrs){
+				if (!this.DateAddrs) {
 					this.$u.toast("请填写详细地址");
 					return;
 				}
 				const res = await this.$api.saveAddress({
-					id:this.id,
+					id: this.id,
 					real_name: this.infoName,
 					phone: this.Phone,
-					province:this.province,
-					city:this.city,
-					district:this.district,
+					province: this.province,
+					city: this.city,
+					district: this.district,
 					detail: this.DateAddrs,
 					is_default: this.Switch ? 0 : 1
 				})
@@ -167,16 +189,18 @@
 	}
 </style>
 <style lang="scss" scoped>
-	.acea-row{
+	.acea-row {
 		display: flex;
 		flex-direction: column;
 	}
-	.picker{
+
+	.picker {
 		text-align: right;
 		font-size: 28rpx;
 		font-weight: 400;
 		color: #707070;
 	}
+
 	.pop2 {
 		display: flex;
 		flex-direction: column;
@@ -215,6 +239,7 @@
 	.index {
 		width: 100%;
 		position: relative;
+
 		.userFi {
 			width: 100%;
 			height: 218rpx;
@@ -241,7 +266,8 @@
 					font-size: 28rpx;
 					font-weight: 400;
 					color: #999999;
-					/deep/.u-input__input{
+
+					/deep/.u-input__input {
 						color: #707070;
 					}
 				}
@@ -264,7 +290,8 @@
 					font-size: 28rpx;
 					font-weight: 400;
 					color: #999999;
-					/deep/.u-input__input{
+
+					/deep/.u-input__input {
 						color: #707070;
 					}
 				}
@@ -293,7 +320,7 @@
 				}
 
 				.AddStat {
-					flex:1;
+					flex: 1;
 					display: flex;
 					align-items: center;
 					text-align: right;
@@ -334,7 +361,8 @@
 					font-size: 28rpx;
 					font-weight: 400;
 					color: #999999;
-					/deep/.u-input__input{
+
+					/deep/.u-input__input {
 						color: #707070;
 					}
 				}
@@ -511,11 +539,13 @@
 			}
 		}
 	}
-	.footer{
+
+	.footer {
 		width: 612rpx;
 		height: 140rpx;
-		margin:0 auto;
-		.btn{
+		margin: 0 auto;
+
+		.btn {
 			width: 100%;
 			height: 84rpx;
 			background: #D61D1D;
@@ -526,9 +556,10 @@
 			text-align: center;
 			color: #FFFFFF;
 		}
-		.btn.noactive{
+
+		.btn.noactive {
 			background: #F2F2F2;
-			color:#848484;
+			color: #848484;
 		}
 	}
 </style>

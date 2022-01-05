@@ -120,6 +120,10 @@
 				}
 				if(this.cardNum==""){
 					this.$u.toast("请输入你的身份证号码");
+					var regIdNo = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/; 
+					if(!regIdNo.test(this.cardNum)){ 
+					  this.$u.toast("身份证号填写有误");
+					}
 					return;
 				}
 				if(this.front_img==""){

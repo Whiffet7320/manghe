@@ -7,7 +7,7 @@
 			<input type="password" v-model="npwd" class="ipt" placeholder="再次输入密码" placeholder-style="color:#808080;font-weight:500" />
 		</view>
 		<view class="cell">
-			<input type="number" v-model="phone" maxlength="11" class="ipt" placeholder="请输入你的手机号" placeholder-style="color:#808080;font-weight:500" />
+			<input type="number" disabled v-model="phone" maxlength="11" class="ipt" placeholder="请输入你的手机号" placeholder-style="color:#808080;font-weight:500" />
 		</view>
 		<view class="cell">
 			<input type="number" v-model="captch" class="ipt ipts" placeholder="请输入短信验证码" placeholder-style="color:#808080;font-weight:500" />
@@ -126,6 +126,7 @@
 					title:"修改登陆密码"
 				})
 			}
+			this.phone = this.userInfo.account
 		},
 		onUnload() {
 			clearInterval(this.clockTimer);

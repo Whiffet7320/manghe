@@ -8,8 +8,14 @@
 		</u-navbar>
 		<image src="/static/image/zu2711.png" class="pic1" mode=""></image>
 		<view class="txt1">Welcome</view>
+		<view class="inp2box inp3">
+			<view class="inp2">
+				<u-input v-model="yqm" type="text" :clearable='false' placeholder='请输入推荐人邀请码' />
+			</view>
+			<view class="txt11">*非必填项</view>
+		</view>
 		<button class="btn1" @tap="getUserProfile">微信用户一键登录</button>
-		<view @click="tozhuce" class="txt2">密码/验证码登录</view>
+		<!-- <view @click="tozhuce" class="txt2">密码/验证码登录</view> -->
 	</view>
 </template>
 
@@ -24,7 +30,11 @@
 				btnShow:false,
 				iv:'',
 				phoneData:'',
+				yqm:'',
 			}
+		},
+		onShow() {
+			this.yqm = uni.getStorageSync('scencLid') ? uni.getStorageSync('scencLid') : ''
 		},
 		methods:{
 			tozhuce(){
@@ -56,7 +66,7 @@
 									this.$api.loginWechat({
 										code:loginres.code,
 										userinfo:userInfo,
-										invite_code: uni.getStorage('scencLid') ? uni.getStorage('scencLid') : '',
+										invite_code: this.yqm,
 									}).then(res => {
 										uni.hideLoading();
 										if (res.data.token !== undefined && res.data.token) {
@@ -95,6 +105,9 @@
 <style lang="scss" scoped>
 	.index {
 		position: relative;
+		width: 750rpx;
+		height: 100vh;
+		overflow: scroll;
 	}
 	.bacImg{
 		position: absolute;
@@ -107,6 +120,28 @@
 		margin-left: 48rpx;
 		width: 34rpx;
 		height: 34rpx;
+	}
+	.inp2box {
+		position: absolute;
+		width: 556rpx;
+		top: 748rpx;
+		margin: 0 112rpx;
+		display: flex;
+		align-items: center;
+	
+		.inp2 {
+			width: 360rpx;
+			border-radius: 10rpx;
+			background: #FFFFFF;
+			padding: 0 20rpx;
+		}
+	
+		.txt11 {
+			margin-left: 34rpx;
+			font-size: 24rpx;
+			font-weight: 700;
+			color: #ffffff;
+		}
 	}
 	.pic1{
 		position: absolute;
@@ -127,7 +162,7 @@
 	}
 	.btn1{
 		position: absolute;
-		top: 802rpx;
+		top: 844rpx;
 		border-radius: 16rpx;
 		left: 50%;
 		transform: translateX(-50%);

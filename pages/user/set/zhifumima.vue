@@ -2,14 +2,19 @@
 	<view class="index">
 		<view v-if="isShezhi == 'no'">
 			<view class="tit1">{{!isTwo?'请设置螃蟹商城的支付密码，建议与银行卡密码不同':'请再次输入密码'}}</view>
-			<u-message-input v-if='!isTwo' :focus="true" :breathe="true" :maxlength='6' :dot-fill="true" @finish="finish" active-color="#D61D1D"></u-message-input>
-			<u-message-input v-else :focus="true" :breathe="true" :maxlength='6' :dot-fill="true" @finish="finish2" active-color="#D61D1D"></u-message-input>
+			<u-message-input v-if='!isTwo' :focus="true" :breathe="true" :maxlength='6' :dot-fill="true"
+				@finish="finish" active-color="#D61D1D"></u-message-input>
+			<u-message-input v-else :focus="true" :breathe="true" :maxlength='6' :dot-fill="true" @finish="finish2"
+				active-color="#D61D1D"></u-message-input>
 		</view>
 		<view v-else>
 			<view class="tit1">{{!isTwo && !isThree?'请输入旧密码': isTwo && !isThree ? '请输入新密码' : '请再次输入密码'}}</view>
-			<u-message-input v-if='!isTwo && !isThree' :focus="true" :breathe="true" :maxlength='6' :dot-fill="true" @finish="finish" active-color="#D61D1D"></u-message-input>
-			<u-message-input v-if='isTwo && !isThree' :focus="true" :breathe="true" :maxlength='6' :dot-fill="true" @finish="finish2" active-color="#D61D1D"></u-message-input>
-			<u-message-input v-if='isTwo && isThree' :focus="true" :breathe="true" :maxlength='6' :dot-fill="true" @finish="finish3" active-color="#D61D1D"></u-message-input>
+			<u-message-input v-if='!isTwo && !isThree' :focus="true" :breathe="true" :maxlength='6' :dot-fill="true"
+				@finish="finish" active-color="#D61D1D"></u-message-input>
+			<u-message-input v-if='isTwo && !isThree' :focus="true" :breathe="true" :maxlength='6' :dot-fill="true"
+				@finish="finish2" active-color="#D61D1D"></u-message-input>
+			<u-message-input v-if='isTwo && isThree' :focus="true" :breathe="true" :maxlength='6' :dot-fill="true"
+				@finish="finish3" active-color="#D61D1D"></u-message-input>
 		</view>
 		<view @click="onSubmit" class="btn">确定</view>
 	</view>
@@ -23,8 +28,8 @@
 				password2: '',
 				isTwo: false,
 				isShezhi: null,
-				isThree:false,
-				password3:'',
+				isThree: false,
+				password3: '',
 			}
 		},
 		onLoad(option) {
@@ -44,21 +49,39 @@
 				this.password3 = e;
 			},
 			async onSubmit() {
-				const res = await this.$api.set_pay_password({
-					pay_password: this.password3,
-					re_pay_password: this.password2,
-					oldpay_password: this.password,
-				})
-				if (res.code == 200) {
-					this.$u.toast('设置成功');
-					setTimeout(() => {
-						uni.navigateBack({
-							delta: 1
-						})
-					}, 1000)
+				if (this.isShezhi == 'no') {
+					const res = await this.$api.set_pay_password({
+						pay_password: this.password,
+						re_pay_password: this.password2,
+					})
+					if (res.code == 200) {
+						this.$u.toast('设置成功');
+						setTimeout(() => {
+							uni.navigateBack({
+								delta: 1
+							})
+						}, 1000)
+					} else {
+						this.$u.toast(res.message);
+					}
 				} else {
-					this.$u.toast(res.message);
+					const res = await this.$api.set_pay_password({
+						pay_password: this.password3,
+						re_pay_password: this.password2,
+						oldpay_password: this.password,
+					})
+					if (res.code == 200) {
+						this.$u.toast('设置成功');
+						setTimeout(() => {
+							uni.navigateBack({
+								delta: 1
+							})
+						}, 1000)
+					} else {
+						this.$u.toast(res.message);
+					}
 				}
+
 			}
 		}
 	}

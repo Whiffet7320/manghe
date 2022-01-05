@@ -179,6 +179,7 @@
 			},
 			confirm2(){
 				uni.clearStorageSync();
+				this.$store.commit('Login',  {token: null});
 				uni.navigateTo({
 					url:"/pages/login/login"
 				})
@@ -188,6 +189,7 @@
 			this.getInfo();
 		},
 		onShow(){
+			this.userInfo = {}
 			if(this.isLogin){
 				this.getUserInfo();
 			}

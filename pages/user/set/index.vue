@@ -13,11 +13,11 @@
 				<view class="desc">{{userInfo.nickname}}</view>
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="icon"></image>
 			</view>
-			<view class="cellitem" @click="goPwd">
+			<!-- <view class="cellitem" @click="goPwd">
 				<view class="name">登陆密码</view>
 				<view class="desc">{{userInfo.pwd==''?'设置登陆密码':"修改登陆密码"}}</view>
 				<image src="/static/image/arrow_right.png" mode="aspectFit" class="icon"></image>
-			</view>
+			</view> -->
 			<view class="cellitem" @click="toZhifumima">
 				<view class="name">支付密码</view>
 				<view class="desc">{{myUserInfo.pay_pwd ? '已设置支付密码':'设置支付密码'}}</view>
@@ -94,6 +94,7 @@
 			},
 			clearfileSize() {
 				uni.clearStorageSync();
+				this.$store.commit('Login',  {token: null});
 				this.show = true;
 				setTimeout(() => {
 					this.show = false;

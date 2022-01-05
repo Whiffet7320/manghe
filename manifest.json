@@ -1,5 +1,5 @@
 {
-    "name" : "yimei",
+    "name" : "天天有蟹",
     "appid" : "__UNI__70DF3BA",
     "description" : "",
     "versionName" : "1.0.0",
@@ -52,9 +52,9 @@
     "quickapp" : {},
     /* 小程序特有相关 */
     "mp-weixin" : {
-        "appid" : "wx4eedb0ab7dba9833",
+        "appid" : "wx24912f458fea2460",
         "setting" : {
-            "urlCheck" : false,
+            "urlCheck" : true,
             "es6" : true,
             "postcss" : true,
             "minified" : true

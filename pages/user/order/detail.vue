@@ -32,16 +32,31 @@
 			</view>
 			<view class="item">
 				<view class="txt1">邮费</view>
-				<view class="txt2">{{orderInfo.total_postage}}元</view>
+				<!-- <view class="txt2">{{orderInfo.total_postage}}元</view> -->
+				<view class="txt2">包邮</view>
 			</view>
 			<view class="item2">{{orderInfo.remark}}</view>
 		</view>
-		<view class="ftbtn">
+		<!-- 未付款 -->
+		<view class="ftbtn" v-if="orderInfo.paid == 0">
+			<view class="btns gray" @click="dshow=true">删除</view>
+			<view class="btns" @click="show = true;">立即支付</view>
+		</view>
+		<!-- <view class="ftbtn" v-if="orderInfo.paid == 1 && orderInfo.status == 2">
+			<view class="btns gray" @click="dshow=true">删除</view>
+			<view class="btns" @click="goShop">再来一单</view>
+		</view>
+		<view class="ftbtn" v-if="orderInfo.paid == 1 && orderInfo.status == 2">
+			<view class="btns gray" @click="dshow=true">删除</view>
+			<view class="btns" @click="goShop">再来一单</view>
+		</view> -->
+		<!-- 已完成 -->
+		<view class="ftbtn" v-if="orderInfo.paid == 1 && orderInfo.status == 2">
 			<view class="btns gray" @click="dshow=true">删除</view>
 			<view class="btns" @click="goShop">再来一单</view>
 		</view>
 		<page-modal v-model="dshow" width="466" title="确认删除订单？" confirm-text="确认删除" @confirm="confirm">
-			<view class="mcont">删除之后数据无法恢复</view>
+			<view class="mcont" style="text-align: center;padding: 20rpx 0">删除之后数据无法恢复</view>
 		</page-modal>
 		<!-- 弹出层 -->
 		<u-popup v-model="show" mode='bottom' border-radius='24' height='708' closeable>
@@ -111,7 +126,8 @@
 				show: false,
 				payIndex:1,
 				show2:false,
-				paytype:"weixin"
+				paytype:"weixin",
+				userInfo: null,
 			}
 		},
 		computed:{
@@ -129,6 +145,59 @@
 						this.$u.toast(res.message);
 					}
 				})
+			},
+			onSubmit() {
+				if (this.paytype == 'weixin') {
+					let data = {
+						order_id: this.orderInfo.id,
+						type: this.paytype,
+					}
+					this.$api.wait_pay(data).then((res) => {
+						if (res.code == 200) {
+							this.show = false;
+							this.goPay(res.data);
+						} else {
+							this.$u.toast(res.message);
+						}
+					})
+				} else if (this.paytype == 'integral') {
+					if (!this.userInfo.pay_pwd) {
+						this.$u.toast('未设置支付密码，请先设置支付密码');
+					} else {
+						if (Number(this.userInfo.integral) < parseFloat(this.orderInfo.pay_price)) {
+							this.$u.toast('积分不足');
+							return
+						}
+						this.password = ''
+						this.show3 = true;
+					}
+				
+				} else if (this.paytype == 'yue') {
+					if (!this.userInfo.pay_pwd) {
+						this.$u.toast('未设置支付密码，请先设置支付密码');
+					} else {
+						if (Number(this.userInfo.now_money) < parseFloat(this.orderInfo.pay_price)) {
+							this.$u.toast('余额不足');
+							return
+						}
+						this.password = ''
+						this.show3 = true;
+					}
+				
+				}
+			},
+			async getUserInfo() {
+				await this.$api.userInfo().then(res => {
+					if (res.code == 200) {
+						this.userInfo = res.data;
+						this.$store.commit("UpdateUserinfo", res.data);
+						this.$store.commit('SetUid', res.data.uid);
+					} else {
+						uni.navigateTo({
+							url: "/pages/login/login"
+						})
+					}
+				});
 			},
 			goShop(){
 				this.$store.commit("setProinfo",this.proInfo);
@@ -206,6 +275,8 @@
 			if(options.id){
 				this.id = options.id;
 			}
+			console.log(this.orderInfo)
+			this.getUserInfo()
 		}
 	}
 </script>

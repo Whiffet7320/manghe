@@ -242,8 +242,8 @@
 		}
 		.notice{
 			position: absolute;
-			top: 37px;
-			left: 15px;
+			top: 74rpx;
+			left: 30rpx;
 			z-index: 50;
 			width: 630rpx;
 			height: 120rpx;
@@ -259,15 +259,12 @@
 			.list{
 				flex:1;
 				display: flex;
-				flex-wrap: wrap;
-				height: 90rpx;
+				height: 110rpx;
 				overflow: hidden;
 				.nitem{
 					display: flex;
 					align-items: center;
 					width: 100%;
-					height: 34rpx !important;
-					padding-bottom: 14rpx;
 					.tit{
 						flex:1;
 						font-size: 24rpx;

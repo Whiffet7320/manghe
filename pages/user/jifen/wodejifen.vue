@@ -7,6 +7,7 @@
 				<view class="txt1">总积分</view>
 			</view>
 			<view class="tit2">{{integral}}</view>
+			<view class="tit3">{{frozen_integral}}积分被冻结</view>
 			<view class="boxs">
 				<view class="left" @click="toGuize">
 					<view class="lt">
@@ -63,6 +64,7 @@
 		},
 		data() {
 			return {
+				frozen_integral:'',
 				integral: '',
 				isEmpty: false,
 				list: [],
@@ -122,7 +124,8 @@
 			async getUserInfo() {
 				await this.$api.userInfo().then(res => {
 					if (res.code == 200) {
-						this.integral = res.data.integral
+						this.integral = res.data.integral;
+						this.frozen_integral = res.data.frozen_integral;
 						this.$store.commit("UpdateUserinfo", res.data);
 						this.$store.commit('SetUid', res.data.uid);
 					} else {
@@ -194,10 +197,19 @@
 
 		.tit2 {
 			position: absolute;
-			top: 276rpx;
+			top: 266rpx;
 			left: 50%;
 			transform: translateX(-50%);
 			font-size: 64rpx;
+			font-weight: 700;
+			color: #ffffff;
+		}
+		.tit3{
+			position: absolute;
+			top: 350rpx;
+			left: 50%;
+			transform: translateX(-50%);
+			font-size: 28rpx;
 			font-weight: 700;
 			color: #ffffff;
 		}

@@ -5,7 +5,8 @@
 		<u-navbar :title-bold='true' :background='background' :border-bottom='false' title-color='#ffffff'
 			:title='navtitle' title-size='34'>
 		</u-navbar>
-		<template v-if='isYzmLogin'>
+		<view style="transform: translateY(-256rpx);">
+			<template v-if='isYzmLogin'>
 			<view class="tit1">
 				<view class="txt1">短信快捷登录</view>
 				<view @click="isYzmLogin=false" class="txt2">账号密码登录></view>
@@ -76,8 +77,10 @@
 		<view class="tit5" v-if="isYzmLogin || !isWangji && !isZhuce">
 			<view @click="isGX = true" v-if="!isGX" class="quan"></view>
 			<u-icon @click="isGX = false" name="checkmark-circle" v-else color="#ffffff" size="26"></u-icon>
-			<view @click="isGX = !isGX" class="txt">登录即同意《螃蟹商城用户协议》和《隐私条款》</view>
+			<view class="txt">登录即同意<text @click="toYonghuxieyi">《螃蟹商城用户协议》</text>和<text @click="toYingsitiaokuan">《隐私条款》</text></view>
 		</view>
+		</view>
+		
 		<u-verification-code seconds="60" ref="uCode" @change="codeChange">
 		</u-verification-code>
 	</view>
@@ -125,6 +128,7 @@
 					console.log(res)
 					if (res.code == 200) {
 						this.$u.toast('登录成功');
+						console.log('11111111')
 						this.$store.commit('Login', {token: res.data.token});
 						uni.setStorageSync("token", res.data.token);
 						uni.navigateTo({
@@ -189,6 +193,16 @@
 					}
 				}
 			},
+			toYonghuxieyi(){
+				uni.navigateTo({
+					url:'/pages/user/agreement/index'
+				})
+			},
+			toYingsitiaokuan(){
+				uni.navigateTo({
+					url:'/pages/user/privacy/index'
+				})
+			},
 			zhuce() {
 				this.navtitle = '注册';
 				this.isZhuce = true;
@@ -218,7 +232,7 @@
 					})
 					const res = await this.$api.send_sms({
 						mobile: this.phone,
-						event: this.isZhuce && !this.isWangji ? 'register' : this.isWangji && !this.isZhuce ?
+						event:!this.isYzmLogin && this.isZhuce && !this.isWangji ? 'register' : !this.isYzmLogin && this.isWangji && !this.isZhuce ?
 							'forgetpwd' : 'login'
 					})
 					if (res.code == 200) {
@@ -243,9 +257,11 @@
 	}
 	.index {
 		position: relative;
+		width: 750rpx;
+		height: 100vh;
+		overflow: scroll;
 	}
-
-	.bacImg {
+	.bacImg{
 		position: absolute;
 		top: 0;
 		left: 0;

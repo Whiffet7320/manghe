@@ -40,14 +40,18 @@
 		<view class="nav3">
 			<view class="item">
 				<view class="txt1">实际付款金额</view>
-				<view class="txt2">{{(parseFloat($tool.argMul(num,proInfo.price))+parseFloat(storePostage)).toFixed(2)}}元</view>
+				<view class="txt2">
+					{{(parseFloat($tool.argMul(num,proInfo.price))+parseFloat(storePostage)).toFixed(2)}}元
+				</view>
 			</view>
 			<view class="item">
 				<view class="txt1">邮费</view>
-				<view class="txt2">{{storePostage}}元</view>
+				<!-- <view class="txt2">{{storePostage}}元</view> -->
+				<view class="txt2">包邮</view>
 			</view>
 			<view class="item2">
-				<u-input v-model="value" :clearable='false' type="textarea" :border="false" placeholder='选填：给卖家留言（45字以内）' />
+				<u-input v-model="value" :clearable='false' type="textarea" :border="false"
+					placeholder='选填：给卖家留言（45字以内）' />
 			</view>
 			<view class="item3">
 				<view class="txt">付款后，我们尽快安排给您发货</view>
@@ -72,7 +76,8 @@
 					</view>
 					<view class="t2">亿万用户的选择，更快更安全</view>
 				</view>
-				<view class="item1" style="border-top: 2rpx solid #f2f2f2;border-bottom: 2rpx solid #f2f2f2;" @click="changePay(2)">
+				<view class="item1" style="border-top: 2rpx solid #f2f2f2;border-bottom: 2rpx solid #f2f2f2;"
+					@click="changePay(2)">
 					<view class="t1">
 						<view class="left">
 							<image src="/static/image/zu3030.png" class="pic1 p2" mode=""></image>
@@ -105,56 +110,79 @@
 				<view class="p2-tit2">购买相对应的积分将在明日到账</view>
 			</view>
 		</u-popup>
+		<!-- 输入支付密码 -->
+		<u-popup v-model="show3" mode='center' border-radius='24' height='286' width='454'>
+			<view class="pop3">
+				<view class="pop3-txt">请输入支付密码</view>
+				<u-message-input width='50' :focus="true" :value='password' :breathe="true" :maxlength='6'
+					:dot-fill="true" @finish="finish" active-color="#D61D1D"></u-message-input>
+				<view class="pop3-btn" @click="payOnsubmit">确认</view>
+			</view>
+		</u-popup>
 	</view>
 </template>
 
 <script>
-	import {mapState} from "vuex";
+	import {
+		mapState
+	} from "vuex";
 	export default {
 		data() {
 			return {
-				addressId:0,
-				aInfo:{},
-				storePostage:0,
-				userInfo:{},
+				password: '',
+				addressId: 0,
+				aInfo: {},
+				storePostage: 0,
+				userInfo: {},
 				num: 1,
 				value: '',
 				show: false,
-				payIndex:1,
-				show2:false,
-				paytype:"weixin"
+				payIndex: 1,
+				show2: false,
+				paytype: "weixin",
+				payObj: null,
+				show3: false,
 			}
 		},
-		computed:{
-			...mapState(["proInfo","addressInfo"])
+		computed: {
+			...mapState(["proInfo", "addressInfo"])
 		},
 		methods: {
+			finish(e) {
+				this.password = e;
+			},
 			goAddress(index) {
-				if(index==0){
+				if (index == 0) {
 					uni.navigateTo({
 						url: '/pages/user/address/index?type=order'
 					});
-				}else if(index==1){
+				} else if (index == 1) {
 					uni.navigateTo({
 						url: '/pages/user/address/detail?type=order'
 					});
 				}
 			},
 			async userDefaultShip() {
-				await this.$api.addressList().then((res)=>{
+				await this.$api.addressList().then((res) => {
 					if (res.code === 200 && res.data) {
 						let data = res.data;
 						let newData = data.filter(item => item.is_default == 1);
-						if(newData.length){
+						if (newData.length) {
 							this.aInfo = newData[0];
-							this.addressId = newData[0].id;
+							this.addressId = this.aInfo.id;
+						} else if (data.length) {
+							this.aInfo = data[0];
+							this.addressId = this.aInfo.id;
+							console.log(this.addressId)
+						} else {
+							this.aInfo = {}
 						}
 					}
 				});
 			},
 			async getUserInfo() {
 				await this.$api.userInfo().then(res => {
-					if(res.code==200){
+					if (res.code == 200) {
 						this.userInfo = res.data;
 					}
 				});
@@ -167,35 +195,84 @@
 			jia() {
 				this.num++
 			},
-			changePay(index){
+			changePay(index) {
 				this.payIndex = index;
-				if(index==1){
+				if (index == 1) {
 					this.paytype = "weixin";
-				}else if(index==2){
+				} else if (index == 2) {
 					this.paytype = "integral";
-				}else if(index==3){
+				} else if (index == 3) {
 					this.paytype = "yue";
 				}
 			},
-			onSubmit(){
-				let data = {
-					user_address_id:this.addressId,
-					buy_num:this.num,
-					remark:this.value,
-					type:this.paytype
+			onSubmit() {
+				if (this.paytype == 'weixin') {
+					let data = {
+						user_address_id: this.addressId,
+						buy_num: this.num,
+						remark: this.value,
+						type: this.paytype,
+					}
+					this.$api.orderPay(data).then((res) => {
+						if (res.code == 200) {
+							this.goPay(res.data);
+						} else {
+							this.$u.toast(res.message);
+						}
+					})
+				} else if (this.paytype == 'integral') {
+					if (!this.userInfo.pay_pwd) {
+						this.$u.toast('未设置支付密码，请先设置支付密码');
+						// uni.navigateTo({
+						// 	url: '/pages/user/set/zhifumima?isShezhi=no'
+						// })
+					} else {
+						if (Number(this.userInfo.integral) < (parseFloat(this.$tool.argMul(this.num, this.proInfo.price)) +
+								parseFloat(this.storePostage)).toFixed(2)) {
+							this.$u.toast('积分不足');
+							return
+						}
+						this.password = ''
+						this.show3 = true;
+					}
+
+				} else if (this.paytype == 'yue') {
+					if (!this.userInfo.pay_pwd) {
+						this.$u.toast('未设置支付密码，请先设置支付密码');
+					} else {
+						if (Number(this.userInfo.now_money) < (parseFloat(this.$tool.argMul(this.num, this.proInfo
+								.price)) +
+								parseFloat(this.storePostage)).toFixed(2)) {
+							this.$u.toast('余额不足');
+							return
+						}
+						this.password = ''
+						this.show3 = true;
+					}
+
 				}
-				this.$api.orderPay(data).then((res)=>{
-					if(res.code==200){
+			},
+			payOnsubmit() {
+				let data = {
+					user_address_id: this.addressId,
+					buy_num: this.num,
+					remark: this.value,
+					type: this.paytype,
+					pay_pwd: this.password
+				}
+				this.$api.orderPay(data).then((res) => {
+					if (res.code == 200) {
+						this.show3 = false;
 						this.show = false;
 						this.goPay(res.data);
-					}else{
+					} else {
 						this.$u.toast(res.message);
 					}
 				})
 			},
-			goPay(jsConfig){
+			goPay(jsConfig) {
 				uni.showLoading({
-					title:"支付中..."
+					title: "支付中..."
 				})
 				switch (this.payIndex) {
 					case 1:
@@ -206,58 +283,60 @@
 							package: jsConfig.package,
 							signType: jsConfig.signType,
 							paySign: jsConfig.paySign,
-							success: (res)=> {
+							success: (res) => {
 								uni.hideLoading();
 								this.show2 = true;
-								setTimeout(()=>{
+								setTimeout(() => {
 									uni.redirectTo({
-										url:"/pages/user/order/order"
+										url: "/pages/user/order/order"
 									})
-								},1500)
+								}, 1500)
 							},
-							fail: (err)=> {
+							fail: (err) => {
 								uni.hideLoading();
 								console.log('fail:' + JSON.stringify(err));
 								this.$u.toast("支付失败");
 							},
-							complete: (e)=> {
+							complete: (e) => {
 								uni.hideLoading();
-								if (e.errMsg == 'requestPayment:cancel'){
+								if (e.errMsg == 'requestPayment:cancel') {
 									this.$u.toast("取消支付");
 								}
 							}
 						});
-					break;
+						break;
 					case 2:
 						uni.hideLoading();
 						this.show2 = true;
-						setTimeout(()=>{
+						setTimeout(() => {
 							uni.redirectTo({
-								url:"/pages/user/order/order"
+								url: "/pages/user/order/order"
 							})
-						},1500)
-					break;
+						}, 1500)
+						break;
 					case 3:
 						uni.hideLoading();
 						this.show2 = true;
-						setTimeout(()=>{
+						setTimeout(() => {
 							uni.redirectTo({
-								url:"/pages/user/order/order"
+								url: "/pages/user/order/order"
 							})
-						},1500)
-					break;
+						}, 1500)
+						break;
 				}
 			}
 		},
-		onLoad(options){
+		onLoad(options) {
 			this.getUserInfo();
 		},
-		onShow(){
-			if(this.addressInfo){
+		onShow() {
+			console.log(this.addressInfo)
+			if (this.addressInfo) {
 				this.aInfo = this.addressInfo;
 				this.addressId = this.addressInfo.id;
+			} else {
+				this.userDefaultShip();
 			}
-			this.userDefaultShip();
 		}
 	}
 </script>
@@ -301,7 +380,8 @@
 
 		.right {}
 	}
-	.noAddress{
+
+	.noAddress {
 		width: 690rpx;
 		height: 80rpx;
 		line-height: 80rpx;
@@ -330,7 +410,7 @@
 		}
 
 		.right {
-			flex:1;
+			flex: 1;
 			padding-left: 44rpx;
 
 			.tit1 {
@@ -513,6 +593,7 @@
 		.item1 {
 			padding: 0 68rpx;
 			height: 152rpx;
+
 			.t1 {
 				padding-top: 32rpx;
 				display: flex;
@@ -527,10 +608,12 @@
 						width: 42rpx;
 						height: 38rpx;
 					}
-					.p2.pic1{
+
+					.p2.pic1 {
 						height: 42rpx;
 					}
-					.p3.pic1{
+
+					.p3.pic1 {
 						height: 42rpx;
 					}
 
@@ -554,28 +637,32 @@
 						color: #ff0000;
 					}
 				}
-				.quan{
+
+				.quan {
 					width: 26rpx;
 					height: 26rpx;
 					border: 2rpx solid #808080;
 					border-radius: 50%;
 				}
-				.quan2{
+
+				.quan2 {
 					width: 26rpx;
 					height: 26rpx;
 				}
 
 			}
-			.t2{
+
+			.t2 {
 				margin-left: 74rpx;
 				margin-top: 16rpx;
 				font-size: 24rpx;
 				font-weight: 500;
 				color: #000000;
 			}
-		
+
 		}
-		.btn-footer{
+
+		.btn-footer {
 			width: 276rpx;
 			height: 60rpx;
 			background: #d61d1d;
@@ -589,22 +676,53 @@
 			margin-top: 16rpx;
 		}
 	}
-	.pop2{
+
+	.pop2 {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		padding-top: 30rpx;
-		.p2-tit1{
+
+		.p2-tit1 {
 			margin-top: 32rpx;
 			font-size: 32rpx;
 			font-weight: 700;
 			color: #000000;
 		}
-		.p2-tit2{
+
+		.p2-tit2 {
 			margin-top: 16rpx;
 			font-size: 24rpx;
 			font-weight: 500;
 			color: #000000;
+		}
+	}
+
+	.pop3 {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		.pop3-txt {
+			margin-top: 40rpx;
+			margin-bottom: 28rpx;
+			text-align: center;
+			font-size: 24rpx;
+			font-weight: 700;
+			color: #000000;
+		}
+
+		.pop3-btn {
+			width: 276rpx;
+			height: 60rpx;
+			background: #d61d1d;
+			border-radius: 8rpx;
+			font-size: 28rpx;
+			font-weight: 700;
+			text-align: center;
+			line-height: 60rpx;
+			color: #ffffff;
+			margin-top: 16rpx;
 		}
 	}
 </style>

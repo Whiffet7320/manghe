@@ -37,6 +37,8 @@
 								</view>
 								<view class="btns" v-if="order.paid==0">
 									<view class="btn2" @click.stop="lijiPay(order)">立即支付</view>
+									<view class="btn1" style="margin-left: 20rpx;" @click.stop="onDel(order.id,index)">
+										删除订单</view>
 								</view>
 								<view class="btns" v-else-if="order.status==0">
 									<view class="btn2" @click.stop="pshow=true">提醒发货</view>
@@ -110,6 +112,15 @@
 				<view class="btn-footer" @click="onSubmit">确认</view>
 			</view>
 		</u-popup>
+		<!-- 输入支付密码 -->
+		<u-popup v-model="show3" mode='center' border-radius='24' height='286' width='454'>
+			<view class="pop3">
+				<view class="pop3-txt">请输入支付密码</view>
+				<u-message-input width='50' :focus="true" :value='password' :breathe="true" :maxlength='6'
+					:dot-fill="true" @finish="finish" active-color="#D61D1D"></u-message-input>
+				<view class="pop3-btn" @click="payOnsubmit">确认</view>
+			</view>
+		</u-popup>
 	</view>
 </template>
 
@@ -128,6 +139,8 @@
 		},
 		data() {
 			return {
+				show3: false,
+				userInfo: null,
 				payOrder: {},
 				popshow: false,
 				payIndex: 1,
@@ -157,6 +170,7 @@
 						state: 2
 					}
 				],
+				password: '',
 				type: -1, // tabs组件的current值，表示当前活动的tab选项
 				// 加载
 				status: 'loadmore',
@@ -169,7 +183,7 @@
 				current_page: 1,
 			}
 		},
-		watch:{
+		watch: {
 			tabCurrentIndex: function() {
 				this.orderList = [];
 				this.current_page = 1;
@@ -179,11 +193,30 @@
 				// }, 800)
 			},
 		},
-		onLoad(options) {
+		onShow() {
+			this.orderList = [];
+			this.current_page = 1;
+			this.getUserInfo()
 			this.getProinfo();
 			this.loadData();
 		},
 		methods: {
+			async getUserInfo() {
+				await this.$api.userInfo().then(res => {
+					if (res.code == 200) {
+						this.userInfo = res.data;
+						this.$store.commit("UpdateUserinfo", res.data);
+						this.$store.commit('SetUid', res.data.uid);
+					} else {
+						uni.navigateTo({
+							url: "/pages/login/login"
+						})
+					}
+				});
+			},
+			finish(e) {
+				this.password = e;
+			},
 			myReachBottom() {
 				this.current_page++;
 				this.loadData()
@@ -199,6 +232,22 @@
 				this.popshow = true;
 				this.payOrder = order;
 			},
+			payOnsubmit() {
+				let data = {
+					order_id: this.payOrder.id,
+					type: this.paytype,
+					pay_pwd:this.password
+				}
+				this.$api.wait_pay(data).then((res) => {
+					if (res.code == 200) {
+						this.show3 = false;
+						this.popshow = false;
+						this.goPay(res.data);
+					} else {
+						this.$u.toast(res.message);
+					}
+				})
+			},
 			changePay(index) {
 				this.payIndex = index;
 				if (index == 1) {
@@ -211,7 +260,7 @@
 			},
 			async loadData() {
 				this.status = 'loading';
-				setTimeout(async() => {
+				setTimeout(async () => {
 					const res = await this.$api.orderList({
 						page: this.current_page,
 						limit: 10,
@@ -228,18 +277,44 @@
 				console.log(this.orderList)
 			},
 			onSubmit() {
-				let data = {
-					order_id:this.payOrder.id,
-					type: this.paytype
-				}
-				this.$api.wait_pay(data).then((res) => {
-					if (res.code == 200) {
-						this.popshow = false;
-						this.goPay(res.data);
-					} else {
-						this.$u.toast(res.message);
+				if (this.paytype == 'weixin') {
+					let data = {
+						order_id: this.payOrder.id,
+						type: this.paytype,
 					}
-				})
+					this.$api.wait_pay(data).then((res) => {
+						if (res.code == 200) {
+							this.popshow = false;
+							this.goPay(res.data);
+						} else {
+							this.$u.toast(res.message);
+						}
+					})
+				} else if (this.paytype == 'integral') {
+					if (!this.userInfo.pay_pwd) {
+						this.$u.toast('未设置支付密码，请先设置支付密码');
+					} else {
+						if (Number(this.userInfo.integral) < parseFloat(this.payOrder.pay_price)) {
+							this.$u.toast('积分不足');
+							return
+						}
+						this.password = ''
+						this.show3 = true;
+					}
+
+				} else if (this.paytype == 'yue') {
+					if (!this.userInfo.pay_pwd) {
+						this.$u.toast('未设置支付密码，请先设置支付密码');
+					} else {
+						if (Number(this.userInfo.now_money) < parseFloat(this.payOrder.pay_price)) {
+							this.$u.toast('余额不足');
+							return
+						}
+						this.password = ''
+						this.show3 = true;
+					}
+
+				}
 			},
 			goPay(jsConfig) {
 				uni.showLoading({
@@ -304,7 +379,8 @@
 				})
 			},
 			toWuliu(order) {
-				var address = `${order.addressinfo.province}${order.addressinfo.city}${order.addressinfo.district}${order.addressinfo.detail}`
+				var address =
+					`${order.addressinfo.province}${order.addressinfo.city}${order.addressinfo.district}${order.addressinfo.detail}`
 				uni.navigateTo({
 					url: `/pages/user/order/wuliu?order_id=${order.id}&express_name=${order.express_name}&address=${address}`
 				})
@@ -629,6 +705,34 @@
 			line-height: 60rpx;
 			color: #ffffff;
 			margin-left: 238rpx;
+			margin-top: 16rpx;
+		}
+	}
+
+	.pop3 {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		.pop3-txt {
+			margin-top: 40rpx;
+			margin-bottom: 28rpx;
+			text-align: center;
+			font-size: 24rpx;
+			font-weight: 700;
+			color: #000000;
+		}
+
+		.pop3-btn {
+			width: 276rpx;
+			height: 60rpx;
+			background: #d61d1d;
+			border-radius: 8rpx;
+			font-size: 28rpx;
+			font-weight: 700;
+			text-align: center;
+			line-height: 60rpx;
+			color: #ffffff;
 			margin-top: 16rpx;
 		}
 	}
