@@ -1,5 +1,6 @@
 <template>
 	<view class="index">
+		<u-toast ref="uToast" />
 		<view class="nav1">
 			<image src="/static/image/zu3037.png" class="pic1" mode=""></image>
 			<view class="tit1">
@@ -64,7 +65,8 @@
 		},
 		data() {
 			return {
-				frozen_integral:'',
+				userInfo:{},
+				frozen_integral: '',
 				integral: '',
 				isEmpty: false,
 				list: [],
@@ -117,13 +119,26 @@
 				})
 			},
 			toTixian() {
-				uni.navigateTo({
-					url: `/pages/user/tixian/tixian?integral=${this.integral}`
-				})
+				if (!this.userInfo.pay_pwd) {
+					this.$u.toast('未设置支付密码，请先设置支付密码');
+					return
+				} 
+				if (new Date().getHours() < 21 && new Date().getHours() > 8) {
+					uni.navigateTo({
+						url: `/pages/user/tixian/tixian?integral=${this.integral}`
+					})
+				} else {
+					this.$refs.uToast.show({
+						title: '提现时间为早上9点到晚上9点',
+						type: 'warning',
+					})
+				}
+
 			},
 			async getUserInfo() {
 				await this.$api.userInfo().then(res => {
 					if (res.code == 200) {
+						this.userInfo = res.data;
 						this.integral = res.data.integral;
 						this.frozen_integral = res.data.frozen_integral;
 						this.$store.commit("UpdateUserinfo", res.data);
@@ -204,7 +219,8 @@
 			font-weight: 700;
 			color: #ffffff;
 		}
-		.tit3{
+
+		.tit3 {
 			position: absolute;
 			top: 350rpx;
 			left: 50%;

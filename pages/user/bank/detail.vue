@@ -12,10 +12,10 @@
 			<view class="title">银行卡号</view>
 			<input type="number" v-model="bankData.cardCode" maxlength="19" placeholder="请填写你的卡号" placeholder-style="color:#808080;" class="ipt" />
 		</view>
-		<!-- <view class="form_group">
-			<view class="title">身份证号码</view>
-			<input type="text" v-model="bankData.sfz" placeholder="请输入你的身份证号码" placeholder-style="color:#808080;" class="ipt" />
-		</view> -->
+		<view class="form_group">
+			<view class="title">姓名</view>
+			<input type="text" v-model="bankData.username" placeholder="请输入你的姓名" placeholder-style="color:#808080;" class="ipt" />
+		</view>
 		<view class="btnwrap">
 			<button class="cubtn" @tap="onSubmit">绑定银行卡</button>
 		</view>
@@ -50,7 +50,8 @@
 				bankData: {
 					bankCode:"",
 					cardCode:"",
-					bankName:""
+					bankName:"",
+					username:'',
 				},
 				bankList: [
 					{bankCode: 'ICBC', bankName: '工商银行'},
@@ -81,10 +82,15 @@
 					this.$u.toast('请填写你的卡号');
 					return;
 				}
+				if(!data.username){
+					this.$u.toast('请填写姓名');
+					return;
+				}
 				let datas = {
 					bank_number:data.cardCode,
 					bank_name:data.bankName,
-					bank_code:data.bankCode
+					bank_code:data.bankCode,
+					username:data.username
 				}
 				this.$api.bindBank(datas).then((res)=>{
 					if(res.code==200){

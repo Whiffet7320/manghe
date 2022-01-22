@@ -98,7 +98,7 @@
 					</view>
 					<view class="t2">当前积分为{{userInfo.integral||0}}分</view>
 				</view>
-				<view class="item1" @click="changePay(3)">
+				<!-- <view class="item1" @click="changePay(3)">
 					<view class="t1">
 						<view class="left">
 							<image src="/static/image/lujin2820.png" class="pic1 p3" mode=""></image>
@@ -108,7 +108,7 @@
 						<view v-else class="quan"></view>
 					</view>
 					<view class="t2">当前余额为{{userInfo.now_money||0.00}}元</view>
-				</view>
+				</view> -->
 				<view class="btn-footer" @click="onSubmit">确认</view>
 			</view>
 		</u-popup>
@@ -705,7 +705,7 @@
 			line-height: 60rpx;
 			color: #ffffff;
 			margin-left: 238rpx;
-			margin-top: 16rpx;
+			margin-top: 120rpx;
 		}
 	}
 

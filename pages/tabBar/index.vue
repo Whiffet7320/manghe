@@ -41,7 +41,7 @@
 			<view class="tit1">{{obj.name}}</view>
 			<view class="tit2">
 				<view class="txt1">
-					￥<text class="big">{{obj.price}}</text>元/只
+					￥<text class="big">{{obj.price}}</text>元/箱
 				</view>
 				<view class="txt2">母蟹{{obj.unit}}两</view>
 			</view>
