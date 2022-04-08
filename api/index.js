@@ -1,6 +1,7 @@
 import axios from 'axios';
 import Vue from 'vue';
 import urls from './url.js';
+import md5 from '../static/md5.min.js'
 const vue = new Vue()
 let myPost = axios.create({
 	baseURL: urls.baseUrl,
@@ -619,246 +620,240 @@ dzpMyGet.interceptors.response.use(response => {
 })
 
 export default {
-	loginWechat(obj) {
+	doLogin(obj) {
 		return myPost({
-			url: urls.loginWechat,
-			data: {
-				...obj
-			}
-		})
-	},
-	userInfo(obj) {
-		return myGet({
-			url: urls.userInfo,
+			url: urls.doLogin,
 			params: {
 				...obj
 			}
 		})
 	},
-	updateUserInfo(obj) {
+	getAddressList(obj) {
+		var timestamp = new Date().getTime();
 		return myPost({
-			url: urls.updateUserInfo,
-			data: {
-				...obj
-			}
-		})
-	},
-	userEdit(obj) {
-		return myPost({
-			url: urls.user_update,
-			data: {
-				...obj
-			}
-		})
-	},
-	product() {
-		return myGet({
-			url: urls.product,
-		})
-	},
-	login(obj) {
-		return myPost({
-			url: urls.login,
-			data: {
-				...obj
-			}
-		})
-	},
-	saveAddress(obj) {
-		return myPost({
-			url: urls.saveAddress,data: {
-				...obj
-			}
-		})
-	},
-	send_sms(obj) {
-		return myPost({
-			url: urls.send_sms,
-			data: {
-				...obj
-			}
-		})
-	},
-	addressList() {
-		return myGet({
-			url: urls.addressList,
-		})
-	},
-	delAddress(id) {
-		return myPost({
-			url: urls.delAddress,
-			data: {
-				id
-			}
-		})
-	},
-	orderPay(obj) {
-		return myPost({
-			url: urls.orderPay,
-			data: {
-				...obj
-			}
-		})
-	},
-	register(obj) {
-		return myPost({
-			url: urls.register,
-			data: {
-				...obj
-			}
-		})
-	},
-	captch_login(obj) {
-		return myPost({
-			url: urls.captch_login,
-			data: {
-				...obj
-			}
-		})
-	},
-	yzrealName(obj) {
-		return myPost({
-			url: urls.yzrealName,
-			data: {
-				...obj
-			}
-		})
-	},
-	forgetpwd(obj) {
-		return myPost({
-			url: urls.forgetpwd,
-			data: {
-				...obj
-			}
-		})
-	},
-	updatepwd(obj) {
-		return myPost({
-			url: urls.updatepwd,
-			data: {
-				...obj
-			}
-		})
-	},
-	recharge(obj) {
-		return myPost({
-			url: urls.recharge,
-			data: {
-				...obj
-			}
-		})
-	},
-	wait_pay(obj) {
-		return myPost({
-			url: urls.wait_pay,
-			data: {
-				...obj
-			}
-		})
-	},
-	exress_detail(obj) {
-		return myGet({
-			url: urls.exress_detail,
-			params:{
-				...obj
-			}
-		})
-	},
-	bindBank(obj) {
-		return myPost({
-			url: urls.bindBank,
-			data: {
-				...obj
-			}
-		})
-	},
-	userBanklist() {
-		return myGet({
-			url: urls.userBanklist,
-		})
-	},
-	delBank(bank_id) {
-		return myPost({
-			url: urls.delBank,
-			data: {
-				bank_id
-			}
-		})
-	},
-	orderList(obj) {
-		return myGet({
-			url: urls.orderList,
+			url: urls.getAddressList,
 			params: {
-				...obj
+				...obj,
+				// user_id:uni.getStorageSync('userId'),
+				user_id: 470320,
+				sign: md5(`BlindBox${timestamp}`).toUpperCase(),
+				timestamp,
 			}
 		})
 	},
-	integral_list(obj) {
-		return myGet({
-			url: urls.integral_list,
-			params: {
-				...obj
-			}
-		})
-	},
-	withdraw_list(obj) {
-		return myGet({
-			url: urls.withdraw_list,
-			params: {
-				...obj
-			}
-		})
-	},
-	walletlist(obj) {
-		return myGet({
-			url: urls.walletlist,
-			params: {
-				...obj
-			}
-		})
-	},
-	confirmOrder(order_id) {
+	updateAddress(obj) {
+		var timestamp = new Date().getTime();
 		return myPost({
-			url: urls.confirmOrder,
-			data: {
-				order_id
-			}
-		})
-	},
-	delOrder(order_id) {
-		return myPost({
-			url: urls.delOrder,
-			data: {
-				order_id
-			}
-		})
-	},
-	notice(obj) {
-		return myGet({
-			url: urls.notice
-		})
-	},
-	set_pay_password(obj) {
-		return myPost({
-			url: urls.set_pay_password,
-			data: {
-				...obj
-			}
-		})
-	},
-	spread(obj) {
-		return myGet({
-			url: urls.spread,
+			url: urls.updateAddress,
 			params: {
-				...obj
+				...obj,
+				user_id:uni.getStorageSync('userId'),
+				sign: md5(`BlindBox${timestamp}`).toUpperCase(),
+				timestamp,
 			}
 		})
 	},
-	withdraw(obj) {
+	deleteAddress(obj){
+		var timestamp = new Date().getTime();
 		return myPost({
-			url: urls.withdraw,
-			data: {
-				...obj
+			url: urls.deleteAddress,
+			params: {
+				...obj,
+				user_id:uni.getStorageSync('userId'),
+				sign: md5(`BlindBox${timestamp}`).toUpperCase(),
+				timestamp,
+			}
+		})
+	},
+	getOrderList(obj){
+		var timestamp = new Date().getTime();
+		return myPost({
+			url: urls.getOrderList,
+			params: {
+				...obj,
+				user_id:uni.getStorageSync('userId'),
+				sign: md5(`BlindBox${timestamp}`).toUpperCase(),
+				timestamp,
+			}
+		})
+	},
+	getFreeBox(obj){
+		var timestamp = new Date().getTime();
+		return myPost({
+			url: urls.getFreeBox,
+			params: {
+				...obj,
+				user_id:uni.getStorageSync('userId'),
+				sign: md5(`BlindBox${timestamp}`).toUpperCase(),
+				timestamp,
+			}
+		})
+	},
+	getAllBoxShop(obj){
+		var timestamp = new Date().getTime();
+		return myPost({
+			url: urls.getAllBoxShop,
+			params: {
+				...obj,
+				user_id:uni.getStorageSync('userId'),
+				sign: md5(`BlindBox${timestamp}`).toUpperCase(),
+				timestamp,
+			}
+		})
+	},
+	getBoxPrice(obj){
+		var timestamp = new Date().getTime();
+		return myPost({
+			url: urls.getBoxPrice,
+			params: {
+				...obj,
+				user_id:uni.getStorageSync('userId'),
+				sign: md5(`BlindBox${timestamp}`).toUpperCase(),
+				timestamp,
+			}
+		})
+	},
+	buyBox(obj){
+		var timestamp = new Date().getTime();
+		return myPost({
+			url: urls.buyBox,
+			params: {
+				...obj,
+				user_id:uni.getStorageSync('userId'),
+				sign: md5(`BlindBox${timestamp}`).toUpperCase(),
+				timestamp,
+			}
+		})
+	},
+	getShopBySubstitution(obj){
+		var timestamp = new Date().getTime();
+		return myPost({
+			url: urls.getShopBySubstitution,
+			params: {
+				...obj,
+				user_id:uni.getStorageSync('userId'),
+				sign: md5(`BlindBox${timestamp}`).toUpperCase(),
+				timestamp,
+			}
+		})
+	},
+	getShopInfo(obj){
+		var timestamp = new Date().getTime();
+		return myPost({
+			url: urls.getShopInfo,
+			params: {
+				...obj,
+				user_id:uni.getStorageSync('userId'),
+				sign: md5(`BlindBox${timestamp}`).toUpperCase(),
+				timestamp,
+			}
+		})
+	},
+	substitutionOrder(obj){
+		var timestamp = new Date().getTime();
+		return myPost({
+			url: urls.substitutionOrder,
+			params: {
+				...obj,
+				user_id:uni.getStorageSync('userId'),
+				sign: md5(`BlindBox${timestamp}`).toUpperCase(),
+				timestamp,
+			}
+		})
+	},
+	getMallTop(obj){
+		var timestamp = new Date().getTime();
+		return myPost({
+			url: urls.getMallTop,
+			params: {
+				...obj,
+				user_id:uni.getStorageSync('userId'),
+				sign: md5(`BlindBox${timestamp}`).toUpperCase(),
+				timestamp,
+			}
+		})
+	},
+	changeOrderToPick(obj){
+		var timestamp = new Date().getTime();
+		return myPost({
+			url: urls.changeOrderToPick,
+			params: {
+				...obj,
+				user_id:uni.getStorageSync('userId'),
+				sign: md5(`BlindBox${timestamp}`).toUpperCase(),
+				timestamp,
+			}
+		})
+	},
+	getHomeMessage(obj){
+		var timestamp = new Date().getTime();
+		return myPost({
+			url: urls.getHomeMessage,
+			params: {
+				...obj,
+				user_id:uni.getStorageSync('userId'),
+				sign: md5(`BlindBox${timestamp}`).toUpperCase(),
+				timestamp,
+			}
+		})
+	},
+	changeOrderToDecompose(obj){
+		var timestamp = new Date().getTime();
+		return myPost({
+			url: urls.changeOrderToDecompose,
+			params: {
+				...obj,
+				user_id:uni.getStorageSync('userId'),
+				sign: md5(`BlindBox${timestamp}`).toUpperCase(),
+				timestamp,
+			}
+		})
+	},
+	completeOrder(obj){
+		var timestamp = new Date().getTime();
+		return myPost({
+			url: urls.completeOrder,
+			params: {
+				...obj,
+				user_id:uni.getStorageSync('userId'),
+				sign: md5(`BlindBox${timestamp}`).toUpperCase(),
+				timestamp,
+			}
+		})
+	},
+	getSystemInfo(obj){
+		var timestamp = new Date().getTime();
+		return myPost({
+			url: urls.getSystemInfo,
+			params: {
+				...obj,
+				user_id:uni.getStorageSync('userId'),
+				sign: md5(`BlindBox${timestamp}`).toUpperCase(),
+				timestamp,
+			}
+		})
+	},
+	queryLogistics(obj){
+		var timestamp = new Date().getTime();
+		return myPost({
+			url: urls.queryLogistics,
+			params: {
+				...obj,
+				user_id:uni.getStorageSync('userId'),
+				sign: md5(`BlindBox${timestamp}`).toUpperCase(),
+				timestamp,
+			}
+		})
+	},
+	getCardInfoByOrder(obj){
+		var timestamp = new Date().getTime();
+		return myPost({
+			url: urls.getCardInfoByOrder,
+			params: {
+				...obj,
+				user_id:uni.getStorageSync('userId'),
+				sign: md5(`BlindBox${timestamp}`).toUpperCase(),
+				timestamp,
 			}
 		})
 	},

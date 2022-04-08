@@ -1,264 +1,279 @@
 <template>
 	<view class="index">
-		<view class="list">
-			<uni-swipe-action>
-				<uni-swipe-action-item class="uitem" v-for="(item,index) in list" :key="index">
-					<view class="item" @click="toEdit(item)">
-						<view class="hd">
-							<view class="top">
-								<text class="name">{{item.real_name}}</text>
-								<text class="phone">{{item.phone.substr(0,3)+'****'+item.phone.substr(7)}}</text>
-								<text class="tag" v-show="item.is_default === 1">默认</text>
-							</view>
-							<view class="detail">{{item.province}}{{item.city}}{{item.district}}{{item.detail}}</view>
+		<u-toast ref="uToast" />
+		<!-- 无地址 -->
+		<view class="nav1" v-if="list.length == 0">
+			<image src="/static/img/zu1281.png" class="n1-pic" mode=""></image>
+			<view class="n1-txt">暂无收货地址，请添加</view>
+		</view>
+		<!-- 有地址 -->
+		<view class="items" v-else>
+			<view class="item" v-for="(item,i) in list" :key='item.address_id'>
+				<view class="tit1">
+					<view class="txt1-1" style="margin-right: 48rpx;">{{item.address_person}}</view>
+					<view class="txt1-1">{{item.address_phone}}</view>
+				</view>
+				<view class="tit2">{{item.address_area}}{{item.address_detail}}</view>
+				<view class="heng"></view>
+				<view class="tit3">
+					<view class="left" @click="changeMoren(item.address_id,i)">
+						<view :class="{'icon':true,'active':item.address_def}">
+							<view class="dian" v-if="item.address_def"></view>
 						</view>
-						<view class="ft" @click.stop="Default(item)">
-							<view class="check">
-								<image src="/static/image/user/icon_checked.png" mode="aspectFit" style="width: 32rpx;height: 32rpx;margin-right: 20rpx;" v-if="item.is_default === 1"></image>
-								<view class="icon" v-else></view>
-							</view>
-							<text>设置为默认地址</text>
-						</view>
+						<view class="txt3-1 txtt">设为默认</view>
 					</view>
-					<template v-slot:right>
-						<view class="slot-button-wrap">
-							<view class="slot-button cancel" @click="bindClick('del',index,item.id)">
-								<image src="/static/image/user/icon_deletes.png" mode="aspectFit" style="width: 35rpx;height: 34rpx;"></image>
-								<text class="slot-button-text">删除</text>
-							</view>
-						</view>
-					</template>
-				</uni-swipe-action-item>
-			</uni-swipe-action>
+					<view class="right">
+						<view @click="toXiugaiAddress(item)" class="txt3-2 txtt">编辑</view>
+						<view @click="delAddress(item.address_id,i)" class="txt3-3 txtt">删除</view>
+					</view>
+				</view>
+			</view>
+			<u-loadmore :status="status" :icon-type="iconType" :load-text="loadText" />
 		</view>
-		<view class="emptybox" v-if="list.length==0">
-			<u-gap height="260"></u-gap>
-			<image src="/static/image/user/empty.png" mode="aspectFit" class="img"></image>
-			<text class="text">暂无收货地址</text>
-			<view class="btn" @click="goAdd">去新建</view>
+		<view class="footer">
+			<view @click="toAddress" class="btn">添加收货地址</view>
 		</view>
-		<view class="goAdds" @click="goAdd" v-if="list.length!=0">新建地址</view>
-		<u-gap height="40"></u-gap>
 	</view>
 </template>
 
 <script>
-	import UniSwipeAction from "@/components/uni-swipe-action/uni-swipe-action.vue";
-	import UniSwipeActionItem from "@/components/uni-swipe-action-item/uni-swipe-action-item.vue";
+	import {
+		mapState
+	} from "vuex";
 	export default {
-		components:{
-			UniSwipeAction,
-			UniSwipeActionItem
+		computed: {
+			...mapState(["dingdanPage", "dingdanPageSize"]),
 		},
 		data() {
 			return {
-				list:[],
-				type:""
+				nowIndex: 1,
+				userId: '',
+				list: [],
+				// 加载
+				status: 'loadmore',
+				iconType: 'flower',
+				loadText: {
+					loadmore: '上拉加载更多',
+					loading: '正在加载...',
+					nomore: '没有了更多了'
+				},
 			}
+		},
+		onShow() {
+			this.list = [];
+			this.userId = uni.getStorageSync('userId')
+			this.getData()
 		},
 		methods: {
-			toEdit(item){
-				this.$store.commit("setAddress",item);
-				if(this.type!=""){
-					uni.navigateBack({
-						delta:1
+			async getData() {
+				this.status = 'loading';
+				const res = await this.$api.getAddressList({
+					// user_id:this.userId
+					user_id: 470320,
+					timestamp: new Date().getTime(),
+					sign: this.$md5(`BlindBox${new Date().getTime()}`)
+				})
+				console.log(res)
+				if (res.data.length < 10) {
+					this.status = 'nomore'
+				} else {
+					this.status = 'loadmore';
+				}
+				this.list = this.list.concat(res.data)
+			},
+			async changeMoren(id, i) {
+				this.nowIndex = i
+				const res = await this.$api.updateAddress({
+					address_def: true,
+					address_id: id,
+				})
+				console.log(res)
+				if (res.status == 200) {
+					this.$refs.uToast.show({
+						title: res.msg,
 					})
-				}else{
-					uni.navigateTo({
-						url:`/pages/user/address/detail?id=${item.id}`
+					this.list.forEach(ele => {
+						this.$set(ele, 'address_def', false)
 					})
+					this.$set(this.list[i], 'address_def', true)
 				}
 			},
-			//获取地址信息
-			async getlist(){
-				const res = await this.$api.addressList();
-				if(res.code==200){
-					this.list = res.data;
-				}
-			},
-			//新建地址
-			goAdd(){
+			toAddress() {
 				uni.navigateTo({
-					url:'/pages/user/address/detail'
+					url: '/pages/user/address/tianjiadizhi'
 				})
 			},
-			//设置默认地址
-			async Default(item){
-				const res = await this.$api.saveAddress({
-					id:item.id,
-					real_name: item.real_name,
-					phone: item.phone,
-					province:item.province,
-					city:item.city,
-					district:item.district,
-					detail: item.detail,
-					is_default: 1
+			toXiugaiAddress(item) {
+				uni.navigateTo({
+					url: `/pages/user/address/tianjiadizhi?address=${JSON.stringify(item)}`
 				})
-				if(res.code == 200){
-					this.$u.toast(res.message);
-					this.getlist();
-				}else{
-					this.$u.toast(res.message);
-				}
 			},
-			bindClick(e,index,id){
-				if(e=="del"){
-					this.$api.delAddress(id).then((res)=>{
-						if(res.code==200){
-							this.$u.toast("删除成功");
-							this.list.splice(index,1);
-						}else{
-							this.$u.toast(res.message);
+			async delAddress(id,i) {
+				const res = await this.$api.deleteAddress({
+					address_id: id
+				})
+				this.$refs.uToast.show({
+					title: res.msg,
+					duration:1000,
+					callback: () => {
+						if (res.status == 200) {
+							this.list.splice(i,1)
 						}
-					})
-				}
+					}
+				})
 			},
-		},
-		onLoad(options){
-			if(options.type){
-				this.type = options.type;
-			}
-		},
-		onShow(){
-			this.getlist();
 		}
 	}
 </script>
 <style lang="scss">
-	page{
-		background-color: #F7F8FA;
+	page {
+		background: #f8f8f8;
 	}
 </style>
 <style lang="scss" scoped>
-	.list{
-		width: 100%;
-		position: relative;
-		overflow: hidden;
-		padding: 20rpx 24rpx 20rpx 44rpx;
-		.item{
-			padding:32rpx 0;
-			background: #FFFFFF;
-			border: 2rpx solid #F4F4F4;
+	/deep/ .u-load-more-wrap {
+		padding: 16rpx 0;
+	}
+
+	.index {}
+
+	.nav1 {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		.n1-pic {
+			margin-top: 550rpx;
+			width: 132rpx;
+			height: 94rpx;
+			opacity: 0.47
+		}
+
+		.n1-txt {
+			margin-top: 30rpx;
+			font-size: 28rpx;
+			font-family: PingFang SC, PingFang SC-Regular;
+			font-weight: 400;
+			text-align: center;
+			color: #666666;
+		}
+	}
+
+	.items {
+		margin-top: 28rpx;
+
+		.item {
+			padding: 26rpx 34rpx;
+			margin: 0 auto 24rpx;
+			width: 690rpx;
+			background: #ffffff;
 			border-radius: 20rpx;
-			height: 252rpx;
-			margin-bottom: 20rpx;
-			.hd{
-				margin-left: 40rpx;
-				border-bottom: 2rpx #F9F9F9 solid;
-				padding-right: 40rpx;
-				.top{
-					display: flex;
-					align-items: center;
-					margin-bottom: 20rpx;
-					font-size: 28rpx;
-					color:#000;
-					.name{
-						margin-right: 28rpx;
-					}
-					.phone{
-						flex:1;
-					}
-					.tag{
-						width: 58rpx;
-						height: 28rpx;
-						line-height: 28rpx;
-						text-align: center;
-						background: #D61D1D;
-						border-radius: 14rpx;
-						font-size: 16rpx;
-						color:#ffffff;
-					}
-				}
-				.detail{
-					font-size: 24rpx;
-					color:#000;
-					height: 62rpx;
-				}
-			}
-			.ft{
-				padding: 30rpx 40rpx 0 40rpx;
+
+			.tit1 {
 				display: flex;
 				align-items: center;
-				font-size: 26rpx;
-				font-family: PingFang SC;
+
+				.txt1-1 {
+					font-size: 32rpx;
+					font-family: PingFang SC, PingFang SC-Bold;
+					font-weight: 700;
+					color: #333333;
+				}
+			}
+
+			.tit2 {
+				font-size: 28rpx;
+				font-family: PingFang SC, PingFang SC-Regular;
 				font-weight: 400;
-				color: #000;
-				.check{
+				margin-top: 10rpx;
+				color: #666666;
+			}
+
+			.heng {
+				margin-top: 28rpx;
+				width: 630rpx;
+				height: 2rpx;
+				background: #dcdcdc;
+			}
+
+			.tit3 {
+				margin-top: 22rpx;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+
+				.txtt {
+					margin-left: 12rpx;
+					font-size: 24rpx;
+					font-family: PingFang SC, PingFang SC-Regular;
+					font-weight: 400;
+					color: #999999;
+				}
+
+				.left {
 					display: flex;
 					align-items: center;
-					.icon{
-						width: 32rpx;
-						height: 32rpx;
-						margin-right: 20rpx;
-						background-color: #F7F8FA;
+
+					.icon {
+						width: 22rpx;
+						height: 22rpx;
+						border: 2rpx solid #b8b8b8;
 						border-radius: 50%;
+					}
+
+					.icon.active {
+						border: 2rpx solid #02b3b6;
+						display: flex;
+						justify-content: center;
+						align-items: center;
+
+						.dian {
+							width: 10rpx;
+							height: 10rpx;
+							background: #02b3b6;
+							border-radius: 50%;
+						}
+					}
+
+					.txt3-1 {
+						margin-left: 12rpx;
+					}
+				}
+
+				.right {
+					display: flex;
+					align-items: center;
+
+					.txt3-3 {
+						margin-left: 28rpx;
 					}
 				}
 			}
 		}
 	}
-	.slot-button-wrap{
-		display: flex;
-		padding-right: 24rpx;
-	}
-	.slot-button{
-		width:142rpx;
-		height: 252rpx;
-		font-size: 24rpx;
-		border-radius: 20rpx;
-		margin-left: 20rpx;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		flex-direction: column;
-		.slot-button-text{
-			margin-top: 20rpx;
-		}
-		&.cancel{
-			background: #D61D1D;
-			color: #fff;
-		}
-	}
-	.emptybox{
-		width: 100%;
-		display: flex;
-		align-items: center;
-		flex-direction: column;
-		.img{
-			width: 212rpx;
-			height: 183rpx;
-		}
-		.text{
-			font-size: 24rpx;
-			font-family: PingFang SC, PingFang SC-Medium;
-			color: #bababa;
-			margin-top: 30rpx;
-			margin-bottom: 48rpx;
-		}
-		.btn{
-			width: 152rpx;
-			height: 50rpx;
-			line-height: 50rpx;
-			background: #d61d1d;
-			border-radius: 26rpx;
-			font-size: 24rpx;
+
+	.footer {
+		position: fixed;
+		bottom: 0;
+		width: 750rpx;
+		height: 140rpx;
+		background: #ffffff;
+		box-shadow: 0rpx -4rpx 8rpx 0rpx rgba(51, 51, 51, 0.04);
+
+		.btn {
+			width: 690rpx;
+			height: 76rpx;
+			background: #02b3b6;
+			border-radius: 38rpx;
+			box-shadow: 0rpx 6rpx 12rpx 0rpx rgba(2, 179, 182, 0.12);
+			margin-top: 12rpx;
+			margin-left: 30rpx;
+			font-size: 32rpx;
 			font-family: PingFang SC, PingFang SC-Bold;
 			font-weight: 700;
 			text-align: center;
-			color: #f7f8fa;
+			line-height: 76rpx;
+			color: #ffffff;
 		}
-	}
-	.goAdds{
-		width: 612rpx;
-		height: 80rpx;
-		margin: 136rpx auto 0;
-		background: #D61D1D;
-		border-radius: 10rpx;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 28rpx;
-		font-weight: 700;
-		color: #ffffff;
 	}
 </style>

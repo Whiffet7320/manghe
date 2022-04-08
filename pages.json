@@ -2,204 +2,131 @@
 	"easycom": {
 		"^u-(.*)": "uview-ui/components/u-$1/u-$1.vue"
 	},
-	"pages": [
-		{
-			"path": "pages/tabBar/index",
-			"style": {
-				"navigationBarTitleText": "首页",
-				"navigationBarBackgroundColor": "#ffffff",
-				"navigationBarTextStyle": "black",
-				"navigationStyle": "custom"
-			}
-		},{
-			"path": "pages/tabBar/user",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "我的",
-				"navigationBarBackgroundColor": "#ffffff",
-				"navigationBarTextStyle": "black"
-			}
-		}, {
-			"path": "pages/login/login",
-			"style": {
-				"navigationStyle": "custom"
-			}
-		}, {
-			"path": "pages/login/zhuce",
-			"style": {
-				"navigationStyle": "custom"
-			}
+	"pages": [{
+		"path": "pages/tabBar/index",
+		"style": {
+			"navigationBarTitleText": "首页",
+			"navigationBarBackgroundColor": "#ffffff",
+			"navigationBarTextStyle": "black",
+			"navigationStyle": "custom"
 		}
-	],
+	}, {
+		"path": "pages/tabBar/guize",
+		"style": {
+			"navigationBarTitleText": "玩法规则",
+			"navigationBarBackgroundColor": "#ffffff",
+			"navigationBarTextStyle": "black"
+		}
+	}, {
+		"path": "pages/tabBar/shop",
+		"style": {
+			"navigationBarTitleText": "兑换商城",
+			"navigationBarBackgroundColor": "#ffffff",
+			"navigationBarTextStyle": "black"
+		}
+	}],
 	"subPackages": [{
-		"root": "pages/index",
-		"pages": [{
-			"path": "jifenguize",
-			"style": {
-				"navigationBarTitleText": "积分规则",
-				"navigationBarBackgroundColor": "#f9edd1",
-				"navigationBarTextStyle": "black"
-			}
-		}, {
-			"path": "fenxiang",
-			"style": {
-				"navigationStyle": "custom"
-			}
-		}]
-	},
-	{
-		"root": "pages/order",
-		"pages": [{
-			"path": "querendingdan",
-			"style": {
-				"navigationBarTitleText": "确认订单",
-				"navigationBarBackgroundColor": "#ffffff",
-				"navigationBarTextStyle": "black"
-			}
-		}]
-	},
-	{
-		"root": "pages/user",
-		"pages": [
-			{
-				"path": "set/index",
+			"root": "pages/index",
+			"pages": [{
+				"path": "jifenguize",
 				"style": {
-					"navigationBarTitleText": "设置"
-				}
-			},
-			{
-				"path": "set/uname",
-				"style": {
-					"navigationBarTitleText": "更改昵称"
-				}
-			},
-			{
-				"path": "set/pwd",
-				"style": {
-					"navigationBarTitleText": "设置登陆密码"
-				}
-			},
-			{
-				"path": "set/zhifumima",
-				"style": {
-					"navigationBarTitleText": "设置支付密码",
-					"navigationBarBackgroundColor": "#ffffff",
+					"navigationBarTitleText": "积分规则",
+					"navigationBarBackgroundColor": "#f9edd1",
 					"navigationBarTextStyle": "black"
 				}
-			},
-			{
-				"path": "address/index",
-				"style": {
-					"navigationBarTitleText": "收货地址"
-				}
-			},
-			{
-				"path": "address/detail",
-				"style": {
-					"navigationBarTitleText": "新建地址"
-				}
-			},
-			{
-				"path": "bank/index",
-				"style": {
-					"navigationBarTitleText": "银行卡"
-				}
-			},
-			{
-				"path": "bank/detail",
-				"style": {
-					"navigationBarTitleText": "绑定银行卡"
-				}
-			},
-			{
-				"path": "certificate/index",
-				"style": {
-					"navigationBarTitleText": "实名认证"
-				}
-			},
-			{
-				"path": "privacy/index",
-				"style": {
-					"navigationBarTitleText": "隐私条款"
-				}
-			},
-			{
-				"path": "agreement/index",
-				"style": {
-					"navigationBarTitleText": "用户协议"
-				}
-			},
-			{
-				"path": "tixian/tixian",
-				"style": {
-					"navigationStyle": "custom",
-					"enablePullDownRefresh": true
-				}
-			},
-			{
-				"path": "tixian/jifentixian",
-				"style": {
-					"navigationBarTitleText": "积分提现",
-					"navigationBarBackgroundColor": "#ffffff",
-					"navigationBarTextStyle": "black"
-				}
-			},
-			{
-				"path": "tixian/zhifumima",
-				"style": {
-					"navigationBarTitleText": "支付密码",
-					"navigationBarBackgroundColor": "#ffffff",
-					"navigationBarTextStyle": "black"
-				}
-			},
-			{
-				"path": "jifen/wodejifen",
-				"style": {
-					"navigationStyle": "custom",
-					"enablePullDownRefresh": true
-				}
-			},
-			{
-				"path": "qianbao/qianbao",
-				"style": {
-					"navigationStyle": "custom",
-					"enablePullDownRefresh": true
-				}
-			},{
-				"path": "qianbao/chongzhi",
+			}, {
+				"path": "fenxiang",
 				"style": {
 					"navigationStyle": "custom"
 				}
-			},
-			{
-				"path": "order/order",
+			}]
+		},
+		{
+			"root": "pages/order",
+			"pages": [{
+				"path": "tijiaodingdan",
 				"style": {
-					"navigationBarTitleText": "我的订单",
+					"navigationBarTitleText": "提交订单",
 					"navigationBarBackgroundColor": "#ffffff",
 					"navigationBarTextStyle": "black"
 				}
-			},
-			{
-				"path": "order/detail",
+			}, {
+				"path": "tiquchenggong",
 				"style": {
-					"navigationBarTitleText": "订单详情",
+					"navigationBarTitleText": "提取成功",
 					"navigationBarBackgroundColor": "#ffffff",
 					"navigationBarTextStyle": "black"
 				}
-			},
-			{
-				"path": "order/wuliu",
+			}, {
+				"path": "goumaichenggong",
+				"style": {
+					"navigationBarTitleText": "购买成功",
+					"navigationBarBackgroundColor": "#ffffff",
+					"navigationBarTextStyle": "black"
+				}
+			}, {
+				"path": "zhihuanchenggong",
+				"style": {
+					"navigationBarTitleText": "置换成功",
+					"navigationBarBackgroundColor": "#ffffff",
+					"navigationBarTextStyle": "black"
+				}
+			}, {
+				"path": "wuliu",
 				"style": {
 					"navigationBarTitleText": "物流信息",
 					"navigationBarBackgroundColor": "#ffffff",
 					"navigationBarTextStyle": "black"
 				}
-			}
-		]
-	}],
+			}]
+		},
+		{
+			"root": "pages/shop",
+			"pages": [{
+				"path": "shangpinxiangqin",
+				"style": {
+					"navigationStyle": "custom"
+				}
+			}]
+		},
+		{
+			"root": "pages/user",
+			"pages": [
+				// {
+				// 	"path": "qianbao/qianbao",
+				// 	"style": {
+				// 		"navigationStyle": "custom",
+				// 		"enablePullDownRefresh": true
+				// 	}
+				// },
+				{
+					"path": "shounahe/shounahe",
+					"style": {
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "address/index",
+					"style": {
+						"navigationBarTitleText": "地址管理",
+						"navigationBarBackgroundColor": "#ffffff",
+						"navigationBarTextStyle": "black"
+					}
+				},
+				{
+					"path": "address/tianjiadizhi",
+					"style": {
+						"navigationBarTitleText": "添加收货地址",
+						"navigationBarBackgroundColor": "#ffffff",
+						"navigationBarTextStyle": "black"
+					}
+				}
+			]
+		}
+	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "螃蟹商城",
+		"navigationBarTitleText": "盲盒",
 		"navigationBarBackgroundColor": "#ffffff",
 		"backgroundColor": "#FFFFFF"
 	}
