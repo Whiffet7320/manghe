@@ -36,13 +36,15 @@
 								</view>
 								<view class="heng"></view>
 								<view class="tit2">
-									<view :class="{'t2-l':true,'item1':item.shop_degree == 0,'item2':item.shop_degree == 1,'item3':item.shop_degree == 2,'item4':item.shop_degree == 3}">
+									<view v-if="item.shop_degree !=''"
+										:class="{'t2-l':true,'item1':item.shop_degree == 0,'item2':item.shop_degree == 1,'item3':item.shop_degree == 2,'item4':item.shop_degree == 3}">
 										<view v-if="item.shop_degree == 0" class="t2-l-txt2 t2-l-txt">金色传说</view>
 										<view v-if="item.shop_degree == 1" class="t2-l-txt2 t2-l-txt">红色史诗</view>
 										<view v-if="item.shop_degree == 2" class="t2-l-txt2 t2-l-txt">紫色稀有</view>
 										<view v-if="item.shop_degree == 3" class="t2-l-txt2 t2-l-txt">蓝色普通</view>
 										<image :src="item.shop_img" class="t2-l-img" mode=""></image>
 									</view>
+									<image v-else :src="item.shop_img" class="t2-l-imgwu" mode=""></image>
 									<view class="t2-r">
 										<view class="txtt1">{{item.shop_name}}</view>
 										<view class="txtt2">参考价：<text class="sp">{{item.order_total}}</text>
@@ -78,13 +80,15 @@
 						</view>
 						<view class="heng"></view>
 						<view class="tit2">
-							<view :class="{'t2-l':true,'item1':item.shop_degree == 0,'item2':item.shop_degree == 1,'item3':item.shop_degree == 2,'item4':item.shop_degree == 3}">
-								<view v-if="item.shop_degree == 0" class="t2-l-txt">金色传说</view>
-								<view v-if="item.shop_degree == 1" class="t2-l-txt">红色史诗</view>
-								<view v-if="item.shop_degree == 2" class="t2-l-txt">紫色稀有</view>
-								<view v-if="item.shop_degree == 3" class="t2-l-txt">蓝色普通</view>
+							<view v-if="item.shop_degree !=''"
+								:class="{'t2-l':true,'item1':item.shop_degree == 0,'item2':item.shop_degree == 1,'item3':item.shop_degree == 2,'item4':item.shop_degree == 3}">
+								<view v-if="item.shop_degree == 0" class="t2-l-txt2 t2-l-txt">金色传说</view>
+								<view v-if="item.shop_degree == 1" class="t2-l-txt2 t2-l-txt">红色史诗</view>
+								<view v-if="item.shop_degree == 2" class="t2-l-txt2 t2-l-txt">紫色稀有</view>
+								<view v-if="item.shop_degree == 3" class="t2-l-txt2 t2-l-txt">蓝色普通</view>
 								<image :src="item.shop_img" class="t2-l-img" mode=""></image>
 							</view>
+							<image v-else :src="item.shop_img" class="t2-l-imgwu" mode=""></image>
 							<view class="t2-r">
 								<view class="txtt1">{{item.shop_name}}</view>
 								<view class="txtt2">参考价：<text class="sp">{{item.order_total}}</text>
@@ -106,10 +110,12 @@
 							<view class="tit3">
 								<view @click="shouhuo(item)" class="btn">确认收货</view>
 								<view @click="toKefu" class="btn">联系客服</view>
-								
-								<view v-if="item.order_status_name == '已发货' && item.shop_type == 0" @click="seeWuliu(item)" class="btn">查看物流
+
+								<view v-if="item.order_status_name == '已发货' && item.shop_type == 0"
+									@click="seeWuliu(item)" class="btn">查看物流
 								</view>
-								<view v-if="item.order_status_name == '已发货' && item.shop_type == 1" @click="lingqukami(item)" class="btn">领取卡密</view>
+								<view v-if="item.order_status_name == '已发货' && item.shop_type == 1"
+									@click="lingqukami(item)" class="btn">领取卡密</view>
 							</view>
 						</template>
 						<!-- 已分解 -->
@@ -184,10 +190,11 @@
 		<u-popup v-model="popShow4" mode='center' border-radius="28" width="690rpx" height="732rpx">
 			<view class="pop4">
 				<view class="p4-txt1">领取卡密</view>
-				<view :class="{'p4-box1':true,'bbx1':nowDengji == 0,'bbx2':nowDengji == 1,'bbx3':nowDengji == 2,'bbx4':nowDengji == 3}">
-					<view class="p4-b1-txt1">{{nowDengji == 0 ? '金色传说' : nowDengji == 1 ? '红色史诗' : nowDengji == 2 ? '紫色稀有' : '蓝色普通'}}</view>
-					<image :src="nowImg" class="p4-b1-pic1"
-						mode=""></image>
+				<view
+					:class="{'p4-box1':true,'bbx1':nowDengji == 0,'bbx2':nowDengji == 1,'bbx3':nowDengji == 2,'bbx4':nowDengji == 3}">
+					<view class="p4-b1-txt1">
+						{{nowDengji == 0 ? '金色传说' : nowDengji == 1 ? '红色史诗' : nowDengji == 2 ? '紫色稀有' : '蓝色普通'}}</view>
+					<image :src="nowImg" class="p4-b1-pic1" mode=""></image>
 				</view>
 				<view class="p4-box2">
 					<view class="p4-item">
@@ -216,7 +223,7 @@
 		data() {
 			return {
 				kahao: '',
-				kami:'',
+				kami: '',
 				nowIndex: 0,
 				list: [{
 					name: 'a'
@@ -237,9 +244,9 @@
 				order: [],
 				orderId: '',
 				sumList: [],
-				nowDengji:'',
-				nowImg:'',
-				zhihuanNum:0,
+				nowDengji: '',
+				nowImg: '',
+				zhihuanNum: 0,
 				// 加载
 				status: 'loadmore',
 				iconType: 'flower',
@@ -284,7 +291,7 @@
 				})
 				console.log(111, res)
 			},
-			toKefu(){
+			toKefu() {
 				// window.open(`http://wpa.qq.com/msgrd?v=3&uin=${2054982001}&site=qq&menu=yes`)
 				window.open(`mqqwpa://im/chat?chat_type=wpa&uin=${2054982001}&version=1&src_type=web&web_src=bjhuli.com`)
 			},
@@ -292,7 +299,7 @@
 				this.orderId = item.order_id;
 				this.popShow3 = true;
 			},
-			yijianfuzhi(){
+			yijianfuzhi() {
 				uni.setClipboardData({
 					data: `卡号:${this.kahao},卡密:${this.kami}`,
 				});
@@ -301,7 +308,7 @@
 				this.nowDengji = item.shop_degree;
 				this.nowImg = item.shop_img;
 				const res = await this.$api.getCardInfoByOrder({
-					order_id:item.order_id,
+					order_id: item.order_id,
 				})
 				console.log(res)
 				this.kahao = res.data.card_account;
@@ -400,18 +407,18 @@
 					})
 					this.sumList.splice(index, 1)
 				}
-				this.sumList.forEach(ele=>{
+				this.sumList.forEach(ele => {
 					zhihuanNum += Number(ele.order_total)
 				})
 				this.zhihuanNum = zhihuanNum;
-				console.log(this.sumList,zhihuanNum)
+				console.log(this.sumList, zhihuanNum)
 
 			},
 			radioChange(e) {
 				this.zhihuanNum = 0;
 				if (e.value) {
 					this.sumList = [...this.list]
-					this.list.forEach(ele=>{
+					this.list.forEach(ele => {
 						this.zhihuanNum += Number(ele.order_total)
 					})
 					this.list.map(val => {
@@ -582,6 +589,7 @@
 			.tit2 {
 				display: flex;
 				margin: 26rpx 0;
+
 				.t2-l {
 					width: 220rpx;
 					height: 212rpx;
@@ -592,19 +600,24 @@
 					flex-direction: column;
 					align-items: center;
 				}
-				.t2-l.item1{
+
+				.t2-l.item1 {
 					background-image: url(../../../static/img/zu4076.png);
 				}
-				.t2-l.item2{
+
+				.t2-l.item2 {
 					background-image: url(../../../static/img/zu4075.png);
 				}
-				.t2-l.item3{
+
+				.t2-l.item3 {
 					background-image: url(../../../static/img/zu4077.png);
 				}
-				.t2-l.item4{
+
+				.t2-l.item4 {
 					background-image: url(../../../static/img/zu4078.png);
 				}
-				.t2-l-txt{
+
+				.t2-l-txt {
 					margin-top: 12rpx;
 					font-size: 16rpx;
 					font-family: PingFang SC, PingFang SC-Bold;
@@ -613,7 +626,8 @@
 					color: #ffffff;
 					letter-spacing: 0.96rpx;
 				}
-				.t2-l-txt.t2-l-txt2{
+
+				.t2-l-txt.t2-l-txt2 {
 					margin-top: 10rpx;
 					font-size: 16rpx;
 					font-family: PingFang SC, PingFang SC-Bold;
@@ -622,11 +636,17 @@
 					color: #ffffff;
 					letter-spacing: 0.96rpx;
 				}
-				.t2-l-img{
+
+				.t2-l-img {
 					margin-top: 26rpx;
 					width: 126rpx;
 					height: 126rpx;
 				}
+				.t2-l-imgwu{
+					width: 220rpx;
+					height: 212rpx;
+				}
+
 				.t2-r {
 					width: 392rpx;
 					margin-left: 22rpx;
@@ -953,16 +973,20 @@
 				height: 162rpx;
 			}
 		}
-		.p4-box1.bbx1{
+
+		.p4-box1.bbx1 {
 			background-image: url('/static/img/zu4154.png');
 		}
-		.p4-box1.bbx2{
+
+		.p4-box1.bbx2 {
 			background-image: url('/static/img/zu4152.png');
 		}
-		.p4-box1.bbx3{
+
+		.p4-box1.bbx3 {
 			background-image: url('/static/img/zu4153.png');
 		}
-		.p4-box1.bbx4{
+
+		.p4-box1.bbx4 {
 			background-image: url('/static/img/zu4151.png');
 		}
 
@@ -971,21 +995,25 @@
 			display: flex;
 			flex-direction: column;
 			align-items: center;
+
 			.p4-item {
 				width: 500rpx;
 				display: flex;
 				align-items: center;
-				.p4-txtt4{
+
+				.p4-txtt4 {
 					font-size: 28rpx;
 					font-family: PingFang SC, PingFang SC-Bold;
 					font-weight: 700;
 					color: #333333;
 				}
-				/deep/ .uni-input-placeholder{
+
+				/deep/ .uni-input-placeholder {
 					color: #333333 !important;
 					margin-left: 24rpx;
 				}
-				/deep/ .uni-input-wrapper{
+
+				/deep/ .uni-input-wrapper {
 					background: #f5f5f5;
 					border-radius: 10rpx;
 					padding: 0 24rpx;
@@ -993,13 +1021,14 @@
 				}
 			}
 		}
-		.p4-btnn{
+
+		.p4-btnn {
 			margin: 40rpx auto 0;
 			width: 384rpx;
 			height: 76rpx;
 			background: #02b3b6;
 			border-radius: 38rpx;
-			box-shadow: 0rpx 6rpx 12rpx 0rpx rgba(2,179,182,0.12); 
+			box-shadow: 0rpx 6rpx 12rpx 0rpx rgba(2, 179, 182, 0.12);
 			font-size: 32rpx;
 			font-family: PingFang SC, PingFang SC-Bold;
 			font-weight: 700;
@@ -1007,6 +1036,6 @@
 			color: #ffffff;
 			line-height: 76rpx;
 		}
-	
+
 	}
 </style>

@@ -36,11 +36,16 @@
 			<image src="/static/img/mcz37.png" class="f2-pic" mode=""></image>
 		</view>
 		<view class="xz">
-			<image v-show="nowIndex1 == 0" src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380927270.gif" mode=""></image>
-			<image v-show="nowIndex1 == 1" src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380962507.gif" mode=""></image>
-			<image v-show="nowIndex1 == 2" src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380975706.gif" mode=""></image>
-			<image v-show="nowIndex1 == 3" src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380988200.gif" mode=""></image>
-			<image v-show="nowIndex1 == 4" src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380999765.gif" mode=""></image>
+			<image v-show="nowIndex1 == 0" class="xz-picc"
+				src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380927270.gif" mode=""></image>
+			<image v-show="nowIndex1 == 1" class="xz-picc"
+				src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380962507.gif" mode=""></image>
+			<image v-show="nowIndex1 == 2" class="xz-picc"
+				src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380975706.gif" mode=""></image>
+			<image v-show="nowIndex1 == 3" class="xz-picc"
+				src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380988200.gif" mode=""></image>
+			<image v-show="nowIndex1 == 4" class="xz-picc"
+				src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380999765.gif" mode=""></image>
 
 		</view>
 		<view class="nav2">
@@ -77,7 +82,7 @@
 				<image src="/static/img/tu1003.png" class="n4-pic2" mode=""></image>
 			</view>
 		</view>
-		<view class="nav5" v-if="shouyeObj.tip" >{{shouyeObj.tip.tips}}</view>
+		<view class="nav5" v-if="shouyeObj.tip">{{shouyeObj.tip.tips}}</view>
 		<view class="nav6">
 			<view class="n6-txt1" @click="popShow2 = true">
 				查看全部商品
@@ -160,13 +165,18 @@
 			<u-popup v-model="popShow3" mode='center' border-radius="28">
 				<view class="pop3">
 					<image @click="popShow3 = false" src="/static/img/zu4080.png" class="p3-close" mode=""></image>
-					<view class="p3-tit1">小试牛刀</view>
+					<view class="p3-tit1">{{nowBox.box_name}}</view>
 					<!-- <image v-if="nowIndex1 == 0" class="p3-xz" src="/static/img/xz1.gif" mode=""></image> -->
-					<image v-if="nowIndex1 == 0" class="p3-xz" src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380927270.gif" mode=""></image>
-					<image v-if="nowIndex1 == 1" class="p5-xz" src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380962507.gif" mode=""></image>
-					<image v-if="nowIndex1 == 2" class="p5-xz" src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380975706.gif" mode=""></image>
-					<image v-if="nowIndex1 == 3" class="p5-xz" src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380988200.gif" mode=""></image>
-					<image v-if="nowIndex1 == 4" class="p5-xz" src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380999765.gif" mode=""></image>
+					<image v-if="nowIndex1 == 0" class="p3-xz"
+						src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380927270.gif" mode=""></image>
+					<image v-if="nowIndex1 == 1" class="p3-xz"
+						src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380962507.gif" mode=""></image>
+					<image v-if="nowIndex1 == 2" class="p3-xz"
+						src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380975706.gif" mode=""></image>
+					<image v-if="nowIndex1 == 3" class="p3-xz"
+						src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380988200.gif" mode=""></image>
+					<image v-if="nowIndex1 == 4" class="p3-xz"
+						src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380999765.gif" mode=""></image>
 					<template v-if="boxPriceList.length!=0">
 						<view class="p3-tit2" @click="toBay(1,nowBox)">
 							<view class="txt1" style="margin: 0 16rpx 0 10rpx;">一发入魂</view>
@@ -215,21 +225,31 @@
 					<image v-if="playNow" src="/static/img/zj9.png" @click="closeMusic" class="p5-pic" mode=""></image>
 					<image v-else src="/static/img/zu4156.png" @click="openMusic" class="p5-pic" mode=""></image>
 					<!-- 未开箱 -->
-					<template v-if="!isKaixiang">
-						<image v-show="nowIndex1 == 0" class="p5-xz" src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380927270.gif" mode=""></image>
-						<image v-show="nowIndex1 == 1" class="p5-xz" src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380962507.gif" mode=""></image>
-						<image v-show="nowIndex1 == 2" class="p5-xz" src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380975706.gif" mode=""></image>
-						<image v-show="nowIndex1 == 3" class="p5-xz" src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380988200.gif" mode=""></image>
-						<image v-show="nowIndex1 == 4" class="p5-xz" src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380999765.gif" mode=""></image>
-					</template>
+					<view v-show="!isKaixiang">
+						<image v-show="nowIndex1 == 0" class="p5-xz"
+							src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380927270.gif" mode=""></image>
+						<image v-show="nowIndex1 == 1" class="p5-xz"
+							src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380962507.gif" mode=""></image>
+						<image v-show="nowIndex1 == 2" class="p5-xz"
+							src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380975706.gif" mode=""></image>
+						<image v-show="nowIndex1 == 3" class="p5-xz"
+							src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380988200.gif" mode=""></image>
+						<image v-show="nowIndex1 == 4" class="p5-xz"
+							src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380999765.gif" mode=""></image>
+					</view>
 					<!-- 开箱 -->
-					<template v-else>
-						<image v-show="nowIndex1 == 0" class="p5-xz xzd" src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649381012357.gif" mode=""></image>
-						<image v-show="nowIndex1 == 1" class="p5-xz xzd" src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649381079857.gif" mode=""></image>
-						<image v-show="nowIndex1 == 2" class="p5-xz xzd" src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649381092856.gif" mode=""></image>
-						<image v-show="nowIndex1 == 3" class="p5-xz xzd" src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649381105815.gif" mode=""></image>
-						<image v-show="nowIndex1 == 4" class="p5-xz xzd" src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649381116979.gif" mode=""></image>
-					</template>
+					<view v-show="isKaixiang">
+						<image v-show="nowIndex1 == 0" class="p5-xz xzd"
+							src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649381012357.gif" mode=""></image>
+						<image v-show="nowIndex1 == 1" class="p5-xz xzd"
+							src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649381079857.gif" mode=""></image>
+						<image v-show="nowIndex1 == 2" class="p5-xz xzd"
+							src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649381092856.gif" mode=""></image>
+						<image v-show="nowIndex1 == 3" class="p5-xz xzd"
+							src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649381105815.gif" mode=""></image>
+						<image v-show="nowIndex1 == 4" class="p5-xz xzd"
+							src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649381116979.gif" mode=""></image>
+					</view>
 					<view class="p5-tit1" @click="choujiang">立即拆开</view>
 					<view class="p5-tit2" v-if="payNum != 1">
 						<view v-if="!isKuaisu" @click="isKuaisu = true" class="p5-icon"></view>
@@ -610,7 +630,7 @@
 			},
 			changSwiper(index) {
 				// console.log(index, this.shopList[index].shop_name)
-				if(this.payNum == 1){
+				if (this.payNum == 1) {
 					this.isKuaisu = true;
 				}
 				if (this.shopList[index] && this.shopList[index].shop_name == this.zhongjiangName && this.flag && this
@@ -651,7 +671,7 @@
 								this.$set(this, 'autoplay', false)
 								setTimeout(() => {
 									shopList.splice(i, 1)
-									if(this.payNum != 1){
+									if (this.payNum != 1) {
 										this.innerAudioContext.seek(0)
 									}
 									this.$set(this, 'autoplay', true)
@@ -703,7 +723,7 @@
 								}, 1000)
 							}, 600)
 						}
-					}, 1500)
+					}, 1000)
 				}
 				// 	setTimeout(() => {
 				// 		if (this.shopList[index].shop_name == this.zhongjiangName && this.flag && this.isKuaisu) {
@@ -970,7 +990,12 @@
 		z-index: 8;
 		left: 50%;
 		transform: translateX(-50%);
-		top: 170rpx;
+		top: 184rpx;
+
+		.xz-picc {
+			width: 640rpx;
+			height: 440rpx;
+		}
 	}
 
 	.nav2 {
@@ -1387,9 +1412,11 @@
 
 		.p3-xz {
 			position: absolute;
-			top: 480rpx;
+			top: 490rpx;
 			left: 50%;
 			transform: translateX(-50%);
+			width: 640rpx;
+			height: 440rpx;
 		}
 
 		.p3-tit1 {
@@ -1548,6 +1575,8 @@
 			left: 50%;
 			transform: translateX(-50%);
 			top: 480rpx;
+			width: 640rpx;
+			height: 440rpx;
 		}
 
 		.p5-xz.xzd {
