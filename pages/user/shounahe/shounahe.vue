@@ -124,7 +124,8 @@
 						<template v-if="nowIndex == 4">
 							<view class="tit3">
 								<view @click="toKefu" class="btn">联系客服</view>
-								<view @click="seeWuliu(item)" class="btn">查看物流</view>
+								<view v-if="item.shop_type == 0" @click="seeWuliu(item)" class="btn">查看物流</view>
+								<view v-if="item.shop_type == 1" @click="lingqukami(item)" class="btn">查看卡密</view>
 							</view>
 						</template>
 					</view>
@@ -262,6 +263,8 @@
 			this.$store.commit('dingdanPage', 1)
 			this.getData()
 			this.getShuoming()
+			this.zhihuanNum = 0
+			this.sumList = []
 		},
 		onReachBottom() {
 			this.$store.commit("dingdanPage", this.dingdanPage + 1);
@@ -602,19 +605,19 @@
 				}
 
 				.t2-l.item1 {
-					background-image: url(../../../static/img/zu4076.png);
+					background-image: url(../../../static/img/zuz4168.png);
 				}
 
 				.t2-l.item2 {
-					background-image: url(../../../static/img/zu4075.png);
+					background-image: url(../../../static/img/zuz4169.png);
 				}
 
 				.t2-l.item3 {
-					background-image: url(../../../static/img/zu4077.png);
+					background-image: url(../../../static/img/zuz4170.png);
 				}
 
 				.t2-l.item4 {
-					background-image: url(../../../static/img/zu4078.png);
+					background-image: url(../../../static/img/zuz4171.png);
 				}
 
 				.t2-l-txt {

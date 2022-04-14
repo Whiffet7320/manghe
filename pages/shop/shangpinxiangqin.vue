@@ -13,7 +13,7 @@
 			<view class="n2-tit1" v-if="type == 1">
 				{{price}}
 				<image src="/static/img/tu1001.png" class="picc" mode=""></image>
-				<view class="txxx">补差价：<text class="sp">1000</text><image src="/static/img/tu1001.png" class="picc" mode=""></image></view>
+				<view class="txxx">补差价：<text class="sp">{{item.shop_price_after}}</text><image src="/static/img/tu1001.png" class="picc" mode=""></image></view>
 			</view>
 			<view class="n2-tit2">{{item.shop_name}}</view>
 		</view>
@@ -22,8 +22,8 @@
 				<view class="heng"></view>
 				<view class="n3-txt1">商品详情</view>
 				<view class="heng"></view>
-				<u-parse :html="content"></u-parse>
 			</view>
+			<u-parse :html="content"></u-parse>
 		</view>
 		<view class="footer">
 			<view v-if="type == 2" @click="popShow1 = true" class="btn">立即购买</view>

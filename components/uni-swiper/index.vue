@@ -12,6 +12,7 @@
 				<view class="u-list-image-wrap" @tap.stop.prevent="listClick(index)" :class="[uCurrent != index ? 'u-list-scale' : '']" :style="{
 						borderRadius: `${borderRadius}rpx`,
 						transform: effect3d && uCurrent != index ? 'scaleY(0.9)' : 'scaleY(1)',
+						opacity: effect3d && uCurrent != index ? '0.6' : '1',
 						margin: effect3d && uCurrent != index ? '0 36rpx' : 0,
 					}">
 					<image class="u-swiper-image" :src="item.image || item" :mode="imgMode"></image>

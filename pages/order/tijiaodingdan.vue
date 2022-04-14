@@ -1,7 +1,7 @@
 <template>
 	<view class="index">
 		<u-toast ref="uToast" />
-		<view class="nav1" @click="toJump('/pages/user/address/index')">
+		<view class="nav1" @click="toJump('/pages/user/address/index','needBack=yes')">
 			<!-- 无地址 -->
 			<!-- <view class="n1-txt1">请选择收货地址</view> -->
 			<!-- 有地址 -->
@@ -75,6 +75,7 @@
 				price: '',
 				shopObj: {},
 				isTiqu:null,
+				nowGetData:'',
 			}
 		},
 		onLoad(options) {
@@ -84,7 +85,9 @@
 			this.shop_id = options.shop_id;
 			this.sum = options.sum;
 			this.price = options.price;
-			this.shopObj = JSON.parse(options.shopObj)
+			if(options.shopObj){
+				this.shopObj = JSON.parse(options.shopObj)
+			}
 			if(options.isTiqu){
 				this.isTiqu = options.isTiqu;
 			}	
@@ -93,7 +96,15 @@
 			this.getData()
 		},
 		methods: {
+			otherFun(obj){
+				console.log(obj)
+				this.nowAddress = obj.nowItem;
+				this.nowGetData = obj.noGetData;
+			},
 			async getData() {
+				if(this.nowGetData == 'yes'){
+					return;
+				}
 				const res = await this.$api.getAddressList()
 				this.nowAddress = res.data.filter(ele => {
 					return ele.address_def
@@ -111,7 +122,9 @@
 					duration: 1000,
 					callback: () => {
 						if (res.status == 200) {
-							this.toJump('/pages/order/goumaichenggong')
+							uni.reLaunch({
+								url:'/pages/order/goumaichenggong'
+							})
 						}
 					},
 				})
@@ -128,7 +141,9 @@
 					duration: 1000,
 					callback: () => {
 						if (res.status == 200) {
-							this.toJump('/pages/order/zhihuanchenggong')
+							uni.reLaunch({
+								url:'/pages/order/zhihuanchenggong'
+							})
 						}
 					},
 				})
@@ -143,14 +158,16 @@
 					duration: 1000,
 					callback: () => {
 						if (res.status == 200) {
-							this.toJump('/pages/order/tiquchenggong')
+							uni.reLaunch({
+								url:'/pages/order/tiquchenggong'
+							})
 						}
 					},
 				})
 			},
-			toJump(url) {
+			toJump(url,params) {
 				uni.navigateTo({
-					url: url
+					url: `${url}?${params}`
 				})
 			},
 		},

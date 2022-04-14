@@ -8,7 +8,7 @@
 		<view class="float11">
 			<vue-seamless-scroll :data="shouyeObj.message" :class-option="classOption" class="wrap"
 				ref="seamlessScroll">
-				<view class="item" v-for="(item,i) in shouyeObj.message" :key='i'>
+				<view class="item" ref='aaaa' v-for="(item,i) in shouyeObj.message" :key='i'>
 					<image :src="item.user_icon" class="fl11-pic1" mode=""></image>
 					<view class="fl11-txt">{{item.message_text}}</view>
 					<image :src="item.message_img" class="fl11-pic2" mode=""></image>
@@ -37,15 +37,15 @@
 		</view>
 		<view class="xz">
 			<image v-show="nowIndex1 == 0" class="xz-picc"
-				src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380927270.gif" mode=""></image>
+				src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649836847501.gif" mode=""></image>
 			<image v-show="nowIndex1 == 1" class="xz-picc"
-				src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380962507.gif" mode=""></image>
+				src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649837106650.gif" mode=""></image>
 			<image v-show="nowIndex1 == 2" class="xz-picc"
-				src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380975706.gif" mode=""></image>
+				src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649837136219.gif" mode=""></image>
 			<image v-show="nowIndex1 == 3" class="xz-picc"
-				src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380988200.gif" mode=""></image>
+				src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649837214740.gif" mode=""></image>
 			<image v-show="nowIndex1 == 4" class="xz-picc"
-				src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380999765.gif" mode=""></image>
+				src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649836709664.gif" mode=""></image>
 
 		</view>
 		<view class="nav2">
@@ -126,38 +126,43 @@
 		<!-- 查看全部商品 -->
 		<u-popup v-model="popShow2" mode='bottom' border-radius="28" width="690rpx" height="1080rpx">
 			<view class="pop2">
-				<view class="p2-tit1">全部商品</view>
-				<view class="heng"></view>
-				<view class="items">
-					<view v-for="item in shopList" :key='item.shop_id'>
-						<view
-							:class="{'item':true,'item1':item.shop_quality == 0,'item2':item.shop_quality == 1,'item3':item.shop_quality == 2,'item4':item.shop_quality == 3}">
-							<view class="txt1" v-if="item.shop_quality == 0">金色传说</view>
-							<view class="txt1" v-if="item.shop_quality == 1">红色史诗</view>
-							<view class="txt1" v-if="item.shop_quality == 2">紫色稀有</view>
-							<view class="txt1" v-if="item.shop_quality == 3">蓝色普通</view>
-							<image :src="item.shop_img" class="pic1" mode=""></image>
-							<view class="txt2">{{item.shop_name}}</view>
-							<view class="txt3">
-								<view class="txttt1">价格：</view>
-								<view class="txttt2">
-									{{item.shop_price}}
-									<image src="/static/img/tu1001.png" class="picc" mode=""></image>
+				<view class="ddiv2">
+					<view class="p2-tit1">全部商品</view>
+					<view class="heng"></view>
+				</view>
+				<view class="ddiv">
+					<view class="items">
+						<view class="aa" v-for="item in shopList" :key='item.shop_id'>
+							<view
+								:class="{'item':true,'item1':item.shop_quality == 0,'item2':item.shop_quality == 1,'item3':item.shop_quality == 2,'item4':item.shop_quality == 3}">
+								<view class="txt1" v-if="item.shop_quality == 0">金色传说</view>
+								<view class="txt1" v-if="item.shop_quality == 1">红色史诗</view>
+								<view class="txt1" v-if="item.shop_quality == 2">紫色稀有</view>
+								<view class="txt1" v-if="item.shop_quality == 3">蓝色普通</view>
+								<image :src="item.shop_img" class="pic1" mode=""></image>
+								<view class="txt2">{{item.shop_name}}</view>
+								<view class="txt3">
+									<view class="txttt1">价格：</view>
+									<view class="txttt2">
+										{{item.shop_price}}
+										<image src="/static/img/tu1001.png" class="picc" mode=""></image>
+									</view>
 								</view>
 							</view>
-						</view>
 
+						</view>
+					</view>
+					<view class="p2-tit2">注意事项：</view>
+					<view class="p2-tit3" v-if="gailvList.length != 0" style="margin-top: 10rpx;">
+						{{gailvList[0].box_name}}：{{gailvList[0].probability}}%
+						；{{gailvList[1].box_name}}：{{gailvList[1].probability}}%
+					</view>
+					<view class="p2-tit3" v-if="gailvList.length != 0" style="padding-bottom: 30rpx;">
+						{{gailvList[2].box_name}}：{{gailvList[2].probability}}%
+						；{{gailvList[3].box_name}}：{{gailvList[3].probability}}%
 					</view>
 				</view>
-				<view class="p2-tit2">注意事项：</view>
-				<view class="p2-tit3" v-if="gailvList.length != 0" style="margin-top: 10rpx;">
-					{{gailvList[0].box_name}}：{{gailvList[0].probability}}%
-					；{{gailvList[1].box_name}}：{{gailvList[1].probability}}%
-				</view>
-				<view class="p2-tit3" v-if="gailvList.length != 0" style="padding-bottom: 30rpx;">
-					{{gailvList[2].box_name}}：{{gailvList[2].probability}}%
-					；{{gailvList[3].box_name}}：{{gailvList[3].probability}}%
-				</view>
+
 			</view>
 		</u-popup>
 		<!-- 开箱(牛刀小试) -->
@@ -168,28 +173,28 @@
 					<view class="p3-tit1">{{nowBox.box_name}}</view>
 					<!-- <image v-if="nowIndex1 == 0" class="p3-xz" src="/static/img/xz1.gif" mode=""></image> -->
 					<image v-if="nowIndex1 == 0" class="p3-xz"
-						src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380927270.gif" mode=""></image>
+						src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649836847501.gif" mode=""></image>
 					<image v-if="nowIndex1 == 1" class="p3-xz"
-						src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380962507.gif" mode=""></image>
+						src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649837106650.gif" mode=""></image>
 					<image v-if="nowIndex1 == 2" class="p3-xz"
-						src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380975706.gif" mode=""></image>
+						src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649837136219.gif" mode=""></image>
 					<image v-if="nowIndex1 == 3" class="p3-xz"
-						src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380988200.gif" mode=""></image>
+						src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649837214740.gif" mode=""></image>
 					<image v-if="nowIndex1 == 4" class="p3-xz"
-						src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380999765.gif" mode=""></image>
+						src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649836709664.gif" mode=""></image>
 					<template v-if="boxPriceList.length!=0">
 						<view class="p3-tit2" @click="toBay(1,nowBox)">
-							<view class="txt1" style="margin: 0 16rpx 0 10rpx;">一发入魂</view>
+							<view class="txt1" style="margin: 0 10rpx 0 8rpx;">一发入魂</view>
 							<view class="txt1">{{nowBox.box_price1}}</view>
 							<image src="/static/img/tu1001.png" class="picc" mode=""></image>
 						</view>
 						<view class="p3-tit3 p3-tit2" @click="toBay(5,nowBox)">
-							<view class="txt1" style="margin: 0 16rpx 0 10rpx;">五连绝世</view>
+							<view class="txt1" style="margin: 0 10rpx 0 8rpx;">五连绝世</view>
 							<view class="txt1">{{nowBox.box_price2}}</view>
 							<image src="/static/img/tu1001.png" class="picc" mode=""></image>
 						</view>
 						<view class="p3-tit4 p3-tit2" @click="toBay(10,nowBox)">
-							<view class="txt1" style="margin: 0 16rpx 0 10rpx;">豪气十连</view>
+							<view class="txt1" style="margin: 0 10rpx 0 8rpx;">豪气十连</view>
 							<view class="txt1">{{nowBox.box_price3}}</view>
 							<image src="/static/img/tu1001.png" class="picc" mode=""></image>
 						</view>
@@ -227,15 +232,15 @@
 					<!-- 未开箱 -->
 					<view v-show="!isKaixiang">
 						<image v-show="nowIndex1 == 0" class="p5-xz"
-							src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380927270.gif" mode=""></image>
+							src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649836847501.gif" mode=""></image>
 						<image v-show="nowIndex1 == 1" class="p5-xz"
-							src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380962507.gif" mode=""></image>
+							src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649837106650.gif" mode=""></image>
 						<image v-show="nowIndex1 == 2" class="p5-xz"
-							src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380975706.gif" mode=""></image>
+							src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649837136219.gif" mode=""></image>
 						<image v-show="nowIndex1 == 3" class="p5-xz"
-							src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380988200.gif" mode=""></image>
+							src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649837214740.gif" mode=""></image>
 						<image v-show="nowIndex1 == 4" class="p5-xz"
-							src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649380999765.gif" mode=""></image>
+							src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649836709664.gif" mode=""></image>
 					</view>
 					<!-- 开箱 -->
 					<view v-show="isKaixiang">
@@ -251,7 +256,7 @@
 							src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649381116979.gif" mode=""></image>
 					</view>
 					<view class="p5-tit1" @click="choujiang">立即拆开</view>
-					<view class="p5-tit2" v-if="payNum != 1">
+					<view v-if="!isShiwan" class="p5-tit2">
 						<view v-if="!isKuaisu" @click="isKuaisu = true" class="p5-icon"></view>
 						<u-icon v-else @click="isKuaisu = false" name="checkmark-circle-fill" color="#02b3b6" size="30">
 						</u-icon>
@@ -264,6 +269,7 @@
 		<view class="pop66">
 			<u-popup v-model="popShow6" mode='center' border-radius="28">
 				<view class="pop6">
+					<view class="shu"></view>
 					<view class="mySwiper">
 						<uniSwiper @change='changSwiper' :current='current' :autoplay='autoplay' height="340"
 							mode='none' :duration='pop6Duration' :interval='pop6Interval' effect3d title :list="list">
@@ -294,10 +300,14 @@
 					<view class="p7-btns" v-if="!isShiwan">
 						<view @click="addShounahe" class="btn1">放入收纳箱</view>
 						<view class="p3-tit2" @click="buyAgain(1)">
-							<view class="txt1" style="margin: 0 16rpx 0 10rpx;">再玩一场</view>
+							<view class="txt1" style="margin: 0 10rpx 0 8rpx;">再玩一场</view>
 							<view v-if="boxPriceList.length != 0" class="txt1">{{nowBox.box_price1}}</view>
 							<image src="/static/img/tu1001.png" class="picc" mode=""></image>
 						</view>
+					</view>
+					<view class="shiwan" v-else>
+						<view class="ttt">试玩结果仅作展示</view>
+						<view @click="popShow7 = false" class="ttbtn">玩一把真的</view>
 					</view>
 				</view>
 			</u-popup>
@@ -318,7 +328,7 @@
 					<view class="p7-btns" v-if="!isShiwan">
 						<view @click="addShounahe" class="btn1">放入收纳箱</view>
 						<view class="p3-tit2" @click="buyAgain(5)">
-							<view class="txt1" style="margin: 0 16rpx 0 10rpx;">再玩一场</view>
+							<view class="txt1" style="margin: 0 10rpx 0 8rpx;">再玩一场</view>
 							<view v-if="boxPriceList.length != 0" class="txt1">{{nowBox.box_price2}}</view>
 							<image src="/static/img/tu1001.png" class="picc" mode=""></image>
 						</view>
@@ -342,7 +352,7 @@
 					<view class="p7-btns" v-if="!isShiwan">
 						<view @click="addShounahe" class="btn1">放入收纳箱</view>
 						<view class="p3-tit2" @click="buyAgain(10)">
-							<view class="txt1" style="margin: 0 16rpx 0 10rpx;">再玩一场</view>
+							<view class="txt1" style="margin: 0 10rpx 0 8rpx;">再玩一场</view>
 							<view v-if="boxPriceList.length != 0" class="txt1">{{nowBox.box_price3}}</view>
 							<image src="/static/img/tu1001.png" class="picc" mode=""></image>
 						</view>
@@ -461,13 +471,25 @@
 			}
 		},
 		mounted() {
-			// this.toMove()
 			uni.createSelectorQuery().select('.nav3').boundingClientRect((rect) => {
 				console.log(Math.round(rect.width))
-				// this.scrollViewWidth = Math.round(rect.width)
 				this.scrollViewWidth = 278;
 			}).exec()
 			this.innerAudioContext = uni.createInnerAudioContext();
+			this.innerAudioContext.obeyMuteSwitch = false
+			setInterval(() => {
+				var str = this.$refs.seamlessScroll.$el.children[0].style.webkitTransform
+				var index = this.$refs.seamlessScroll.$el.children[0].style.webkitTransform.indexOf(' ')
+				this.$refs.seamlessScroll.$el.children[0].children[0].children.forEach(ele => {
+
+					if (ele.offsetTop + Number(str.substring(index + 1, str.length - 3)) < 36 && ele
+						.offsetTop + Number(str.substring(index + 1, str.length - 3)) > -10) {
+						ele.className = 'item active'
+					} else {
+						ele.className = 'item'
+					}
+				})
+			}, 100)
 			// this.innerAudioContext.src =
 			// 	'https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299819377.mpeg';
 			// this.innerAudioContext.loop = true
@@ -477,7 +499,7 @@
 			// https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299819377.mpeg 下落时音效
 		},
 		methods: {
-			async getData() {
+			async login() {
 				const res = await this.$api.doLogin({
 					spm: 'JLLWBsQCSCjVrMetK2PTfPw17oc2Q7y3kt7kv2Lf9ISkMXSR33sfBowrsDKmkTkV735p7bGISy'
 				})
@@ -485,6 +507,9 @@
 					this.user_lucky = res.data.user_lucky;
 					uni.setStorageSync('userId', res.data.user_id);
 				}
+			},
+			async getData() {
+				this.login()
 				const res4 = await this.$api.getHomeMessage();
 				this.shouyeObj = res4.data;
 				this.boxId = this.shouyeObj.box[0].box_id
@@ -587,8 +612,8 @@
 			},
 			async choujiang() {
 				this.isKaixiang = true;
-				this.innerAudioContext.src =
-					'https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299819377.mpeg';
+				this.innerAudioContext.src = encodeURI(
+					'https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299819377.mpeg');
 				this.innerAudioContext.play()
 				// this.innerAudioContext.onEnded(()=>{
 				// 	this.innerAudioContext.stop()
@@ -602,37 +627,68 @@
 					this.zhongjiangNum = this.zhongjiangShop.shop_quality;
 					this.zhongjiangName = this.zhongjiangShop.shop_name;
 					// this.zhongjiangID = this.zhongjiangShop.shop_id;
+					setTimeout(() => {
+						this.popShow5 = false;
+						this.popShow6 = true;
+						this.isKaixiang = false;
+						this.autoplay = true;
+						this.innerAudioContext.src =
+							encodeURI('https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299801426.mpeg');
+						this.innerAudioContext.autoplay = true;
+					}, 2600)
 				} else if (!this.isShiwan && !this.isKuaisu) {
-					this.buyShopList2 = [...this.buyShopList]
+					if(this.payNum == 1){
+						this.zhongjiangShop = this.buyShopList[0];
+						this.zhongjiangNum = this.zhongjiangShop.shop_quality;
+						this.zhongjiangName = this.zhongjiangShop.shop_name;
+					}else{
+						this.buyShopList2 = [...this.buyShopList]
+					}
+					setTimeout(() => {
+						this.popShow5 = false;
+						this.popShow6 = true;
+						this.isKaixiang = false;
+						this.autoplay = true;
+						this.innerAudioContext.src =
+							encodeURI('https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299801426.mpeg');
+						this.innerAudioContext.autoplay = true;
+					}, 2600)
 				} else if (!this.isShiwan && this.isKuaisu) {
 					this.zhongjiangShop = this.buyShopList[0];
 					this.zhongjiangNum = this.zhongjiangShop.shop_quality;
 					this.zhongjiangName = this.zhongjiangShop.shop_name;
+					setTimeout(() => {
+						this.popShow5 = false;
+						this.isKaixiang = false;
+						this.innerAudioContext.src =
+							encodeURI('https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299801426.mpeg');
+						this.innerAudioContext.autoplay = true;
+						if (this.payNum == 1) {
+							this.popShow7 = true;
+							this.innerAudioContext.src =
+								encodeURI(
+									'https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299638723.mpeg');
+						} else if (this.payNum == 5) {
+							this.innerAudioContext.src =
+								encodeURI(
+									'https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299638723.mpeg');
+							this.popShow8 = true;
+						} else if (this.payNum == 10) {
+							this.innerAudioContext.src =
+								encodeURI(
+									'https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299638723.mpeg');
+							this.popShow9 = true;
+							console.log(this.popShow9)
+						}
+					}, 2400)
 				}
-
-				setTimeout(() => {
-					this.popShow5 = false;
-					this.popShow6 = true;
-					this.isKaixiang = false;
-					this.autoplay = true;
-					this.innerAudioContext.src =
-						'https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299801426.mpeg';
-					this.innerAudioContext.autoplay = true;
-				}, 2600)
-			},
-			toMove() {
-				// for (let i = 0; i < 4; i++) {
-				// 	setTimeout(() => {
-				// 		this.pop6Interval = 220 + 50 * i
-				// 		this.pop6Duration = 220 + 40 * i
-				// 	}, 2200 + i * 500)
-				// }
+				this.login()
 			},
 			changSwiper(index) {
 				// console.log(index, this.shopList[index].shop_name)
-				if (this.payNum == 1) {
-					this.isKuaisu = true;
-				}
+				// if (this.payNum == 1) {
+				// 	this.isKuaisu = true;
+				// }
 				if (this.shopList[index] && this.shopList[index].shop_name == this.zhongjiangName && this.flag && this
 					.isKuaisu) {
 					setTimeout(() => {
@@ -644,19 +700,25 @@
 								this.popShow6 = false;
 								this.popShow7 = true;
 								this.innerAudioContext.src =
-									'https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299638723.mpeg';
+									encodeURI(
+										'https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299638723.mpeg'
+									);
 							}, 500)
 						} else if (this.payNum == 5 && this.flag) {
 							setTimeout(() => {
 								this.innerAudioContext.src =
-									'https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299638723.mpeg';
+									encodeURI(
+										'https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299638723.mpeg'
+									);
 								this.popShow6 = false;
 								this.popShow8 = true;
 							}, 500)
 						} else if (this.payNum == 10 && this.flag) {
 							setTimeout(() => {
 								this.innerAudioContext.src =
-									'https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299638723.mpeg';
+									encodeURI(
+										'https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299638723.mpeg'
+									);
 								this.popShow9 = true;
 								this.popShow6 = false;
 								console.log(this.popShow9)
@@ -678,7 +740,7 @@
 								}, 500)
 							}
 						})
-						console.log(shopList.length, this.payNum)
+						console.log(shopList.length, this.payNum,'cyyyyyyyyyy')
 						if (shopList.length == 0 && this.payNum == 5) {
 							this.$set(this, 'autoplay', false)
 							setTimeout(() => {
@@ -687,7 +749,9 @@
 								this.innerAudioContext.stop()
 								this.innerAudioContext.volume = 0
 								this.innerAudioContext.src =
-									'https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299638723.mpeg';
+									encodeURI(
+										'https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299638723.mpeg'
+									);
 								this.innerAudioContext.volume = 1
 								setTimeout(() => {
 									this.innerAudioContext.play()
@@ -701,7 +765,9 @@
 								this.innerAudioContext.stop()
 								this.innerAudioContext.volume = 0
 								this.innerAudioContext.src =
-									'https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299638723.mpeg';
+									encodeURI(
+										'https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299638723.mpeg'
+									);
 								this.innerAudioContext.volume = 1
 								setTimeout(() => {
 									this.innerAudioContext.play()
@@ -716,7 +782,9 @@
 								this.innerAudioContext.stop()
 								this.innerAudioContext.volume = 0
 								this.innerAudioContext.src =
-									'https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299638723.mpeg';
+									encodeURI(
+										'https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299638723.mpeg'
+									);
 								this.innerAudioContext.volume = 1
 								setTimeout(() => {
 									this.innerAudioContext.play()
@@ -725,57 +793,7 @@
 						}
 					}, 1000)
 				}
-				// 	setTimeout(() => {
-				// 		if (this.shopList[index].shop_name == this.zhongjiangName && this.flag && this.isKuaisu) {
-
-				// 			this.$set(this, 'autoplay', false)
-				// 			this.$set(this, 'current', index.toString())
-				// 			console.log(this.payNum)
-				// 			if (this.payNum == 1 && this.flag) {
-				// 				setTimeout(() => {
-				// 					this.popShow6 = false;
-				// 					this.popShow7 = true;
-				// 				}, 1000)
-				// 			} else if (this.payNum == 5 && this.flag) {
-				// 				setTimeout(() => {
-				// 					this.popShow6 = false;
-				// 					this.popShow8 = true;
-				// 				}, 1000)
-				// 			} else if (this.payNum == 10 && this.flag) {
-				// 				setTimeout(() => {
-				// 					this.popShow9 = true;
-				// 					this.popShow6 = false;
-				// 					console.log(this.popShow9)
-				// 				}, 1000)
-				// 			}
-				// 		} else if (!this.isKuaisu) {
-				// 			var shopList = this.buyShopList2
-				// 			shopList.forEach((ele, i) => {
-				// 				if (ele.shop_name == this.shopList[index].shop_name && this.flag) {
-				// 					this.$set(this, 'autoplay', false)
-				// 					setTimeout(() => {
-				// 						shopList.splice(i, 1)
-				// 						this.$set(this, 'autoplay', true)
-				// 					}, 200)
-				// 				}
-				// 			})
-				// 			console.log(shopList.length, this.payNum)
-				// 			if (shopList.length == 0 && this.payNum == 5) {
-				// 				this.$set(this, 'autoplay', false)
-				// 				setTimeout(() => {
-				// 					this.popShow6 = false;
-				// 					this.popShow8 = true;
-				// 				}, 500)
-				// 			} else if (shopList.length == 0 && this.payNum == 10) {
-				// 				this.$set(this, 'autoplay', false)
-				// 				setTimeout(() => {
-				// 					this.popShow9 = true;
-				// 					this.popShow6 = false;
-				// 				}, 500)
-				// 			}
-				// 		}
-				// 	}, 4000)
-
+				// this.login()
 			},
 			async changeIndex1(i, item, e) {
 				this.nowBox = item;
@@ -866,13 +884,45 @@
 		top: 80rpx;
 		z-index: 9999;
 
+		@keyframes pulse {
+			0% {
+				transform: scale(1);
+			}
+
+			25% {
+				transform: scale(1.1);
+			}
+
+			50% {
+				transform: scale(1);
+			}
+
+			75% {
+				transform: scale(1.1);
+			}
+
+			100% {
+				transform: scale(1);
+			}
+		}
+
 		.wrap {
 			height: 70px;
 			width: 360px;
 			margin: 0 auto;
 			overflow: hidden;
 
+			// animation: pulse 6s infinite;
+			.item.active {
+				transform: scale(1.2);
+				margin-left: 26rpx;
+				opacity: 1;
+				transition: all 1.5s;
+			}
+
 			.item {
+				opacity: 0.7;
+				transition: all 1.5s;
 				display: flex;
 				position: relative;
 				margin-top: 20rpx;
@@ -990,12 +1040,12 @@
 		z-index: 8;
 		left: 50%;
 		transform: translateX(-50%);
-		top: 184rpx;
+		top: 234rpx;
 
-		.xz-picc {
-			width: 640rpx;
-			height: 440rpx;
-		}
+		// .xz-picc {
+		// 	width: 640rpx;
+		// 	height: 440rpx;
+		// }
 	}
 
 	.nav2 {
@@ -1131,8 +1181,8 @@
 			height: 164rpx;
 
 			.n7i-txt1 {
-				padding-top: 8rpx;
-				font-size: 12rpx;
+				padding-top: 4rpx;
+				font-size: 14rpx;
 				font-family: PingFang SC, PingFang SC-Bold;
 				font-weight: 700;
 				text-align: center;
@@ -1256,127 +1306,153 @@
 
 	}
 
+	// /deep/ .uni-scroll-view-content{
+	// 	height: 96%;
+	// }
 	.pop2 {
-		padding: 0 30rpx;
+		// padding: 0 30rpx;
+		position: relative;
 
-		.p2-tit1 {
-			font-size: 32rpx;
-			font-family: PingFang SC, PingFang SC-Bold;
-			font-weight: 700;
-			text-align: center;
-			color: #333333;
-			margin-top: 24rpx;
+		.ddiv2 {
+			position: fixed;
+			top: 0;
+			width: 100%;
+			background-color: #FFFFFF;
+			z-index: 999;
+
+			.p2-tit1 {
+				font-size: 32rpx;
+				font-family: PingFang SC, PingFang SC-Bold;
+				font-weight: 700;
+				text-align: center;
+				color: #333333;
+				margin-top: 24rpx;
+			}
+
+			.heng {
+				margin-top: 20rpx;
+				height: 2rpx;
+				background: #d8d8d8;
+			}
 		}
 
-		.heng {
-			margin-top: 20rpx;
-			height: 2rpx;
-			background: #d8d8d8;
-		}
 
-		.items {
-			margin-top: 30rpx;
-			display: flex;
-			flex-wrap: wrap;
+		.ddiv {
+			margin-top: 60px;
+			height: 964rpx;
+			padding: 0 32rpx;
 
-			.item1.item {
-				background-image: url(../../static/img/zu4154.png);
-			}
+			// overflow: scroll;
+			// overflow-y: scroll;
+			// -webkit-overflow-scrolling:touch;
+			.items {
+				margin-top: 30rpx;
+				display: flex;
+				flex-wrap: wrap;
 
-			.item2.item {
-				background-image: url(../../static/img/zu4152.png);
-			}
-
-			.item3.item {
-				background-image: url(../../static/img/zu4153.png);
-			}
-
-			.item4.item {
-				background-image: url(../../static/img/zu4151.png);
-			}
-
-			.item {
-				width: 328rpx;
-				height: 360rpx;
-				background-size: 100% 100%;
-				padding: 0 30rpx;
-				margin-bottom: 30rpx;
-
-				&:nth-child(2n) {
-					margin-left: 30rpx;
+				.item1.item {
+					background-image: url(../../static/img/zuz4168.png);
 				}
 
-				.txt1 {
-					padding-top: 20rpx;
-					font-size: 24rpx;
-					font-family: PingFang SC, PingFang SC-Bold;
-					font-weight: 700;
-					text-align: center;
-					color: #ffffff;
-					letter-spacing: 1.44rpx;
+				.item2.item {
+					background-image: url(../../static/img/zuz4169.png);
 				}
 
-				.pic1 {
-					margin-top: 40rpx;
-					margin-left: 54rpx;
-					width: 152rpx;
-					height: 152rpx;
+				.item3.item {
+					background-image: url(../../static/img/zuz4170.png);
 				}
 
-				.txt2 {
-					font-size: 28rpx;
-					font-family: PingFang SC, PingFang SC-Bold;
-					font-weight: 700;
-					color: #333333;
-					overflow: hidden;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-					margin-top: 6rpx;
+				.item4.item {
+					background-image: url(../../static/img/zuz4171.png);
 				}
 
-				.txt3 {
-					display: flex;
-					align-items: center;
+				.aa {
+					&:nth-child(2n) {
+						// border: 2px solid red;
+						margin-left: 30rpx !important;
+					}
+				}
 
-					.txttt1 {
+				.item {
+					width: 328rpx;
+					height: 360rpx;
+					background-size: 100% 100%;
+					padding: 0 30rpx;
+					margin-bottom: 30rpx;
+
+					.txt1 {
+						padding-top: 14rpx;
 						font-size: 24rpx;
 						font-family: PingFang SC, PingFang SC-Bold;
 						font-weight: 700;
-						color: #333333;
+						text-align: center;
+						color: #ffffff;
+						letter-spacing: 1.44rpx;
 					}
 
-					.txttt2 {
+					.pic1 {
+						margin-top: 40rpx;
+						margin-left: 54rpx;
+						width: 152rpx;
+						height: 152rpx;
+					}
+
+					.txt2 {
+						font-size: 28rpx;
+						font-family: PingFang SC, PingFang SC-Bold;
+						font-weight: 700;
+						color: #333333;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+						margin-top: 6rpx;
+					}
+
+					.txt3 {
 						display: flex;
 						align-items: center;
-						font-size: 32rpx;
-						font-family: PingFang SC, PingFang SC-Heavy;
-						font-weight: 800;
-						text-align: left;
-						color: #f90000;
 
-						.picc {
-							width: 42rpx;
-							height: 42rpx;
+						.txttt1 {
+							font-size: 24rpx;
+							font-family: PingFang SC, PingFang SC-Bold;
+							font-weight: 700;
+							color: #333333;
+						}
+
+						.txttt2 {
+							display: flex;
+							align-items: center;
+							font-size: 32rpx;
+							font-family: PingFang SC, PingFang SC-Heavy;
+							font-weight: 800;
+							text-align: left;
+							color: #f90000;
+
+							.picc {
+								width: 42rpx;
+								height: 42rpx;
+							}
 						}
 					}
 				}
 			}
+
+			.p2-tit2 {
+				font-size: 28rpx;
+				font-family: PingFang SC, PingFang SC-Regular;
+				font-weight: 400;
+				color: #f90000;
+			}
+
+			.p2-tit3 {
+				font-size: 24rpx;
+				font-family: PingFang SC, PingFang SC-Regular;
+				font-weight: 400;
+				color: #666666;
+				margin-bottom: 4rpx;
+			}
 		}
 
-		.p2-tit2 {
-			font-size: 28rpx;
-			font-family: PingFang SC, PingFang SC-Regular;
-			font-weight: 400;
-			color: #f90000;
-		}
-
-		.p2-tit3 {
-			font-size: 24rpx;
-			font-family: PingFang SC, PingFang SC-Regular;
-			font-weight: 400;
-			color: #666666;
-			margin-bottom: 4rpx;
-		}
 
 	}
 
@@ -1415,8 +1491,8 @@
 			top: 490rpx;
 			left: 50%;
 			transform: translateX(-50%);
-			width: 640rpx;
-			height: 440rpx;
+			// width: 640rpx;
+			// height: 440rpx;
 		}
 
 		.p3-tit1 {
@@ -1659,9 +1735,20 @@
 		background-size: 100% 100%;
 		position: relative;
 
+		.shu {
+			position: absolute;
+			width: 4rpx;
+			height: 296rpx;
+			background: #02b3b6;
+			top: 47%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			z-index: 900;
+		}
+
 		.mySwiper {
 			position: absolute;
-			top: 50%;
+			top: 47%;
 			// height: 300rpx;
 			transform: translateY(-50%);
 			width: 100%;
@@ -1687,23 +1774,23 @@
 
 	.pop7 {
 		.item1.p7-box1 {
-			background-image: url(../../static/img/zu4154.png);
+			background-image: url(../../static/img/zuz4168.png);
 			background-size: 100% 100%;
 		}
 
 		.item2.p7-box1 {
-			background-image: url(../../static/img/zu4152.png);
+			background-image: url(../../static/img/zuz4169.png);
 			background-size: 100% 100%;
 
 		}
 
 		.item3.p7-box1 {
-			background-image: url(../../static/img/zu4153.png);
+			background-image: url(../../static/img/zuz4170.png);
 			background-size: 100% 100%;
 		}
 
 		.item4.p7-box1 {
-			background-image: url(../../static/img/zu4151.png);
+			background-image: url(../../static/img/zuz4171.png);
 			background-size: 100% 100%;
 		}
 
@@ -1715,7 +1802,7 @@
 			align-items: center;
 
 			.txt1 {
-				padding-top: 46rpx;
+				padding-top: 36rpx;
 				font-size: 48rpx;
 				font-family: PingFang SC, PingFang SC-Bold;
 				font-weight: 700;
@@ -1815,6 +1902,36 @@
 
 		}
 
+		.shiwan {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			padding-bottom: 14rpx;
+
+			.ttt {
+				margin-top: 20rpx;
+				opacity: 0.82;
+				font-size: 28rpx;
+				font-family: PingFang SC, PingFang SC-Regular;
+				font-weight: 400;
+				color: #ffffff;
+			}
+
+			.ttbtn {
+				margin-top: 60rpx;
+				width: 336rpx;
+				height: 82rpx;
+				background: #3cfae2;
+				border-radius: 42rpx;
+				box-shadow: 0rpx 6rpx 12rpx 0rpx rgba(2, 179, 182, 0.54);
+				font-size: 36rpx;
+				font-family: PingFang SC, PingFang SC-Heavy;
+				font-weight: 800;
+				text-align: center;
+				line-height: 82rpx;
+				color: #333333;
+			}
+		}
 	}
 
 	.pop8 {

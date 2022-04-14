@@ -74,10 +74,10 @@ function touchmove(e, ownerInstance) {
 		return;
 	}
 
-	if (e.preventDefault) {
-		// 阻止页面滚动
-		e.preventDefault()
-	}
+	// if (e.preventDefault) {
+	// 	// 阻止页面滚动
+	// 	e.preventDefault()
+	// }
 
 	move(state.x + state.deltaX, instance, ownerInstance)
 }

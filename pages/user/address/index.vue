@@ -8,7 +8,7 @@
 		</view>
 		<!-- 有地址 -->
 		<view class="items" v-else>
-			<view class="item" v-for="(item,i) in list" :key='item.address_id'>
+			<view class="item" @click="choossAddress(item)" v-for="(item,i) in list" :key='item.address_id'>
 				<view class="tit1">
 					<view class="txt1-1" style="margin-right: 48rpx;">{{item.address_person}}</view>
 					<view class="txt1-1">{{item.address_phone}}</view>
@@ -49,6 +49,7 @@
 				nowIndex: 1,
 				userId: '',
 				list: [],
+				needBack: '',
 				// 加载
 				status: 'loadmore',
 				iconType: 'flower',
@@ -63,6 +64,9 @@
 			this.list = [];
 			this.userId = uni.getStorageSync('userId')
 			this.getData()
+		},
+		onLoad(options) {
+			this.needBack = options.needBack;
 		},
 		methods: {
 			async getData() {
@@ -80,6 +84,21 @@
 					this.status = 'loadmore';
 				}
 				this.list = this.list.concat(res.data)
+			},
+			choossAddress(item) {
+				if (this.needBack == 'yes') {
+					var obj = {
+						nowItem: item,
+						noGetData: 'yes'
+					}
+					var pages = getCurrentPages();
+					var prevPage = pages[pages.length - 2];
+					prevPage.$vm.otherFun(obj)
+					uni.navigateBack()
+					// uni.redirectTo({
+					// 	url:`/pages/order/tijiaodingdan?nowItem=${JSON.stringify(item)}&noGetData=yes`
+					// })
+				}
 			},
 			async changeMoren(id, i) {
 				this.nowIndex = i
@@ -108,16 +127,16 @@
 					url: `/pages/user/address/tianjiadizhi?address=${JSON.stringify(item)}`
 				})
 			},
-			async delAddress(id,i) {
+			async delAddress(id, i) {
 				const res = await this.$api.deleteAddress({
 					address_id: id
 				})
 				this.$refs.uToast.show({
 					title: res.msg,
-					duration:1000,
+					duration: 1000,
 					callback: () => {
 						if (res.status == 200) {
-							this.list.splice(i,1)
+							this.list.splice(i, 1)
 						}
 					}
 				})

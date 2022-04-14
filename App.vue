@@ -63,4 +63,7 @@
 	page{
 		font-family: PingFang SC;
 	}
+	/deep/ body.pages-tabBar-index{
+		height: 96vh;
+	}
 </style>

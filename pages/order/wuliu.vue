@@ -36,17 +36,17 @@
 			</view>
 		</view>
 		<!-- 有物流信息 -->
-		<view class="nav2">
+		<view class="nav2" v-if="flag">
 			<view v-for="(item, index) in tracesData" :key="index">
 				<trackNode :is-first="index===tracesData.length-1" :is-newest="index===0"
 					:is-main-node="item.isMainNode" :node-data="item"></trackNode>
 			</view>
 		</view>
 		<!-- 暂无物流信息 -->
-		<!-- <view class="nav3">
+		<view class="nav3" v-else>
 			<image src="/static/img/zu1281.png" class="n3-pic1" mode=""></image>
-			<view class="n3-txt">暂无物流信息</view>
-		</view> -->
+			<view class="n3-txt">{{msg}}</view>
+		</view>
 	</view>
 </template>
 
@@ -72,7 +72,9 @@
 				order_id: '',
 				lever: 1,
 				orderNum: '1020 9823 7865 5332 06',
-				tracesData: []
+				tracesData: [],
+				flag:true,
+				msg:'',
 			}
 		},
 		methods: {
@@ -81,6 +83,7 @@
 					order_id: this.order_id
 				})
 				if (res.status == 200) {
+					this.flag = true;
 					this.wuliuObj = res.data;
 					this.orderNum = this.wuliuObj.courier
 					res.data.data.forEach(ele => {
@@ -88,6 +91,9 @@
 						ele.acceptStation = ele.context
 					})
 					this.tracesData = res.data.data
+				}else{
+					this.flag = false;
+					this.msg = res.msg
 				}
 			},
 			fuzhi() {

@@ -1,5 +1,6 @@
 <template>
 	<view class="index">
+		<u-toast ref="uToast" />
 		<view class="nav11">
 			<view class="nav1">
 				<view v-for="(item,i) in fenleiList" :key='item.id' @click="changeIndex(i,item.id)"
@@ -28,14 +29,14 @@
 					<view class="n2-txt2">
 						<view class="txttt1">补差价：</view>
 						<view class="txttt2">
-							{{item.shop_price}}
+							{{item.shop_price_after}}
 							<image src="/static/img/tu1001.png" class="picc" mode=""></image>
 						</view>
 					</view>
 					<view class="n2-txt3">
 						<view class="txttt1">原价：</view>
 						<view class="txttt2">
-							{{item.shop_price_after}}
+							{{item.shop_price}}
 							<image src="/static/img/tu1001.png" class="picc" mode=""></image>
 						</view>
 					</view>
@@ -62,8 +63,8 @@
 				type: '',
 				fenleiList: [],
 				shop_type: '',
-				order:[],
-				sum:'',
+				order: [],
+				sum: '',
 				// 加载
 				status: 'loadmore',
 				iconType: 'flower',
@@ -112,18 +113,28 @@
 			async getData() {
 				this.status = 'loading';
 				const res = await this.$api.getShopBySubstitution({
-					order:this.order,
-					sum:this.sum,
+					order: this.order,
+					sum: this.sum,
 					shop_type: this.shop_type,
 					pagesize: 10,
 					pagenum: this.dingdanPage,
 				})
-				if (res.data.data.length < 10) {
-					this.status = 'nomore'
+				console.log(res)
+				if (res.status == 200) {
+					if (res.data.data.length < 10) {
+						this.status = 'nomore'
+					} else {
+						this.status = 'loadmore';
+					}
+					this.list = this.list.concat(res.data.data)
 				} else {
-					this.status = 'loadmore';
+					this.$refs.uToast.show({
+						title: res.msg,
+						type: 'warning',
+					})
+					this.list = []
 				}
-				this.list = this.list.concat(res.data.data)
+
 			},
 			changeIndex(i, id) {
 				this.nowIndex = i;
