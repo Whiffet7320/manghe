@@ -57,6 +57,25 @@
 				this.form.address_area = `${e.province.label} ${e.city.label} ${e.area.label}`
 			},
 			async onSubmit() {
+				for (let key in this.form) {
+					if (this.form[key] == '' && key != 'address_def') {
+						console.log(key)
+						this.$refs.uToast.show({
+							title: '请填写正确的信息',
+						})
+						return
+					} else {
+						if (key == 'address_phone') {
+							var reg = /^1[3-9]\d{9}$/
+							if (!reg.test(this.form[key])) {
+								this.$refs.uToast.show({
+									title: '请填写正确手机号',
+								})
+								return
+							}
+						}
+					}
+				}
 				if (!this.edit) {
 					const res = await this.$api.updateAddress({
 						...this.form,

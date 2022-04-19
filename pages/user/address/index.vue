@@ -16,15 +16,15 @@
 				<view class="tit2">{{item.address_area}}{{item.address_detail}}</view>
 				<view class="heng"></view>
 				<view class="tit3">
-					<view class="left" @click="changeMoren(item.address_id,i)">
+					<view class="left" @click.stop="changeMoren(item.address_id,i)">
 						<view :class="{'icon':true,'active':item.address_def}">
 							<view class="dian" v-if="item.address_def"></view>
 						</view>
 						<view class="txt3-1 txtt">设为默认</view>
 					</view>
 					<view class="right">
-						<view @click="toXiugaiAddress(item)" class="txt3-2 txtt">编辑</view>
-						<view @click="delAddress(item.address_id,i)" class="txt3-3 txtt">删除</view>
+						<view @click.stop="toXiugaiAddress(item)" class="txt3-2 txtt">编辑</view>
+						<view @click.stop="delAddress(item.address_id,i)" class="txt3-3 txtt">删除</view>
 					</view>
 				</view>
 			</view>
@@ -115,6 +115,13 @@
 						this.$set(ele, 'address_def', false)
 					})
 					this.$set(this.list[i], 'address_def', true)
+					var obj = {
+						nowItem: {},
+						noGetData: 'no'
+					}
+					var pages = getCurrentPages();
+					var prevPage = pages[pages.length - 2];
+					prevPage.$vm.otherFun(obj)
 				}
 			},
 			toAddress() {
@@ -137,6 +144,9 @@
 					callback: () => {
 						if (res.status == 200) {
 							this.list.splice(i, 1)
+							if(this.list.length == 0){
+								
+							}
 						}
 					}
 				})

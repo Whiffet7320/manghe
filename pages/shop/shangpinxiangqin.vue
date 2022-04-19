@@ -39,8 +39,15 @@
 					<view class="p1-txt1">
 						<view class="top">{{item.shop_name}}</view>
 						<view class="down">
-							{{shop_price_after}}
+							{{price}}
 							<image src="/static/img/tu1001.png" class="picc" mode=""></image>
+						</view>
+						<view class="down2" v-if="type == 1">
+							<view class="d2-txt">补差价：</view>
+							<view class="d2-txt2">
+								{{item.shop_price_after}}
+								<image src="/static/img/tu1001.png" class="picc" mode=""></image>
+							</view>
 						</view>
 					</view>
 				</view>
@@ -75,11 +82,13 @@
 				price:'',
 				shop_price_after:'',
 				shop_rotation:'',
+				order:'',
 			}
 		},
 		onLoad(option) {
 			this.type = option.type;
 			this.id = option.id;
+			this.order = option.order_id;
 			this.item = JSON.parse(option.item)
 			console.log(this.item)
 		},
@@ -104,15 +113,15 @@
 				}
 			},
 			toPay(){
-				var price = Number(this.num) * Number(this.shop_price_after)
+				var price = Number(this.num) * Number(this.item.shop_price)
 				uni.navigateTo({
-					url:`/pages/order/tijiaodingdan?type=1&num=${this.num}&shop_id=${this.id}&price=${price}&shopObj=${JSON.stringify(this.item)}`
+					url:`/pages/order/tijiaodingdan?type=1&num=${this.num}&shop_id=${this.id}&price=${price}&shopObj=${JSON.stringify(this.item)}&order_id=${this.order}`
 				})
 			},
 			toZh(){
-				var price = Number(this.num) * Number(this.shop_price_after)
+				var price = Number(this.num) * Number(this.item.shop_price_after)
 				uni.navigateTo({
-					url:`/pages/order/tijiaodingdan?type=2&num=${this.num}&shop_id=${this.id}&price=${price}&shopObj=${JSON.stringify(this.item)}`
+					url:`/pages/order/tijiaodingdan?type=2&num=${this.num}&shop_id=${this.id}&price=${price}&shopObj=${JSON.stringify(this.item)}&order_id=${this.order}`
 				})
 			},
 			toBack(){
@@ -307,6 +316,30 @@
 					.picc {
 						width: 54rpx;
 						height: 54rpx;
+					}
+				}
+				.down2{
+					display: flex;
+					align-items: center;
+					.d2-txt{
+						font-size: 24rpx;
+						font-family: PingFang SC, PingFang SC-Bold;
+						font-weight: 700;
+						color: #333333;
+					}
+					.d2-txt2{
+						display: flex;
+						align-items: center;
+						font-family: PingFang SC, PingFang SC-Heavy;
+						font-weight: 800;
+						text-align: left;
+						color: #f90000;
+						font-size: 28rpx;
+						
+						.picc {
+							width: 40rpx;
+							height: 40rpx;
+						}
 					}
 				}
 			}

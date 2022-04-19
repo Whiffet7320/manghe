@@ -3,9 +3,9 @@
 		<u-toast ref="uToast" />
 		<view class="nav1" @click="toJump('/pages/user/address/index','needBack=yes')">
 			<!-- 无地址 -->
-			<!-- <view class="n1-txt1">请选择收货地址</view> -->
+			<view v-if="!nowAddress || !nowAddress.address_phone" class="n1-txt1">请选择收货地址</view>
 			<!-- 有地址 -->
-			<view class="n1-txt2">
+			<view v-else class="n1-txt2">
 				<view class="txt2-1">
 					<view class="txt2-1-1">{{nowAddress.address_person}}</view>
 					<view class="txt2-1-1">{{nowAddress.address_phone}}</view>
@@ -32,7 +32,9 @@
 			<view class="heng"></view>
 			<view class="n2-tit2">
 				<view class="n2t2-l">支付方式</view>
-				<view class="n2t2-r">奖品提取</view>
+				<view v-if="isTiqu == 1" class="n2t2-r">奖品提取</view>
+				<view v-if="type == 2" class="n2t2-r">商品置换</view>
+				<view v-if="type == 1" class="n2t2-r">商品购买</view>
 			</view>
 			<view class="n2-tit2">
 				<view class="n2t2-l">运费</view>
@@ -74,8 +76,9 @@
 				sum: '',
 				price: '',
 				shopObj: {},
-				isTiqu:null,
-				nowGetData:'',
+				isTiqu: null,
+				nowGetData: '',
+				order: '',
 			}
 		},
 		onLoad(options) {
@@ -85,24 +88,27 @@
 			this.shop_id = options.shop_id;
 			this.sum = options.sum;
 			this.price = options.price;
-			if(options.shopObj){
+			this.order = options.order_id;
+			if (options.shopObj) {
 				this.shopObj = JSON.parse(options.shopObj)
 			}
-			if(options.isTiqu){
+			if (options.isTiqu) {
 				this.isTiqu = options.isTiqu;
-			}	
+			}
+			console.log(this.shopObj)
 		},
 		onShow() {
 			this.getData()
 		},
 		methods: {
-			otherFun(obj){
+			otherFun(obj) {
 				console.log(obj)
 				this.nowAddress = obj.nowItem;
 				this.nowGetData = obj.noGetData;
 			},
 			async getData() {
-				if(this.nowGetData == 'yes'){
+				console.log(this.nowGetData)
+				if (this.nowGetData == 'yes') {
 					return;
 				}
 				const res = await this.$api.getAddressList()
@@ -112,10 +118,17 @@
 				console.log(this.nowAddress)
 			},
 			async toBuy() {
+				if (!this.nowAddress) {
+					this.$refs.uToast.show({
+						title: `请先选择收货地址`,
+						duration: 1000,
+					})
+				}
 				const res = await this.$api.substitutionOrder({
 					num: this.num,
 					shop_id: this.shop_id,
-					address_id: this.nowAddress.address_id
+					address_id: this.nowAddress.address_id,
+					order: this.order
 				})
 				this.$refs.uToast.show({
 					title: res.msg,
@@ -123,18 +136,25 @@
 					callback: () => {
 						if (res.status == 200) {
 							uni.reLaunch({
-								url:'/pages/order/goumaichenggong'
+								url: '/pages/order/goumaichenggong'
 							})
 						}
 					},
 				})
 			},
-			async toZhihuan(){
+			async toZhihuan() {
+				if (!this.nowAddress) {
+					this.$refs.uToast.show({
+						title: `请先选择收货地址`,
+						duration: 1000,
+					})
+				}
 				const res = await this.$api.substitutionOrder({
 					address_id: this.nowAddress.address_id,
-					order_id:this.shopObj.order_id,
+					order_id: this.shopObj.order_id,
 					shop_id: this.shop_id,
 					num: this.num,
+					order: this.order,
 				})
 				this.$refs.uToast.show({
 					title: res.msg,
@@ -142,16 +162,23 @@
 					callback: () => {
 						if (res.status == 200) {
 							uni.reLaunch({
-								url:'/pages/order/zhihuanchenggong'
+								url: '/pages/order/zhihuanchenggong'
 							})
 						}
 					},
 				})
 			},
-			async tiquSubmit(){
+			async tiquSubmit() {
+				if (!this.nowAddress) {
+					this.$refs.uToast.show({
+						title: `请先选择收货地址`,
+						duration: 1000,
+					})
+				}
 				const res = await this.$api.changeOrderToPick({
 					address_id: this.nowAddress.address_id,
-					order_id:this.shopObj.order_id
+					order_id: this.shopObj.order_id,
+					order: this.order,
 				})
 				this.$refs.uToast.show({
 					title: res.msg,
@@ -159,13 +186,13 @@
 					callback: () => {
 						if (res.status == 200) {
 							uni.reLaunch({
-								url:'/pages/order/tiquchenggong'
+								url: '/pages/order/tiquchenggong'
 							})
 						}
 					},
 				})
 			},
-			toJump(url,params) {
+			toJump(url, params) {
 				uni.navigateTo({
 					url: `${url}?${params}`
 				})
@@ -262,7 +289,8 @@
 					color: #ffffff;
 					letter-spacing: 0.72rpx;
 				}
-				.n2t1-imgg{
+
+				.n2t1-imgg {
 					display: block;
 					margin: 10rpx auto 0;
 					width: 110rpx;

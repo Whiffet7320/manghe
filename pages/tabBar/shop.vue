@@ -145,7 +145,7 @@
 			},
 			toXq(item) {
 				uni.navigateTo({
-					url: `/pages/shop/shangpinxiangqin?type=${this.type}&id=${item.shop_id}&item=${JSON.stringify(item)}`
+					url: `/pages/shop/shangpinxiangqin?type=${this.type}&id=${item.shop_id}&item=${JSON.stringify(item)}&order_id=${this.order}`
 				})
 			},
 		}

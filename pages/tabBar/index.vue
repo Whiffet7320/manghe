@@ -35,7 +35,7 @@
 		<view class="float2">
 			<image src="/static/img/mcz37.png" class="f2-pic" mode=""></image>
 		</view>
-		<view class="xz">
+		<!-- <view class="xz">
 			<image v-show="nowIndex1 == 0" class="xz-picc"
 				src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649836847501.gif" mode=""></image>
 			<image v-show="nowIndex1 == 1" class="xz-picc"
@@ -47,6 +47,13 @@
 			<image v-show="nowIndex1 == 4" class="xz-picc"
 				src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649836709664.gif" mode=""></image>
 
+		</view> -->
+		<view class="newXz">
+			<view class="mySwiperxz">
+				<uniSwiperXz @change='changSwiperXz' :current='currentXz' :autoplay='autoplayXz' height="440"
+					mode='none' effect3d title :list="xzList">
+				</uniSwiperXz>
+			</view>
 		</view>
 		<view class="nav2">
 			<image src="/static/img/mcz38.png" class="n2-pic1" mode=""></image>
@@ -58,7 +65,7 @@
 		</view> -->
 		<scroll-view class="nav3" scroll-with-animation :scroll-left="scrollLeft" scroll-x="true">
 
-			<view v-for="(item,i) in shouyeObj.box" :key='item.box_id' @click="changeIndex1(i,item,$event)"
+			<view ref='xzDom' v-for="(item,i) in shouyeObj.box" :key='item.box_id' @click="changeIndex1(i,item,$event)"
 				:class="{'item':true,'active':nowIndex1 == i,'scrollItem':true,'marginRight':i == shouyeObj.box.length - 1}">
 				{{item.box_name}}
 			</view>
@@ -250,9 +257,9 @@
 							src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649381079857.gif" mode=""></image>
 						<image v-show="nowIndex1 == 2" class="p5-xz xzd"
 							src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649381092856.gif" mode=""></image>
-						<image v-show="nowIndex1 == 3" class="p5-xz xzd"
-							src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649381105815.gif" mode=""></image>
 						<image v-show="nowIndex1 == 4" class="p5-xz xzd"
+							src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649381105815.gif" mode=""></image>
+						<image v-show="nowIndex1 == 3" class="p5-xz xzd"
 							src="https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649381116979.gif" mode=""></image>
 					</view>
 					<view class="p5-tit1" @click="choujiang">立即拆开</view>
@@ -369,12 +376,14 @@
 		mapState
 	} from "vuex";
 	import uniSwiper from '../../components/uni-swiper/index.vue'
+	import uniSwiperXz from '../../components/uni-swiper-xz/index.vue'
 	export default {
 		computed: {
 			...mapGetters(['isLogin'])
 		},
 		components: {
 			uniSwiper,
+			uniSwiperXz
 		},
 		watch: {
 			// popShow9(newVal){
@@ -382,35 +391,18 @@
 			// 		this.flag = false;
 			// 	}
 			// }
-			autoplay(newVal) {
-				if (!newVal) {
-					this.flag = false;
-				} else {
-					this.flag = true;
-				}
-			}
+			// autoplay(newVal) {
+			// 	if (!newVal) {
+			// 		this.flag = false;
+			// 	} else {
+			// 		this.flag = true;
+			// 	}
+			// }
 		},
 		data() {
 			return {
-				listData11: [{
-					'title': '无缝滚动第一行无缝滚动第一行',
-					'date': '2017-12-16'
-				}, {
-					'title': '无缝滚动第二行无缝滚动第二行',
-					'date': '2017-12-16'
-				}, {
-					'title': '无缝滚动第三行无缝滚动第三行',
-					'date': '2017-12-16'
-				}, {
-					'title': '无缝滚动第四行无缝滚动第四行',
-					'date': '2017-12-16'
-				}, {
-					'title': '无缝滚动第五行无缝滚动第五行',
-					'date': '2017-12-16'
-				}, {
-					'title': '无缝滚动第六行无缝滚动第六行',
-					'date': '2017-12-16'
-				}],
+				listData11: [],
+				xzList:['https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649836847501.gif','https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649837106650.gif','https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649837136219.gif','https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649837214740.gif','https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649836709664.gif'],
 				// 
 				actIndex: 'act-3',
 				payNum: '',
@@ -421,7 +413,7 @@
 				popShow4: false,
 				popShow5: false,
 				playNow: true,
-				isKuaisu: true,
+				isKuaisu: false,
 				popShow6: false,
 				popShow7: false,
 				popShow8: false,
@@ -432,7 +424,9 @@
 				// pop6Duration: 1000000,
 				// pop6Interval: 1100000,
 				autoplay: false,
+				autoplayXz:false,
 				current: 0,
+				currentXz: 0,
 				timer: null,
 				zjNum1Shop: 1,
 				scrollLeft: 0,
@@ -458,6 +452,8 @@
 				},
 				buyShopList2: [],
 				innerAudioContext: null,
+				myIndex: -1,
+				myIndexFlag: false,
 			}
 		},
 		onShow() {
@@ -509,9 +505,11 @@
 				}
 			},
 			async getData() {
+				this.list = []
 				this.login()
 				const res4 = await this.$api.getHomeMessage();
 				this.shouyeObj = res4.data;
+				this.xzList = this.xzList.slice(0,this.shouyeObj.box.length)
 				this.boxId = this.shouyeObj.box[0].box_id
 				const res2 = await this.$api.getAllBoxShop({
 					box_id: this.boxId
@@ -520,7 +518,7 @@
 				this.shopList.forEach(ele => {
 					this.list.push({
 						image: ele.shop_quality == 0 ? '/static/img/zu4158.png' : ele.shop_quality ==
-							1 ? '/static/img/zu4158.png' : ele.shop_quality == 2 ?
+							1 ? '/static/img/zu4082.png' : ele.shop_quality == 2 ?
 							'/static/img/zu4159.png' : '/static/img/zu4157.png',
 						shopImage: ele.shop_img,
 					})
@@ -637,11 +635,12 @@
 						this.innerAudioContext.autoplay = true;
 					}, 2600)
 				} else if (!this.isShiwan && !this.isKuaisu) {
-					if(this.payNum == 1){
+					if (this.payNum == 1) {
+						this.buyShopList2 = [...this.buyShopList]
 						this.zhongjiangShop = this.buyShopList[0];
 						this.zhongjiangNum = this.zhongjiangShop.shop_quality;
 						this.zhongjiangName = this.zhongjiangShop.shop_name;
-					}else{
+					} else {
 						this.buyShopList2 = [...this.buyShopList]
 					}
 					setTimeout(() => {
@@ -684,11 +683,17 @@
 				}
 				this.login()
 			},
+			changSwiperXz(index){
+				this.$refs.xzDom[index].$el.click()
+			},
 			changSwiper(index) {
-				// console.log(index, this.shopList[index].shop_name)
-				// if (this.payNum == 1) {
-				// 	this.isKuaisu = true;
-				// }
+				console.log(this.autoplay, index, this.myIndex)
+				if (this.myIndex == index) {
+					this.$set(this, 'autoplay', false)
+					this.flag = false
+					this.myIndexFlag = true;
+				}
+				console.log(this.flag,'flag')
 				if (this.shopList[index] && this.shopList[index].shop_name == this.zhongjiangName && this.flag && this
 					.isKuaisu) {
 					setTimeout(() => {
@@ -725,24 +730,43 @@
 							}, 500)
 						}
 					}, 2000)
-				} else if (!this.isKuaisu) {
+				} else if (!this.isKuaisu && this.flag) {
 					setTimeout(() => {
+						console.log(this.flag,'flag')
 						var shopList = this.buyShopList2
-						shopList.forEach((ele, i) => {
+						// console.log(this.shopList)
+						// console.log(index)
+						shopList.some((ele, i) => {
+							// console.log(ele.shop_name, this.shopList[index].shop_name)
+							console.log('some')
 							if (ele.shop_name == this.shopList[index].shop_name && this.flag) {
-								this.$set(this, 'autoplay', false)
-								setTimeout(() => {
-									shopList.splice(i, 1)
-									if (this.payNum != 1) {
+								console.log(ele.shop_name, 'cccccc', index)
+								this.myIndex = index;
+								this.flag = false
+								// this.$set(this, 'autoplay', false)
+								shopList.splice(i, 1)
+								if(shopList.length == 0){
+									this.myIndexFlag = false;
+								}
+								if (this.payNum != 1) {
+									setTimeout(() => {
+										console.log('settime',shopList.length)
+										if (shopList.length != 0) {
+											this.myIndex = -1
+										}
 										this.innerAudioContext.seek(0)
-									}
-									this.$set(this, 'autoplay', true)
-								}, 500)
+										this.$set(this, 'autoplay', true)
+										this.flag = true;
+									}, 1000)
+								}
+								return true
 							}
 						})
-						console.log(shopList.length, this.payNum,'cyyyyyyyyyy')
-						if (shopList.length == 0 && this.payNum == 5) {
-							this.$set(this, 'autoplay', false)
+						// console.log(shopList.length, this.payNum,'cyyyyyyyyyy')
+						if (shopList.length == 0 && this.payNum == 5 && this.myIndexFlag) {
+							// this.$set(this, 'autoplay', false)
+							this.myIndex = -1;
+							this.myIndexFlag = false;
 							setTimeout(() => {
 								this.popShow6 = false;
 								this.popShow8 = true;
@@ -757,8 +781,9 @@
 									this.innerAudioContext.play()
 								}, 1000)
 							}, 600)
-						} else if (shopList.length == 0 && this.payNum == 10) {
-							this.$set(this, 'autoplay', false)
+						} else if (shopList.length == 0 && this.payNum == 10 && this.myIndexFlag) {
+							this.myIndex = -1;
+							this.myIndexFlag = false;
 							setTimeout(() => {
 								this.popShow9 = true;
 								this.popShow6 = false;
@@ -774,8 +799,9 @@
 								}, 1000)
 
 							}, 600)
-						} else if (shopList.length == 0 && this.payNum == 1) {
-							this.$set(this, 'autoplay', false)
+						} else if (shopList.length == 0 && this.payNum == 1 && this.myIndexFlag) {
+							this.myIndex = -1;
+							this.myIndexFlag = false;
 							setTimeout(() => {
 								this.popShow6 = false;
 								this.popShow7 = true;
@@ -796,6 +822,8 @@
 				// this.login()
 			},
 			async changeIndex1(i, item, e) {
+				this.currentXz = i
+				this.list = []
 				this.nowBox = item;
 				this.nowIndex1 = i;
 				this.boxId = item.box_id;
@@ -810,11 +838,12 @@
 				this.shopList.forEach(ele => {
 					this.list.push({
 						image: ele.shop_quality == 0 ? '/static/img/zu4158.png' : ele.shop_quality ==
-							1 ? '/static/img/zu4158.png' : ele.shop_quality == 2 ?
+							1 ? '/static/img/zu4082.png' : ele.shop_quality == 2 ?
 							'/static/img/zu4159.png' : '/static/img/zu4157.png',
 						shopImage: ele.shop_img,
 					})
 				})
+				console.log(this.list)
 				this.gailvList = res2.data.probability;
 				const res4 = await this.$api.getHomeMessage({
 					box_id: this.boxId
@@ -1046,6 +1075,15 @@
 		// 	width: 640rpx;
 		// 	height: 440rpx;
 		// }
+	}
+	.newXz{
+		position: absolute;
+		z-index: 8;
+		left: 50%;
+		transform: translateX(-50%);
+		top: 234rpx;
+		height: 440rpx;
+		width: 100%;
 	}
 
 	.nav2 {
@@ -1812,9 +1850,9 @@
 			}
 
 			.pic1 {
-				margin-top: 90rpx;
+				margin-top: 70rpx;
 				width: 398rpx;
-				height: 318rpx;
+				height: 398rpx;
 			}
 
 			.txt2 {

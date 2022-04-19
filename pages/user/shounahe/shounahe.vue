@@ -194,7 +194,8 @@
 				<view
 					:class="{'p4-box1':true,'bbx1':nowDengji == 0,'bbx2':nowDengji == 1,'bbx3':nowDengji == 2,'bbx4':nowDengji == 3}">
 					<view class="p4-b1-txt1">
-						{{nowDengji == 0 ? '金色传说' : nowDengji == 1 ? '红色史诗' : nowDengji == 2 ? '紫色稀有' : '蓝色普通'}}</view>
+						{{nowDengji == 0 ? '金色传说' : nowDengji == 1 ? '红色史诗' : nowDengji == 2 ? '紫色稀有' : '蓝色普通'}}
+					</view>
 					<image :src="nowImg" class="p4-b1-pic1" mode=""></image>
 				</view>
 				<view class="p4-box2">
@@ -363,18 +364,19 @@
 				})
 			},
 			toZhihuan() {
+
 				var sum = 0
 				this.sumList.forEach(ele => {
 					sum += Number(ele.order_total)
 				})
-				console.log(sum)
+				console.log(sum, this.order)
 				uni.navigateTo({
 					url: `/pages/tabBar/shop?type=1&order=${this.order.toString()}&sum=${sum}`
 				})
 				this.isZH = false;
 			},
-			formatDate(date) {
-				var date = new Date(date);
+			formatDate(date1) {
+				var date = new Date(date1);
 				var YY = date.getFullYear() + '-';
 				var MM = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
 				var DD = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate());
@@ -383,6 +385,18 @@
 				var ss = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
 				return YY + MM + DD + " " + hh + mm + ss;
 			},
+			// add0(m){return m<10?'0'+m:m },
+			// formatDate(datetime) {
+			// 	//shijianchuo是整数，否则要parseInt转换
+			// 	var time = new Date(datetime);
+			// 	var y = time.getFullYear();
+			// 	var m = time.getMonth() + 1;
+			// 	var d = time.getDate();
+			// 	var h = time.getHours();
+			// 	var mm = time.getMinutes();
+			// 	var s = time.getSeconds();
+			// 	return y + '-' + this.add0(m) + '-' + this.add0(d) + ' ' + this.add0(h) + ':' + this.add0(mm) + ':' + this.add0(s);
+			// },
 			toHome() {
 				uni.navigateTo({
 					url: '/pages/tabBar/index'
@@ -450,6 +464,7 @@
 				})
 				this.zhihuanNum = Number(item.order_total)
 				this.sumList.push(item)
+				this.order = [item.order_id]
 			},
 			toJump(url, param) {
 				console.log(url)
@@ -645,7 +660,8 @@
 					width: 126rpx;
 					height: 126rpx;
 				}
-				.t2-l-imgwu{
+
+				.t2-l-imgwu {
 					width: 220rpx;
 					height: 212rpx;
 				}
