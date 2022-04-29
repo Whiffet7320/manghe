@@ -567,6 +567,7 @@
 			buyAgain(num) {
 				if (num == 1) {
 					this.boxPirce = this.nowBox.box_price1
+					this.flag = true;
 				} else if (num == 5) {
 					this.boxPirce = this.nowBox.box_price2
 				} else if (num == 10) {
@@ -613,6 +614,9 @@
 				this.innerAudioContext.src = encodeURI(
 					'https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299819377.mpeg');
 				this.innerAudioContext.play()
+				if(!this.playNow){
+					this.innerAudioContext.volume = 0
+				}
 				// this.innerAudioContext.onEnded(()=>{
 				// 	this.innerAudioContext.stop()
 				// })
@@ -621,6 +625,7 @@
 						box_id: this.boxId
 					})
 					console.log(res)
+					this.buyShopList2 = [res.data[0]]
 					this.zhongjiangShop = res.data[0];
 					this.zhongjiangNum = this.zhongjiangShop.shop_quality;
 					this.zhongjiangName = this.zhongjiangShop.shop_name;
@@ -708,6 +713,9 @@
 									encodeURI(
 										'https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299638723.mpeg'
 									);
+									if(!this.playNow){
+										this.innerAudioContext.volume = 0
+									}
 							}, 500)
 						} else if (this.payNum == 5 && this.flag) {
 							setTimeout(() => {
@@ -715,6 +723,9 @@
 									encodeURI(
 										'https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299638723.mpeg'
 									);
+									if(!this.playNow){
+										this.innerAudioContext.volume = 0
+									}
 								this.popShow6 = false;
 								this.popShow8 = true;
 							}, 500)
@@ -724,6 +735,9 @@
 									encodeURI(
 										'https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299638723.mpeg'
 									);
+									if(!this.playNow){
+										this.innerAudioContext.volume = 0
+									}
 								this.popShow9 = true;
 								this.popShow6 = false;
 								console.log(this.popShow9)
@@ -757,12 +771,12 @@
 										this.innerAudioContext.seek(0)
 										this.$set(this, 'autoplay', true)
 										this.flag = true;
-									}, 1000)
+									}, 1500)
 								}
 								return true
 							}
 						})
-						// console.log(shopList.length, this.payNum,'cyyyyyyyyyy')
+						console.log(shopList.length, this.payNum ,this.myIndexFlag)
 						if (shopList.length == 0 && this.payNum == 5 && this.myIndexFlag) {
 							// this.$set(this, 'autoplay', false)
 							this.myIndex = -1;
@@ -777,8 +791,12 @@
 										'https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299638723.mpeg'
 									);
 								this.innerAudioContext.volume = 1
+								if(!this.playNow){
+									this.innerAudioContext.volume = 0
+								}
 								setTimeout(() => {
 									this.innerAudioContext.play()
+									this.flag = true;
 								}, 1000)
 							}, 600)
 						} else if (shopList.length == 0 && this.payNum == 10 && this.myIndexFlag) {
@@ -794,8 +812,12 @@
 										'https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299638723.mpeg'
 									);
 								this.innerAudioContext.volume = 1
+								if(!this.playNow){
+									this.innerAudioContext.volume = 0
+								}
 								setTimeout(() => {
 									this.innerAudioContext.play()
+									this.flag = true;
 								}, 1000)
 
 							}, 600)
@@ -812,8 +834,12 @@
 										'https://rushifu-test.oss-cn-hangzhou.aliyuncs.com/1649299638723.mpeg'
 									);
 								this.innerAudioContext.volume = 1
+								if(!this.playNow){
+									this.innerAudioContext.volume = 0
+								}
 								setTimeout(() => {
 									this.innerAudioContext.play()
+									this.flag = true;
 								}, 1000)
 							}, 600)
 						}
@@ -908,6 +934,7 @@
 	}
 
 	.float11 {
+		pointer-events: none;
 		position: absolute;
 		left: 36rpx;
 		top: 80rpx;

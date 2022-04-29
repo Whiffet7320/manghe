@@ -16,7 +16,7 @@
 		</view>
 		<view class="nav2">
 			<view class="n2-tit1">
-				<view v-if="isTiqu" class="n2t1-l">
+				<view v-if="isTiqu" :class="{'n2t1-l':true,'bbx1':shopObj.shop_degree == 0,'bbx2':shopObj.shop_degree == 1,'bbx3':shopObj.shop_degree == 2,'bbx4':shopObj.shop_degree == 3}">
 					<view v-if="shopObj.shop_degree == 0" class="n7i-txt1">金色传说</view>
 					<view v-if="shopObj.shop_degree == 1" class="n7i-txt1">红色史诗</view>
 					<view v-if="shopObj.shop_degree == 2" class="n7i-txt1">紫色稀有</view>
@@ -272,9 +272,23 @@
 
 		.n2-tit1 {
 			display: flex;
-
+			.n2t1-l.bbx1 {
+				background-image: url('../../static/img/zu4154.png');
+			}
+			
+			.n2t1-l.bbx2 {
+				background-image: url('../../static/img/zu4152.png');
+			}
+			
+			.n2t1-l.bbx3 {
+				background-image: url('../../static/img/zu4153.png');
+			}
+			
+			.n2t1-l.bbx4 {
+				background-image: url('../../static/img/zu4151.png');
+			}
 			.n2t1-l {
-				background-image: url(../../static/img/zu4078.png);
+				// background-image: url(../../static/img/zu4078.png);
 				background-size: 100% 100%;
 				width: 180rpx;
 				height: 172rpx;

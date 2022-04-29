@@ -8,7 +8,7 @@
 				height: height + 'rpx',
 				backgroundColor: bgColor
 			}">
-			<swiper-item class="u-swiper-item" v-for="(item, index) in list" :key="index">
+			<swiper-item @touchmove.stop class="u-swiper-item" v-for="(item, index) in list" :key="index">
 				<view class="u-list-image-wrap" @tap.stop.prevent="listClick(index)" :class="[uCurrent != index ? 'u-list-scale' : '']" :style="{
 						borderRadius: `${borderRadius}rpx`,
 						transform: effect3d && uCurrent != index ? 'scaleY(0.9)' : 'scaleY(1)',
@@ -215,6 +215,9 @@
 			}
 		},
 		methods: {
+			stopTouchMove(){
+				return false
+			},
 			listClick(index) {
 				this.$emit('click', index);
 			},
@@ -236,9 +239,8 @@
 </script>
 
 <style lang="scss" scoped>
-	
-	
 	.u-swiper-wrap {
+		pointer-events: none;// 禁止点击
 		position: relative;
 		overflow: hidden;
 		transform: translateY(0);

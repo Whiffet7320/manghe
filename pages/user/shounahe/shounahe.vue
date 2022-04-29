@@ -108,7 +108,7 @@
 						<!-- 待收货 -->
 						<template v-if="nowIndex == 1">
 							<view class="tit3">
-								<view @click="shouhuo(item)" class="btn">确认收货</view>
+								<view v-if="item.shop_type != 1" @click="shouhuo(item)" class="btn">确认收货</view>
 								<view @click="toKefu" class="btn">联系客服</view>
 
 								<view v-if="item.order_status_name == '已发货' && item.shop_type == 0"
@@ -366,8 +366,11 @@
 			toZhihuan() {
 
 				var sum = 0
+				this.order = [];
+				console.log(this.sumList)
 				this.sumList.forEach(ele => {
 					sum += Number(ele.order_total)
+					this.order.push(ele.order_id)
 				})
 				console.log(sum, this.order)
 				uni.navigateTo({
@@ -435,6 +438,7 @@
 				this.zhihuanNum = 0;
 				if (e.value) {
 					this.sumList = [...this.list]
+					console.log(this.sumList)
 					this.list.forEach(ele => {
 						this.zhihuanNum += Number(ele.order_total)
 					})

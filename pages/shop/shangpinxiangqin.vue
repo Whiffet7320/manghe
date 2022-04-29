@@ -2,8 +2,9 @@
 	<view class="index">
 		<view class="nav1">
 			<image @click="toBack" src="/static/img/zu947.png" class="fimg" mode=""></image>
-			<image :src="item.shop_img"
-				class="n1-pic" mode=""></image>
+			<!-- <image :src="item.shop_img"
+				class="n1-pic" mode=""></image> -->
+			<u-swiper :height='588' mode='number' :list="shop_rotation"></u-swiper>
 		</view>
 		<view class="nav2">
 			<view class="n2-tit1" v-if="type == 2">
@@ -81,7 +82,7 @@
 				content:'',
 				price:'',
 				shop_price_after:'',
-				shop_rotation:'',
+				shop_rotation:[],
 				order:'',
 			}
 		},
@@ -103,7 +104,10 @@
 				this.content = res.data.shop_detail;
 				this.price = res.data.shop_price;
 				this.shop_price_after = res.data.shop_price_after;
-				this.shop_rotation = res.data.shop_rotation
+				this.shop_rotation = JSON.parse(res.data.shop_rotation) 
+				this.shop_rotation = this.shop_rotation.filter(ele=>{
+					return ele != ''
+				})
 			},
 			jian(){
 				if(this.num == 1){
@@ -142,7 +146,9 @@
 	.index {
 		position: relative;
 	}
-	
+	/deep/ .u-swiper-indicator{
+		transform: translateY(-76rpx);
+	}
 	.nav1 {
 		width: 750rpx;
 		height: 588rpx;
