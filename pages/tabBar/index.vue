@@ -215,7 +215,11 @@
 		<u-popup v-model="popShow4" mode='bottom' border-radius="28" height="476rpx">
 			<view class="pop4">
 				<view class="p4-tit1">
-					<image src="/static/img/xz1.png" class="p4-l-pic" mode=""></image>
+					<image v-if="nowIndex1 == 0" src="/static/img/xz61.png" class="p4-l-pic" mode=""></image>
+					<image v-if="nowIndex1 == 1" src="/static/img/xz1.png" class="p4-l-pic" mode=""></image>
+					<image v-if="nowIndex1 == 2" src="/static/img/xz4222.png" class="p4-l-pic" mode=""></image>
+					<image v-if="nowIndex1 == 3" src="/static/img/xz8222.png" class="p4-l-pic" mode=""></image>
+					<image v-if="nowIndex1 == 4" src="/static/img/xz7222.png" class="p4-l-pic" mode=""></image>
 					<view class="p4-r">
 						<view class="p4-t">{{boxName}}</view>
 						<view class="p4-d">{{boxPirce}}
@@ -1440,7 +1444,7 @@
 
 				.item {
 					width: 328rpx;
-					height: 360rpx;
+					height: 350rpx;
 					background-size: 100% 100%;
 					padding: 0 30rpx;
 					margin-bottom: 30rpx;
@@ -1478,7 +1482,7 @@
 						align-items: center;
 
 						.txttt1 {
-							font-size: 24rpx;
+							font-size: 22rpx;
 							font-family: PingFang SC, PingFang SC-Bold;
 							font-weight: 700;
 							color: #333333;
@@ -1487,15 +1491,15 @@
 						.txttt2 {
 							display: flex;
 							align-items: center;
-							font-size: 32rpx;
+							font-size: 26rpx;
 							font-family: PingFang SC, PingFang SC-Heavy;
 							font-weight: 800;
 							text-align: left;
 							color: #f90000;
 
 							.picc {
-								width: 42rpx;
-								height: 42rpx;
+								width: 40rpx;
+								height: 40rpx;
 							}
 						}
 					}
@@ -1593,7 +1597,7 @@
 			justify-content: center;
 
 			.txt1 {
-				font-size: 30rpx;
+				font-size: 26rpx;
 				font-family: PingFang SC, PingFang SC-Heavy;
 				font-weight: 800;
 				color: #ffffff;
